@@ -11,6 +11,16 @@ class DatabaseSeeder extends Seeder
      */
     public function run()
     {
-        // $this->call(UsersTableSeeder::class);
+         $this->call(MainTableSeeder::class);
+    }
+}
+
+class MainTableSeeder extends Seeder {
+    public function run()
+    {
+        DB::table('mains')->insert([
+            'id'=>1,
+            'recorder_id'=>1
+        ]);
     }
 }
