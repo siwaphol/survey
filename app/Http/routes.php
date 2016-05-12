@@ -13,30 +13,27 @@
 
 Route::get('/', function () {
     $str = "select 
-t1.id,
-t1.parent_id,
-t1.sibling_order,
-t1.section,
-t1.input_type,
-t1.name,
-t1.subtext,
-t1.required,
-t1.dependent_question_id,
-t1.dependent_parent_option_id,
-t3.id as option_id,
-t3.name as option_name
-from questions t1
-LEFT JOIN option_questions t2
-on t1.id=t2.question_id
-LEFT JOIN options t3
-on t2.option_id=t3.id
-ORDER BY t1.parent_id,t1.sibling_order ";
-
+        t1.id,
+        t1.parent_id,
+        t1.sibling_order,
+        t1.section,
+        t1.input_type,
+        t1.name,
+        t1.subtext,
+        t1.required,
+        t1.dependent_question_id,
+        t1.dependent_parent_option_id,
+        t3.id as option_id,
+        t3.name as option_name
+        from questions t1
+        LEFT JOIN option_questions t2
+        on t1.id=t2.question_id
+        LEFT JOIN options t3
+        on t2.option_id=t3.id
+        ORDER BY t1.parent_id,t1.sibling_order ";
     $result = DB::select($str);
-
     $t = collect($result);
     $grouped = $t->groupBy('id');
-
 
     $template = '{"schema": {"type": "object","properties": {}},'.
     '"options":{"fields":{}}}';
@@ -83,4 +80,32 @@ ORDER BY t1.parent_id,t1.sibling_order ";
 //    dd($json);
 
     return view('welcome', compact('result','json'));
+});
+
+Route::get('html-loop', function(){
+    $str = "select 
+        t1.id,
+        t1.parent_id,
+        t1.sibling_order,
+        t1.section,
+        t1.input_type,
+        t1.name,
+        t1.subtext,
+        t1.required,
+        t1.dependent_question_id,
+        t1.dependent_parent_option_id,
+        t3.id as option_id,
+        t3.name as option_name
+        from questions t1
+        LEFT JOIN option_questions t2
+        on t1.id=t2.question_id
+        LEFT JOIN options t3
+        on t2.option_id=t3.id
+        ORDER BY t1.parent_id,t1.sibling_order ";
+    $result = DB::select($str);
+    $t = collect($result);
+    $grouped = $t->groupBy('id');
+
+//    dd($grouped);
+    return view('welcome2', compact('grouped'));
 });
