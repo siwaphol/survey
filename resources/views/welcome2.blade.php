@@ -74,10 +74,11 @@
                         @foreach($question as $option)
                             <div class="radio">
                                 <label>
-                                    <input type="radio" name="q_{{$option->id}}[]" value="{{$option->option_id}}" class="styled">
+                                    <input type="radio" name="q_{{$option->id}}[]" value="{{$option->option_id}}"
+                                           class="styled" {{is_null($option->selected)?'':'checked'}}>
                                     {{$option->option_name}}
                                     @if($option->option_id===1)
-                                        <input type="text">
+                                        <input type="text" name="q_{{$option->id}}_other" value="{{$option->other_text}}">
                                     @endif
                                 </label>
                             </div>

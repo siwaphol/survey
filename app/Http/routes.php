@@ -95,16 +95,27 @@ Route::get('html-loop', function(){
         t1.dependent_question_id,
         t1.dependent_parent_option_id,
         t3.id as option_id,
-        t3.name as option_name
+        t3.name as option_name,
+        t2.id as option_question_id,
+        t4.id as selected,
+        t4.answer_numeric,
+        t4.answer_text,
+        t4.other_text
         from questions t1
         LEFT JOIN option_questions t2
         on t1.id=t2.question_id
         LEFT JOIN options t3
         on t2.option_id=t3.id
-        ORDER BY t1.parent_id,t1.sibling_order ";
+        LEFT JOIN answers t4
+        on t2.id=t4.option_question_id and t4.main_id=1
+        ORDER BY t1.id,t1.parent_id,t1.sibling_order,t2.id ";
     $result = DB::select($str);
+
+//    dd($result);
     $t = collect($result);
     $grouped = $t->groupBy('id');
+
+//    dd($grouped);
 
 //    dd($grouped);
     return view('welcome2', compact('grouped'));
