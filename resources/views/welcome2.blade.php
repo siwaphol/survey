@@ -1,52 +1,68 @@
 <!DOCTYPE html>
 <html>
     <head>
+        <meta name="csrf-token" content="{{ csrf_token() }}">
         <title>Laravel</title>
 
         <link href="https://fonts.googleapis.com/css?family=Lato:100" rel="stylesheet" type="text/css">
-        <!-- dependencies (jquery, handlebars and bootstrap) -->
-        <script type="text/javascript" src="//code.jquery.com/jquery-1.11.1.min.js"></script>
-        <script type="text/javascript" src="//cdnjs.cloudflare.com/ajax/libs/handlebars.js/4.0.5/handlebars.min.js"></script>
-        <link type="text/css" href="//maxcdn.bootstrapcdn.com/bootstrap/3.3.1/css/bootstrap.min.css" rel="stylesheet"/>
-        <script type="text/javascript" src="//maxcdn.bootstrapcdn.com/bootstrap/3.3.1/js/bootstrap.min.js"></script>
+        <link href="assets/css/icons/icomoon/styles.css" rel="stylesheet" type="text/css">
+        <link href="assets/css/bootstrap.css" rel="stylesheet" type="text/css">
+        {{--<link href="assets/css/core.css" rel="stylesheet" type="text/css">--}}
+        <link href="assets/css/components.css" rel="stylesheet" type="text/css">
+        {{--<link href="assets/css/colors.css" rel="stylesheet" type="text/css">--}}
+        <!-- /global stylesheets -->
 
-        <!-- alpaca -->
-        <link type="text/css" href="//code.cloudcms.com/alpaca/1.5.17/bootstrap/alpaca.min.css" rel="stylesheet"/>
-        <script type="text/javascript" src="//code.cloudcms.com/alpaca/1.5.17/bootstrap/alpaca.min.js"></script>
+        <!-- Core JS files -->
+        <script type="text/javascript" src="assets/js/plugins/loaders/pace.min.js"></script>
+        <script type="text/javascript" src="assets/js/core/libraries/jquery.min.js"></script>
+        <script type="text/javascript" src="assets/js/core/libraries/bootstrap.min.js"></script>
+        <script type="text/javascript" src="assets/js/plugins/loaders/blockui.min.js"></script>
+        <!-- /core JS files -->
+
+        <!-- Theme JS files -->
+        <script type="text/javascript" src="assets/js/plugins/forms/styling/uniform.min.js"></script>
+        {{--<script type="text/javascript" src="assets/js/plugins/forms/styling/switchery.min.js"></script>--}}
+        {{--<script type="text/javascript" src="assets/js/plugins/forms/styling/switch.min.js"></script>--}}
+
+        {{--<script type="text/javascript" src="assets/js/core/app.js"></script>--}}
+        {{--<script type="text/javascript" src="assets/js/pages/form_checkboxes_radios.js"></script>--}}
+
         <style>
-            html, body {
-                height: 100%;
-            }
+            /*html, body {*/
+                /*height: 100%;*/
+            /*}*/
 
-            body {
-                margin: 0;
-                padding: 0;
-                width: 100%;
-                display: table;
-                font-weight: 100;
-                font-family: 'Lato';
-                background-color: gainsboro;
-            }
+            /*body {*/
+                /*margin: 0;*/
+                /*padding: 0;*/
+                /*width: 100%;*/
+                /*display: table;*/
+                /*font-weight: 100;*/
+                /*!*font-family: 'Lato';*!*/
+                /*background-color: gainsboro;*/
+            /*}*/
 
-            .container {
-                text-align: center;
-                display: table-cell;
-                vertical-align: middle;
-            }
+            /*.container {*/
+                /*text-align: center;*/
+                /*display: table-cell;*/
+                /*vertical-align: middle;*/
+            /*}*/
 
-            .content {
-                text-align: center;
-                display: inline-block;
-            }
+            /*.content {*/
+                /*text-align: center;*/
+                /*display: inline-block;*/
+            /*}*/
 
-            .title {
-                font-size: 96px;
-            }
+            /*.title {*/
+                /*font-size: 96px;*/
+            /*}*/
         </style>
     </head>
     <body>
         <div class="container">
             <div class="content">
+                <form action="test-post" method="post">
+                    <input type="hidden" name="_token" value="<?php echo csrf_token(); ?>">
                 @foreach($grouped as $question)
                     <div class="form-group text-left {{is_null($question[0]->parent_id)?'':'hidden has-parent'}}"
                             data-parent-id="{{$question[0]->parent_id}}"
@@ -58,13 +74,18 @@
                         @foreach($question as $option)
                             <div class="radio">
                                 <label>
-                                    <input type="radio" name="q_{{$option->id}}[]" value="{{$option->option_id}}">
+                                    <input type="radio" name="q_{{$option->id}}[]" value="{{$option->option_id}}" class="styled">
                                     {{$option->option_name}}
+                                    @if($option->option_id===1)
+                                        <input type="text">
+                                    @endif
                                 </label>
                             </div>
                         @endforeach
                     </div>
                 @endforeach
+                    <input type="submit" value="submit">
+                </form>
             </div>
         </div>
 
@@ -77,6 +98,10 @@
                        $("#q_"+currentId).removeClass("hidden");
                    });
                });
+
+                $(".styled").uniform({
+                    radioClass: 'choice'
+                });
             });
         </script>
     </body>

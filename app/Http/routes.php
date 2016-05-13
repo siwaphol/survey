@@ -109,3 +109,5 @@ Route::get('html-loop', function(){
 //    dd($grouped);
     return view('welcome2', compact('grouped'));
 });
+
+Route::post('test-post','AnswerController@testPost');
