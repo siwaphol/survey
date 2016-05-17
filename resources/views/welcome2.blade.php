@@ -64,13 +64,9 @@
                 <form action="test-post" method="post">
                     <input type="hidden" name="_token" value="<?php echo csrf_token(); ?>">
                 @foreach($grouped as $question)
-                    <div class="form-group text-left {{is_null($question[0]->parent_id)?'':'hidden has-parent'}}"
-                            data-parent-id="{{$question[0]->parent_id}}"
-                            data-id="{{$question[0]->id}}"
-                    id="q_{{$question[0]->id}}">
-                   <h3>{{$question[0]->name}}
-                            {{(!is_null($question[0]->subtext)&&!empty($question[0]->subtext))
-                            ?"({$question[0]->subtext})":''}}</h3>
+                    @if($question->input_type===\App\Question::TYPE_RADIO)
+                    <div class="form-group text-left {{$question->class}}" data-parent-id="{{$question->parent_id}}" data-id="{{$question->id}}" id="q_{{$question->id}}">
+                   <h3>{{$question->name}} | {{$question->subtext}}</h3>
                         @foreach($question as $option)
                             <div class="radio">
                                 <label>
@@ -84,6 +80,37 @@
                             </div>
                         @endforeach
                     </div>
+                        @if(isset($question->children))
+                            @each('partials.children',$question->children,'question')
+                        @endif
+                    @elseif($question->input_type===\App\Question::TYPE_CHECKBOX)
+                            <div class="form-group text-left {{is_null($question->parent_id)?'':'hidden has-parent'}}"
+                                 data-parent-id="{{$question->parent_id}}"
+                                 data-id="{{$question->id}}"
+                                 id="q_{{$question->id}}">
+                                <h3>{{$question->name}}
+                                    {{(!is_null($question->subtext)&&!empty($question->subtext))
+                                    ?"({$question->subtext})":''}}</h3>
+                                @foreach($question as $option)
+                                    <div class="checkbox">
+                                        <label>
+                                            <input type="checkbox" name="q_{{$option->id}}[]" value="{{$option->option_id}}"
+                                                   class="styled" {{is_null($option->selected)?'':'checked'}}>
+                                            {{$option->option_name}}
+                                            @if($option->option_id===1)
+                                                <input type="text" name="q_{{$option->id}}_other" value="{{$option->other_text}}">
+                                            @endif
+                                        </label>
+                                    </div>
+                                @endforeach
+                            </div>
+                    @elseif($question->input_type===\App\Question::TYPE_TITLE)
+
+                    @elseif($question->input_type===\App\Question::TYPE_NUMBER)
+
+                    @elseif($question->input_type===\App\Question::TYPE_TEXT)
+
+                    @endif
                 @endforeach
                     <input type="submit" value="submit">
                 </form>

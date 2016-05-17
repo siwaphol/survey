@@ -90,7 +90,7 @@ Route::get('html-loop', function(){
         t1.section,
         t1.input_type,
         t1.name,
-        t1.subtext,
+        IFNULL(t1.subtext,'') as subtext,
         t1.required,
         t1.dependent_question_id,
         t1.dependent_parent_option_id,
@@ -114,6 +114,30 @@ Route::get('html-loop', function(){
 //    dd($result);
     $t = collect($result);
     $grouped = $t->groupBy('id');
+
+    $forgetList =[];
+    foreach ($grouped as $aQuestion){
+        $aQuestion->{"input_type"} = $aQuestion[0]->input_type;
+        $aQuestion->{"id"} = $aQuestion[0]->id;
+        $aQuestion->{"parent_id"} = $aQuestion[0]->parent_id;
+        $aQuestion->{"name"} = $aQuestion[0]->name;
+        $aQuestion->{"subtext"} = $aQuestion[0]->subtext;
+
+        $aQuestion->{"class"} = "";
+        if (!is_null($aQuestion->parent_id)){
+            // TODO-nong ดูว่าถ้า parent มีค่า อาจจะไม่ hidden
+            $aQuestion->{"class"} = 'hidden has-parent';
+        }
+
+        if(!is_null($aQuestion[0]->parent_id)){
+            $grouped[$aQuestion[0]->parent_id]->{"children"} = [$aQuestion[0]->id=>$aQuestion];
+            $forgetList[] = $aQuestion[0]->id;
+        }
+    }
+    //for get in list
+    foreach ($forgetList as $aId){
+        $grouped->forget((string)$aId);
+    }
 
 //    dd($grouped);
 
