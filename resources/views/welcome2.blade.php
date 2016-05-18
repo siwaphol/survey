@@ -79,12 +79,19 @@
                                 </label>
                             </div>
                         @endforeach
-                    </div>
                         @if(isset($question->children))
-                            @each('partials.children',$question->children,'question')
+                            @foreach($question->children as $childQuestion)
+                            @include('partials.children',['question'=>$childQuestion,
+                            'parent_id'=>$question->id
+                           ,'parent_type'=>'radio'
+                           ,'parent_option_id'=>''
+                           ,'margin'=>0
+                            ])
+                            @endforeach
                         @endif
+                    </div>
                     @elseif($question->input_type===\App\Question::TYPE_CHECKBOX)
-                            <div class="form-group text-left {{is_null($question->parent_id)?'':'hidden has-parent'}}"
+                            <div class="form-group text-left {{$question->class}}"
                                  data-parent-id="{{$question->parent_id}}"
                                  data-id="{{$question->id}}"
                                  id="q_{{$question->id}}">
@@ -102,15 +109,70 @@
                                             @endif
                                         </label>
                                     </div>
+                                    @if(isset($question->children))
+                                        @foreach($question->children as $childQuestion)
+                                        @include('partials.children',['question'=>$childQuestion,
+                                        'parent_type'=>'checkbox',
+                                        'parent_option_id'=>$option->option_id,
+                                        'parent_id'=>$question->id,
+                                        'margin'=>0
+                                        ])
+                                        @endforeach
+                                    @endif
                                 @endforeach
                             </div>
                     @elseif($question->input_type===\App\Question::TYPE_TITLE)
-
+                        <div class="form-group text-left">
+                            <h3>{{$question->name}}
+                                {{(!is_null($question->subtext)&&!empty($question->subtext))
+                                ?"({$question->subtext})":''}}</h3>
+                            @if(isset($question->children))
+                                @foreach($question->children as $childQuestion)
+                                    @include('partials.children',['question'=>$childQuestion,
+                                    'parent_id'=>$question->id
+                                   ,'parent_type'=>'radio'
+                                   ,'parent_option_id'=>''
+                                   ,'margin'=>0
+                                    ])
+                                @endforeach
+                            @endif
+                        </div>
                     @elseif($question->input_type===\App\Question::TYPE_NUMBER)
-
+                            <div class="form-group text-left">
+                                <h3>{{$question->name}}
+                                    {{(!is_null($question->subtext)&&!empty($question->subtext))
+                                    ?"({$question->subtext})":''}}</h3>
+                                <input type="number" name="q_{{$option->id}}" value="">
+                                @if(isset($question->children))
+                                    @foreach($question->children as $childQuestion)
+                                        @include('partials.children',['question'=>$childQuestion,
+                                        'parent_id'=>$question->id
+                                       ,'parent_type'=>'radio'
+                                       ,'parent_option_id'=>''
+                                       ,'margin'=>0
+                                        ])
+                                    @endforeach
+                                @endif
+                            </div>
                     @elseif($question->input_type===\App\Question::TYPE_TEXT)
-
+                            <div class="form-group text-left">
+                                <h3>{{$question->name}}
+                                    {{(!is_null($question->subtext)&&!empty($question->subtext))
+                                    ?"({$question->subtext})":''}}</h3>
+                                <input type="text" name="q_{{$option->id}}" value="">
+                                @if(isset($question->children))
+                                    @foreach($question->children as $childQuestion)
+                                        @include('partials.children',['question'=>$childQuestion,
+                                        'parent_id'=>$question->id
+                                       ,'parent_type'=>'radio'
+                                       ,'parent_option_id'=>''
+                                       ,'margin'=>0
+                                        ])
+                                    @endforeach
+                                @endif
+                            </div>
                     @endif
+
                 @endforeach
                     <input type="submit" value="submit">
                 </form>
@@ -119,13 +181,66 @@
 
         <script type="text/javascript">
             $(function () {
-               $(".has-parent").each(function () {
+                var loopParent = [];
+                var children = [];
+
+               $(".has-parent-no-dependent").each(function () {
                    var parentId = parseInt($(this).attr("data-parent-id"));
                    var currentId = $(this).attr("data-id");
+                   var dependDentOptionId = $(this).attr("data-dependent-parent-option");
                    $('#q_'+parentId + ' input[type="radio"]').change(function () {
-                       $("#q_"+currentId).removeClass("hidden");
+                       console.log('parent is changed: ', "#q_"+parentId+"_"+dependDentOptionId+"_"+currentId);
+                       $("#q_"+parentId+"_"+dependDentOptionId+"_"+currentId).removeClass("hidden");
+                   });
+                   $('#q_'+parentId + ' input[type="checkbox"]').change(function () {
+                       console.log('parent is changed: ', "#q_"+parentId+"_"+dependDentOptionId+"_"+currentId);
+                       $("#q_"+parentId+"_"+dependDentOptionId+"_"+currentId).removeClass("hidden");
                    });
                });
+
+                $(".has-parent").each(function () {
+                    var parentId = parseInt($(this).attr("data-parent-id"));
+                    var splitId = $(this).attr("id").replace("q_","").split("_");
+                    var currentId = $(this).attr("id");
+                    if(splitId.length==2){
+                        console.log("parent: ", splitId[0], ", splitId: ", splitId[1]);
+                        return;
+                    }
+                    console.log("parent: ", splitId[0],", whenparentselect: ",splitId[1] ,", splitId: ", splitId[2]);
+
+                    $('#q_'+parentId + ' input[type="radio"]').change(function (e) {
+                        console.log(e);
+//                        $("#q_"+parentId+"_"+dependDentOptionId+"_"+currentId).removeClass("hidden");
+                    });
+
+                    if(loopParent.indexOf(splitId[0])==-1){
+                        loopParent.push(splitId[0]);
+                        children[splitId[0]] = [];
+                    }
+
+                    children[splitId[0]].push(currentId);
+
+//                    $('#q_'+parentId + ' input[type="checkbox"]').change(function (e) {
+////                        console.log('parent is changed: ', "#q_"+parentId+"_"+dependDentOptionId+"_"+currentId);
+//                        console.log(e);
+//                        if(e.target.value===splitId[1] && e.target.checked==true){
+//                            $(this).removeClass("hidden");
+//                        }
+////                        $("#q_"+parentId+"_"+dependDentOptionId+"_"+currentId).removeClass("hidden");
+//                    });
+                });
+
+                for(var i=0;i<loopParent.length;i++){
+                    var currentI = i;
+                    $('#q_'+loopParent[i] + ' input[type="checkbox"]').change(function (e){
+                        console.log('target,',e.target.value,' checked, ', e.target.checked);
+                        if(e.target.checked){
+                            $("div[id*=q_"+loopParent[currentI]+"_"+e.target.value+"]").each(function () {
+                                $(this).removeClass("hidden");
+                            })
+                        }
+                    });
+                }
 
                 $(".styled").uniform({
                     radioClass: 'choice'

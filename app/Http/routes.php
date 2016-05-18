@@ -122,15 +122,21 @@ Route::get('html-loop', function(){
         $aQuestion->{"parent_id"} = $aQuestion[0]->parent_id;
         $aQuestion->{"name"} = $aQuestion[0]->name;
         $aQuestion->{"subtext"} = $aQuestion[0]->subtext;
+        $aQuestion->{"dependent_parent_option_id"} = $aQuestion[0]->dependent_parent_option_id;
 
         $aQuestion->{"class"} = "";
         if (!is_null($aQuestion->parent_id)){
             // TODO-nong ดูว่าถ้า parent มีค่า อาจจะไม่ hidden
-            $aQuestion->{"class"} = 'hidden has-parent';
+            if($grouped[$aQuestion->parent_id][0]->input_type===\App\Question::TYPE_RADIO
+            && is_null($aQuestion->dependent_parent_option_id)){
+                $aQuestion->{"class"} = 'hidden has-parent-no-dependent';
+            }else{
+                $aQuestion->{"class"} = 'hidden has-parent';
+            }
         }
 
         if(!is_null($aQuestion[0]->parent_id)){
-            $grouped[$aQuestion[0]->parent_id]->{"children"} = [$aQuestion[0]->id=>$aQuestion];
+            $grouped[$aQuestion[0]->parent_id]->{"children"}[] = [$aQuestion[0]->id=>$aQuestion];
             $forgetList[] = $aQuestion[0]->id;
         }
     }

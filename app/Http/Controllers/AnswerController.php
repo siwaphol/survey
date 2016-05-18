@@ -14,6 +14,7 @@ class AnswerController extends Controller
     {
         $input = $request->input();
 
+        dd($request->input());
         // อาจจะต้องการ section ตรงนี้
 
         foreach ($input as $key=>$value){
