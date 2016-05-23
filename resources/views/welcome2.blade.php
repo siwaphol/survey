@@ -180,9 +180,9 @@
         </div>
 
         <script type="text/javascript">
+            var loopParent = [];
+            var children = [];
             $(function () {
-                var loopParent = [];
-                var children = [];
 
                $(".has-parent-no-dependent").each(function () {
                    var parentId = parseInt($(this).attr("data-parent-id"));
@@ -229,13 +229,27 @@
 ////                        $("#q_"+parentId+"_"+dependDentOptionId+"_"+currentId).removeClass("hidden");
 //                    });
                 });
-
+                var tst = function(e){
+                    console.log(e);
+                    console.log(e.data);
+                };
                 for(var i=0;i<loopParent.length;i++){
                     var currentI = i;
-                    $('#q_'+loopParent[i] + ' input[type="checkbox"]').change(function (e){
-                        console.log('target,',e.target.value,' checked, ', e.target.checked);
+                    console.log('#q_'+loopParent[i] + ' input[type="checkbox"]');
+                    $('#q_'+loopParent[i] + ' input[type="checkbox"]').change({fixedId:currentI},function (e){
+                        console.log('checkbox target,',e.target.value,' checked, ', e.target.checked);
                         if(e.target.checked){
-                            $("div[id*=q_"+loopParent[currentI]+"_"+e.target.value+"]").each(function () {
+                            $("div[id*=q_"+loopParent[e.data.fixedId]+"_"+e.target.value+"]").each(function () {
+                                $(this).removeClass("hidden");
+                            })
+                        }
+                    });
+//                    $('#q_'+loopParent[i] + ' input[type="checkbox"]').change({test: 123},tst);
+
+                    $('#q_'+loopParent[i] + ' input[type="radio"]').change(function ({fixedId:currentI},e){
+                        console.log('radio target,',e.target.value,' checked, ', e.target.checked);
+                        if(e.target.checked){
+                            $("div[id*=q_"+loopParent[e.data.fixedId]+"_"+e.target.value+"]").each(function () {
                                 $(this).removeClass("hidden");
                             })
                         }

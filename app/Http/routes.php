@@ -92,7 +92,6 @@ Route::get('html-loop', function(){
         t1.name,
         IFNULL(t1.subtext,'') as subtext,
         t1.required,
-        t1.dependent_question_id,
         t1.dependent_parent_option_id,
         t3.id as option_id,
         t3.name as option_name,
@@ -132,6 +131,7 @@ Route::get('html-loop', function(){
                 $aQuestion->{"class"} = 'hidden has-parent-no-dependent';
             }else{
                 $aQuestion->{"class"} = 'hidden has-parent';
+//                $aQuestion->{"parent_input_type"} = $grouped[$aQuestion->parent_id][0]->input_type;
             }
         }
 

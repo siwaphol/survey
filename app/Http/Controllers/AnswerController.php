@@ -19,7 +19,19 @@ class AnswerController extends Controller
 
         foreach ($input as $key=>$value){
             if(strpos($key,"q_")!==false && strpos($key,"other")===false){
-                $question_id = (int)str_replace("q_","",$key);
+                //q_2__3 => question id 3 when parent is 2 and dont care what choice parent is selected
+
+                //q_10_21_11 => question id 11 when parent is 10 and selected 21
+
+                $removed_q_key = explode("_", str_replace("q_","",$key));
+                if(count($removed_q_key)===1){
+                    $question_id = (int)$removed_q_key[0];
+                }else{
+                    $parent_question_id = (int)$removed_q_key[0];
+                    $parent_option_id = empty($removed_q_key[1])?null:(int)$removed_q_key[1];
+                    $question_id = (int)$removed_q_key[2];
+                }
+//                $question_id = (int)str_replace("q_","",$key);
                 $option_id = (int)$value[0];
                 $result = \DB::select("select id from option_questions 
                   where question_id=? and option_id=? ",array($question_id,$option_id));
