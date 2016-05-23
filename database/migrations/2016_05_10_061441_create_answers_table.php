@@ -20,8 +20,10 @@ class CreateAnswersTable extends Migration
 
             $table->bigInteger('option_question_id')->unsigned();
             $table->foreign('option_question_id')->references('id')->on('option_questions');
-            $table->integer('question_id')->unsigned();
+            $table->bigInteger('question_id')->unsigned();
             $table->foreign('question_id')->references('id')->on('questions');
+            $table->bigInteger('parent_option_selected_id')->unsigned();
+            $table->foreign('parent_option_selected_id')->references('id')->on('option');
 
             $table->float('answer_numeric')->nullable();
             $table->string('answer_text')->nullable();

@@ -15,11 +15,13 @@ class CreateOptionQuestionsTable extends Migration
         Schema::create('option_questions', function (Blueprint $table) {
             $table->bigIncrements('id')->unsigned();
 
-            $table->integer('question_id')->unsigned();
+            $table->bigInteger('question_id')->unsigned();
             $table->foreign('question_id')->references('id')->on('questions');
-            $table->integer('option_id')->unsigned();
+            $table->bigInteger('option_id')->unsigned();
             $table->foreign('option_id')->references('id')->on('options');
+            $table->integer('order');
 
+            $table->unique(['question_id','order']);
             $table->timestamps();
         });
     }

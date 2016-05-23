@@ -78,6 +78,19 @@
                                     @endif
                                 </label>
                             </div>
+                            {{--ถ้ามีลูและลูกขึ้นอยู่กับ option_id ปัจจุบัน--}}
+                            @if(isset($question->children))
+                                @foreach($question->children as $childQuestion)
+                                    @if(!is_null($question->dependent_parent_option_id)&&(int)$question->dependent_parent_option_id===(int)$option->option_id)
+                                        @include('partials.children',['question'=>$childQuestion,
+                                            'parent_id'=>$question->id
+                                            ,'parent_type'=>'radio'
+                                            ,'parent_option_id'=>''
+                                            ,'margin'=>0
+                                            ])
+                                    @endif
+                                @endforeach
+                            @endif
                         @endforeach
                         @if(isset($question->children))
                             @foreach($question->children as $childQuestion)

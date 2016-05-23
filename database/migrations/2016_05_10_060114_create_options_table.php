@@ -13,8 +13,10 @@ class CreateOptionsTable extends Migration
     public function up()
     {
         Schema::create('options', function (Blueprint $table) {
-            $table->increments('id')->unsigned();
+            $table->bigInteger('id')->unsigned();
             $table->string('name');
+
+            $table->primary('id');
             $table->timestamps();
         });
     }
