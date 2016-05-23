@@ -46,9 +46,7 @@
              data-id="{{$aQuestion->id}}" id="q_{{$parent_id}}_{{$parent_option_id}}_{{$aQuestion->id}}"
              style="margin-left: {{$margin}}px;">
 
-            <h3>{{$aQuestion->name}}
-                {{(!is_null($aQuestion->subtext)&&!empty($aQuestion->subtext))
-                ?"({$aQuestion->subtext})":''}}</h3>
+            <h3>{{$aQuestion->name}}</h3>
             @foreach($aQuestion as $option)
                 <div class="checkbox">
                     <label>
@@ -62,12 +60,14 @@
                 </div>
                 @if(isset($aQuestion->children))
                     @foreach($aQuestion->children as $childQuestion)
+                        @if($childQuestion[0]->dependent_parent_option_id)
                         @include('partials.children',['question'=>$childQuestion,
                         'parent_type'=>'checkbox',
                         'parent_option_id'=>$option->option_id,
                         'parent_id'=>$aQuestion->id,
                         'margin'=>$margin
                         ])
+                        @endif
                     @endforeach
                 @endif
             @endforeach
@@ -80,9 +80,7 @@
              data-id="{{$aQuestion->id}}" id="q_{{$parent_id}}_{{$parent_option_id}}_{{$aQuestion->id}}"
              style="margin-left: {{$margin}}px;">
 
-            <h3>{{$aQuestion->name}}
-                {{(!is_null($aQuestion->subtext)&&!empty($aQuestion->subtext))
-                ?"({$aQuestion->subtext})":''}}</h3>
+            <h3>{{$aQuestion->name}}</h3>
             @if(isset($aQuestion->children))
                 @foreach($aQuestion->children as $childQuestion)
                     @include('partials.children',['question'=>$childQuestion,
@@ -102,9 +100,7 @@
              data-id="{{$aQuestion->id}}" id="q_{{$parent_id}}_{{$parent_option_id}}_{{$aQuestion->id}}"
              style="margin-left: {{$margin}}px;">
 
-            <h3>{{$aQuestion->name}}
-                {{(!is_null($aQuestion->subtext)&&!empty($aQuestion->subtext))
-                ?"({$aQuestion->subtext})":''}}</h3>
+            <h3>{{$aQuestion->name}}</h3>
             <input type="number" name="q_{{$parent_id}}_{{$parent_option_id}}_{{$aQuestion->id}}" value="">
             @if(isset($aQuestion->children))
                 @foreach($aQuestion->children as $childQuestion)
@@ -125,9 +121,7 @@
              data-id="{{$aQuestion->id}}" id="q_{{$parent_id}}_{{$parent_option_id}}_{{$aQuestion->id}}"
              style="margin-left: {{$margin}}px;">
 
-            <h3>{{$aQuestion->name}}
-                {{(!is_null($aQuestion->subtext)&&!empty($aQuestion->subtext))
-                ?"({$aQuestion->subtext})":''}}</h3>
+            <h3>{{$aQuestion->name}}</h3>
             <input type="text" name="q_{{$parent_id}}_{{$parent_option_id}}_{{$aQuestion->id}}" value="">
             @if(isset($aQuestion->children))
                 @foreach($aQuestion->children as $childQuestion)

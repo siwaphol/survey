@@ -5,22 +5,22 @@
         <title>Laravel</title>
 
         <link href="https://fonts.googleapis.com/css?family=Lato:100" rel="stylesheet" type="text/css">
-        <link href="assets/css/icons/icomoon/styles.css" rel="stylesheet" type="text/css">
-        <link href="assets/css/bootstrap.css" rel="stylesheet" type="text/css">
-        {{--<link href="assets/css/core.css" rel="stylesheet" type="text/css">--}}
-        <link href="assets/css/components.css" rel="stylesheet" type="text/css">
-        {{--<link href="assets/css/colors.css" rel="stylesheet" type="text/css">--}}
+        <link href="{{asset('assets/css/icons/icomoon/styles.css')}}" rel="stylesheet" type="text/css">
+        <link href="{{asset('assets/css/bootstrap.css')}}" rel="stylesheet" type="text/css">
+        {{--<link href="{{asset('assets/css/core.css')}}" rel="stylesheet" type="text/css">--}}
+        <link href="{{asset('assets/css/components.css')}}" rel="stylesheet" type="text/css">
+        {{--<link href="{{asset('assets/css/colors.css')}}" rel="stylesheet" type="text/css">--}}
         <!-- /global stylesheets -->
 
         <!-- Core JS files -->
-        <script type="text/javascript" src="assets/js/plugins/loaders/pace.min.js"></script>
-        <script type="text/javascript" src="assets/js/core/libraries/jquery.min.js"></script>
-        <script type="text/javascript" src="assets/js/core/libraries/bootstrap.min.js"></script>
-        <script type="text/javascript" src="assets/js/plugins/loaders/blockui.min.js"></script>
+        <script type="text/javascript" src="{{asset('assets/js/plugins/loaders/pace.min.js')}}"></script>
+        <script type="text/javascript" src="{{asset('assets/js/core/libraries/jquery.min.js')}}"></script>
+        <script type="text/javascript" src="{{asset('assets/js/core/libraries/bootstrap.min.js')}}"></script>
+        <script type="text/javascript" src="{{asset('assets/js/plugins/loaders/blockui.min.js')}}"></script>
         <!-- /core JS files -->
 
         <!-- Theme JS files -->
-        <script type="text/javascript" src="assets/js/plugins/forms/styling/uniform.min.js"></script>
+        <script type="text/javascript" src="{{asset('assets/js/plugins/forms/styling/uniform.min.js')}}"></script>
         {{--<script type="text/javascript" src="assets/js/plugins/forms/styling/switchery.min.js"></script>--}}
         {{--<script type="text/javascript" src="assets/js/plugins/forms/styling/switch.min.js"></script>--}}
 
@@ -61,6 +61,14 @@
     <body>
         <div class="container">
             <div class="content">
+                <div class="row">
+                    <a href="{{url("html-loop")}}/1">ทั่วไป</a>|
+                    <a href="{{url("html-loop")}}/2">ก.1</a>|
+                    <a href="{{url("html-loop")}}/3">ก.2</a>|
+                    <a href="{{url("html-loop")}}/4">ก.3</a>|
+                    <a href="{{url("html-loop")}}/5">ข.1</a>|
+                    <a href="{{url("html-loop")}}/6">ข.2</a>
+                </div>
                 <form action="test-post" method="post">
                     <input type="hidden" name="_token" value="<?php echo csrf_token(); ?>">
                 @foreach($grouped as $question)
@@ -135,15 +143,13 @@
                                 @endforeach
                             </div>
                     @elseif($question->input_type===\App\Question::TYPE_TITLE)
-                        <div class="form-group text-left">
-                            <h3>{{$question->name}}
-                                {{(!is_null($question->subtext)&&!empty($question->subtext))
-                                ?"({$question->subtext})":''}}</h3>
+                        <div class="form-group text-left {{$question->class}}">
+                            <h3>{{$question->name}}</h3>
                             @if(isset($question->children))
                                 @foreach($question->children as $childQuestion)
                                     @include('partials.children',['question'=>$childQuestion,
                                     'parent_id'=>$question->id
-                                   ,'parent_type'=>'radio'
+                                   ,'parent_type'=>\App\Question::TYPE_TITLE
                                    ,'parent_option_id'=>''
                                    ,'margin'=>0
                                     ])
@@ -151,16 +157,14 @@
                             @endif
                         </div>
                     @elseif($question->input_type===\App\Question::TYPE_NUMBER)
-                            <div class="form-group text-left">
-                                <h3>{{$question->name}}
-                                    {{(!is_null($question->subtext)&&!empty($question->subtext))
-                                    ?"({$question->subtext})":''}}</h3>
-                                <input type="number" name="q_{{$option->id}}" value="">
+                            <div class="form-group text-left {{$question->class}}">
+                                <h3>{{$question->name}}</h3>
+                                <input type="number" name="q_{{$question[0]->id}}" value="">
                                 @if(isset($question->children))
                                     @foreach($question->children as $childQuestion)
                                         @include('partials.children',['question'=>$childQuestion,
                                         'parent_id'=>$question->id
-                                       ,'parent_type'=>'radio'
+                                       ,'parent_type'=>\App\Question::TYPE_NUMBER
                                        ,'parent_option_id'=>''
                                        ,'margin'=>0
                                         ])
@@ -168,16 +172,14 @@
                                 @endif
                             </div>
                     @elseif($question->input_type===\App\Question::TYPE_TEXT)
-                            <div class="form-group text-left">
-                                <h3>{{$question->name}}
-                                    {{(!is_null($question->subtext)&&!empty($question->subtext))
-                                    ?"({$question->subtext})":''}}</h3>
-                                <input type="text" name="q_{{$option->id}}" value="">
+                            <div class="form-group text-left {{$question->class}}">
+                                <h3>{{$question->name}}</h3>
+                                <input type="text" name="q_{{$question[0]->id}}" value="">
                                 @if(isset($question->children))
                                     @foreach($question->children as $childQuestion)
                                         @include('partials.children',['question'=>$childQuestion,
                                         'parent_id'=>$question->id
-                                       ,'parent_type'=>'radio'
+                                       ,'parent_type'=>\App\Question::TYPE_TEXT
                                        ,'parent_option_id'=>''
                                        ,'margin'=>0
                                         ])

@@ -29,7 +29,7 @@ class CreateQuestionsTable extends Migration
             $table->smallInteger('required')->default(0);
 //            $table->integer('dependent_question_id')->nullable();
 
-            $table->integer('dependent_parent_option_id')->nullable();
+            $table->string('dependent_parent_option_id')->nullable();
 
             $table->unique(['parent_id','sibling_order']);
             $table->timestamps();
