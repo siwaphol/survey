@@ -14,6 +14,7 @@ class CreateQuestionsTable extends Migration
     {
         Schema::create('questions', function (Blueprint $table) {
             $table->bigInteger('id')->unsigned();
+            $table->primary('id');
 
             $table->bigInteger('parent_id')->unsigned()->nullable();
             $table->foreign('parent_id')->references('id')->on('questions');
@@ -31,7 +32,6 @@ class CreateQuestionsTable extends Migration
             $table->integer('dependent_parent_option_id')->nullable();
 
             $table->unique(['parent_id','sibling_order']);
-            $table->primary('id');
             $table->timestamps();
         });
     }
