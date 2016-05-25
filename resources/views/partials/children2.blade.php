@@ -22,7 +22,7 @@
             @foreach($question as $option)
                 <div class="radio">
                     <label>
-                        <input type="radio" name="q_{{$parent_id}}_{{$parent_option_id}}_{{$option->id}}[]" value="{{$option->option_id}}"
+                        <input type="radio" name="q_{{$parent_id}}_{{$parent_option_id}}_{{$option->id}}" value="{{$option->option_id}}"
                                class="styled" {{is_null($option->selected)?'':'checked'}}>
                         {{$option->option_name}}
                         @if($option->option_id===1)

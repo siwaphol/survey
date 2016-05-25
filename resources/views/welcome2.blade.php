@@ -62,133 +62,19 @@
         <div class="container">
             <div class="content">
                 <div class="row">
-                    <a href="{{url("html-loop")}}/1">ทั่วไป</a>|
-                    <a href="{{url("html-loop")}}/2">ก.1</a>|
-                    <a href="{{url("html-loop")}}/3">ก.2</a>|
-                    <a href="{{url("html-loop")}}/4">ก.3</a>|
-                    <a href="{{url("html-loop")}}/5">ข.1</a>|
-                    <a href="{{url("html-loop")}}/6">ข.2</a>
+                    <a href="{{url("html-loop-2")}}/1">ทั่วไป</a>|
+                    <a href="{{url("html-loop-2")}}/2">ก.1</a>|
+                    <a href="{{url("html-loop-2")}}/3">ก.2</a>|
+                    <a href="{{url("html-loop-2")}}/4">ก.3</a>|
+                    <a href="{{url("html-loop-2")}}/5">ข.1</a>|
+                    <a href="{{url("html-loop-2")}}/6">ข.2</a>
                 </div>
                 <form action="{{url('test-post')}}" method="post">
                     <input type="hidden" name="_token" value="<?php echo csrf_token(); ?>">
-                {{--@foreach($grouped as $question)--}}
-                    {{--@if($question->input_type===\App\Question::TYPE_RADIO)--}}
-                    {{--<div class="form-group text-left {{$question->class}}" data-parent-id="{{$question->parent_id}}" data-id="{{$question->id}}" id="q_{{$question->id}}">--}}
-                   {{--<h3>{{$question->name}} | {{$question->subtext}}</h3>--}}
-                        {{--@foreach($question as $option)--}}
-                            {{--<div class="radio">--}}
-                                {{--<label>--}}
-                                    {{--<input type="radio" name="q_{{$option->id}}[]" value="{{$option->option_id}}"--}}
-                                           {{--class="styled" {{is_null($option->selected)?'':'checked'}}>--}}
-                                    {{--{{$option->option_name}}--}}
-                                    {{--@if($option->option_id===1)--}}
-                                        {{--<input type="text" name="q_{{$option->id}}_other" value="{{$option->other_text}}">--}}
-                                    {{--@endif--}}
-                                {{--</label>--}}
-                            {{--</div>--}}
-                            {{--ถ้ามีลูและลูกขึ้นอยู่กับ option_id ปัจจุบัน--}}
-                            {{--@if(isset($question->children))--}}
-                                {{--@foreach($question->children as $childQuestion)--}}
-                                    {{--@if(!is_null($question->dependent_parent_option_id)&&(int)$question->dependent_parent_option_id===(int)$option->option_id)--}}
-                                        {{--@include('partials.children',['question'=>$childQuestion,--}}
-                                            {{--'parent_id'=>$question->id--}}
-                                            {{--,'parent_type'=>'radio'--}}
-                                            {{--,'parent_option_id'=>''--}}
-                                            {{--,'margin'=>0--}}
-                                            {{--])--}}
-                                    {{--@endif--}}
-                                {{--@endforeach--}}
-                            {{--@endif--}}
-                        {{--@endforeach--}}
-                        {{--@if(isset($question->children))--}}
-                            {{--@foreach($question->children as $childQuestion)--}}
-                            {{--@include('partials.children',['question'=>$childQuestion,--}}
-                            {{--'parent_id'=>$question->id--}}
-                           {{--,'parent_type'=>'radio'--}}
-                           {{--,'parent_option_id'=>''--}}
-                           {{--,'margin'=>0--}}
-                            {{--])--}}
-                            {{--@endforeach--}}
-                        {{--@endif--}}
-                    {{--</div>--}}
-                    {{--@elseif($question->input_type===\App\Question::TYPE_CHECKBOX)--}}
-                            {{--<div class="form-group text-left {{$question->class}}"--}}
-                                 {{--data-parent-id="{{$question->parent_id}}"--}}
-                                 {{--data-id="{{$question->id}}"--}}
-                                 {{--id="q_{{$question->id}}">--}}
-                                {{--<h3>{{$question->name}}--}}
-                                    {{--{{(!is_null($question->subtext)&&!empty($question->subtext))--}}
-                                    {{--?"({$question->subtext})":''}}</h3>--}}
-                                {{--@foreach($question as $option)--}}
-                                    {{--<div class="checkbox">--}}
-                                        {{--<label>--}}
-                                            {{--<input type="checkbox" name="q_{{$option->id}}[]" value="{{$option->option_id}}"--}}
-                                                   {{--class="styled" {{is_null($option->selected)?'':'checked'}}>--}}
-                                            {{--{{$option->option_name}}--}}
-                                            {{--@if($option->option_id===1)--}}
-                                                {{--<input type="text" name="q_{{$option->id}}_other" value="{{$option->other_text}}">--}}
-                                            {{--@endif--}}
-                                        {{--</label>--}}
-                                    {{--</div>--}}
-                                    {{--@if(isset($question->children))--}}
-                                        {{--@foreach($question->children as $childQuestion)--}}
-                                        {{--@include('partials.children',['question'=>$childQuestion,--}}
-                                        {{--'parent_type'=>'checkbox',--}}
-                                        {{--'parent_option_id'=>$option->option_id,--}}
-                                        {{--'parent_id'=>$question->id,--}}
-                                        {{--'margin'=>0--}}
-                                        {{--])--}}
-                                        {{--@endforeach--}}
-                                    {{--@endif--}}
-                                {{--@endforeach--}}
-                            {{--</div>--}}
-                    {{--@elseif($question->input_type===\App\Question::TYPE_TITLE)--}}
-                        {{--<div class="form-group text-left {{$question->class}}">--}}
-                            {{--<h3>{{$question->name}}</h3>--}}
-                            {{--@if(isset($question->children))--}}
-                                {{--@foreach($question->children as $childQuestion)--}}
-                                    {{--@include('partials.children',['question'=>$childQuestion,--}}
-                                    {{--'parent_id'=>$question->id--}}
-                                   {{--,'parent_type'=>\App\Question::TYPE_TITLE--}}
-                                   {{--,'parent_option_id'=>''--}}
-                                   {{--,'margin'=>0--}}
-                                    {{--])--}}
-                                {{--@endforeach--}}
-                            {{--@endif--}}
-                        {{--</div>--}}
-                    {{--@elseif($question->input_type===\App\Question::TYPE_NUMBER)--}}
-                            {{--<div class="form-group text-left {{$question->class}}">--}}
-                                {{--<h3>{{$question->name}}</h3>--}}
-                                {{--<input type="number" name="q_{{$question[0]->id}}" value="">--}}
-                                {{--@if(isset($question->children))--}}
-                                    {{--@foreach($question->children as $childQuestion)--}}
-                                        {{--@include('partials.children',['question'=>$childQuestion,--}}
-                                        {{--'parent_id'=>$question->id--}}
-                                       {{--,'parent_type'=>\App\Question::TYPE_NUMBER--}}
-                                       {{--,'parent_option_id'=>''--}}
-                                       {{--,'margin'=>0--}}
-                                        {{--])--}}
-                                    {{--@endforeach--}}
-                                {{--@endif--}}
-                            {{--</div>--}}
-                    {{--@elseif($question->input_type===\App\Question::TYPE_TEXT)--}}
-                            {{--<div class="form-group text-left {{$question->class}}">--}}
-                                {{--<h3>{{$question->name}}</h3>--}}
-                                {{--<input type="text" name="q_{{$question[0]->id}}" value="">--}}
-                                {{--@if(isset($question->children))--}}
-                                    {{--@foreach($question->children as $childQuestion)--}}
-                                        {{--@include('partials.children',['question'=>$childQuestion,--}}
-                                        {{--'parent_id'=>$question->id--}}
-                                       {{--,'parent_type'=>\App\Question::TYPE_TEXT--}}
-                                       {{--,'parent_option_id'=>''--}}
-                                       {{--,'margin'=>0--}}
-                                        {{--])--}}
-                                    {{--@endforeach--}}
-                                {{--@endif--}}
-                            {{--</div>--}}
-                    {{--@endif--}}
+                    <input type="hidden" name="section" value="{{$section}}">
+                    {{--for test--}}
+                    <input type="hidden" name="main_id" value="{{$main_id}}">
 
-                {{--@endforeach--}}
                     @include('partials.children2',[
                         'questions'=>$grouped
                         ,'margin'=>0

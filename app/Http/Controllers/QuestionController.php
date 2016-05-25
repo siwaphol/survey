@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Answer;
 use App\Option;
 use App\Question;
 use Illuminate\Http\Request;
@@ -175,6 +176,9 @@ class QuestionController extends Controller
         $result = \DB::select($str);
 
 //    dd($result);
+        $main_id= 1;
+        $answers = Answer::where('main_id',$main_id)->get();
+
         $t = collect($result);
         $grouped = $t->groupBy('id');
 
@@ -274,6 +278,6 @@ class QuestionController extends Controller
 //    dd($grouped);
 
 //    dd($grouped);
-        return view('welcome2', compact('grouped'));
+        return view('welcome2', compact('grouped','section', 'main_id'));
     }
 }

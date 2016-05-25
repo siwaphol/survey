@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Answer;
 use App\Option;
+use App\Question;
 use Illuminate\Http\Request;
 
 use App\Http\Requests;
@@ -16,6 +17,8 @@ class AnswerController extends Controller
 
         dd($request->input());
         // อาจจะต้องการ section ตรงนี้
+        $questions = Question::where('section',$request->input('section'))->get();
+        $oldAnswers = Answer::where('main_id',$request->input('main_id'))->get();
 
         foreach ($input as $key=>$value){
             if(strpos($key,"q_")!==false && strpos($key,"other")===false){
@@ -59,5 +62,32 @@ class AnswerController extends Controller
         }
 
         dd($request->input());
+    }
+
+    protected function parentQuestionIsSelected($parent_id, $collection, $option_id=null)
+    {
+        foreach ($collection as $key=>$value){
+            $splitArr = explode("_", str_replace("q_","", $key));
+            if((int)$splitArr[2]===(int)$parent_id){
+                if (!is_null($option_id)){
+                    if (is_array($value))
+                    {
+                        foreach ($value as $parent_option){
+                            if((int)$parent_option===(int)$option_id){
+                                return true;
+                            }
+                        }
+                        continue;
+                    }
+                    if ((int)$value===(int)$option_id){
+                        return true;
+                    }
+                    continue;
+                }
+                return true;
+            }
+        }
+
+        return false;
     }
 }
