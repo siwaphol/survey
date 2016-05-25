@@ -189,35 +189,32 @@ class QuestionController extends Controller
             $aQuestion->{"dependent_parent_option_id"} = $aQuestion[0]->dependent_parent_option_id;
 
             $aQuestion->{"class"} = "";
-            if (!is_null($aQuestion->parent_id)){
-                // 1.ถ้าไม่ขึ้นกับแม่สัก option เลย
-
-                // 1.1 title ให้อยู่ล่างแม่ปกติ
-
-                // 1.2 text และ number ให้อยู่ล่างแม่ปกติ
-
-                // 1.3 checkbox ให้ไปอยู่ให้ทุก option ของแม่
-
-                // 1.4 radio ให้อยู่ล่างแม่ปกติ
-
-                // 2.ถ้าขึ้นกับแม่
-
-                // 2.1 ทั้ง checkbox และ radio ให้อยู่ล่าง option ของแม่ทั้งหมด
-
-                // TODO-nong ดูว่าถ้า parent มีค่า อาจจะไม่ hidden
-                if($grouped[$aQuestion->parent_id][0]->input_type===Question::TYPE_TITLE){
-                    $aQuestion->{"class"} = "";
-                }
-                else if($grouped[$aQuestion->parent_id][0]->input_type===Question::TYPE_RADIO
-                    && is_null($aQuestion->dependent_parent_option_id)){
-                    $aQuestion->{"class"} = 'has-parent-no-dependent';
-//                $aQuestion->{"class"} = 'hidden has-parent-no-dependent';
-                }else{
-//                $aQuestion->{"class"} = 'hidden has-parent';
-                    $aQuestion->{"class"} = 'has-parent';
-//                $aQuestion->{"parent_input_type"} = $grouped[$aQuestion->parent_id][0]->input_type;
-                }
-            }
+//            if (!is_null($aQuestion->parent_id)){
+//                // 1.ถ้าไม่ขึ้นกับแม่สัก option เลย
+//
+//                // 1.1 title ให้อยู่ล่างแม่ปกติ
+//
+//                // 1.2 text และ number ให้อยู่ล่างแม่ปกติ
+//
+//                // 1.3 checkbox ให้ไปอยู่ให้ทุก option ของแม่
+//
+//                // 1.4 radio ให้อยู่ล่างแม่ปกติ
+//
+//                // 2.ถ้าขึ้นกับแม่
+//
+//                // 2.1 ทั้ง checkbox และ radio ให้อยู่ล่าง option ของแม่ทั้งหมด
+//
+//                // TODO-nong ดูว่าถ้า parent มีค่า อาจจะไม่ hidden
+//                if($grouped[$aQuestion->parent_id][0]->input_type===Question::TYPE_RADIO
+//                    && is_null($aQuestion->dependent_parent_option_id)){
+//                    $aQuestion->{"class"} = 'has-parent-no-dependent';
+////                $aQuestion->{"class"} = 'hidden has-parent-no-dependent';
+//                }else{
+////                $aQuestion->{"class"} = 'hidden has-parent';
+//                    $aQuestion->{"class"} = 'has-parent';
+////                $aQuestion->{"parent_input_type"} = $grouped[$aQuestion->parent_id][0]->input_type;
+//                }
+//            }
 
             if(!is_null($aQuestion[0]->parent_id)){
                 $typeArr = [Question::TYPE_TITLE, Question::TYPE_TEXT, Question::TYPE_NUMBER];
@@ -226,12 +223,14 @@ class QuestionController extends Controller
                     if(!isset($grouped[$aQuestion[0]->parent_id]->{"children"})){
                         $grouped[$aQuestion[0]->parent_id]->{"children"} = [];
                     }
+                    $aQuestion->{"class"} = "";
                     $grouped[$aQuestion[0]->parent_id]->{"children"}[$aQuestion[0]->id] = $aQuestion;
                 }
 
                 $type2Arr = [Question::TYPE_CHECKBOX, Question::TYPE_RADIO];
                 $inArray2 = in_array($grouped[$aQuestion[0]->parent_id]->input_type, $type2Arr);
                 if($inArray2){
+                    $aQuestion->{"class"} = ' has-parent';
                     if (is_null($aQuestion->dependent_parent_option_id)){
                         if ($grouped[$aQuestion[0]->parent_id]->input_type===Question::TYPE_RADIO){
                             if(!isset($grouped[$aQuestion[0]->parent_id]->{"children"})){
@@ -272,7 +271,7 @@ class QuestionController extends Controller
             $grouped->forget((string)$aId);
         }
 
-    dd($grouped);
+//    dd($grouped);
 
 //    dd($grouped);
         return view('welcome2', compact('grouped'));
