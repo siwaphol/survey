@@ -20,6 +20,15 @@ class AnswerController extends Controller
         $questions = Question::where('section',$request->input('section'))->get();
         $oldAnswers = Answer::where('main_id',$request->input('main_id'))->get();
 
+        // คำตอบของแต่ละคำถาม
+        // 1. q_a_b_c คำถามที่ c ให้ดูว่า คำถาม a ถูกเลือก option b หรือไม่
+        // 2. q_a__c คำถามที่ c ให้ดูว่า คำถาม a ถูกเลือกสัก option หรือไม่
+        // 3. q___c ดูว่าค่าที่่สงมาไม่เป็นค่าว่าง
+
+        //ดดยแต่ละคำถาม ถ้าเป้นประเภท option หรือประเภท text อาจจะง่ายหน่อยเพราะแทนที่ค่าเดิมได้
+        // แต่กรณีที่ต้องขึ้นกับแม่ ให้ตรวจดูประเภทแม่
+        // ของ เดิมมี a=1 b=1, a=1 b=2 แล้วของใหม่เป้น a=1 b=2 , a=1 b=3 อาจจะต้องลบ a=1 b1 ออกจากตาราง answers
+
         foreach ($input as $key=>$value){
             if(strpos($key,"q_")!==false && strpos($key,"other")===false){
                 //q_2__3 => question id 3 when parent is 2 and dont care what choice parent is selected
