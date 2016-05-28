@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Answer;
 use App\Option;
+use App\OptionQuestion;
 use App\Question;
 use Illuminate\Http\Request;
 
@@ -19,6 +20,7 @@ class AnswerController extends Controller
         // อาจจะต้องการ section ตรงนี้
         $questions = Question::where('section',$request->input('section'))->get();
         $oldAnswers = Answer::where('main_id',$request->input('main_id'))->get();
+        $optionQuestions = OptionQuestion::get();
 
         // คำตอบของแต่ละคำถาม
         // 1. q_a_b_c คำถามที่ c ให้ดูว่า คำถาม a ถูกเลือก option b หรือไม่
@@ -36,8 +38,80 @@ class AnswerController extends Controller
                 //q_10_21_11 => question id 11 when parent is 10 and selected 21
 
                 $removed_q_key = explode("_", str_replace("q_","",$key));
-                if(count($removed_q_key)===1){
-                    $question_id = (int)$removed_q_key[0];
+
+                if(empty($removed_q_key[0])&&empty($removed_q_key[1])){
+                    $input_type = $questions->where('id', $removed_q_key[2])->first()->input_type;
+                    if ($input_type!==Question::TYPE_CHECKBOX){
+                        $answerForThisQuestion = $oldAnswers->where('question_id',$removed_q_key[2])->first();
+                        if(!is_null($answerForThisQuestion)){
+                            $answerForThisQuestion = new Answer();
+                            $answerForThisQuestion->main_id = $input['main_id'];
+                            $answerForThisQuestion->question_id = $removed_q_key[2];
+                        }
+
+                        if ($input_type ===Question::TYPE_NUMBER){
+                            $answerForThisQuestion->answer_numeric = (float)$value;
+                        }
+                        else if($input_type ===Question::TYPE_TEXT){
+                            $answerForThisQuestion->answer_text = $value;
+                        }
+                        else if ($input_type ===Question::TYPE_RADIO){
+                            $option_question_id = \DB::table('option_questions')
+                                ->where('question',$removed_q_key[2])
+                                ->where('option',$value)
+                                ->get('id');
+                            $answerForThisQuestion->option_question_id = $option_question_id[0]->id;
+                        }
+                    }
+                    // ============ CHECKBOX TYPE
+                    if ($input_type===Question::TYPE_CHECKBOX){
+                        $answersForThisQuestion = $oldAnswers->where('question_id',$removed_q_key[2])->get();
+
+                        $option_question_id_list = OptionQuestion::where('question_id',$removed_q_key)
+                            ->whereIn('option_id',$value)
+                            ->lists('id');
+
+                        // ลบของเดิมที่ไม่มีใน answer ใหม่
+                        $notFoundInNewAnswers = $oldAnswers->where('question_id',$removed_q_key[2])
+                            ->whereNotIn('option_question_id',$option_question_id_list)
+                            ->get();
+                        //หาว่ามีลูกที่ขึ้นกับ option_id ปัจจุบันของแม่ให้เอาออก
+                        foreach ($notFoundInNewAnswers as $deleteAnswer){
+                            $current_option_id = $optionQuestions->where('id',$deleteAnswer->option_quesiton_id)
+                                ->first()->option_id;
+                            $childrenAnswers = $oldAnswers
+                                ->where('parent_id', (int)$removed_q_key[2])
+                                ->where('parent_option_selected_id',(int)$current_option_id)->get();
+                            if ($childrenAnswers->count > 0){
+                                foreach ($childrenAnswers as $childAnswer){
+                                    $childAnswer->delete();
+                                }
+                            }
+                            $deleteAnswer->delete();
+                        }
+                        // ใส่คำตอบใหม่ที่ได้
+                        foreach ($value as $anOption){
+                            
+                            $option_question_id = $optionQuestions->where('question',$removed_q_key[2])
+                                ->where('option',$anOption)
+                                ->first()->id;
+
+                            //ลบอันที่ไม่มีในคำตอบรอบใหม่ออก
+                            //TODO-nong เกิดปัญหาว่าต้องลบลูกออกด้วยไหมเพราะ ถ้าลูกขึ้นกับ option นี้ของแม่
+
+                        }
+                    }
+
+
+                    //TODO-nong ถ้าเป็น checkbox กับ radio
+                    //TODO-nong ถ้าเป็น checkbox อาจจะต้องวนลูป
+                    $option_question_id = \DB::table('option_questions')
+                        ->where('question',$removed_q_key[2])
+                        ->where('option',$value)
+                        ->get('id');
+
+                    $answerForThisQuestion->option_question_id = $option_question_id;
+
                 }else{
                     $parent_question_id = (int)$removed_q_key[0];
                     $parent_option_id = empty($removed_q_key[1])?null:(int)$removed_q_key[1];
