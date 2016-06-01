@@ -76,6 +76,7 @@
                 <form action="{{url('test-post')}}" method="post">
                     <input type="hidden" name="_token" value="<?php echo csrf_token(); ?>">
                     <input type="hidden" name="section" value="{{$section}}">
+                    <input type="hidden" name="sub_section" value="{{$sub_section}}">
                     {{--for test--}}
                     <input type="hidden" name="main_id" value="{{$main_id}}">
 

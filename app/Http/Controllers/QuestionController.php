@@ -164,6 +164,8 @@ class QuestionController extends Controller
             default:
                 $section = "ทั่วไป";
         }
+        //test
+        $sub_section = "NULL";
 
         $str = "select 
         t1.id,
@@ -296,6 +298,6 @@ class QuestionController extends Controller
 //    dd($grouped);
 
 //    dd($grouped);
-        return view('welcome2', compact('grouped','section', 'main_id'));
+        return view('welcome2', compact('grouped','section','sub_section', 'main_id'));
     }
 }

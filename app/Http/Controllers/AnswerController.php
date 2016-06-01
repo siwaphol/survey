@@ -31,12 +31,79 @@ class AnswerController extends Controller
         // แต่กรณีที่ต้องขึ้นกับแม่ ให้ตรวจดูประเภทแม่
         // ของ เดิมมี a=1 b=1, a=1 b=2 แล้วของใหม่เป้น a=1 b=2 , a=1 b=3 อาจจะต้องลบ a=1 b1 ออกจากตาราง answers
 
-        // TODO-nong คัดก่อนว่าถ้าที่ใส่เข้ามา parent ไม่มีค่าให้เอาออก
+        //ลบของเดิม
+        \DB::table('answers')->where('main_id',$input['main_id'])
+            ->where('section',$input['section'])
+            ->where('sub_section',$input['sub_section'])
+            ->delete();
+
+        // ัดก่อนว่าถ้าที่ใส่เข้ามา ไม่มีค่าให้เอาออก
         $inputCollection = collect($input);
-        $inputCollection = $inputCollection->filter(function($item,$value){
-            
-        })
-        dd($inputCollection);
+        $inputCollection = $inputCollection->filter(function($item){
+            if (is_array($item)){
+                return count($item)>0;
+            }
+            return !empty(trim($item));
+        })->all();
+
+        $inputObjectCollection = [];
+        foreach ($inputCollection as $key=>$value){
+            if(strpos($key,"q_")!==false && strpos($key,"other")===false) {
+                $exploded = explode("_", str_replace("q_", "", $key));
+
+                $newObj = new \stdClass();
+                $newObj->parent_id = empty($exploded[0])?null:(int)$exploded[0];
+                $newObj->dependent_option_id = empty($exploded[1])?null:(int)$exploded[1];
+                $newObj->question_id = (int)$exploded[2];
+                $newObj->value = $value;
+                $inputObjectCollection[] = $newObj;
+            }
+        }
+//        dd($inputObjectCollection);
+
+        $inputObjectCollection = collect($inputObjectCollection);
+        $q_null_null_questionId = $inputObjectCollection->filter(function($item){
+            return is_null($item->parent_id)&&is_null($item->dependent_option_id);
+        });
+        $q_parent_null_questionId = [];
+        $q_parent_dependent_questionId = [];
+        if($q_null_null_questionId->count()>0){
+            $q_parent_null_questionId = $inputObjectCollection->filter(function($item){
+                return !is_null($item->parent_id)&&is_null($item->dependent_option_id);
+            });
+
+            $q_parent_dependent_questionId = $inputObjectCollection->filter(function($item){
+                return !is_null($item->parent_id)&&!is_null($item->dependent_option_id);
+            });
+        }
+
+//        foreach ($inputCollection as $key=>$value){
+//            if(strpos($key,"q_")!==false && strpos($key,"other")===false){
+//                $removed_q_key = explode("_", str_replace("q_","",$key));
+//                // q___id
+//                if(empty($removed_q_key[0])&&empty($removed_q_key[1])){
+//                    $q_null_null_questionId[$key] = $value;
+//                }
+//                // q_parentId__id
+//                if(!empty($removed_q_key[0])&&empty($removed_q_key[1])){
+//                    $parentSelected = $this->checkIfParentIsSelected($inputCollection, $key);
+//                    if ($parentSelected){
+//                        $q_parent_null_questionId[$key] = $value;
+//                        continue;
+//                    }
+//                }
+//                // q_parentId_dependentId_id
+//                if(!empty($removed_q_key[0])&&!empty($removed_q_key[1])){
+//                    $parentSelected = $this->checkIfParentOptionIsSelected($inputCollection, $key);
+//                    if ($parentSelected){
+//                        $q_parent_dependent_questionId[$key] = $value;
+//                        continue;
+//                    }
+//                }
+//            }
+//        }
+
+        dd($inputCollection,$q_null_null_questionId,$q_parent_null_questionId,$q_parent_dependent_questionId);
 
         foreach ($input as $key=>$value){
             if(strpos($key,"q_")!==false && strpos($key,"other")===false){
@@ -53,6 +120,8 @@ class AnswerController extends Controller
                         if(!is_null($answerForThisQuestion)){
                             $answerForThisQuestion = new Answer();
                             $answerForThisQuestion->main_id = $input['main_id'];
+                            $answerForThisQuestion->section = $input['section'];
+                            $answerForThisQuestion->sub_section = $input['sub_section'];
                             $answerForThisQuestion->question_id = $removed_q_key[2];
                         }
 
@@ -176,6 +245,56 @@ class AnswerController extends Controller
                     continue;
                 }
                 return true;
+            }
+        }
+
+        return false;
+    }
+
+    /**
+     * @param $parentArr
+     * @param $question_key
+     * @return array
+     * @internal param $q_null_null_questionId
+     * @internal param $parent_id
+     * @internal param $removed_q_key
+     * @internal param $value
+     * @internal param $q_parent_dependent_questionId
+     * @internal param $key
+     */
+    protected function checkIfParentOptionIsSelected($parentArr, $question_key)
+    {
+        $explodedQuestionKey = explode("_", str_replace("q_","",$question_key));
+        foreach ($parentArr as $key => $value) {
+            if(strpos($key,"q_")!==false && strpos($key,"other")===false){
+                $parentExploded = explode("_", str_replace("q_","",$key));
+
+                if ($parentExploded[2] === $explodedQuestionKey[0]) {
+                    if (is_array($value)) {
+                        if (in_array($explodedQuestionKey[1], $value))
+                            return true;
+                    }
+                    else {
+                        if($explodedQuestionKey[1] === $value)
+                            return true;
+                    }
+                }
+            }
+        }
+
+        return false;
+    }
+
+    protected function checkIfParentIsSelected($parentArr, $question_key)
+    {
+        $explodedQuestionKey = explode("_", str_replace("q_","",$question_key));
+        foreach ($parentArr as $key => $value) {
+            if(strpos($key,"q_")!==false && strpos($key,"other")===false) {
+                $parentExploded = explode("_", str_replace("q_", "", $key));
+
+                if ($parentExploded[2] === $explodedQuestionKey[0]) {
+                    return true;
+                }
             }
         }
 

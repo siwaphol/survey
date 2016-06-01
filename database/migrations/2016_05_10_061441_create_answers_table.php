@@ -18,6 +18,9 @@ class CreateAnswersTable extends Migration
             $table->bigInteger('main_id')->unsigned();
             $table->foreign('main_id')->references('id')->on('mains');
 
+            $table->string('section');
+            $table->string('sub_section');
+
             $table->bigInteger('option_question_id')->unsigned();
             $table->foreign('option_question_id')->references('id')->on('option_questions');
             $table->bigInteger('question_id')->unsigned();
