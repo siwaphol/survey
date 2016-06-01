@@ -56,6 +56,9 @@
             /*.title {*/
                 /*font-size: 96px;*/
             /*}*/
+            legend {
+                border-bottom: 1px solid #000000;
+            }
         </style>
     </head>
     <body>
@@ -67,7 +70,8 @@
                     <a href="{{url("html-loop-2")}}/3">ก.2</a>|
                     <a href="{{url("html-loop-2")}}/4">ก.3</a>|
                     <a href="{{url("html-loop-2")}}/5">ข.1</a>|
-                    <a href="{{url("html-loop-2")}}/6">ข.2</a>
+                    <a href="{{url("html-loop-2")}}/6">ข.2</a>|
+                    <a href="{{url("html-loop-2")}}/7">ข.3</a>
                 </div>
                 <form action="{{url('test-post')}}" method="post">
                     <input type="hidden" name="_token" value="<?php echo csrf_token(); ?>">

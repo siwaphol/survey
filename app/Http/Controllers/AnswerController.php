@@ -16,7 +16,7 @@ class AnswerController extends Controller
     {
         $input = $request->input();
 
-        dd($request->input());
+//        dd($request->input());
         // อาจจะต้องการ section ตรงนี้
         $questions = Question::where('section',$request->input('section'))->get();
         $oldAnswers = Answer::where('main_id',$request->input('main_id'))->get();
@@ -30,6 +30,13 @@ class AnswerController extends Controller
         //ดดยแต่ละคำถาม ถ้าเป้นประเภท option หรือประเภท text อาจจะง่ายหน่อยเพราะแทนที่ค่าเดิมได้
         // แต่กรณีที่ต้องขึ้นกับแม่ ให้ตรวจดูประเภทแม่
         // ของ เดิมมี a=1 b=1, a=1 b=2 แล้วของใหม่เป้น a=1 b=2 , a=1 b=3 อาจจะต้องลบ a=1 b1 ออกจากตาราง answers
+
+        // TODO-nong คัดก่อนว่าถ้าที่ใส่เข้ามา parent ไม่มีค่าให้เอาออก
+        $inputCollection = collect($input);
+        $inputCollection = $inputCollection->filter(function($item,$value){
+            
+        })
+        dd($inputCollection);
 
         foreach ($input as $key=>$value){
             if(strpos($key,"q_")!==false && strpos($key,"other")===false){
@@ -62,6 +69,7 @@ class AnswerController extends Controller
                                 ->get('id');
                             $answerForThisQuestion->option_question_id = $option_question_id[0]->id;
                         }
+                        $answerForThisQuestion->save();
                     }
                     // ============ CHECKBOX TYPE
                     if ($input_type===Question::TYPE_CHECKBOX){

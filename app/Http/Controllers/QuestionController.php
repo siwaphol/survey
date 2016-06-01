@@ -37,6 +37,11 @@ class QuestionController extends Controller
         // sheet 2 option
         \DB::transaction(function () use ($worksheetData,$chunkFilter,$objReader,$chunkSize,$path) {
             $totalRows = $worksheetData[2]['totalRows'];
+
+            \DB::statement("SET FOREIGN_KEY_CHECKS = 0");
+            \DB::table('options')->truncate();
+            \DB::statement("SET FOREIGN_KEY_CHECKS = 1");
+
             for ($startRow = 2; $startRow <= $totalRows; $startRow += $chunkSize) {
                 $chunkFilter->setRows($startRow,$chunkSize);
 
@@ -62,6 +67,11 @@ class QuestionController extends Controller
         // sheet 1 question
         \DB::transaction(function ()use($worksheetData,$chunkFilter,$objReader,$chunkSize,$path) {
             $totalRows = $worksheetData[1]['totalRows'];
+
+            \DB::statement("SET FOREIGN_KEY_CHECKS = 0");
+            \DB::table('questions')->truncate();
+            \DB::statement("SET FOREIGN_KEY_CHECKS = 1");
+
             for ($startRow = 2; $startRow <= $totalRows; $startRow += $chunkSize) {
                 $chunkFilter->setRows($startRow,$chunkSize);
 
@@ -94,6 +104,11 @@ class QuestionController extends Controller
         // sheet 3 question_option
         \DB::transaction(function () use ($worksheetData,$chunkFilter,$objReader,$chunkSize,$path) {
             $totalRows = $worksheetData[3]['totalRows'];
+
+            \DB::statement("SET FOREIGN_KEY_CHECKS = 0");
+            \DB::table('option_questions')->truncate();
+            \DB::statement("SET FOREIGN_KEY_CHECKS = 1");
+
             for ($startRow = 2; $startRow <= $totalRows; $startRow += $chunkSize) {
                 $chunkFilter->setRows($startRow,$chunkSize);
 
@@ -142,6 +157,9 @@ class QuestionController extends Controller
                 break;
             case 6:
                 $section = "ข.2";
+                break;
+            case 7:
+                $section = "ข.3";
                 break;
             default:
                 $section = "ทั่วไป";

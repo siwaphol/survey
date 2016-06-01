@@ -82,5 +82,9 @@
             ])
         @endif
         </div>
+
+        @if($margin==0)
+        <legend></legend>
+        @endif
     @endforeach
 @endif
