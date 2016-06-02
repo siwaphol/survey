@@ -166,6 +166,8 @@ class QuestionController extends Controller
         }
         //test
         $sub_section = "NULL";
+        $radioText = Question::TYPE_RADIO;
+        $checkboxText = Question::TYPE_CHECKBOX;
 
         $str = "select 
         t1.id,
@@ -190,12 +192,19 @@ class QuestionController extends Controller
         LEFT JOIN options t3
         on t2.option_id=t3.id
         LEFT JOIN answers t4
-        on t2.id=t4.option_question_id and t4.main_id=1
+        on 
+        (CASE t1.input_type
+           WHEN  '{$checkboxText}' THEN t2.id=option_question_id
+           WHEN '{$radioText}' THEN t2.id=option_question_id
+           ELSE TRUE
+          END)
+          and t4.main_id=1 and t4.question_id=t1.id
         WHERE t1.section='{$section}'
         ORDER BY t1.id,t1.parent_id,t1.sibling_order,t2.id ";
+        
         $result = \DB::select($str);
 
-//    dd($result);
+    dd($result);
         $main_id= 1;
         $answers = Answer::where('main_id',$main_id)->get();
 
