@@ -204,7 +204,7 @@ class QuestionController extends Controller
         
         $result = \DB::select($str);
 
-    dd($result);
+//    dd($result);
         $main_id= 1;
         $answers = Answer::where('main_id',$main_id)->get();
 

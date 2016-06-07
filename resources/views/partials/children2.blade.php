@@ -11,11 +11,11 @@
         {{--ประเภท textbox number --}}
         @elseif($question->input_type===\App\Question::TYPE_NUMBER)
                 <label for="q_{{$parent_id}}_{{$parent_option_id}}_{{$question->id}}">{{$question->name}}</label>
-            <input type="number" name="q_{{$parent_id}}_{{$parent_option_id}}_{{$question->id}}" value="">
+            <input type="number" name="q_{{$parent_id}}_{{$parent_option_id}}_{{$question->id}}" value="{{$question[0]->answer_numeric}}">
             {{--ประเภท textbox text--}}
         @elseif($question->input_type===\App\Question::TYPE_TEXT)
                 <label for="q_{{$parent_id}}_{{$parent_option_id}}_{{$question->id}}">{{$question->name}}</label>
-                <input type="text" name="q_{{$parent_id}}_{{$parent_option_id}}_{{$question->id}}" value="">
+                <input type="text" name="q_{{$parent_id}}_{{$parent_option_id}}_{{$question->id}}" value="{{$question[0]->answer_text}}">
             {{--ประเภท radio--}}
         @elseif($question->input_type===\App\Question::TYPE_RADIO)
             <h4>{{$question->name}}</h4>
