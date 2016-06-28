@@ -17,6 +17,8 @@
         <script type="text/javascript" src="{{asset('assets/js/core/libraries/jquery.min.js')}}"></script>
         <script type="text/javascript" src="{{asset('assets/js/core/libraries/bootstrap.min.js')}}"></script>
         <script type="text/javascript" src="{{asset('assets/js/plugins/loaders/blockui.min.js')}}"></script>
+        <script type="text/javascript" src="{{asset('assets/js/core/libraries/angular.min.js')}}"></script>
+
         <!-- /core JS files -->
 
         <!-- Theme JS files -->
@@ -63,15 +65,14 @@
     </head>
     <body>
         <div class="container">
-            <div class="content">
+            <div class="content" ng-app>
                 <div class="row">
-                    <a href="{{url("html-loop-2")}}/1">ทั่วไป</a>|
-                    <a href="{{url("html-loop-2")}}/2">ก.1</a>|
-                    <a href="{{url("html-loop-2")}}/3">ก.2</a>|
-                    <a href="{{url("html-loop-2")}}/4">ก.3</a>|
-                    <a href="{{url("html-loop-2")}}/5">ข.1</a>|
-                    <a href="{{url("html-loop-2")}}/6">ข.2</a>|
-                    <a href="{{url("html-loop-2")}}/7">ข.3</a>
+                    @foreach(\App\Question::$sections as $key=>$value)
+                        @if((int)$key===0)
+                            @continue
+                        @endif
+                    <a href="{{url("html-loop-2")}}/{{$key}}">{{$value}}</a>|
+                    @endforeach
                 </div>
                 <form action="{{url('test-post')}}" method="post">
                     <input type="hidden" name="_token" value="<?php echo csrf_token(); ?>">
@@ -81,7 +82,10 @@
                     <input type="hidden" name="main_id" value="{{$main_id}}">
 
                     @include('partials.children2',[
-                        'questions'=>$grouped
+                        'questions'=>$grouped,
+                        'parentQuestions'=>null
+                        ,'parent_parent_id'=>null
+                        ,'parent_parent_option_id'=>null
                         ,'margin'=>0
                         ,'parent_id'=>''
                         ,'parent_option_id'=>''
@@ -96,77 +100,54 @@
             var children = [];
             $(function () {
 
-               $(".has-parent-no-dependent").each(function () {
-                   var parentId = parseInt($(this).attr("data-parent-id"));
-                   var currentId = $(this).attr("data-id");
-                   var dependDentOptionId = $(this).attr("data-dependent-parent-option");
-                   $('#q_'+parentId + ' input[type="radio"]').change(function () {
-                       console.log('parent is changed: ', "#q_"+parentId+"_"+dependDentOptionId+"_"+currentId);
-                       $("#q_"+parentId+"_"+dependDentOptionId+"_"+currentId).removeClass("hidden");
-                   });
-                   $('#q_'+parentId + ' input[type="checkbox"]').change(function () {
-                       console.log('parent is changed: ', "#q_"+parentId+"_"+dependDentOptionId+"_"+currentId);
-                       $("#q_"+parentId+"_"+dependDentOptionId+"_"+currentId).removeClass("hidden");
-                   });
-               });
-
-                $(".has-parent").each(function () {
-                    var parentId = parseInt($(this).attr("data-parent-id"));
-                    var splitId = $(this).attr("id").replace("q_","").split("_");
-                    var currentId = $(this).attr("id");
-                    if(splitId.length==2){
-                        console.log("parent: ", splitId[0], ", splitId: ", splitId[1]);
-                        return;
-                    }
-                    console.log("parent: ", splitId[0],", whenparentselect: ",splitId[1] ,", splitId: ", splitId[2]);
-
-                    $('#q_'+parentId + ' input[type="radio"]').change(function (e) {
-                        console.log(e);
-//                        $("#q_"+parentId+"_"+dependDentOptionId+"_"+currentId).removeClass("hidden");
-                    });
-
-                    if(loopParent.indexOf(splitId[0])==-1){
-                        loopParent.push(splitId[0]);
-                        children[splitId[0]] = [];
-                    }
-
-                    children[splitId[0]].push(currentId);
-
-//                    $('#q_'+parentId + ' input[type="checkbox"]').change(function (e) {
-////                        console.log('parent is changed: ', "#q_"+parentId+"_"+dependDentOptionId+"_"+currentId);
+//                $(".has-parent").each(function () {
+//                    var parentId = parseInt($(this).attr("data-parent-id"));
+//                    var splitId = $(this).attr("id").replace("q_","").split("_");
+//                    var currentId = $(this).attr("id");
+//                    if(splitId.length==2){
+//                        console.log("parent: ", splitId[0], ", splitId: ", splitId[1]);
+//                        return;
+//                    }
+//                    console.log("parent: ", splitId[0],", whenparentselect: ",splitId[1] ,", splitId: ", splitId[2]);
+//
+//                    $('#q_'+parentId + ' input[type="radio"],[type="checkbox"]').change(function (e) {
 //                        console.log(e);
-//                        if(e.target.value===splitId[1] && e.target.checked==true){
-//                            $(this).removeClass("hidden");
-//                        }
 ////                        $("#q_"+parentId+"_"+dependDentOptionId+"_"+currentId).removeClass("hidden");
 //                    });
-                });
-                var tst = function(e){
-                    console.log(e);
-                    console.log(e.data);
-                };
-                for(var i=0;i<loopParent.length;i++){
-                    var currentI = i;
-                    console.log('#q_'+loopParent[i] + ' input[type="checkbox"]');
-                    $('#q_'+loopParent[i] + ' input[type="checkbox"]').change({fixedId:currentI},function (e){
-                        console.log('checkbox target,',e.target.value,' checked, ', e.target.checked);
-                        if(e.target.checked){
-                            $("div[id*=q_"+loopParent[e.data.fixedId]+"_"+e.target.value+"]").each(function () {
-                                $(this).removeClass("hidden");
-                            })
-                        }
-                    });
-//                    $('#q_'+loopParent[i] + ' input[type="checkbox"]').change({test: 123},tst);
-
-                    $('#q_'+loopParent[i] + ' input[type="radio"]').change(function ({fixedId:currentI},e){
-                        console.log('radio target,',e.target.value,' checked, ', e.target.checked);
-                        if(e.target.checked){
-                            $("div[id*=q_"+loopParent[e.data.fixedId]+"_"+e.target.value+"]").each(function () {
-                                $(this).removeClass("hidden");
-                            })
-                        }
-                    });
-                }
+//
+//                    if(loopParent.indexOf(splitId[0])==-1){
+//                        loopParent.push(splitId[0]);
+//                        children[splitId[0]] = [];
+//                    }
+//
+//                    children[splitId[0]].push(currentId);
+//                });
+//                var tst = function(e){
+//                    console.log(e);
+//                    console.log(e.data);
+//                };
+//                for(var i=0;i<loopParent.length;i++){
+//                    var currentI = i;
+//                    console.log('#q_'+loopParent[i] + ' input[type="checkbox"]');
+//                    $('#q_'+loopParent[i] + ' input[type="checkbox"]').change({fixedId:currentI},function (e){
+//                        console.log('checkbox target,',e.target.value,' checked, ', e.target.checked);
+//                        if(e.target.checked){
+//                            $("div[id*=q_"+loopParent[e.data.fixedId]+"_"+e.target.value+"]").each(function () {
+//                                $(this).removeClass("hidden");
+//                            })
+//                        }
+//                    });
+////                    $('#q_'+loopParent[i] + ' input[type="checkbox"]').change({test: 123},tst);
+//
+//                    $('#q_'+loopParent[i] + ' input[type="radio"]').change(function ({fixedId:currentI},e){
+//                        console.log('radio target,',e.target.value,' checked, ', e.target.checked);
+//                        if(e.target.checked){
+//                            $("div[id*=q_"+loopParent[e.data.fixedId]+"_"+e.target.value+"]").each(function () {
+//                                $(this).removeClass("hidden");
+//                            })
+//                        }
+//                    });
+//                }
 
                 $(".styled").uniform({
                     radioClass: 'choice'

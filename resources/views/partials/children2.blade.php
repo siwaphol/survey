@@ -3,7 +3,26 @@
         <div class="form-group text-left {{$question->class}}"
              data-parent-id="{{$question->parent_id}}"
              data-dependent-parent-option="{{$question->dependent_parent_option_id}}"
-            id="q_{{$parent_id}}_{{$parent_option_id}}_{{$question->id}}"
+             @if(strpos($question->class,'has-parent')>-1 && !is_null($parentQuestions) && $parentQuestions[$parent_id])
+                     <?php $parentQ = $parentQuestions[$parent_id]; ?>
+                 @if($parent_option_id==null)
+                    {{--ขึ้นกับ option ทุกอันของแม่ loop ng-if สำหรับ or condition ng-if="model1||model2"--}}
+                     <?php $allOptions = "";$first= true; ?>
+                     @foreach($parentQ as $p_option)
+                        <?php
+                        if ($first){
+                            $first = false;
+                            $allOptions .= "q_".$p_option->id.'_'.$p_option->option_id;
+                            continue;
+                        }
+                        $allOptions .= " || q_".$p_option->id.'_'.$p_option->option_id;
+                        ?>
+                     @endforeach
+                     ng-if="{{$allOptions}}"
+                 @else
+                    ng-if="q_{{$parent_id}}_{{$parent_option_id}}"
+                @endif
+             @endif
              style="margin-left: {{$margin}}px;">
         {{--ประเภท title--}}
         @if($question->input_type===\App\Question::TYPE_TITLE)
@@ -22,7 +41,10 @@
             @foreach($question as $option)
                 <div class="radio">
                     <label>
-                        <input type="radio" name="q_{{$parent_id}}_{{$parent_option_id}}_{{$option->id}}" value="{{$option->option_id}}"
+                        <input type="radio"
+                               name="q_{{$parent_id}}_{{$parent_option_id}}_{{$option->id}}"
+                               ng-model="q_{{$option->id}}_{{$option->option_id}}"
+                               value="{{$option->option_id}}"
                                class="styled" {{is_null($option->selected)?'':'checked'}}>
                         {{$option->option_name}}
                         @if($option->option_id===1)
@@ -34,6 +56,9 @@
                 @if(isset($option->children) && count($option->children)>0)
                     @include('partials.children2',[
                         'questions'=>$option->children
+                        ,'parentQuestions'=> $questions
+                        ,'parent_parent_option_id'=> $parent_option_id
+                                        ,'parent_parent_id'=>$parent_id
                         ,'margin'=>($margin+20)
                         ,'parent_id'=>$option->id
                         ,'parent_option_id'=>$option->option_id
@@ -46,7 +71,10 @@
             @foreach($question as $option)
                 <div class="checkbox">
                     <label>
-                        <input type="checkbox" name="q_{{$parent_id}}_{{$parent_option_id}}_{{$option->id}}[]" value="{{$option->option_id}}"
+                        <input type="checkbox"
+                               name="q_{{$parent_id}}_{{$parent_option_id}}_{{$option->id}}[]"
+                               ng-model="q_{{$option->id}}_{{$option->option_id}}"
+                               value="{{$option->option_id}}"
                                class="styled" {{is_null($option->selected)?'':'checked'}}>
                         {{$option->option_name}}
                         @if($option->option_id===1)
@@ -58,6 +86,9 @@
                 @if(isset($option->children) && count($option->children)>0)
                     @include('partials.children2',[
                         'questions'=>$option->children
+                        ,'parentQuestions'=> $questions
+                        ,'parent_parent_option_id'=> $parent_option_id
+                                        ,'parent_parent_id'=>$parent_id
                         ,'margin'=>($margin+20)
                         ,'parent_id'=>$option->id
                         ,'parent_option_id'=>$option->option_id
@@ -76,6 +107,9 @@
         @if(isset($question->children) && count($question->children)>0)
             @include('partials.children2',[
                 'questions'=>$question->children
+                ,'parentQuestions'=> $questions
+                ,'parent_parent_option_id'=>$parent_option_id
+                ,'parent_parent_id'=>$parent_id
                 ,'margin'=>($margin+20)
                 ,'parent_id'=>$next_parent_id
                 ,'parent_option_id'=>null

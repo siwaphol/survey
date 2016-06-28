@@ -13,7 +13,7 @@ class QuestionController extends Controller
 {
     public function importExcelQuestion()
     {
-        $filename = "survey_question.xlsx";
+        $filename = "SurveyDB_v1.xlsx";
         $path = storage_path("excel\\" . $filename);
 
         if(explode('.', $filename)[1] === 'xls'){
@@ -30,13 +30,12 @@ class QuestionController extends Controller
         $chunkSize = 10000;
         $chunkFilter = new \App\Custom\ChunkReadFilter();
         $objReader->setReadFilter($chunkFilter);
-        $currentRowInExcelCount = 2;
-        $step = 1;
-        $duplicateCode = [];
 
-        // sheet 2 option
-        \DB::transaction(function () use ($worksheetData,$chunkFilter,$objReader,$chunkSize,$path) {
-            $totalRows = $worksheetData[2]['totalRows'];
+        $optionSheetNo = 0;
+
+        // sheet 0 option
+        \DB::transaction(function () use ($worksheetData,$chunkFilter,$objReader,$chunkSize,$path,$optionSheetNo) {
+            $totalRows = $worksheetData[$optionSheetNo]['totalRows'];
 
             \DB::statement("SET FOREIGN_KEY_CHECKS = 0");
             \DB::table('options')->truncate();
@@ -48,7 +47,7 @@ class QuestionController extends Controller
                 $objPHPExcel = $objReader->load($path);
 
                 $sheetData = $objPHPExcel
-                    ->getSheet(2)
+                    ->getSheet($optionSheetNo)
                     ->toArray(null,true,true,true);
 
                 for($i=$startRow; $i <= ($startRow+$chunkSize-1); $i++) {
@@ -62,76 +61,77 @@ class QuestionController extends Controller
                 }
             }
         });
-//        dd('options finish');
+        \DB::statement("SET FOREIGN_KEY_CHECKS = 0");
+        \DB::table('option_questions')->truncate();
+        \DB::table('questions')->truncate();
+        \DB::statement("SET FOREIGN_KEY_CHECKS = 1");
 
-        // sheet 1 question
-        \DB::transaction(function ()use($worksheetData,$chunkFilter,$objReader,$chunkSize,$path) {
-            $totalRows = $worksheetData[1]['totalRows'];
+        for($sheetNo=1; $sheetNo <=10; $sheetNo++){
+            echo ' sheet ' . $sheetNo;
+            if($sheetNo%2){
+                echo ' (odd)';
+                // questions sheet
+                \DB::transaction(function ()use($worksheetData,$chunkFilter,$objReader,$chunkSize,$path,$sheetNo) {
+                    $totalRows = $worksheetData[$sheetNo]['totalRows'];
 
-            \DB::statement("SET FOREIGN_KEY_CHECKS = 0");
-            \DB::table('questions')->truncate();
-            \DB::statement("SET FOREIGN_KEY_CHECKS = 1");
+                    for ($startRow = 2; $startRow <= $totalRows; $startRow += $chunkSize) {
+                        $chunkFilter->setRows($startRow,$chunkSize);
 
-            for ($startRow = 2; $startRow <= $totalRows; $startRow += $chunkSize) {
-                $chunkFilter->setRows($startRow,$chunkSize);
+                        $objPHPExcel = $objReader->load($path);
 
-                $objPHPExcel = $objReader->load($path);
+                        $sheetData = $objPHPExcel
+                            ->getSheet($sheetNo)
+                            ->toArray(null,true,true,true);
 
-                $sheetData = $objPHPExcel
-                    ->getSheet(1)
-                    ->toArray(null,true,true,true);
-
-                for($i=$startRow; $i <= ($startRow+$chunkSize-1); $i++) {
-                    if ($i > $totalRows) {
-                        break;
+                        for($i=$startRow; $i <= ($startRow+$chunkSize-1); $i++) {
+                            if ($i > $totalRows) {
+                                break;
+                            }
+                            $question = Question::findOrNew((int)$sheetData[$i]["A"]);
+                            $question->id = (int)$sheetData[$i]["A"];
+                            $question->parent_id = $sheetData[$i]["B"]==='NULL'?null:(int)$sheetData[$i]["B"];
+                            $question->sibling_order = (int)$sheetData[$i]["C"];
+                            $question->dependent_parent_option_id = $sheetData[$i]["D"]==='NULL'?null:$sheetData[$i]["D"];
+                            $question->section = $sheetData[$i]["E"];
+                            $question->sub_section = $sheetData[$i]["F"];
+                            $question->input_type = $sheetData[$i]["G"];
+                            $question->text = $sheetData[$i]["H"];
+                            $question->unit_of_measure = $sheetData[$i]["I"]==='NULL'?null:$sheetData[$i]["I"];
+                            $question->save();
+                        }
                     }
-                    $question = Question::findOrNew((int)$sheetData[$i]["A"]);
-                    $question->id = (int)$sheetData[$i]["A"];
-                    $question->parent_id = $sheetData[$i]["B"]==='NULL'?null:(int)$sheetData[$i]["B"];
-                    $question->sibling_order = (int)$sheetData[$i]["C"];
-                    $question->dependent_parent_option_id = $sheetData[$i]["D"]==='NULL'?null:$sheetData[$i]["D"];
-                    $question->section = $sheetData[$i]["E"];
-                    $question->sub_section = $sheetData[$i]["F"];
-                    $question->input_type = $sheetData[$i]["G"];
-                    $question->text = $sheetData[$i]["H"];
-                    $question->unit_of_measure = $sheetData[$i]["I"]==='NULL'?null:$sheetData[$i]["I"];
-                    $question->save();
-                }
+                });
+                continue;
             }
-        });
-//
-//        dd('finish questions insert');
-        // sheet 3 question_option
-        \DB::transaction(function () use ($worksheetData,$chunkFilter,$objReader,$chunkSize,$path) {
-            $totalRows = $worksheetData[3]['totalRows'];
+            echo ' (even)';
+            // question_option sheet
+            \DB::transaction(function () use ($worksheetData,$chunkFilter,$objReader,$chunkSize,$path,$sheetNo) {
+                $totalRows = $worksheetData[$sheetNo]['totalRows'];
 
-            \DB::statement("SET FOREIGN_KEY_CHECKS = 0");
-            \DB::table('option_questions')->truncate();
-            \DB::statement("SET FOREIGN_KEY_CHECKS = 1");
+                for ($startRow = 2; $startRow <= $totalRows; $startRow += $chunkSize) {
+                    $chunkFilter->setRows($startRow,$chunkSize);
 
-            for ($startRow = 2; $startRow <= $totalRows; $startRow += $chunkSize) {
-                $chunkFilter->setRows($startRow,$chunkSize);
+                    $objPHPExcel = $objReader->load($path);
 
-                $objPHPExcel = $objReader->load($path);
+                    $sheetData = $objPHPExcel
+                        ->getSheet($sheetNo)
+                        ->toArray(null,true,true,true);
 
-                $sheetData = $objPHPExcel
-                    ->getSheet(3)
-                    ->toArray(null,true,true,true);
+                    for($i=$startRow; $i <= ($startRow+$chunkSize-1); $i++) {
+                        if ($i > $totalRows) {
+                            break;
+                        }
 
-                for($i=$startRow; $i <= ($startRow+$chunkSize-1); $i++) {
-                    if ($i > $totalRows) {
-                        break;
+                        \DB::table('option_questions')
+                            ->insert([
+                                'question_id'=>(int)$sheetData[$i]["A"],
+                                'option_id'=>(int)$sheetData[$i]["B"],
+                                'order'=>(int)$sheetData[$i]["C"],
+                            ]);
                     }
-                    
-                    \DB::table('option_questions')
-                        ->insert([
-                            'question_id'=>(int)$sheetData[$i]["A"],
-                            'option_id'=>(int)$sheetData[$i]["B"],
-                            'order'=>(int)$sheetData[$i]["C"],
-                        ]);
                 }
-            }
-        });
+            });
+        }
 
         dd("complete");
 
@@ -139,31 +139,15 @@ class QuestionController extends Controller
 
     public function htmlLoop($id)
     {
-        switch ($id){
-            case 1:
-                $section = "ทั่วไป";
+        $section = "";
+        foreach (Question::$sections as $key=>$value){
+            if ((int)$id===(int)$key){
+                $section = $value;
                 break;
-            case 2:
-                $section = "ก.1";
-                break;
-            case 3:
-                $section = "ก.2";
-                break;
-            case 4:
-                $section = "ก.3";
-                break;
-            case 5:
-                $section = "ข.1";
-                break;
-            case 6:
-                $section = "ข.2";
-                break;
-            case 7:
-                $section = "ข.3";
-                break;
-            default:
-                $section = "ทั่วไป";
+            }
         }
+        if (empty($section))
+            abort(404);
         //test
         $sub_section = "NULL";
         $radioText = Question::TYPE_RADIO;
@@ -238,16 +222,6 @@ class QuestionController extends Controller
 //                // 2.1 ทั้ง checkbox และ radio ให้อยู่ล่าง option ของแม่ทั้งหมด
 //
 //                // TODO-nong ดูว่าถ้า parent มีค่า อาจจะไม่ hidden
-//                if($grouped[$aQuestion->parent_id][0]->input_type===Question::TYPE_RADIO
-//                    && is_null($aQuestion->dependent_parent_option_id)){
-//                    $aQuestion->{"class"} = 'has-parent-no-dependent';
-////                $aQuestion->{"class"} = 'hidden has-parent-no-dependent';
-//                }else{
-////                $aQuestion->{"class"} = 'hidden has-parent';
-//                    $aQuestion->{"class"} = 'has-parent';
-////                $aQuestion->{"parent_input_type"} = $grouped[$aQuestion->parent_id][0]->input_type;
-//                }
-//            }
 
             if(!is_null($aQuestion[0]->parent_id)){
                 $typeArr = [Question::TYPE_TITLE, Question::TYPE_TEXT, Question::TYPE_NUMBER];
@@ -264,6 +238,7 @@ class QuestionController extends Controller
                 $inArray2 = in_array($grouped[$aQuestion[0]->parent_id]->input_type, $type2Arr);
                 if($inArray2){
                     $aQuestion->{"class"} = ' has-parent';
+
                     if (is_null($aQuestion->dependent_parent_option_id)){
                         if ($grouped[$aQuestion[0]->parent_id]->input_type===Question::TYPE_RADIO){
                             if(!isset($grouped[$aQuestion[0]->parent_id]->{"children"})){
@@ -304,9 +279,6 @@ class QuestionController extends Controller
             $grouped->forget((string)$aId);
         }
 
-//    dd($grouped);
-
-//    dd($grouped);
         return view('welcome2', compact('grouped','section','sub_section', 'main_id'));
     }
 }
