@@ -4,21 +4,32 @@
              @if(strpos($question->class,'has-parent')>-1 && !is_null($parentQuestions) && $parentQuestions[$parent_id])
              <?php $parentQ = $parentQuestions[$parent_id]; ?>
              @if($parent_option_id==null)
-             {{--ขึ้นกับ option ทุกอันของแม่ loop ng-if สำหรับ or condition ng-if="model1||model2"--}}
-             <?php $allOptions = "";$first= true; ?>
-             @foreach($parentQ as $p_option)
-             <?php
-             if ($first){
-                 $first = false;
-                 $allOptions .= "question.no_".$p_option->id.'_'.$p_option->option_id;
-                 continue;
-             }
-             $allOptions .= " || question.no_".$p_option->id.'_'.$p_option->option_id;
-             ?>
-             @endforeach
-             ng-if="{{$allOptions}}"
+                 {{--ขึ้นกับ option ทุกอันของแม่ loop ng-if สำหรับ or condition ng-if="model1||model2"--}}
+                 <?php $allOptions = "";$first= true; ?>
+                 @foreach($parentQ as $p_option)
+                 <?php
+                 if ($first){
+                     $first = false;
+                     if($parentQ->input_type===\App\Question::TYPE_CHECKBOX)
+                         $allOptions .= "question.no_".$parent_parent_id."_".$parent_parent_option_id."_".$parent_id."_".$p_option->option_id;
+                     else
+                         $allOptions .= "question.no_".$parent_parent_id."_".$parent_parent_option_id."_".$parent_id;
+
+                     continue;
+                 }
+                 if($parentQ->input_type===\App\Question::TYPE_CHECKBOX)
+                     $allOptions .= " || question.no_".$parent_parent_id."_".$parent_parent_option_id."_".$parent_id."_".$p_option->option_id;
+                 else
+                    $allOptions .= " || question.no_".$parent_parent_id."_".$parent_parent_option_id."_".$parent_id;
+                 ?>
+                 @endforeach
+                 ng-if="{{$allOptions}}"
              @else
-             ng-if="question.no_{{$parent_id}}_{{$parent_option_id}}"
+                 @if($parentQ->input_type===\App\Question::TYPE_RADIO)
+                     ng-if="question.no_{{$parent_parent_id}}_{{$parent_parent_option_id}}_{{$parent_id}}"
+                 @elseif($parentQ->input_type===\App\Question::TYPE_CHECKBOX)
+                    ng-if="question.no_{{$parent_parent_id}}_{{$parent_parent_option_id}}_{{$parent_id}}_{{$parent_option_id}}"
+                 @endif
              @endif
              @endif
              style="margin-left: {{$margin}}px;">
@@ -28,19 +39,19 @@
             {{--ประเภท textbox number --}}
             @elseif($question->input_type===\App\Question::TYPE_NUMBER)
                 <label for="q_{{$parent_id}}_{{$parent_option_id}}_{{$question->id}}">{{$question->name}}</label>
-                <input type="number" name="q_{{$parent_id}}_{{$parent_option_id}}_{{$question->id}}" value="{{$question[0]->answer_numeric}}" ng-model="question.no_{{$question->id}}">
+                <input type="number" value="{{$question[0]->answer_numeric}}" ng-model="question.no_{{$parent_id}}_{{$parent_option_id}}_{{$question->id}}">
             {{--ประเภท textbox text--}}
             @elseif($question->input_type===\App\Question::TYPE_TEXT)
                 <label for="q_{{$parent_id}}_{{$parent_option_id}}_{{$question->id}}">{{$question->name}}</label>
-                <input type="text" name="q_{{$parent_id}}_{{$parent_option_id}}_{{$question->id}}" value="{{$question[0]->answer_text}}" ng-model="question.no_{{$question->id}}">
+                <input type="text" value="{{$question[0]->answer_text}}" ng-model="question.no_{{$parent_id}}_{{$parent_option_id}}_{{$question->id}}">
             {{--ประเภท radio--}}
             @elseif($question->input_type===\App\Question::TYPE_RADIO)
                 <h4>{{$question->name}}</h4>
-                <md-radio-group ng-model="question.no_{{$question->id}}">
+                <md-radio-group ng-model="question.no_{{$parent_id}}_{{$parent_option_id}}_{{$question->id}}">
                 @foreach($question as $option)
                     <md-radio-button value="{{$option->option_id}}">{{$option->option_name}}</md-radio-button>
                     @if($option->option_id===1)
-                        <input type="text" name="q_{{$option->id}}_other" value="{{$option->other_text}}">
+                        <input type="text" value="{{$option->other_text}}">
                     @endif
                     {{--each option has children--}}
                     @if(isset($option->children) && count($option->children)>0)
@@ -48,7 +59,7 @@
                             'questions'=>$option->children
                             ,'parentQuestions'=> $questions
                             ,'parent_parent_option_id'=> $parent_option_id
-                                            ,'parent_parent_id'=>$parent_id
+                            ,'parent_parent_id'=>$parent_id
                             ,'margin'=>($margin+20)
                             ,'parent_id'=>$option->id
                             ,'parent_option_id'=>$option->option_id
@@ -61,14 +72,14 @@
                 <h4>{{$question->name}}</h4>
                 @foreach($question as $option)
                     <div>
-                        <md-checkbox ng-model="question.no_{{$question->id}}_{{$option->option_id}}">{{$option->option_name}}</md-checkbox>
+                        <md-checkbox ng-model="question.no_{{$parent_id}}_{{$parent_option_id}}_{{$option->id}}_{{$option->option_id}}">{{$option->option_name}}</md-checkbox>
                         {{--each option has children--}}
                         @if(isset($option->children) && count($option->children)>0)
                             @include('partials.children3',[
                                 'questions'=>$option->children
                                 ,'parentQuestions'=> $questions
                                 ,'parent_parent_option_id'=> $parent_option_id
-                                                ,'parent_parent_id'=>$parent_id
+                                ,'parent_parent_id'=>$parent_id
                                 ,'margin'=>($margin+20)
                                 ,'parent_id'=>$option->id
                                 ,'parent_option_id'=>$option->option_id
