@@ -23,6 +23,7 @@
                     ng-if="q_{{$parent_id}}_{{$parent_option_id}}"
                 @endif
              @endif
+            ng-init="applyUniformFunction()"
              style="margin-left: {{$margin}}px;">
         {{--ประเภท title--}}
         @if($question->input_type===\App\Question::TYPE_TITLE)
@@ -31,11 +32,11 @@
         @elseif($question->input_type===\App\Question::TYPE_NUMBER)
                 <label for="q_{{$parent_id}}_{{$parent_option_id}}_{{$question->id}}">{{$question->name}}</label>
             <input type="number" name="q_{{$parent_id}}_{{$parent_option_id}}_{{$question->id}}" value="{{$question[0]->answer_numeric}}">
-            {{--ประเภท textbox text--}}
+        {{--ประเภท textbox text--}}
         @elseif($question->input_type===\App\Question::TYPE_TEXT)
                 <label for="q_{{$parent_id}}_{{$parent_option_id}}_{{$question->id}}">{{$question->name}}</label>
                 <input type="text" name="q_{{$parent_id}}_{{$parent_option_id}}_{{$question->id}}" value="{{$question[0]->answer_text}}">
-            {{--ประเภท radio--}}
+        {{--ประเภท radio--}}
         @elseif($question->input_type===\App\Question::TYPE_RADIO)
             <h4>{{$question->name}}</h4>
             @foreach($question as $option)
@@ -65,7 +66,7 @@
                     ])
                 @endif
             @endforeach
-            {{--ประเภท checkbox--}}
+        {{--ประเภท checkbox--}}
         @elseif($question->input_type===\App\Question::TYPE_CHECKBOX)
                 <h4>{{$question->name}}</h4>
             @foreach($question as $option)
