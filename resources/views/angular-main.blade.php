@@ -67,7 +67,7 @@
         $scope.question = {};
 
         @foreach($scopeParameters as $aScope)
-        {{$aScope}}
+        {!! $aScope !!}
         @endforeach
     });
 </script>

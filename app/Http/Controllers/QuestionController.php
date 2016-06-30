@@ -168,6 +168,7 @@ class QuestionController extends Controller
         t2.id as option_question_id,
         t4.id as selected,
         t4.parent_option_selected_id,
+        t4.option_question_id as answer_option_question_id,
         t4.answer_numeric,
         t4.answer_text,
         t4.other_text
@@ -192,6 +193,7 @@ class QuestionController extends Controller
 //        dd($result);
 
         $scopeParameters = array();
+        $duplicateRadio = array();
         foreach ($result as $row){
             if ($row->input_type!==Question::TYPE_TITLE){
                 $scopeName = '$scope.question.no_'.$row->parent_id . '_' . $row->parent_option_selected_id
@@ -200,11 +202,18 @@ class QuestionController extends Controller
                     $scopeName .= '_' . $row->option_id;
                     $scopeName .= ' = '. ($row->selected?'true':'false');
                 }elseif ($row->input_type === Question::TYPE_TEXT)
-                    $scopeName .= ' = ' . ($row->answer_text?:"0");
+                    $scopeName .= ' = ' . ($row->answer_text?:"''");
                 elseif ($row->input_type===Question::TYPE_NUMBER)
                     $scopeName .= ' = ' . ($row->answer_numeric?:'0');
-                elseif ($row->input_type===Question::TYPE_RADIO)
-                    $scopeName .= ' = ' . ($row->option_question_id?:'0');
+                elseif ($row->input_type===Question::TYPE_RADIO){
+                    if (!in_array($scopeName, $duplicateRadio)){
+                        $duplicateRadio[] = $scopeName;
+                        $scopeName .= ' = ' . ($row->answer_option_question_id?:"''");
+                        $scopeName .= ';';
+                        $scopeParameters[] = $scopeName;
+                    }
+                    continue;
+                }
 
                 $scopeName .= ';';
                 $scopeParameters[] = $scopeName;
