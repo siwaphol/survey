@@ -167,6 +167,7 @@ class QuestionController extends Controller
         t2.order as option_order,
         t2.id as option_question_id,
         t4.id as selected,
+        t4.parent_option_selected_id,
         t4.answer_numeric,
         t4.answer_text,
         t4.other_text
@@ -188,7 +189,28 @@ class QuestionController extends Controller
         
         $result = \DB::select($str);
 
-//    dd($result);
+//        dd($result);
+
+        $scopeParameters = array();
+        foreach ($result as $row){
+            if ($row->input_type!==Question::TYPE_TITLE){
+                $scopeName = '$scope.question.no_'.$row->parent_id . '_' . $row->parent_option_selected_id
+                    . '_' .$row->id;
+                if ($row->input_type === Question::TYPE_CHECKBOX){
+                    $scopeName .= '_' . $row->option_id;
+                    $scopeName .= ' = '. ($row->selected?'true':'false');
+                }elseif ($row->input_type === Question::TYPE_TEXT)
+                    $scopeName .= ' = ' . ($row->answer_text?:"0");
+                elseif ($row->input_type===Question::TYPE_NUMBER)
+                    $scopeName .= ' = ' . ($row->answer_numeric?:'0');
+                elseif ($row->input_type===Question::TYPE_RADIO)
+                    $scopeName .= ' = ' . ($row->option_question_id?:'0');
+
+                $scopeName .= ';';
+                $scopeParameters[] = $scopeName;
+            }
+        }
+
         $main_id= 1;
         $answers = Answer::where('main_id',$main_id)->get();
 
@@ -197,6 +219,7 @@ class QuestionController extends Controller
 
         $forgetList =[];
         foreach ($grouped as $aQuestion){
+            
             $aQuestion->{"input_type"} = $aQuestion[0]->input_type;
             $aQuestion->{"id"} = $aQuestion[0]->id;
             $aQuestion->{"parent_id"} = $aQuestion[0]->parent_id;
@@ -280,6 +303,6 @@ class QuestionController extends Controller
         }
 
 //        return view('welcome2', compact('grouped','section','sub_section', 'main_id'));
-        return view('angular-main', compact('grouped','section','sub_section', 'main_id'));
+        return view('angular-main', compact('grouped','section','sub_section', 'main_id','scopeParameters'));
     }
 }

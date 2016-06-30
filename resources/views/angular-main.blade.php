@@ -65,6 +65,10 @@
     angular.module('testAngular', ['ngMaterial']).
     controller('AppCtrl', function ($scope) {
         $scope.question = {};
+
+        @foreach($scopeParameters as $aScope)
+        {{$aScope}}
+        @endforeach
     });
 </script>
 </body>
