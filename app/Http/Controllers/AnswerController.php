@@ -305,6 +305,61 @@ class AnswerController extends Controller
         return false;
     }
 
+    public function saveAnswersWithEasiestWay(Request $request)
+    {
+//        dd($request->input());
+        $input = $request->input();
+        $questions = Question::where('section',$request->input('section'))->get();
+        $optionQuestions = OptionQuestion::get();
+
+        //ลบของเดิม
+        \DB::table('answers')->where('main_id',$input['main_id'])
+            ->where('section',$input['section'])
+            ->where('sub_section',$input['sub_section'])
+            ->delete();
+
+        foreach ($input as $key=>$value){
+            if (strpos($key,'no_')!==false){
+                // 0 = parent_id
+                // 1 = dependent_parent_option_id
+                // 2 = question_id
+                // 4 = option_id (checkbox only)
+                $insertingItem = explode("_",str_replace('no_','',$key));
+                $curQuestion = $questions->where('id',(int)$insertingItem[2])->first();
+
+                $answer = new Answer();
+                $answer->main_id = $input['main_id'];
+                $answer->section = $input['section'];
+                $answer->sub_section = $input['sub_section'];
+                $answer->question_id = $insertingItem[2];
+                $answer->parent_option_selected_id = empty($insertingItem[1])?null:$insertingItem[1];
+
+                if ($curQuestion->input_type===Question::TYPE_TEXT){
+                    $answer->answer_text = $value;
+                    $answer->save();
+                }else if($curQuestion->input_type===Question::TYPE_NUMBER){
+                    $answer->answer_numeric = (int)$value;
+                    $answer->save();
+                }else if($curQuestion->input_type===Question::TYPE_RADIO){
+                    $oq = $optionQuestions->where('question_id',(int)$insertingItem[2])
+                        ->where('option_id', (int)$value)->first();
+                    if ($oq){
+                        $answer->option_question_id = $oq->id;
+                        $answer->save();
+                    }
+                }else if($curQuestion->input_type===Question::TYPE_CHECKBOX){
+                    $oq = $optionQuestions->where('question_id',(int)$insertingItem[2])
+                        ->where('option_id', (int)$insertingItem[3])->first();
+                    if ($oq){
+                        $answer->option_question_id = $oq->id;
+                        $answer->save();
+                    }
+                }
+            }
+        }
+
+        return json_encode(['success'=>true]);
+    }
     /**
      * @param $q_null_null_questionId
      * @param $input

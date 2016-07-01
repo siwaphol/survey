@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Answer;
 use App\Option;
+use App\OptionQuestion;
 use App\Question;
 use Illuminate\Http\Request;
 
@@ -194,9 +195,18 @@ class QuestionController extends Controller
 
         $scopeParameters = array();
         $duplicateRadio = array();
+        $questions = Question::get();
+        $optionQuestions = OptionQuestion::get();
         foreach ($result as $row){
             if ($row->input_type!==Question::TYPE_TITLE){
-                $scopeName = '$scope.question.no_'.$row->parent_id . '_' . $row->parent_option_selected_id
+                $parentIsTitle = false;
+                if (!is_null($row->parent_id)){
+                    if($questions->where('id',(int)$row->parent_id)->first()->input_type===Question::TYPE_TITLE){
+                        $parentIsTitle = true;
+                    }
+                }
+
+                $scopeName = '$scope.question.no_'.($parentIsTitle?'':$row->parent_id) . '_' . $row->parent_option_selected_id
                     . '_' .$row->id;
                 if ($row->input_type === Question::TYPE_CHECKBOX){
                     $scopeName .= '_' . $row->option_id;
@@ -208,7 +218,10 @@ class QuestionController extends Controller
                 elseif ($row->input_type===Question::TYPE_RADIO){
                     if (!in_array($scopeName, $duplicateRadio)){
                         $duplicateRadio[] = $scopeName;
-                        $scopeName .= ' = ' . ($row->answer_option_question_id?:"''");
+
+                        $oq = $optionQuestions->where('id',(int)$row->answer_option_question_id)->first();
+
+                        $scopeName .= ' = ' . ($oq?$oq->option_id:"''");
                         $scopeName .= ';';
                         $scopeParameters[] = $scopeName;
                     }

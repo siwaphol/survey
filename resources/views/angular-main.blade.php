@@ -25,7 +25,7 @@
                 <a href="{{url("html-loop-2")}}/{{$key}}">{{$value}}</a>|
             @endforeach
         </div>
-        <form action="{{url('test-post')}}" method="post">
+        <form ng-submit="submit()">
             <input type="hidden" name="_token" value="<?php echo csrf_token(); ?>">
             <input type="hidden" name="section" value="{{$section}}">
             <input type="hidden" name="sub_section" value="{{$sub_section}}">
@@ -40,8 +40,9 @@
                 ,'margin'=>0
                 ,'parent_id'=>''
                 ,'parent_option_id'=>''
-            ]);
-            <input type="submit" value="submit">
+            ])
+            <input type="submit" value="Submit" id="submit">
+            {{--<button class="btn btn-success" ng-click="submit()">Submit</button>--}}
         </form>
     </div>
 </div>
@@ -63,12 +64,43 @@
      * You must include the dependency on 'ngMaterial'
      */
     angular.module('testAngular', ['ngMaterial']).
-    controller('AppCtrl', function ($scope) {
+    controller('AppCtrl', function ($scope, $http) {
         $scope.question = {};
 
         @foreach($scopeParameters as $aScope)
         {!! $aScope !!}
         @endforeach
+
+        var submitItems = [];
+        $scope.formData = {};
+        var postURL = '{{url('test-post-2')}}';
+
+        $scope.submit = function () {
+            submitItems = {};
+            angular.forEach($scope.question,function (value, key) {
+                if(value && value!='' && value!=0){
+                    this[key] = value;
+                }
+            }, submitItems);
+
+            submitItems["_token"] = $('[name="_token"]').val();
+            submitItems["section"] = $('[name="section"]').val();
+            submitItems["sub_section"] = $('[name="sub_section"]').val();
+            submitItems["main_id"] = $('[name="main_id"]').val();
+
+            console.log(submitItems);
+
+            $http({
+                method: 'POST',
+                url: postURL,
+                data: $.param(submitItems),
+                headers : { 'Content-Type': 'application/x-www-form-urlencoded' }
+            }).success(function (data) {
+                console.log(data);
+            }).error(function (data) {
+                console.log(data);
+            });
+        }
     });
 </script>
 </body>
