@@ -7,7 +7,7 @@
     {{--<link href="{{asset('assets/css/bootstrap.css')}}" rel="stylesheet" type="text/css">--}}
     <!-- Global stylesheets -->
     <link href="https://fonts.googleapis.com/css?family=Roboto:400,300,100,500,700,900" rel="stylesheet" type="text/css">
-    {{--<link href="{{asset('assets/css/icons/icomoon/styles.css')}}" rel="stylesheet" type="text/css">--}}
+    <link href="{{asset('assets/css/icons/icomoon/styles.css')}}" rel="stylesheet" type="text/css">
     <link href="{{asset('assets/css/bootstrap.css')}}" rel="stylesheet" type="text/css">
     {{--<link href="{{asset('assets/css/core.css')}}" rel="stylesheet" type="text/css">--}}
     {{--<link href="{{asset('assets/css/components.css')}}" rel="stylesheet" type="text/css">--}}
@@ -15,6 +15,7 @@
     <!-- /global stylesheets -->
     <!-- Angular Material style sheet -->
     <link rel="stylesheet" href="http://ajax.googleapis.com/ajax/libs/angular_material/1.1.0-rc2/angular-material.min.css">
+    <link href="{{asset('css/app.css')}}" rel="stylesheet" type="text/css">
 
     <style>
         legend {

@@ -163,6 +163,7 @@ class QuestionController extends Controller
         t1.text,
         t1.required,
         t1.dependent_parent_option_id,
+        t1.unit_of_measure,
         t3.id as option_id,
         t3.name as option_name,
         t2.order as option_order,

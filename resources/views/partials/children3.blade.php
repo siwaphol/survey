@@ -41,11 +41,13 @@
                 <label for="q_{{$parent_id}}_{{$parent_option_id}}_{{$question->id}}">{{$question->name}}</label>
                 <input type="number" value="{{$question[0]->answer_numeric}}"
                        ng-model="question.no_{{$parent_id}}_{{$parent_option_id}}_{{$question->id}}">
+                <label for="">{{$question[0]->unit_of_measure}}</label>
                 {{--ประเภท textbox text--}}
             @elseif($question->input_type===\App\Question::TYPE_TEXT)
                 <label for="q_{{$parent_id}}_{{$parent_option_id}}_{{$question->id}}">{{$question->name}}</label>
                 <input type="text" value="{{$question[0]->answer_text}}"
                        ng-model="question.no_{{$parent_id}}_{{$parent_option_id}}_{{$question->id}}">
+                <label for="">{{$question[0]->unit_of_measure}}</label>
                 {{--ประเภท radio--}}
             @elseif($question->input_type===\App\Question::TYPE_RADIO)
                 <h4>{{$question->name}}</h4>
