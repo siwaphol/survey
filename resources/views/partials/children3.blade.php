@@ -13,20 +13,20 @@
                  if ($parentQ->input_type === \App\Question::TYPE_CHECKBOX)
                      $allOptions .= "question.no_" . $parent_parent_id . "_" . $parent_parent_option_id . "_" . $parent_id . "_" . $p_option->option_id;
                  else
-                     $allOptions .= "question.no_" . $parent_parent_id . "_" . $parent_parent_option_id . "_" . $parent_id;
+                     $allOptions .= "question.no_" . $parent_parent_id . "_" . $parent_parent_option_id . "_" . $parent_id . " == ".$p_option->option_id;
 
                  continue;
              }
              if ($parentQ->input_type === \App\Question::TYPE_CHECKBOX)
                  $allOptions .= " || question.no_" . $parent_parent_id . "_" . $parent_parent_option_id . "_" . $parent_id . "_" . $p_option->option_id;
              else
-                 $allOptions .= " || question.no_" . $parent_parent_id . "_" . $parent_parent_option_id . "_" . $parent_id;
+                 $allOptions .= " || question.no_" . $parent_parent_id . "_" . $parent_parent_option_id . "_" . $parent_id . " == ".$p_option->option_id;
              ?>
              @endforeach
              ng-if="{{$allOptions}}"
              @else
              @if($parentQ->input_type===\App\Question::TYPE_RADIO)
-             ng-if="question.no_{{$parent_parent_id}}_{{$parent_parent_option_id}}_{{$parent_id}}"
+             ng-if="question.no_{{$parent_parent_id}}_{{$parent_parent_option_id}}_{{$parent_id}}=={{$parent_option_id}}"
              @elseif($parentQ->input_type===\App\Question::TYPE_CHECKBOX)
              ng-if="question.no_{{$parent_parent_id}}_{{$parent_parent_option_id}}_{{$parent_id}}_{{$parent_option_id}}"
              @endif

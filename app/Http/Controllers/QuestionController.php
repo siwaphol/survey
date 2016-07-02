@@ -212,16 +212,17 @@ class QuestionController extends Controller
                     $scopeName .= '_' . $row->option_id;
                     $scopeName .= ' = '. ($row->selected?'true':'false');
                 }elseif ($row->input_type === Question::TYPE_TEXT)
-                    $scopeName .= ' = ' . ($row->answer_text?:"''");
+                    $scopeName .= ' = ' . ($row->answer_text?"'".$row->answer_text."'":"''");
                 elseif ($row->input_type===Question::TYPE_NUMBER)
                     $scopeName .= ' = ' . ($row->answer_numeric?:'0');
                 elseif ($row->input_type===Question::TYPE_RADIO){
                     if (!in_array($scopeName, $duplicateRadio)){
-                        $duplicateRadio[] = $scopeName;
-
                         $oq = $optionQuestions->where('id',(int)$row->answer_option_question_id)->first();
 
-                        $scopeName .= ' = ' . ($oq?$oq->option_id:"''");
+                        if ($oq)
+                            $duplicateRadio[] = $scopeName;
+
+                        $scopeName .= ' = ' . ($oq?"'".$oq->option_id."'":"''");
                         $scopeName .= ';';
                         $scopeParameters[] = $scopeName;
                     }
@@ -266,7 +267,6 @@ class QuestionController extends Controller
 //
 //                // 2.1 ทั้ง checkbox และ radio ให้อยู่ล่าง option ของแม่ทั้งหมด
 //
-//                // TODO-nong ดูว่าถ้า parent มีค่า อาจจะไม่ hidden
 
             if(!is_null($aQuestion[0]->parent_id)){
                 $typeArr = [Question::TYPE_TITLE, Question::TYPE_TEXT, Question::TYPE_NUMBER];
