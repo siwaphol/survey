@@ -4,8 +4,8 @@
 *
 *  Specific JS code additions for uploader_bootstrap.html page
 *
-*  Version: 1.0
-*  Latest update: Aug 1, 2015
+*  Version: 1.1
+*  Latest update: Dec 11, 2015
 *
 * ---------------------------------------------------------------------------- */
 
@@ -13,64 +13,14 @@ $(function() {
 
     // Basic example
     $('.file-input').fileinput({
-        browseLabel: '',
-        browseClass: 'btn btn-primary btn-icon',
-        removeLabel: '',
-        uploadLabel: '',
-        uploadClass: 'btn btn-default btn-icon',
-        browseIcon: '<i class="icon-plus22"></i> ',
-        uploadIcon: '<i class="icon-file-upload"></i> ',
-        removeClass: 'btn btn-danger btn-icon',
-        removeIcon: '<i class="icon-cancel-square"></i> ',
+        browseLabel: 'Browse',
+        browseIcon: '<i class="icon-file-plus"></i>',
+        uploadIcon: '<i class="icon-file-upload2"></i>',
+        removeIcon: '<i class="icon-cross3"></i>',
         layoutTemplates: {
-            caption: '<div tabindex="-1" class="form-control file-caption {class}">\n' + '<span class="icon-file-plus kv-caption-icon"></span><div class="file-caption-name"></div>\n' + '</div>'
+            icon: '<i class="icon-file-check"></i>'
         },
         initialCaption: "No file selected"
-    });
-
-
-    // With preview
-    $(".file-input-preview").fileinput({
-        browseLabel: '',
-        browseClass: 'btn btn-primary btn-icon',
-        removeLabel: '',
-        uploadLabel: '',
-        uploadClass: 'btn btn-default btn-icon',
-        browseIcon: '<i class="icon-plus22"></i> ',
-        uploadIcon: '<i class="icon-file-upload"></i> ',
-        removeClass: 'btn btn-danger btn-icon',
-        removeIcon: '<i class="icon-cancel-square"></i> ',
-        layoutTemplates: {
-            caption: '<div tabindex="-1" class="form-control file-caption {class}">\n' + '<span class="icon-file-plus kv-caption-icon"></span><div class="file-caption-name"></div>\n' + '</div>'
-        },
-        initialPreview: [
-            "<img src='assets/images/placeholder.jpg' class='file-preview-image' alt=''>",
-            "<img src='assets/images/placeholder.jpg' class='file-preview-image' alt=''>",
-        ],
-        overwriteInitial: false,
-        maxFileSize: 100
-    });
-
-
-    // Display preview on load
-    $(".file-input-overwrite").fileinput({
-        browseLabel: '',
-        browseClass: 'btn btn-primary btn-icon',
-        removeLabel: '',
-        uploadLabel: '',
-        uploadClass: 'btn btn-default btn-icon',
-        browseIcon: '<i class="icon-plus22"></i> ',
-        uploadIcon: '<i class="icon-file-upload"></i> ',
-        removeClass: 'btn btn-danger btn-icon',
-        removeIcon: '<i class="icon-cancel-square"></i> ',
-        layoutTemplates: {
-            caption: '<div tabindex="-1" class="form-control file-caption {class}">\n' + '<span class="icon-file-plus kv-caption-icon"></span><div class="file-caption-name"></div>\n' + '</div>'
-        },
-        initialPreview: [
-            "<img src='assets/images/placeholder.jpg' class='file-preview-image' alt=''>",
-            "<img src='assets/images/placeholder.jpg' class='file-preview-image' alt=''>",
-        ],
-        overwriteInitial: true
     });
 
 
@@ -86,26 +36,24 @@ $(function() {
         uploadClass: 'btn bg-teal-400',
         uploadIcon: '<i class="icon-file-upload position-left"></i> ',
         layoutTemplates: {
-            caption: '<div tabindex="-1" class="form-control file-caption {class}">\n' + '<span class="icon-file-plus kv-caption-icon"></span><div class="file-caption-name"></div>\n' + '</div>'
+            icon: '<i class="icon-file-check"></i>'
         },
-        initialCaption: "No file selected"
+        initialCaption: "Please select image",
+        mainClass: 'input-group'
     });
 
 
-    // Advanced example
+    // Template modifications
     $('.file-input-advanced').fileinput({
         browseLabel: 'Browse',
         browseClass: 'btn btn-default',
-        removeLabel: '',
-        uploadLabel: '',
-        browseIcon: '<i class="icon-plus22 position-left"></i> ',
-        uploadClass: 'btn btn-primary btn-icon',
-        uploadIcon: '<i class="icon-file-upload"></i> ',
-        removeClass: 'btn btn-danger btn-icon',
-        removeIcon: '<i class="icon-cancel-square"></i> ',
-        initialCaption: "No file selected",
+        removeClass: 'btn btn-default',
+        uploadClass: 'btn bg-success-400',
+        browseIcon: '<i class="icon-file-plus"></i>',
+        uploadIcon: '<i class="icon-file-upload2"></i>',
+        removeIcon: '<i class="icon-cross3"></i>',
         layoutTemplates: {
-            caption: '<div tabindex="-1" class="form-control file-caption {class}">\n' + '<span class="icon-file-plus kv-caption-icon"></span><div class="file-caption-name"></div>\n' + '</div>',
+            icon: '<i class="icon-file-check"></i>',
             main1: "{preview}\n" +
             "<div class='input-group {class}'>\n" +
             "   <div class='input-group-btn'>\n" +
@@ -117,7 +65,56 @@ $(function() {
             "       {remove}\n" +
             "   </div>\n" +
             "</div>"
-        }
+        },
+        initialCaption: "No file selected"
+    });
+
+
+    // Custom file extensions
+    $(".file-input-extensions").fileinput({
+        browseLabel: 'Browse',
+        browseClass: 'btn btn-primary',
+        uploadClass: 'btn btn-default',
+        browseIcon: '<i class="icon-file-plus"></i>',
+        uploadIcon: '<i class="icon-file-upload2"></i>',
+        removeIcon: '<i class="icon-cross3"></i>',
+        layoutTemplates: {
+            icon: '<i class="icon-file-check"></i>'
+        },
+        maxFilesNum: 10,
+        allowedFileExtensions: ["jpg", "gif", "png", "txt"]
+    });
+
+
+    // Always display preview
+    $(".file-input-preview").fileinput({
+        browseLabel: 'Browse',
+        browseIcon: '<i class="icon-file-plus"></i>',
+        uploadIcon: '<i class="icon-file-upload2"></i>',
+        removeIcon: '<i class="icon-cross3"></i>',
+        layoutTemplates: {
+            icon: '<i class="icon-file-check"></i>'
+        },
+        initialPreview: [
+            "<img src='assets/images/placeholder.jpg' class='file-preview-image' alt=''>",
+            "<img src='assets/images/placeholder.jpg' class='file-preview-image' alt=''>",
+        ],
+        overwriteInitial: false,
+        maxFileSize: 100
+    });
+
+
+    // Display preview on load
+    $(".file-input-overwrite").fileinput({
+        browseLabel: 'Browse',
+        browseIcon: '<i class="icon-file-plus"></i>',
+        uploadIcon: '<i class="icon-file-upload2"></i>',
+        removeIcon: '<i class="icon-cross3"></i>',
+        initialPreview: [
+            "<img src='assets/images/placeholder.jpg' class='file-preview-image' alt=''>",
+            "<img src='assets/images/placeholder.jpg' class='file-preview-image' alt=''>",
+        ],
+        overwriteInitial: true
     });
 
 
@@ -137,21 +134,22 @@ $(function() {
     });
 
 
-    // Custom file extensions
-    $(".file-input-extensions").fileinput({
-        browseLabel: 'Browse',
-        browseClass: 'btn btn-primary',
-        removeLabel: '',
-        browseIcon: '<i class="icon-plus22 position-left"></i> ',
-        uploadIcon: '<i class="icon-file-upload position-left"></i> ',
-        removeClass: 'btn btn-danger btn-icon',
-        removeIcon: '<i class="icon-cancel-square"></i> ',
-        layoutTemplates: {
-            caption: '<div tabindex="-1" class="form-control file-caption {class}">\n' + '<span class="icon-file-plus kv-caption-icon"></span><div class="file-caption-name"></div>\n' + '</div>'
-        },
-        initialCaption: "No file selected",
-        maxFilesNum: 10,
-        allowedFileExtensions: ["jpg", "gif", "png", "txt"]
+    // AJAX upload
+    $(".file-input-ajax").fileinput({
+        uploadUrl: "http://localhost", // server upload action
+        uploadAsync: true,
+        maxFileCount: 5,
+        initialPreview: [],
+        fileActionSettings: {
+            removeIcon: '<i class="icon-bin"></i>',
+            removeClass: 'btn btn-link btn-xs btn-icon',
+            uploadIcon: '<i class="icon-upload"></i>',
+            uploadClass: 'btn btn-link btn-xs btn-icon',
+            indicatorNew: '<i class="icon-file-plus text-slate"></i>',
+            indicatorSuccess: '<i class="icon-checkmark3 file-icon-large text-success"></i>',
+            indicatorError: '<i class="icon-cross2 text-danger"></i>',
+            indicatorLoading: '<i class="icon-spinner2 spinner text-muted"></i>',
+        }
     });
-    
+
 });

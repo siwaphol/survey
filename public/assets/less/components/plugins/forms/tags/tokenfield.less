@@ -4,18 +4,23 @@
 *
 *  Styles for tokenfield.js - Advanced tagging/tokenizing plugin for Bootstrap
 *
-*  Version: 1.0
-*  Latest update: Mar 10, 2015
+*  Version: 1.1
+*  Latest update: Mar 10, 2016
 *
 * ---------------------------------------------------------------------------- */
 
 
-/* # Core
--------------------------------------------------- */
+// Base
+// ------------------------------
 
 .tokenfield {
-    height: auto;
-    padding: 0 0 3px 0;
+    border-width: 0;
+
+    // Remove default .form-control styling
+    &.form-control {
+        height: auto;
+        padding: 0;
+    }
 
     // Clear floating
     &:after {
@@ -26,11 +31,26 @@
 
     // Token
     .token {
-        margin: 3px 0 0 3px;
+        margin-top: (@tags-spacing / 2);
+        margin-bottom: (@tags-spacing / 2);
+        margin-right: @tags-spacing;
         cursor: default;
         float: left;
         position: relative;
-        border-radius: @border-radius-small;
+        border-radius: 100px;
+
+        // Skip tokens with custom background color
+        &:not([class*=bg-]) {
+            background-color: @tags-bg;
+            color: @tags-color;
+
+            // Change background on hover
+            &:hover,
+            &:focus {
+                background-color: @tags-hover-bg;
+                color: @tags-hover-color;
+            }
+        }
 
         // Invalid
         &.invalid {
@@ -39,6 +59,7 @@
             border-radius: 0;
             border-bottom: 1px dotted @brand-danger;
 
+            // Active
             &.active {
                 background-color: @gray-lighter;
                 border: 1px solid @gray-lighter;
@@ -50,57 +71,51 @@
             display: block;
             overflow: hidden;
             text-overflow: ellipsis;
-            padding: (@padding-base-vertical - 3) @padding-xs-horizontal;
-            padding-right: ((@padding-xs-horizontal * 2) + (@icon-font-size / 2));
-            background-color: @color-slate-700;
-            color: #fff;
-            font-size: @font-size-small;
-            line-height: @line-height-small;
-            border-radius: @border-radius-small;
+            padding: @padding-base-vertical @padding-base-horizontal;
+            padding-right: ((@padding-base-horizontal * 1.5) + @font-size-mini);
         }
 
         // Close button
-        .close {
+        > .close {
             font-size: 0;
             cursor: pointer;
             position: absolute;
             top: 50%;
-            right: (@padding-xs-horizontal / 1.25);
+            color: inherit;
+            right: @padding-base-horizontal;
             line-height: 1;
-            margin-top: -(@icon-font-size / 2);
-            .opacity(0.7);
+            margin-top: -(@font-size-mini / 2);
 
             // Icon
             &:after {
-                content: '\ed6b';
+                content: '\ed6a';
                 font-family: 'icomoon';
                 display: block;
-                font-size: @icon-font-size;
-                color: #fff;
+                font-size: @font-size-mini;
                 -webkit-font-smoothing: antialiased;
                 -moz-osx-font-smoothing: grayscale;
             }
 
+            // Hover action
             &:hover {
                 .opacity(1);
             }
         }
+    }
 
-        // Solid color
-        &[class*=bg-] {
-            .token-label {
-                background-color: inherit;
-            }
+    //
+    // Contextual classes
+    //
 
-            .close {
-                color: inherit;
-            }
-        }
+    // Center icons vertically
+    & + .form-control-feedback {
+        margin-top: (@tags-spacing / 2);
     }
 
 
-    // Inputs sizing
-    // ------------------------------
+    //
+    // Input field
+    //
 
     // Make typeahead input auto width
     .twitter-typeahead {
@@ -109,28 +124,30 @@
 
     // Input field
     .token-input {
+        direction: ltr;
         background: none;
-        width: 60px!important;
+        width: 80px!important;
+        max-width: 50%;
         min-width: 60px;
-        height: @input-height-base - 8;
-        padding-left: @padding-base-vertical;
-        margin-top: 3px;
-        font-size: @font-size-small;
-        line-height: @line-height-small;
+        padding: @padding-base-vertical 0;
+        margin-top: (@tags-spacing / 2);
+        margin-bottom: (@tags-spacing / 2);
         border: 0;
         outline: 0;
     }
 
 
+    //
     // States
-    // ------------------------------
+    //
 
-    // Hide close button in readonly
+    // Readonly
     &.readonly .token {
         .token-label {
-            padding-right: @padding-xs-horizontal;
+            padding-right: @padding-base-horizontal;
         }
 
+        // Hide close button in readonly
         .close {
             display: none;
         }
@@ -138,16 +155,23 @@
 
     // Disabled
     &.disabled {
-        background-color: @input-bg-disabled;
-        color: @text-muted;
-
         .token {
+
+            // Mute tokens
             &,
             .close {
                 .opacity(0.5);
             }
+
+            // Revert default background on hover
+            &:hover,
+            &:focus {
+                background-color: @tags-bg;
+                color: @tags-color;
+            }
         }
 
+        // Add disabled cursor
         &,
         .token-input,
         .token,
@@ -155,55 +179,55 @@
             cursor: @cursor-disabled;
         }
     }
-
-    // RTL
-    &.rtl {
-        direction: rtl;
-        text-align: right;
-
-        .token {
-            margin-left: 0;
-            margin-right: 3px;
-
-            .token-label {
-                padding-left: ((@padding-xs-horizontal * 2) + (@icon-font-size / 2));
-                padding-right: @padding-xs-horizontal;
-            }
-        }
-    }
 }
 
 
 
-/* # Sizing
--------------------------------------------------- */
+// Sizing
+// ------------------------------
 
 // Large
-.tokenfield.input-lg,
-.input-group-lg .tokenfield {
-    padding: 0 0 3px 0;
-}
 .input-group-lg .token > .token-label,
 .tokenfield.input-lg .token > span {
-    padding-top: (@padding-large-vertical - 3);
-    padding-bottom: (@padding-large-vertical - 3);
+    padding: @padding-large-vertical @padding-large-horizontal;
+    padding-right: ((@padding-large-horizontal * 1.5) + @font-size-mini);
 }
 .input-group-lg .token-input,
 .tokenfield.input-lg .token-input {
-    height: @input-height-large - 8;
+    padding-top: @padding-large-vertical;
+    padding-bottom: @padding-large-vertical;
+}
+.input-group-lg,
+.tokenfield.input-lg {
+    .token > .close {
+        right: @padding-large-horizontal;
+    }
+
+    // Readonly
+    &.readonly .token > .token-label {
+        padding-right: @padding-large-horizontal;
+    }
 }
 
 // Small
-.tokenfield.input-sm,
-.input-group-sm .tokenfield {
-    padding: 0 0 3px 0;
-}
 .input-group-sm .token > .token-label,
 .tokenfield.input-sm .token > span {
-    padding-top: (@padding-small-vertical - 3);
-    padding-bottom: (@padding-small-vertical - 3);
+    padding: @padding-small-vertical @padding-small-horizontal;
+    padding-right: ((@padding-small-horizontal * 1.5) + @font-size-mini);
 }
 .input-group-sm .token-input,
 .tokenfield.input-sm .token-input {
-    height: @input-height-small - 8;
+    padding-top: @padding-small-vertical;
+    padding-bottom: @padding-small-vertical;
+}
+.input-group-sm,
+.tokenfield.input-sm {
+    .token > .close {
+        right: @padding-small-horizontal;
+    }
+
+    // Readonly
+    &.readonly .token > .token-label {
+        padding-right: @padding-small-horizontal;
+    }
 }

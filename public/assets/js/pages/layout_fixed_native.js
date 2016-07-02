@@ -2,10 +2,10 @@
 *
 *  # Sticky sidebar with native scrollbar
 *
-*  Specific JS code additions for layout_sidebar_sticky_native.html blank page
+*  Specific JS code additions for layout_fixed_native.html page
 *
-*  Version: 1.0
-*  Latest update: Aug 1, 2015
+*  Version: 1.1
+*  Latest update: Dec 14, 2015
 *
 * ---------------------------------------------------------------------------- */
 
@@ -39,43 +39,6 @@ $(function() {
 
         // Initialize mini sidebar 
         miniSidebar();
-    });
-
-
-    // Resize sidebar on scroll
-    // ------------------------------
-
-    // Resize detached sidebar vertically when bottom reached
-    function resizeDetached() {
-        $(window).on('scroll load', function() {
-          if ($(window).scrollTop() > $(document).height() - $(window).height() - 40) {
-            $('.sidebar-fixed').addClass('fixed-sidebar-space');
-          }
-          else {
-            $('.sidebar-fixed').removeClass('fixed-sidebar-space');
-          }
-        });
-    }
-
-
-    // Resize sidebar on scroll
-    // ------------------------------
-
-    // Initialize scrollbar when affixed
-    $('.sidebar-fixed').on('affix.bs.affix', function() {
-        resizeDetached();
-    });
-
-    // Init mini sidebar functionality for main sidebar
-    $('.sidebar-main .sidebar-fixed').on('affix.bs.affix', function() {
-        miniSidebar();
-    });
-
-    // Attach BS affix component to the sidebar
-    $('.sidebar-fixed').affix({
-        offset: {
-            top: $('.sidebar-fixed').offset().top - 20 // top offset - computed line height
-        }
     });
 
 });

@@ -53,7 +53,7 @@
                     @foreach($question as $option)
                         <md-radio-button value="{{$option->option_id}}">{{$option->option_name}}</md-radio-button>
                         @if($option->option_id===1)
-                            <input type="text" value="{{$option->other_text}}">
+                            <input type="text" ng-model="other_{{$parent_id}}_{{$parent_option_id}}_{{$question->id}}" value="{{$option->other_text}}">
                         @endif
                         {{--each option has children--}}
                         @if(isset($option->children) && count($option->children)>0)
@@ -76,6 +76,9 @@
                     <div>
                         <md-checkbox
                                 ng-model="question.no_{{$parent_id}}_{{$parent_option_id}}_{{$option->id}}_{{$option->option_id}}">{{$option->option_name}}</md-checkbox>
+                        @if($option->option_id===1)
+                            <input type="text" ng-model="other_{{$parent_id}}_{{$parent_option_id}}_{{$option->id}}_{{$option->option_id}}" value="{{$option->other_text}}">
+                        @endif
                         {{--each option has children--}}
                         @if(isset($option->children) && count($option->children)>0)
                             @include('partials.children3',[

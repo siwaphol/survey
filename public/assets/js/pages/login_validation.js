@@ -17,7 +17,7 @@ $(function() {
 
     // Setup validation
     $(".form-validate").validate({
-        ignore: 'input[type=hidden], .select2-input', // ignore hidden fields
+        ignore: 'input[type=hidden], .select2-search__field', // ignore hidden fields
         errorClass: 'validation-error-label',
         successClass: 'validation-valid-label',
         highlight: function(element, errorClass) {
@@ -45,8 +45,8 @@ $(function() {
                 error.appendTo( element.parent().parent().parent() );
             }
 
-            // Input with icons
-            else if (element.parents('div').hasClass('has-feedback')) {
+            // Input with icons and Select2
+            else if (element.parents('div').hasClass('has-feedback') || element.hasClass('select2-hidden-accessible')) {
                 error.appendTo( element.parent() );
             }
 
@@ -59,6 +59,7 @@ $(function() {
             else if (element.parent().hasClass('uploader') || element.parents().hasClass('input-group')) {
                 error.appendTo( element.parent().parent() );
             }
+
             else {
                 error.insertAfter(element);
             }

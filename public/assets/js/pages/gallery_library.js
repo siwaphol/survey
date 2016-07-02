@@ -92,7 +92,7 @@ $(function() {
 
     // Styles checkboxes, radios
     $('.styled').uniform({
-    	wrapperClass: 'bg-white'
+    	radioClass: 'choice'
     });
 
 

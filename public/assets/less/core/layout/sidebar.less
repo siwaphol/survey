@@ -20,6 +20,7 @@
 	position: relative;
 	width: 100%;
 	display: none;
+	.box-shadow(@shadow-depth1);
 
 	// For desktop only
 	@media (min-width: @grid-float-breakpoint) {
@@ -49,33 +50,18 @@
 			}
 		}
 	}
-
-	// Add 1px border if both sidebars are dark
-	&:not(.sidebar-default) + &:not(.sidebar-default) {
-		border-left: 1px solid fade(#fff, 10%)
-	}
 }
 
 // Light sidebar
 .sidebar-default {
 	background-color: @sidebar-light-bg;
 	color: @text-color;
-	border-bottom: 1px solid @panel-default-border;
-
-	// For desktop only
-	@media (min-width: @grid-float-breakpoint) {
-		border-bottom: 0;
-		border-right: 1px solid @panel-default-border;
-
-		.content-wrapper + & {
-			border-left: 1px solid @panel-default-border;
-		}
-	}
 }
 
 // Sidebar content
 .sidebar-content {
 	position: relative;
+	padding-bottom: (@line-height-computed - @navigation-padding-base-vertical);
 }
 
 
@@ -111,7 +97,7 @@
 .category-title {
 	position: relative;
 	margin: 0;
-	padding: @content-padding-small @content-padding-large;
+	padding: @navigation-padding-base-vertical @content-padding-large;
 	padding-right: (@content-padding-large + @content-padding-small + @icon-font-size);
 	border-bottom: 1px solid fade(#fff, 10%);
 
@@ -155,6 +141,151 @@
 
 
 
+// User menu
+// ------------------------------
+
+// Base
+.sidebar-user-material {
+
+	// Add backgroupd image    
+    .category-content {
+		background: url(../images/backgrounds/user_bg4.jpg) center center no-repeat;
+	    background-repeat: no-repeat;
+	    background-position: center center;
+	    -webkit-background-size: cover;
+	    -moz-background-size: cover;
+	    -o-background-size: cover;
+	    background-size: cover;
+    }
+        
+    // Navigation menu wrapper
+	.navigation-wrapper {
+		background-color: fade(#000, 10%);
+		border-bottom: 1px solid fade(#fff, 10%);
+		
+		// In default sidebar
+    	.sidebar-default & {
+    		background-color: fade(#000, 1%);
+    		border-bottom-color: @panel-default-border;
+    	}
+	}
+    	
+    // Navigation menu
+	.navigation {
+		padding: @list-spacing 0;
+	}
+
+	// Add top border radius if comes first
+	.sidebar-detached &:first-child .category-content {
+		.border-top-radius(@border-radius-base);
+	}
+}
+
+// User menu
+.sidebar-user-material-menu {
+	margin: -(@content-padding-large);
+	margin-top: @line-height-computed;
+	
+	// Link
+	> a {
+    	padding: @content-padding-small @content-padding-large;
+    	display: block;
+		color: #fff;
+		background-color: fade(#000, 10%);
+		text-shadow: 0 0 1px fade(#000, 50%);
+		
+		// Hover effect
+		&:hover,
+		&:focus,
+		&[aria-expanded="true"] {
+			background-color: fade(#000, 15%);
+		}
+		
+		// Caret and icons
+		> i {
+			float: right;
+			margin-top: ((@line-height-computed - @icon-font-size) / 2);
+		}
+		
+		// Caret arrow animation
+		> .caret {
+			.transition-duration(0.35s);
+		}
+		
+		// Rotate caret
+		&[aria-expanded="true"] > .caret {
+			.rotate(180deg);
+		}
+	}    	
+}
+
+// User info
+.sidebar-user-material-content {
+	text-align: center;
+	
+	// Link
+	> a {
+		display: inline-block;
+		.box-shadow(@shadow-depth1);
+		
+		// Thumbnail
+		> img {
+			height: 80px;
+		}
+	}
+	
+	// User name
+	> h6 {
+		margin-bottom: 0;
+	}
+	
+	// Label colors
+	> h6,
+	> span {
+		color: #fff;
+		text-shadow: 0 0 1px fade(#000, 50%);
+	}
+}
+
+// Inside mini sidebar
+.sidebar-xs {
+	
+	// Hide text
+	.sidebar-user-material-content {
+		display: none;
+	}
+
+	// Remove spacing from category
+	.sidebar-user-material > .category-content {
+		padding: 0;
+	}
+
+	// Menu button
+	.sidebar-user-material-menu {
+		margin: 0;
+
+		// Link
+		> a {
+			text-align: center;
+			padding: ((@sidebar-mini-width - @icon-font-size) / 2);
+			line-height: 1;
+		}
+
+		// Hide text
+		> a > span {
+			display: none;
+		}
+
+		// Icon or caret
+		> a > i {
+			float: none;
+			margin-top: 0;
+		}
+	}
+}
+
+
+
 // Default sidebar navigation
 // ------------------------------
 
@@ -175,7 +306,7 @@
 	  display: none;
 	}
 
-	// All items
+	// All level nav items
 	li {
 		position: relative;
 
@@ -191,16 +322,15 @@
 
 		// All level links
 		a {
-			color: fade(#fff, 75%);
+			color: @navigation-dark-color;
 			display: block;
-			@transition: background 0.15s linear, color 0.15s linear;
-			.transition(@transition); // Add minor animation to all level links
+			.transition(~"background 0.15s linear, color 0.15s linear"); // Add minor animation to all level links
 
 			// Hover state
 			&:hover,
 			&:focus {
-				background-color: fade(#000, 10%);
-				color: #fff;
+				background-color: @navigation-dark-hover-bg;
+				color: @navigation-dark-hover-color;
 			}
 
 			// Left icons
@@ -260,7 +390,7 @@
 
 		// Divider
 		&.navigation-divider {
-			margin: (@list-spacing * 2) 0;
+			margin: (@line-height-computed / 2) 0;
 			height: 1px;
 			background-color: fade(#fff, 10%);
 
@@ -268,12 +398,6 @@
 			.sidebar-default & {
 				background-color: @gray-lighter;
 			}
-		}
-
-		// Transparent labels
-		&:not(.active) .label-transparent {
-			color: fade(#fff, 50%);
-			font-weight: 400;
 		}
 	}
 
@@ -296,12 +420,12 @@
 				&:hover,
 				&:focus {
 					background-color: @navigation-dark-active-bg;
-					color: #fff;
+					color: @navigation-dark-active-color;
 				}
 
 				// Make all texts white
 				> [class*=text-] {
-					color: #fff;
+					color: @navigation-dark-active-color;
 				}
 
 				// No color dependency - make all labela and badges white
@@ -309,7 +433,7 @@
 				.badge {
 					background-color: transparent;
 					border-color: transparent;
-					color: #fff;
+					color: @navigation-dark-active-color;
 					.transition(background-color ease-in-out 0.2s);
 				}
 			}
@@ -326,9 +450,9 @@
 			// Nav items
 			li {
 				a {
-					padding: 10px @content-padding-large;
+					padding: @content-padding-small @content-padding-large;
 					padding-left: (@content-padding-large + @content-padding-base + @icon-font-size);
-					min-height: (@line-height-computed + 20);				
+					min-height: (@line-height-computed + @content-padding-large);				
 				}
 			}
 
@@ -444,11 +568,24 @@
 		}
 	}
 
+	// Scrollspy navigation
+	&.nav {
+		> .active > .hidden-ul {
+			display: block;
+		}
+
+		// Display children lists
+		@media (max-width: @grid-float-breakpoint-max) {
+			> li > .hidden-ul {
+				display: block;
+			}
+		}
+	}
+
 	// Labels and badges
 	.label,
 	.badge {
 		float: right;
-		margin-top: 1px;
 	}
 }
 
@@ -459,11 +596,11 @@
 		// All levels
 		li {
 			> a {
-				color: @text-color;
+				color: @navigation-light-color;
 
 				&:hover,
 				&:focus {
-					background-color: @dropdown-link-hover-bg;
+					background-color: @navigation-light-hover-bg;
 				}
 			}
 
@@ -473,8 +610,13 @@
 					&,
 					&:hover,
 					&:focus {
-						background-color: @dropdown-link-hover-bg;
-						color: @text-color;
+						background-color: @navigation-light-active-bg;
+						color: @navigation-light-active-color;
+					}
+
+					// Make all texts dark
+					> [class*=text-] {
+						color: @navigation-light-active-color;
 					}
 				}
 			}
@@ -492,8 +634,7 @@
 
 			// Transparent labels
 			.label-transparent {
-				color: @text-muted;
-				font-weight: 400;
+				color: @text-color;
 			}
 		}
 
@@ -510,12 +651,12 @@
 					&:hover,
 					&:focus {
 						background-color: @navigation-light-active-bg;
-						color: #fff;
+						color: @navigation-light-active-color;
 					}
 
 					// Make transparent labels white
 					.label-transparent {
-						color: #fff;
+						color: @navigation-light-active-color;
 					}
 				}
 			}
@@ -553,7 +694,6 @@
 	}
 }
 
-
 // Bordered navigation
 .navigation-bordered {
 	> li {
@@ -567,9 +707,6 @@
 		// Headers
 		&.navigation-header {
 			background-color: fade(#000, 10%);
-			padding-top: @navigation-padding-base-vertical;
-			padding-bottom: @navigation-padding-base-vertical;
-			line-height: 1;
 		}
 
 		// Remove 1px spacing
@@ -697,9 +834,9 @@
 			width: @sidebar-base-width;
 			max-height: 100%;
 			overflow: auto;
-			top: @navbar-height + 2;
-			bottom: @navbar-height + 2;
-			margin-bottom: -(@navbar-height + 2);
+			top: @navbar-height;
+			bottom: @navbar-height;
+			margin-bottom: -(@navbar-height);
 		}
 
 		// In mini sidebar
@@ -711,7 +848,7 @@
 
 		// In light sidebar
 		&.sidebar-default .sidebar-content {
-			width: @sidebar-base-width - 1; // Exclude 1px border here
+			width: @sidebar-base-width;
 		}
 	}
 
@@ -833,18 +970,11 @@
 		position: static;
 	}
 
-
 	// Setup desktop view
 	@media (min-width: @grid-float-breakpoint) {
 		display: block;
 		position: relative;
 		margin-bottom: 0;
-
-		// Light sidebar
-		> .sidebar-default {
-			border: 1px solid @panel-default-border;
-			.box-shadow(0 1px 1px fade(#000, 5%));
-		}
 
 		// Display sidebar as a block element
 		> .sidebar {
@@ -858,6 +988,7 @@
 			position: fixed;
 			top: @line-height-computed;
 			bottom: @line-height-computed;
+			.transition(bottom ease-in-out 0.15s);
 
 			> .sidebar {
 				max-height: 100%;
@@ -867,7 +998,35 @@
 
 		// Avoid footer overlap
 		&.fixed-sidebar-space {
-			bottom: (@line-height-computed * 3);
+			bottom: (@line-height-computed * 4);
+
+			// If footer is navbar
+			.navbar-bottom & {
+				bottom: ((@line-height-computed * 2) + @navbar-height);
+			}
+			.navbar-bottom-lg & {
+				bottom: ((@line-height-computed * 2) + @navbar-height-large);
+			}
+			.navbar-bottom-sm & {
+				bottom: ((@line-height-computed * 2) + @navbar-height-small);
+			}
+			.navbar-bottom-xs & {
+				bottom: ((@line-height-computed * 2) + @navbar-height-mini);
+			}
+		}
+
+		// Add top spacing if navbar is fixed
+		.navbar-fixed & {
+			top: (@navbar-height + (@line-height-computed * 2));
+		}
+		.navbar-fixed-lg & {
+			top: (@navbar-height-large + (@line-height-computed * 2));
+		}
+		.navbar-fixed-sm & {
+			top: (@navbar-height-small + (@line-height-computed * 2));
+		}
+		.navbar-fixed-xs & {
+			top: (@navbar-height-mini + (@line-height-computed * 2));
 		}
 	}
 }
@@ -887,14 +1046,12 @@
 		// In light sidebar
 		&.sidebar-default {
 			background-color: transparent;
-			border: 0;
 			.box-shadow(none);
 
 			// Make categories white
 			.sidebar-category {
 				background-color: @sidebar-light-bg;
-				border: 1px solid @panel-default-border;
-				.box-shadow(0 1px 1px fade(#000, 5%));
+				.box-shadow(@shadow-depth1);
 			}
 		}
 	}
@@ -909,7 +1066,7 @@
 @media (min-width: @grid-float-breakpoint) {
 	.sidebar-xs {
 
-		// Inside main sidebar
+		// Works only in main sidebar
 		.sidebar-main {
 			width: @sidebar-mini-width;
 
@@ -942,10 +1099,10 @@
 				.icons-list {
 					position: static;
 				    text-align: center;
-				    padding-top: @content-padding-small;
-				    padding-bottom: @content-padding-small;
-					margin-top: (((@line-height-computed - @icon-font-size) / 2) + 1);
-					margin-bottom: (((@line-height-computed - @icon-font-size) / 2) + 1);
+					margin-top: 0;
+					padding-top: @content-padding-small + ((@line-height-computed - @icon-font-size) / 2) + (@font-size-base - @font-size-mini);
+					padding-bottom: @content-padding-small + ((@line-height-computed - @icon-font-size) / 2) + (@font-size-base - @font-size-mini);
+
 
 				    // Stack items
 				    > li {
@@ -958,10 +1115,26 @@
 				    	}
 				    }
 				}
+
+				// H6 heading
+				&.h6 {
+					.icons-list {
+					    padding-top: @content-padding-large + (((@headings-line-height * @font-size-h6) - @icon-font-size) / 2);
+					    padding-bottom: @content-padding-large + (((@headings-line-height * @font-size-h6) - @icon-font-size) / 2);
+					}
+				}
+
+				// H5 heading
+				&.h5 {
+					.icons-list {
+					    padding-top: @content-padding-large + (((@headings-line-height * @font-size-h5) - @icon-font-size) / 2);
+					    padding-bottom: @content-padding-large + (((@headings-line-height * @font-size-h5) - @icon-font-size) / 2);
+					}
+				}
 			}
 
 			// Main navigation
-			.navigation-main {
+			.navigation {
 
 				// Navigation items
 				> li {
@@ -977,38 +1150,23 @@
 							position: absolute;
 							top: 0;
 							right: -(@sidebar-base-width);
-							background-color: @navigation-dark-active-bg;
-							border-color: @navigation-dark-active-bg;
-							padding: inherit;
-							padding-left: @content-padding-large;
-							padding-right: @content-padding-large;
+							background-color: @navigation-dark-active-label-bg;
+							padding: @navigation-padding-base-vertical @navigation-padding-base-horizontal;
 							width: @sidebar-base-width;
 							text-align: left;
-							color: #fff;
+							color: @navigation-dark-active-label-color;
+							cursor: pointer;
 							.border-right-radius(@border-radius-base);
+							.box-shadow(@shadow-depth1);
 
-							// Arrow
-							&:after {
-								@arrow-size: 5px; // Use inline variable
-								content: "";
-								width: 0;
-								height: 0;
-								border-right: @arrow-size solid;
-								border-top: @arrow-size solid transparent;
-								border-bottom: @arrow-size solid transparent;
-								border-right-color: inherit;
-								position: absolute;
-								left: -(@arrow-size);
-								top: 50%;
-								margin-top: -@arrow-size;
-							}
-
-							// No color dependency - make all labela and badges white
+							// Label/badge
 							.label,
 							.badge {
 								background-color: transparent;
 								border-color: transparent;
-								color: #fff;
+								color: @navigation-dark-active-label-color;
+								padding-left: 0;
+								padding-right: 0;
 							}
 						}
 
@@ -1017,6 +1175,11 @@
 							margin: 2px 0;
 							display: block;
 							float: none;
+						}
+
+						// Allow overflow in ripple
+						&.legitRipple {
+							overflow: visible;
 						}
 					}
 
@@ -1030,6 +1193,7 @@
 					.has-ul {
 						> span {
 							border-radius: 0 @border-radius-base 0 0;
+							cursor: default;
 						}
 					}
 
@@ -1062,7 +1226,6 @@
 						> a {
 							> span {
 								display: block;
-								cursor: default;
 							}
 						}
 
@@ -1081,27 +1244,26 @@
 						width: @sidebar-base-width;
 						display: none;
 						background-color: @sidebar-dark-bg;
-						border-left: 1px solid fade(#fff, 10%);
 						border-radius: 0 0 @border-radius-base 0;
+						.box-shadow(@shadow-depth1);
 
 						> li {
 							> a {
-								padding-left: @content-padding-large;
-								padding-right: @content-padding-large;
+								padding-left: @navigation-padding-base-horizontal;
+								padding-right: @navigation-padding-base-horizontal;
 							}
 
 							> ul > li {
 								> a {
-									padding-left: (@content-padding-large * 1.5);
+									padding-left: (@navigation-padding-base-horizontal * 1.5);
 								}
 
 								> ul > li {
 									> a {
-										padding-left: (@content-padding-large * 3);
+										padding-left: (@navigation-padding-base-horizontal * 3);
 									}
 								}
 							}
-
 						}
 					}
 				}
@@ -1182,25 +1344,33 @@
 		}
 
 		// Inside light sidebar
-		.sidebar-default {
-			.navigation-main {
-				> li {
-					> a > span {
-						background-color: @navigation-light-active-bg;
-						border-color: @navigation-light-active-bg;
-					}
-					
-					> ul {
-						background-color: @sidebar-light-bg;
-						border: 1px solid @panel-default-border;
-						border-top: 0;
-					}
+		.sidebar-main {
+			&.sidebar-default {
+				.navigation {
+					> li {
+						> a > span {
+							background-color: @navigation-light-active-label-bg;
+							color: @navigation-light-active-label-color;
+													
+							// Label/badge
+							.label,
+							.badge {
+								color: @navigation-light-active-label-color;
+							}
+						}
+						
+						// Children list
+						> ul {
+							background-color: @sidebar-light-bg;
+							border-top: 0;
+						}
 
-					// Keep item highlighted on hover (light sidebar)
-					&:hover {						
-						&:not(.active) > a {
-							background-color: @dropdown-link-hover-bg;
-							color: @text-color;
+						// Keep item highlighted on hover (light sidebar)
+						&:hover {						
+							&:not(.active) > a {
+								background-color: @dropdown-link-hover-bg;
+								color: @text-color;
+							}						
 						}
 					}
 				}

@@ -4,8 +4,8 @@
 *
 *  Specific JS code additions for datatable_extension_buttons_print.html page
 *
-*  Version: 1.0
-*  Latest update: Nov 9, 2015
+*  Version: 1.1
+*  Latest update: Mar 6, 2016
 *
 * ---------------------------------------------------------------------------- */
 
@@ -79,18 +79,15 @@ $(function() {
     // Export options - row selector
     $('.datatable-button-print-rows').DataTable({
         buttons: {
-            dom: {
-                button: {
-                    className: 'btn btn-default'
-                }
-            },
             buttons: [
                 {
                     extend: 'print',
+                    className: 'btn btn-default',
                     text: '<i class="icon-printer position-left"></i> Print all'
                 },
                 {
                     extend: 'print',
+                    className: 'btn btn-default',
                     text: '<i class="icon-checkmark3 position-left"></i> Print selected',
                     exportOptions: {
                         modifier: {

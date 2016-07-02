@@ -4,8 +4,8 @@
 *
 *  Display default and custom components in page header and panel heading
 *
-*  Version: 1.1
-*  Latest update: Oct 20, 2015
+*  Version: 1.2
+*  Latest update: Mar 10, 2016
 *
 * ---------------------------------------------------------------------------- */
 
@@ -65,6 +65,11 @@
     margin-top: -(@input-height-base / 2);
 }
 
+
+//
+// Inside panel
+//
+
 // Inside panel body
 .panel-body {
     > .heading-elements {
@@ -73,6 +78,7 @@
         z-index: 10;
     }
 
+    // Mobile view
     @media (max-width: @screen-xs-max) {
         > .heading-elements-toggle {
             top: @panel-body-padding;
@@ -82,6 +88,114 @@
         > .heading-elements.visible {
             top: ((@panel-body-padding * 2) + @icon-font-size);
             background-color: @panel-bg;
+        }
+    }
+}
+
+// Inside panel footer
+.panel-footer {
+    > .heading-elements {
+        @media (min-width: @screen-sm-min) {
+            position: static;
+            margin-top: 0;
+        }
+    }
+
+    // Mobile view
+    @media (max-width: @screen-xs-max) {
+        > .heading-elements > .pull-right {
+            float: none!important;
+        }
+
+        // Toggle button
+        .heading-elements-toggle {
+            position: static;
+            padding-top: @content-padding-small;
+            padding-bottom: @content-padding-small;
+            margin-top: 0;
+            display: block;
+            text-align: center;
+        }
+    }
+}
+
+// Inside bordered panel footer
+.panel-footer-bordered {
+    @media (min-width: @screen-sm-min) {
+        .heading-elements {
+            margin-left: -(@content-padding-large);
+        }
+    }
+}
+
+
+//
+// Heading thumbnails
+//
+
+.heading-thumbnails {
+    list-style: none;
+    margin: 0;
+    padding: 0;
+    font-size: 0;
+
+    // Items
+    > li {
+        position: relative;
+        display: inline-block;
+        font-size: @font-size-base;
+
+        // Multiple items
+        + li {
+            margin-left: 10px;
+        }
+
+        // Images
+        img {
+            height: auto;
+            max-height: @input-height-base;
+            max-width: 100%;
+            border-radius: 100px;
+        }
+
+        // Labels and badges
+        .label,
+        .badge {
+            position: absolute;
+            top: -8px;
+            right: -8px;
+            border: 2px solid @panel-footer-bg;
+
+            // Inside transparent panel footer
+            .panel-default > .panel-heading &,
+            .panel-footer-transparent & {
+                border-color: @panel-bg;
+            }
+        }
+
+        // Status mark
+        .status-mark {
+            position: absolute;
+            top: 0;
+            right: 0;
+            box-shadow: 0 0 0 2px @panel-footer-bg;
+
+            // Add background color if circle
+            &[class*=border-] {
+                background-color: @panel-footer-bg;
+
+                // Inside transparent panel footer
+                .panel-default > .panel-heading &,
+                .panel-footer-transparent & {
+                    background-color: @panel-bg;
+                }
+            }
+
+            // Inside transparent panel footer
+            .panel-default > .panel-heading &,
+            .panel-footer-transparent & {
+                background-color: @panel-bg;
+            }
         }
     }
 }
@@ -96,7 +210,19 @@
     .heading-btn + .heading-btn,
     .page-header & .icons-list > li + li,
     .thumbnail-heading & .icons-list > li + li {
-        margin-left: 10px;
+        margin-left: (@content-padding-large / 2);
+    }
+
+    // Button link inside dark page header
+    .page-header-inverse & {
+        .btn-link {
+            color: #fff;
+        }
+    }
+
+    // List
+    .list-inline {
+        margin-bottom: 0;
     }
 
     // Remove margin from paginations
@@ -108,22 +234,15 @@
 
     // Breadcrumb inside page header
     .breadcrumb {
-        padding-top: (@padding-base-vertical + 1);
-        padding-bottom: (@padding-base-vertical + 1);
+        padding-top: 0;
+        padding-bottom: 0;
     }
 
     // Align text left in panel tabs/pills
-    &.panel-tabs,
-    &.panel-pills {
+    &.panel-nav {
         .nav > li > a {
             text-align: left;
         }
-    }
-
-    // Remove extra vertical spacing from float links
-    .btn-float.btn-link {
-        padding-top: 0;
-        padding-bottom: 0;
     }
 
     // Custom date range display
@@ -131,11 +250,12 @@
         margin-top: ((@input-height-base - 28px) / 2); // half of elements general height - font size
     }
 
+    // Button group
     .heading-btn-group {
         font-size: 0;
 
         > .btn + .btn:not(.btn-link) {
-            margin-left: 10px;
+            margin-left: (@content-padding-large / 2);
         }
     }
 
@@ -157,6 +277,7 @@
         .pager,
         .breadcrumb,
         .daterange-custom,
+        .heading-thumbnails,
         .heading-form .form-group,
         > .btn-group {
             margin-bottom: @line-height-computed;
@@ -187,8 +308,8 @@
 
         // Make dropdown menus full width
         .dropdown-menu {
-            left: -1px;
-            right: -1px;
+            left: 0;
+            right: 0;
             margin-top: 0;
             .border-top-radius(0);
         }
@@ -212,9 +333,10 @@
         .pager,
         .heading-form,
         .daterange-custom,
+        .heading-thumbnails,
         > .btn-group {
             float: left;
-            margin-left: @grid-gutter-width;
+            margin-left: @content-padding-large;
         }
 
         // Heading text
@@ -222,7 +344,7 @@
             display: inline-block;
 
             & + .heading-text {
-                margin-left: @grid-gutter-width;
+                margin-left: @content-padding-large;
             }
         }
 
@@ -232,7 +354,6 @@
         .progress,
         .ui-slider,
         .noui-slider,
-        .uploader,
         .input-group,
         .selectboxit-container .selectboxit-options,
         .heading-form .form-control {
@@ -271,16 +392,16 @@
 
         // Floating buttons
         .btn-float {
-            margin-top: ((@input-height-base - ((@btn-float-padding * 2) + @icon-font-size + 2)) / 2); // Difference between base height and button height
+            margin-top: (((@input-height-base - ((@btn-float-padding * 2) + @icon-font-size)) / 2)); // Difference between base height and button height
 
             // If has text
             &.has-text {
-                margin-top: ((@input-height-base - ((@btn-float-padding * 2) + @icon-font-size + @line-height-computed + 5)) / 2); // Difference between base height and button height with text
+                margin-top: (((@input-height-base - ((@btn-float-padding * 2) + @icon-font-size + @line-height-computed + 5)) / 2)); // Difference between base height and button height with text
             }
 
             // If float link
             &.btn-link {
-                margin-top: ((@input-height-base - (@icon-font-size + @line-height-computed + 5 + 2)) / 2); // Float links don't have vertical paddings
+                margin-top: (((@input-height-base - (@icon-font-size + @line-height-computed + (@btn-float-padding * 2) - 6)) / 2));
             }
         }
 
@@ -334,57 +455,40 @@
 
         // Icons list
         .icons-list {
-            margin-top: ((@line-height-computed / 2) - 1);
+            margin-top: ((@input-height-base - @icon-font-size) / 2);
         }
 
         // Text
         .heading-text {
-            margin-top: ((@line-height-computed / 2) - 2);
+            margin-top: ((@input-height-base - @line-height-computed) / 2);
         }
 
-        // Tabs
-        &.panel-tabs {
-            bottom: 0;
-            top: auto;
-            height: auto;
-            margin-top: 0;
+        // Panel navs
+        &.panel-nav {
 
+            // Navs
+            > .nav {
+                margin-bottom: 0;
+                margin-top: ((@input-height-base - (((@padding-base-vertical + 2) * 2) + @line-height-computed)) / 2);
+            }
+
+            // Tabs
             > .nav-tabs {
                 border-bottom: 0;
-                margin-bottom: 0;
 
-                > li > a {
-                    padding: @panel-heading-padding;
+                &.nav-tabs-bottom > li.active > a:after {
+                    background-color: transparent;
                 }
-            }
-
-            // Inside flat panel
-            .panel-flat & {
-                bottom: auto;
-                top: 0;
-
-                > .nav-tabs > li > a {
-                    padding-top: @content-padding-large;
-                    padding-bottom: @content-padding-large;
-                }
-            }
-        }
-
-        // Pills
-        &.panel-pills {
-            > .nav-pills {
-                margin-bottom: 0;
-                margin-top: -1px;
             }
 
             // Small pills
-            .nav-sm {
-                margin-top: 1px;
+            > .nav-sm {
+                margin-top: ((@input-height-base - ((@padding-small-vertical * 2) + @line-height-computed)) / 2);
             }
 
             // Mini pills
-            .nav-xs {
-                margin-top: 3px;
+            > .nav-xs {
+                margin-top: ((@input-height-base - (((@padding-xs-vertical - 2) * 2) + @line-height-computed)) / 2);
             }
         }
     }
@@ -411,10 +515,15 @@
 
     // Input group
     .input-group {
+        max-width: 220px;
+
+        // Inputs
         .form-control {
             width: 100%;
             margin-top: 0;
         }
+
+        // Buttons
         &.input-group-sm .btn,
         &.input-group-xs .btn {
             margin-top: 0;
@@ -424,8 +533,9 @@
     // Setup desktop view
     @media (min-width: @screen-sm-min) {
         .form-group {
-            display: inline-block;
+            float: left;
 
+            // Multiple groups
             & + .form-group {
                 margin-left: @content-padding-base;
             }
@@ -434,7 +544,7 @@
         // Radios and checkboxes
         .checkbox-inline,
         .radio-inline {
-            margin-top: ((@line-height-computed / 2) - 2);
+            margin-top: ((@input-height-base - @line-height-computed) / 2);
         }
 
         // Checkbox switch
@@ -474,11 +584,12 @@
             margin-top: 0;
             top: 100%;
             height: auto;
-            left: -1px;
-            right: -1px;
+            left: 0;
+            right: 0;
             padding: @content-padding-large;
             padding-bottom: 0;
-            border: 1px solid @panel-default-border;
+            border-top: 1px solid @panel-default-border;
+            border-bottom: 1px solid @panel-default-border;
             z-index: (@zindex-navbar - 3);
         }
     }
@@ -487,7 +598,6 @@
     .panel[class*=bg-],
     .panel-heading[class*=bg-] {
         .heading-elements.visible {
-            border-width: 1px 0;
             border-color: fade(#fff, 50%);
             left: 0;
             right: 0;
@@ -498,20 +608,49 @@
     // Page header elements
     .page-header {
         .heading-elements {
-            background-color: #fcfcfc;
-
             &.visible {
-                border-width: 1px 0;
+                background-color: @body-bg;
                 left: 0;
                 right: 0;
-                z-index: (@zindex-navbar - 2);
+                border-color: darken(@body-bg, 5%);
+                border-bottom-width: 0;
+                z-index: (@zindex-navbar + 2);
+                .box-shadow(@shadow-depth1);
+            }
+        }
+        
+        // Default page header
+        &-default {
+            .heading-elements.visible {
+                background-color: inherit;
+                border-color: @panel-default-border;
+            }
+        }
+
+        // Inversed page header
+        &-inverse {
+            .heading-elements.visible {
+                background-color: inherit;
+                border-color: fade(#fff, 10%);
+            }
+        }
+    }
+
+    // Panel footer elements
+    .panel-footer-transparent {
+        .heading-elements {
+            &.visible {
+                background-color: @panel-bg;
             }
         }
     }
 
     // Breadcrumb elements
     .breadcrumb-elements.visible {
+        background-color: inherit;
         padding: 0;
         z-index: 9;
+        border-width: 0;
+        .box-shadow(@shadow-depth1);
     }
 }

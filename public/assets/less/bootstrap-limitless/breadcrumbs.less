@@ -117,14 +117,6 @@
             padding-bottom: 3px;
         }
 
-        // Mute links
-        > li {
-            > a,
-            + li:before {
-                color: @color-grey-500;
-            }
-        }
-
         // Add left spacing if title has icon
         &.position-right {
             margin-left: (@icon-font-size + @element-horizontal-spacing + 5);
@@ -178,11 +170,9 @@
 // Base
 .breadcrumb-line {
     position: relative;
-    background-color: #fafafa;
-    border: 1px solid @panel-inner-border;
-    border-radius: @border-radius-base;
-    margin-bottom: @line-height-computed;
-    .box-shadow(0 1px 1px fade(#000, 5%));
+    padding-left: @grid-gutter-width;
+    padding-right: @grid-gutter-width;
+    .box-shadow(@shadow-depth1);
 
     // Clearing floats
     &:after {
@@ -192,19 +182,27 @@
     }
 
     // Inside page header (all levels)
-    .page-header & {
-        margin-left: @grid-gutter-width;
-        margin-right: @grid-gutter-width;
-
-        &:first-child {
-            margin-top: @line-height-computed;
-            margin-bottom: 0;
-        }
+    .page-header &:first-child {
+        z-index: (@zindex-navbar - 6);
     }
 
+    // In page header
+    &:not([class*=bg-]) {
+        background-color: @page-header-default-bg;
+    }
+    
+    // After page header content
+    .page-header-content + & {
+        margin-bottom: @line-height-computed;        
+    }
+
+    // Darken inside white header
+    .page-header-default &:not([class*=bg-]) {
+        background-color: @panel-footer-bg;
+    }
+    
     // Breadcrumb
     .breadcrumb {
-        margin-left: @content-padding-base;
         margin-right: ((@content-padding-base * 2) + @icon-font-size);
 
         @media (min-width: @grid-float-breakpoint) {
@@ -216,54 +214,53 @@
     // Z-index correction for mobiles
     @media (max-width: @grid-float-breakpoint-max) {
         z-index: (@zindex-navbar - 2);
+        background-color: inherit;
     }
 }
 
-// Full width line
-.breadcrumb-line-wide {
-    margin-left: 0;
-    margin-right: 0;
-    border-radius: 0;
-    border-width: 1px 0;
 
-    // Inside page header
-    .page-header & {
-        margin-left: 0;
-        margin-right: 0;
+// Inside colored page header
+.page-header-default,
+.page-header-inverse {
 
-        // If first, remove top border and margin
-        &:first-child {
-            margin-top: 0;
-            border-top-width: 0;
-        }
+    // Add top border and remove shadow in colored header
+    .page-header-content + .breadcrumb-line {
+        border-top: 1px solid @panel-default-border;
+        margin-bottom: 0;
+        .box-shadow(none);
     }
 
-    // In filled page header
-    .page-header-filled & {
-        border-bottom-width: 0;
-        margin-bottom: 0;
+    // Always display shadow in component
+    .page-header-content + .breadcrumb-line-component {
+        border-width: 0;
+        .box-shadow(@shadow-depth1);
+    }
+}
 
-        &:first-child {
-            border-bottom-width: 1px;
-        }
+
+// As a component
+.breadcrumb-line-component {
+    border-radius: @border-radius-base;
+    padding-left: 0;
+    padding-right: 0;
+    
+    // Set colors
+    &:not([class*=bg-]) {
+        background-color: @panel-bg;
     }
 
     // Adjust horizontal spacing of breadcrumb
     .breadcrumb {
         margin-left: @grid-gutter-width;
     }
-
-    // Adjust horizontal spacing of breadcrumb elements
-    @media (min-width: @grid-float-breakpoint) {
-        .breadcrumb-elements {
-            margin-right: @grid-gutter-width;
-
-            .dropdown-menu {
-                right: 0;
-            }
-        }
+    
+    // Inside page header
+    .page-header & {
+        margin-left: @grid-gutter-width;
+        margin-right: @grid-gutter-width;
     }
 }
+
 
 // Line with custom bg color
 .breadcrumb-line[class*=bg-] {
@@ -280,6 +277,11 @@
             color: fade(#fff, 75%);
         }
     }
+}
+
+
+// In dark containers
+.breadcrumb-line[class*=bg-] {
 
     // Breadcrumb elements
     .breadcrumb-elements {
@@ -288,14 +290,14 @@
         // Element items
         > li {
             > a {
-                color: #fff;
+                color: fade(#fff, 90%);
             }
 
             // Highlight on hover
             &.open > a,
             > a:hover,
             > a:focus {
-                background-color: fade(#000, 10%);
+                color: #fff;
             }
         }
     }
@@ -337,7 +339,11 @@
         &.open > a,
         > a:hover,
         > a:focus {
-            background-color: #fafafa;
+            background-color: darken(@panel-footer-bg, 1%);
+
+            .breadcrumb-line[class*=bg-] & {
+                background-color: fade(#fff, 10%);
+            }
         }
     }
 
@@ -345,17 +351,14 @@
     .dropdown-menu {
         margin-top: 0;
         left: auto;
-        right: -1px;
+        right: 0;
         .border-top-radius(0);
 
         // Mobile view
         @media (max-width: @screen-xs-max) {
-            left: -1px;
+            left: 0;
 
-            .breadcrumb-line-wide & {
-                border-radius: 0;
-            }
-
+            // Links
             > li > a {
                 padding-left: @content-padding-base;
                 padding-right: @content-padding-base;
@@ -383,11 +386,13 @@
         text-align: inherit;
         border-top: 0;
 
+        // Collapse
         &.collapse {
             display: block;
             visibility: visible;
         }
 
+        // Items
         > li {
             float: left;
 
@@ -395,15 +400,15 @@
             .btn-group {
                 position: relative;
             }
+
+            .breadcrumb-line-component &:last-child > a {
+                .border-right-radius(@border-radius-base);
+            }
         }
 
+        // Hide collapsible toggler
         [data-toggle="collapse"] {
             display: none;
-        }
-
-        // Round right corners in last item
-        .breadcrumb-line:not(.breadcrumb-line-wide) & > li:last-child > a {
-            .border-right-radius(@border-radius-base);
         }
     }
 

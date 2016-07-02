@@ -4,8 +4,8 @@
 *
 *  In-place editing with Twitter Bootstrap, jQuery UI or pure jQuery
 *
-*  Version: 1.0
-*  Latest update: May 25, 2015
+*  Version: 1.1
+*  Latest update: Mar 10, 2016
 *
 * ---------------------------------------------------------------------------- */
 
@@ -42,7 +42,7 @@
 
     // Set min width to the input field
     .form-control {
-        min-width: 150px;
+        min-width: 200px;
     }
 
     // Checkbox, radio
@@ -63,7 +63,7 @@
 .editable-buttons {
     display: inline-block;
     vertical-align: top;
-    margin-left: 5px;
+    margin-left: @element-horizontal-spacing;
 
     &.editable-buttons-bottom {
         display: block;
@@ -73,7 +73,7 @@
     }
 
     .editable-cancel {
-        margin-left: 5px; 
+        margin-left: @element-horizontal-spacing; 
     }
 }
 
@@ -97,6 +97,11 @@
     // Elastic textarea
     .elastic {
         height: 100px;
+    }
+
+    // Inline datepicker
+    .datepicker-inline {
+        padding: (@list-spacing * 2);
     }
 }
 
@@ -154,7 +159,7 @@
 // Clear input button
 .editable-clear-x {
     position: absolute;
-    right: @padding-base-horizontal - 3;
+    right: 0;
     top: ((@input-height-base - @icon-font-size) / 2);
     line-height: 1;
     cursor: pointer;

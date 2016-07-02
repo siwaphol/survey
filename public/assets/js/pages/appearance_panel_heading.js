@@ -42,7 +42,7 @@ $(function() {
 
     // SelectBoxIt dropdowns
     $(".selectbox").selectBoxIt({
-        autoWidth: false 
+        autoWidth: false
     });
 
 
@@ -53,7 +53,7 @@ $(function() {
     // Select2 selects
     $('.select').select2({
         minimumResultsForSearch: Infinity,
-        width: 200
+        width: 150
     });
 
 
@@ -105,8 +105,8 @@ $(function() {
 
     // Single file uploader
     $('.file-styled').uniform({
-        fileButtonHtml: '<i class="icon-googleplus5"></i>',
-        wrapperClass: 'bg-warning'
+        fileClass: 'uploader uploader-xs',
+        fileButtonClass: 'action btn bg-blue btn-xs'
     });
 
 

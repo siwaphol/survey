@@ -4,8 +4,8 @@
 *
 *  Styles for listbox.js - A responsive dual listbox widget optimized for Bootstrap
 *
-*  Version: 1.0
-*  Latest update: May 25, 2015
+*  Version: 1.1
+*  Latest update: Mar 10, 2016
 *
 * ---------------------------------------------------------------------------- */
 
@@ -24,28 +24,23 @@
         margin-bottom: @line-height-computed;
     }
 
-    // Select
-    select.form-control {
-        padding: @list-spacing;
-    }
-    option {
-        display: block;
-        padding: @padding-base-vertical @padding-base-horizontal;
-        border-radius: @border-radius-small;
-    }
-
     // Move option on select
     &.moveonselect {
+
+        // Hide "Move single" button
         .move,
         .remove {
             display: none;
         }
 
+        // Visible buttons
         .moveall,
         .removeall {
             width: 100%;
+            border-radius: @border-radius-base!important;
         }
 
+        // Add border to the next buttons
         .btn-group {
             .btn + .btn {
                 border-left-width: 1px;
@@ -61,7 +56,6 @@
     // Main buttons
     .buttons {
         width: 100%;
-        margin-bottom: -1px;
     }
 
     // Clear buttons
@@ -70,6 +64,7 @@
         display: none;
         margin-top: @line-height-computed;
 
+        // Reset styles
         &,
         &:hover,
         &:focus {
@@ -96,12 +91,13 @@
     // Button group
     .btn-group .btn {
         margin: 0;
-        .border-bottom-radius(0);
 
+        // Borders
         & + .btn {
             border-left-width: 0;
         }
 
+        // Icons
         > i {
             float: none;
             text-align: center;
@@ -150,8 +146,6 @@
         }
 
         .box1 {
-            padding-bottom: 5px;
-
             &:after {
                 content: '\e9c9';
                 font-size: @icon-font-size;

@@ -4,8 +4,8 @@
 *
 *  Specific JS code additions for datatable_extension_colvis.html page
 *
-*  Version: 1.1
-*  Latest update: Nov 10, 2015
+*  Version: 1.2
+*  Latest update: Mar 6, 2016
 *
 * ---------------------------------------------------------------------------- */
 
@@ -92,26 +92,24 @@ $(function() {
     // Column groups
     $('.datatable-colvis-group').DataTable({
         buttons: {
-            dom: {
-                button: {
-                    className: 'btn btn-default'
-                }
-            },
             buttons: [
                 {
                     extend: 'colvisGroup',
                     text: 'Office info',
+                    className: 'btn btn-default',
                     show: [0, 1, 2],
                     hide: [3, 4, 5]
                 },
                 {
                     extend: 'colvisGroup',
+                    className: 'btn btn-default',
                     text: 'HR info',
                     show: [3, 4, 5],
                     hide: [0, 1, 2]
                 },
                 {
                     extend: 'colvisGroup',
+                    className: 'btn btn-default',
                     text: 'Show all',
                     show: ':hidden'
                 }

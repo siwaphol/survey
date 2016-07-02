@@ -4,7 +4,15 @@
     <meta name="csrf-token" content="{{ csrf_token() }}">
     <title>Laravel</title>
     <meta name="viewport" content="width=device-width, initial-scale=1">
+    {{--<link href="{{asset('assets/css/bootstrap.css')}}" rel="stylesheet" type="text/css">--}}
+    <!-- Global stylesheets -->
+    <link href="https://fonts.googleapis.com/css?family=Roboto:400,300,100,500,700,900" rel="stylesheet" type="text/css">
+    {{--<link href="{{asset('assets/css/icons/icomoon/styles.css')}}" rel="stylesheet" type="text/css">--}}
     <link href="{{asset('assets/css/bootstrap.css')}}" rel="stylesheet" type="text/css">
+    {{--<link href="{{asset('assets/css/core.css')}}" rel="stylesheet" type="text/css">--}}
+    {{--<link href="{{asset('assets/css/components.css')}}" rel="stylesheet" type="text/css">--}}
+    {{--<link href="{{asset('assets/css/colors.css')}}" rel="stylesheet" type="text/css">--}}
+    <!-- /global stylesheets -->
     <!-- Angular Material style sheet -->
     <link rel="stylesheet" href="http://ajax.googleapis.com/ajax/libs/angular_material/1.1.0-rc2/angular-material.min.css">
 
@@ -15,6 +23,9 @@
     </style>
 </head>
 <body ng-app="testAngular">
+
+@include('partials._navbar')
+
 <div class="container">
     <div class="content" ng-controller="AppCtrl">
         <div class="row">
@@ -47,8 +58,16 @@
     </div>
 </div>
 
+{{--<script type="text/javascript" src="{{asset('assets/js/core/libraries/jquery.min.js')}}"></script>--}}
+{{--<script type="text/javascript" src="{{asset('assets/js/core/libraries/bootstrap.min.js')}}"></script>--}}
+<!-- Core JS files -->
+{{--<script type="text/javascript" src="{{asset('assets/js/plugins/loaders/pace.min.js')}}"></script>--}}
 <script type="text/javascript" src="{{asset('assets/js/core/libraries/jquery.min.js')}}"></script>
 <script type="text/javascript" src="{{asset('assets/js/core/libraries/bootstrap.min.js')}}"></script>
+{{--<script type="text/javascript" src="{{asset('assets/js/plugins/loaders/blockui.min.js')}}"></script>--}}
+{{--<script type="text/javascript" src="{{asset('assets/js/core/app.js')}}"></script>--}}
+<!-- /core JS files -->
+
 <!-- Angular Material requires Angular.js Libraries -->
 <script src="http://ajax.googleapis.com/ajax/libs/angularjs/1.5.3/angular.min.js"></script>
 <script src="http://ajax.googleapis.com/ajax/libs/angularjs/1.5.3/angular-animate.min.js"></script>
@@ -103,5 +122,6 @@
         }
     });
 </script>
+
 </body>
 </html>

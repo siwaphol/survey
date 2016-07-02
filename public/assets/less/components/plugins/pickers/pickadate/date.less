@@ -4,8 +4,8 @@
 *
 *  The mobile-friendly, responsive, and lightweight jQuery date & time input picker
 *
-*  Version: 1.0
-*  Latest update: May 25, 2015
+*  Version: 1.1
+*  Latest update: Mar 10, 2016
 *
 * ---------------------------------------------------------------------------- */
 
@@ -15,16 +15,17 @@
 
 // Picker box
 .picker__box {
-    padding: 5px;
+    padding: (@list-spacing * 2);
 }
 
 // Header
 .picker__header {
     text-align: center;
     position: relative;
-    font-size: @font-size-h6;
-    padding-top: 15px;
-    padding-bottom: 15px;
+    font-size: @font-size-h5;
+    line-height: 1;
+    padding-top: @content-padding-base;
+    padding-bottom: @content-padding-base;
 }
 
 
@@ -34,15 +35,13 @@
 // Month and year labels
 .picker__month,
 .picker__year {
-    font-weight: 500;
     display: inline-block;
     margin-left: 5px;
     margin-right: 5px;
 }
 .picker__year {
     color: @text-muted;
-    font-size: @font-size-small;
-    font-weight: normal;
+    font-size: @font-size-base;
 }
 
 
@@ -61,7 +60,7 @@
     width: 35%;
 }
 .picker__select--year {
-    width: 22.5%;
+    width: 35%;
 }
 
 
@@ -137,7 +136,7 @@
     table-layout: fixed;
     font-size: inherit;
     width: 100%;
-    margin-bottom: 10px;
+    margin-bottom: (@list-spacing * 2);
 
     td {
         margin: 0;
@@ -150,7 +149,8 @@
     width: 14.285714286%;
     font-size: @font-size-small;
     text-align: center;
-    padding-bottom: 10px;
+    padding-bottom: @content-padding-small;
+    padding-top: (@list-spacing * 2);
     color: @text-muted;
     font-weight: 400;
 }
@@ -245,7 +245,7 @@
     button {
         border: 0;
         background: #fff;
-        padding: @padding-base-vertical @padding-base-horizontal;
+        padding: @padding-small-vertical @padding-small-horizontal;
         border-radius: @border-radius-base;
         font-weight: 500;
         cursor: pointer;
@@ -280,6 +280,7 @@
     position: relative;
     margin-right: 5px;
     top: 1px;
+    line-height: 1;
     font-size: @icon-font-size;
 }
 .picker__button--clear:before {

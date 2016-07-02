@@ -5,11 +5,26 @@
 *  Specific JS code additions for components_modals.html page
 *
 *  Version: 1.0
-*  Latest update: Aug 1, 2015
+*  Latest update: Jan 25, 2016
 *
 * ---------------------------------------------------------------------------- */
 
 $(function() {
+
+
+    // Basic modals
+    // ------------------------------
+
+    // Load remote content
+    $('#modal_remote').on('show.bs.modal', function() {
+        $(this).find('.modal-body').load('assets/demo_data/wizard/education.html', function() {
+
+            // Init Select2 when loaded
+            $('.select').select2({
+                minimumResultsForSearch: Infinity
+            });
+        });
+    });
 
 
     // Bootbox extension
@@ -37,7 +52,6 @@ $(function() {
             }
         });
     });
-
 
 
     // Modal callbacks
@@ -71,7 +85,6 @@ $(function() {
         });
     });
     
-
 
     // Sweet Alert extension
     // ------------------------------
@@ -240,5 +253,4 @@ $(function() {
             }
         });
     });
-
 });

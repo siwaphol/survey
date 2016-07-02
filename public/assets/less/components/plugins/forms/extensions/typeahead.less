@@ -4,8 +4,8 @@
  *
  *  Styles for typeahead.bundle.min.js - input suggestion engine
  *
- *  Version: 1.1
- *  Latest update: Oct 20, 2015
+ *  Version: 1.2
+ *  Latest update: Mar 10, 2016
  *
  * ---------------------------------------------------------------------------- */
 
@@ -38,15 +38,15 @@
 	margin-top: 1px;
 	min-width: 180px;
 	padding: @list-spacing 0;
-	background-color: #fff;
-	border: 1px solid @dropdown-border;
+	background-color: @dropdown-bg;
 	border-radius: @border-radius-base;
 	max-height: 300px;
 	overflow-y: auto;
-	.box-shadow(0 1px 3px fade(#000, 10%));
+	.box-shadow(@shadow-depth2);
 
+	// Scrollable
 	.typeahead-scrollable & {
-		max-height: 150px;
+		max-height: 250px;
 	}
 
 	// RTL
@@ -57,7 +57,7 @@
 
 // Menu item
 .tt-suggestion {
-	padding: (@padding-base-vertical + 1) @content-padding-base;
+	padding: @padding-base-vertical @padding-base-horizontal;
 	cursor: pointer;
 
 	// Hover state bg color
@@ -65,6 +65,7 @@
 		background-color: @dropdown-link-hover-bg;
 	}
 
+	// Remove margin from paragraphs
 	p {
 		margin: 0;
 	}
@@ -80,16 +81,16 @@
 .tt-heading {
 	font-size: @font-size-mini;
 	line-height: @line-height-mini;
-	padding: (@padding-base-vertical + 1) @content-padding-base;
+	padding: @padding-base-vertical @padding-base-horizontal;
 	text-transform: uppercase;
 	display: block;
-	font-weight: 500;
+	font-weight: 700;
     margin-top: 2px;
     margin-bottom: 2px;
 }
 
 // Add padding for empty message
 .typeahead-template .empty-message {
-	padding: (@padding-base-vertical + 1) @content-padding-base;
+	padding: @padding-base-vertical @padding-base-horizontal;
 	text-align: center;
 }

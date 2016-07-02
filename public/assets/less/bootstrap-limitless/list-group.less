@@ -4,8 +4,8 @@
 *
 *  Overrides for list groups bootstrap component
 *
-*  Version: 1.0
-*  Latest update: May 25, 2015
+*  Version: 1.1
+*  Latest update: Mar 10, 2016
 *
 * ---------------------------------------------------------------------------- */
 
@@ -20,12 +20,6 @@
     border: 1px solid @list-group-border;
     padding: @list-spacing 0;
     border-radius: @border-radius-base;
-}
-
-// Borderless nav layout
-.list-group-borderless {
-    border: 0;
-    border-radius: 0;
 }
 
 
@@ -88,14 +82,8 @@
         &.pull-right {
             margin-right: 0;
             margin-left: @element-horizontal-spacing;
-            margin-top: (((@line-height-computed - @icon-font-size) / 2) + 1);
+            margin-top: ((@line-height-computed - @icon-font-size) / 2);
         }
-    }
-
-    // 2px difference in height, adding 1px top margin
-    > .badge,
-    > .label {
-        margin-top: 1px;
     }
 }
 

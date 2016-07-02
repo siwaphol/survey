@@ -4,8 +4,8 @@
 *
 *  An all-in-one wizard plugin that is extremely flexible, compact and feature-rich
 *
-*  Version: 1.0
-*  Latest update: May 25, 2015
+*  Version: 1.1
+*  Latest update: Mar 10, 2016
 *
 * ---------------------------------------------------------------------------- */
 
@@ -32,7 +32,7 @@
         padding: 0;
 
         > .body {
-            padding: 0 @panel-body-padding;
+            padding: 0 @content-padding-large;
         }
 
         > iframe {
@@ -76,8 +76,8 @@
                 a {
                     position: relative;
                     padding-top: 48px;
-                    margin-top: @panel-body-padding;
-                    margin-bottom: @panel-body-padding;
+                    margin-top: @line-height-computed;
+                    margin-bottom: @line-height-computed;
                     display: block;
                 }
 
@@ -196,7 +196,7 @@
 
             // Media queries
             @media (max-width: @screen-xs-max) {
-                margin-bottom: @panel-body-padding;
+                margin-bottom: @line-height-computed;
 
                 // Nav item
                 > li {
@@ -271,7 +271,7 @@
         position: relative;
         display: block;
         text-align: right;
-        padding: @panel-body-padding;
+        padding: @content-padding-large;
         padding-top: 0;
 
         // Paging list
@@ -293,7 +293,7 @@
 
                 // Add horizontal spacing
                 & + li {
-                    margin-left: 10px;
+                    margin-left: @content-padding-small;
                 }
 
                 // Button styling
@@ -302,7 +302,9 @@
                     color: #fff;
                     display: block;
                     padding: @padding-base-vertical @padding-base-horizontal;
-                    border-radius: @border-radius-small;
+                    border-radius: @border-radius-base;
+                    text-transform: uppercase;
+                    font-weight: 500;
                     border: 1px solid transparent;
 
                     // Hover state

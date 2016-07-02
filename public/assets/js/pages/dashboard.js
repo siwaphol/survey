@@ -451,7 +451,7 @@ $(function() {
         $(window).on('resize', resizeStream);
 
         // Call function on sidebar width change
-        $('.sidebar-control').on('click', resizeStream);
+        $(document).on('click', '.sidebar-control', resizeStream);
 
         // Resize function
         // 
@@ -850,7 +850,7 @@ $(function() {
             $(window).on('resize', appSalesResize);
 
             // Call function on sidebar width change
-            $('.sidebar-control').on('click', appSalesResize);
+            $(document).on('click', '.sidebar-control', appSalesResize);
 
             // Resize function
             // 
@@ -1125,7 +1125,7 @@ $(function() {
             $(window).on('resize', resizeHeatmap);
 
             // Call function on sidebar width change
-            $('.sidebar-control').on('click', resizeHeatmap);
+            $(document).on('click', '.sidebar-control', resizeHeatmap);
 
             // Resize function
             // 
@@ -1462,7 +1462,7 @@ $(function() {
             $(window).on('resize', monthlySalesAreaResize);
 
             // Call function on sidebar width change
-            $('.sidebar-control').on('click', monthlySalesAreaResize);
+            $(document).on('click', '.sidebar-control', monthlySalesAreaResize);
 
             // Resize function
             // 
@@ -1634,7 +1634,7 @@ $(function() {
             $(window).on('resize', messagesAreaResize);
 
             // Call function on sidebar width change
-            $('.sidebar-control').on('click', messagesAreaResize);
+            $(document).on('click', '.sidebar-control', messagesAreaResize);
 
             // Resize function
             // 
@@ -1861,7 +1861,7 @@ $(function() {
         $(window).on('resize', resizeSparklines);
 
         // Call function on sidebar width change
-        $('.sidebar-control').on('click', resizeSparklines);
+        $(document).on('click', '.sidebar-control', resizeSparklines);
 
         // Resize function
         // 
@@ -2209,7 +2209,7 @@ $(function() {
         $(window).on('resize', revenueResize);
 
         // Call function on sidebar width change
-        $('.sidebar-control').on('click', revenueResize);
+        $(document).on('click', '.sidebar-control', revenueResize);
 
         // Resize function
         // 
@@ -3036,7 +3036,7 @@ $(function() {
         $(window).on('resize', barsResize);
 
         // Call function on sidebar width change
-        $('.sidebar-control').on('click', barsResize);
+        $(document).on('click', '.sidebar-control', barsResize);
 
         // Resize function
         // 
@@ -3437,7 +3437,7 @@ $(function() {
                         $(window).on('resize', resizeBulletsCore);
 
                         // Call function on sidebar width change
-                        $('.sidebar-control').on('click', resizeBulletsCore);
+                        $(document).on('click', '.sidebar-control', resizeBulletsCore);
 
                         // Resize function
                         // 
@@ -3691,7 +3691,7 @@ $(function() {
             $(window).on('resize', bulletResize);
 
             // Call function on sidebar width change
-            $('.sidebar-control').on('click', bulletResize);
+            $(document).on('click', '.sidebar-control', bulletResize);
 
             // Resize function
             // 

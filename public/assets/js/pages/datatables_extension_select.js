@@ -62,11 +62,18 @@ $(function() {
 
     // Checkbox selection
     $('.datatable-select-checkbox').DataTable({
-        columnDefs: [{
-            orderable: false,
-            className: 'select-checkbox',
-            targets:   0
-        }],
+        columnDefs: [
+            {
+                orderable: false,
+                className: 'select-checkbox',
+                targets: 0
+            },
+            {
+                orderable: false,
+                width: '100px',
+                targets: 6
+            }
+        ],
         select: {
             style: 'os',
             selector: 'td:first-child'

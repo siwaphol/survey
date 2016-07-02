@@ -102,11 +102,13 @@ $(function() {
         // Main bottom
         if (vals == 'main_bottom') {
             $('#navbar-main').addClass('navbar-fixed-bottom');
-            $('body').addClass('navbar-bottom')
+            $('body').addClass('navbar-bottom');
+            $('.footer').hide();
         }
         else {
             $('#navbar-main').removeClass('navbar-fixed-bottom');
-            $('body').removeClass('navbar-bottom')
+            $('body').removeClass('navbar-bottom');
+            $('.footer').show();
         }
     });
 
@@ -146,11 +148,12 @@ $(function() {
         if (vals == 'multiple_bottom') {
             $('body').addClass('navbar-bottom-md-xs');
             $('#navbar-main, #navbar-second').wrapAll('<div class="navbar-fixed-bottom" />');
-            
+            $('.footer').hide();
         }
         else {
             $('body').removeClass('navbar-bottom-md-xs');
             $('body').children('.navbar-fixed-bottom').children().unwrap();
+            $('.footer').show();
         }
     });
 

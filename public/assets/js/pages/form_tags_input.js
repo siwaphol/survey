@@ -4,8 +4,8 @@
 *
 *  Specific JS code additions for form_tag_inputs.html page
 *
-*  Version: 1.0
-*  Latest update: Aug 1, 2015
+*  Version: 1.1
+*  Latest update: Mar 10, 2016
 *
 * ---------------------------------------------------------------------------- */
 
@@ -290,7 +290,7 @@ $(function() {
     // Custom tag class
     $('.tagsinput-custom-tag-class').tagsinput({
         tagClass: function(item){
-            return 'label label-success';
+            return 'label bg-success';
         }
     });
 
@@ -422,11 +422,11 @@ $(function() {
     elt2.tagsinput({
         tagClass: function(item) {
             switch (item.continent) {
-                case 'Europe'   : return 'label label-info';
-                case 'America'  : return 'label label-danger';
-                case 'Australia': return 'label label-success';
-                case 'Africa'   : return 'label label-primary';
-                case 'Asia'     : return 'label label-default';
+                case 'Europe'   : return 'label bg-indigo-400';
+                case 'America'  : return 'label bg-danger';
+                case 'Australia': return 'label bg-success';
+                case 'Africa'   : return 'label bg-primary';
+                case 'Asia'     : return 'label bg-pink-400';
             }
         },
         itemValue: 'value',

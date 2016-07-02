@@ -4,8 +4,8 @@
  *
  *  Styles for timeline in 3 layouts: left, right and centered
  *
- *  Version: 1.0
- *  Latest update: May 25, 2015
+ *  Version: 1.1
+ *  Latest update: Dec 11, 2015
  *
  * ---------------------------------------------------------------------------- */
 
@@ -156,6 +156,13 @@
 			margin-right: 5px;
 			position: relative;
 			top: 1px;
+		}
+	}
+
+	@media (min-width: @screen-md) {
+		&:before,
+		&:after {
+			content: none;
 		}
 	}
 }

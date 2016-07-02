@@ -69,7 +69,7 @@ $(function() {
         if(toggleType.checked) {
 
             // Toggle necessary body and navbar classes
-            $('body').children('.navbar').addClass('navbar-fixed-top');
+            $('body').children('.navbar').first().addClass('navbar-fixed-top');
             $('body').addClass('navbar-top');
 
             // Add offset to all
@@ -81,7 +81,7 @@ $(function() {
         else {
 
             // Toggle necessary body and navbar classes
-            $('body').children('.navbar').removeClass('navbar-fixed-top');
+            $('body').children('.navbar').first().removeClass('navbar-fixed-top');
             $('body').removeClass('navbar-top');
 
             // Remove offset from all

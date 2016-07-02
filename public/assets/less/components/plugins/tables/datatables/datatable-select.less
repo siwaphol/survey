@@ -5,8 +5,8 @@
 *  Spreadsheets such as Excel and Google Docs have a very handy data duplication
 *  option of an auto fill tool
 *
-*  Version: 1.0
-*  Latest update: Nov 9, 2015
+*  Version: 1.1
+*  Latest update: Dec 9, 2015
 *
 * ---------------------------------------------------------------------------- */
 
@@ -29,7 +29,7 @@
 .dataTables_wrapper {
     .select-info,
     .select-item {
-        margin-left: 0.5em;
+        margin-left: @content-padding-small;
 
         // On mobile
         @media (max-width: @screen-xs-max) {
@@ -43,14 +43,16 @@
 // Checkbox
 // ------------------------------
 
-.dataTable {
+.dataTable tbody {
+
+    // Chackbox base
     .select-checkbox {
         position: relative;
 
         // Checkbox icon base
         &:before,
         &:after {
-            display: inline-block;
+            display: block;
             color: @color-slate-700;
             position: absolute;
             top: 50%;
@@ -61,24 +63,38 @@
         // Box
         &:before {
             content: '';
-            background-color: #fff;
             width: @checkbox-size;
             height: @checkbox-size;
             margin-top: -(@checkbox-size / 2);
             margin-left: -(@checkbox-size / 2);
             border: @checkbox-border-width solid @color-slate-500;
+            border-radius: @border-radius-small;
         }
 
-        // Checkmark icon
         &:after {
-            content: "\e600";
+            content: "\ed6e";
             font-family: 'icomoon';
             font-size: @icon-font-size;
             line-height: 1;
-            margin-top: -((@checkbox-size - @checkbox-border-width) / 2);
-            margin-left: -((@checkbox-size - @checkbox-border-width) / 2);
             -webkit-font-smoothing: antialiased;
             -moz-osx-font-smoothing: grayscale;
+            margin-top: -((@checkbox-size - @checkbox-border-width) / 2);
+            margin-left: -((@checkbox-size - @checkbox-border-width) / 2);
+            .opacity(0);
+            .scale(0);
+            .transition-duration(0.1s);
+        }
+    }
+
+    // Checkmark icon
+    .selected .select-checkbox {
+        &:before {
+            border-color: transparent;
+            .transition-duration(0.1s);
+        }
+        &:after {
+            .opacity(1);
+            .scale(1);
         }
     }
 }

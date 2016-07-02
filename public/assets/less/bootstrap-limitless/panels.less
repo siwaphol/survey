@@ -4,8 +4,8 @@
 *
 *  Overrides for panels bootstrap component
 *
-*  Version: 1.0
-*  Latest update: May 25, 2015
+*  Version: 1.1
+*  Latest update: Mar 10, 2016
 *
 * ---------------------------------------------------------------------------- */
 
@@ -15,8 +15,9 @@
 
 .panel {
     margin-bottom: @line-height-computed;
-    border-color: @panel-default-border;
+    border-width: 0;
     color: @text-color;
+    .box-shadow(@shadow-depth1);
 }
 
 
@@ -70,24 +71,48 @@
 }
 
 
+// Bordered panels
+// -------------------------
+
+.panel-bordered {
+    border-width: 1px;
+}
+
+
 // Custom border colors
 // -------------------------
 
 .panel {
     &[class*=border-top-] {
         .border-top-radius(0);
+
+        &:not(.border-top-lg):not(.border-top-xlg) {
+            border-top-width: 1px;
+        }
     }
 
     &[class*=border-bottom-] {
         .border-bottom-radius(0);
+
+        &:not(.border-bottom-lg):not(.border-bottom-xlg) {
+            border-bottom-width: 1px;
+        }
     }
 
     &[class*=border-left-] {
         .border-left-radius(0);
+
+        &:not(.border-left-lg):not(.border-left-xlg) {
+            border-left-width: 1px;
+        }
     }
 
     &[class*=border-right-] {
         .border-right-radius(0);
+
+        &:not(.border-right-lg):not(.border-right-xlg) {
+            border-right-width: 1px;
+        }
     }
 }
 
@@ -110,6 +135,9 @@
 // Base class
 .panel-heading {
     position: relative;
+    padding-top: @content-padding-large;
+    padding-bottom: @content-padding-large;
+    .border-top-radius(@border-radius-base);
 
     // Bordered panel
     .panel-bordered > & {
@@ -118,9 +146,18 @@
 
     // In flat panel it is higher
     .panel-flat > & {
-        padding-top: @content-padding-large;
-        padding-bottom: @content-padding-large;
         background-color: @panel-bg;
+
+        // Add extra vertical spacing for title
+        > .panel-title {
+            margin-top: 2px;
+            margin-bottom: 2px;
+        }
+
+        // Remove top padding in panel tabs content
+        + .tab-content > .has-padding {
+            padding-top: 0;
+        }
     }
 
     // Inherit bg color in solid color panel
@@ -135,7 +172,6 @@
     .panel-success &,
     .panel-warning &,
     .panel-info & {
-        margin: -1px -1px 0 -1px;
         .border-top-radius(@border-radius-base);
     }
 
@@ -202,7 +238,6 @@
     // Link base
     a[data-action] {
         vertical-align: middle;
-        .transition(all ease-in-out 0.2s);
 
         // Icons base
         &:after {
@@ -251,6 +286,8 @@
 // Base styles
 .panel-footer {
     position: relative;
+    padding-left: 0;
+    .border-bottom-radius(@border-radius-base);
 
     // Clearing floats
     &:after {
@@ -259,74 +296,55 @@
         clear: both;
     }
 
-    // List 
-    > ul {
-        margin: 0;
-        padding: 0;
-        font-size: 0;
-        list-style: none;
-        float: left;
-        margin-left: @content-padding-base;
-
-        &:first-child {
-            margin-left: 0;
-        }
-
-        > li {
-            display: inline-block;
-            font-size: @font-size-base;
-            padding-top: (@padding-base-vertical + 1);
-            padding-bottom: (@padding-base-vertical + 1);
-
-            & + li {
-                margin-left: @content-padding-base;
-            }
-
-            > a {
-                color: @text-color;
-            }
-
-            .dropdown-menu {
-                margin-top: 0;
-                margin-bottom: 0;
-            }
-        }
+    // Components
+    .form-control,
+    .selectboxit-btn,
+    .multiselect.btn-default,
+    .bootstrap-select .btn-default,
+    .select2-selection--single:not([class*=bg-]):not([class*=border-]) {
+        border-bottom-color: transparent!important;
+        .box-shadow(none)!important;
     }
 
-    // Setup mobile view
-    @media (max-width: @screen-xs) {
-        text-align: center;
-
-        ul,
-        .pull-right {
-            margin-left: 0;
-            float: none!important;
-        }
-
-        > ul > li,
-        .dropdown,
-        .dropup,
-        .btn-group {
-            position: static;
-        }
-
-        .dropdown-menu {
-            left: 0;
-            right: 0;
-        }
+    // Mobile view
+    @media (max-width: @screen-xs-max) {
+        padding: 0;
     }
 }
 
-// Detached panel footer
+// Transparent panel footer
 .panel-footer-transparent {
     background-color: transparent;
     border-top: 0;
+    padding-top: 0;
+    padding-bottom: @content-padding-large - ((@input-height-base - @line-height-computed) / 2);
+}
 
-    // List items
-    > ul > li {
-        padding-top: 0;
-        padding-bottom: 0;
-        margin-bottom: @panel-body-padding;
+// Condensed panel footer
+.panel-footer-condensed {
+    padding-top: 2px;
+    padding-bottom: 2px;
+}
+
+// Bordered panel footer
+.panel-footer-bordered {
+    background-color: @panel-bg;
+    padding-right: 0;
+
+    @media (min-width: @screen-sm-min) {
+        margin-left: @content-padding-large;
+        margin-right: @content-padding-large;
+    }
+}
+
+
+// Tables
+// -------------------------
+
+.panel {
+    > .panel-body + .table,
+    > .panel-body + .table-responsive {
+        border-top-width: 0;
     }
 }
 
@@ -380,9 +398,14 @@
 // Contextual variation overrides
 // -------------------------
 
+// Default
+.panel-default {
+    border-color: transparent;
+}
+
 // Primary
 .panel-primary {
-    border-color: @panel-default-border;
+    border-color: transparent;
 
     &.panel-bordered {
         border-color: @panel-primary-border;
@@ -391,7 +414,7 @@
 
 // Success
 .panel-success {
-    border-color: @panel-default-border;
+    border-color: transparent;
 
     &.panel-bordered {
         border-color: @panel-success-border;
@@ -400,7 +423,7 @@
 
 // Info
 .panel-info {
-    border-color: @panel-default-border;
+    border-color: transparent;
 
     &.panel-bordered {
         border-color: @panel-info-border;
@@ -409,7 +432,7 @@
 
 // Warning
 .panel-warning {
-    border-color: @panel-default-border;
+    border-color: transparent;
 
     &.panel-bordered {
         border-color: @panel-warning-border;
@@ -418,7 +441,7 @@
 
 // Danger
 .panel-danger {
-    border-color: @panel-default-border;
+    border-color: transparent;
 
     &.panel-bordered {
         border-color: @panel-danger-border;

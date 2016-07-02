@@ -4,30 +4,40 @@
 *
 *  Core JS file with default functionality configuration
 *
-*  Version: 1.1
-*  Latest update: Oct 20, 2015
+*  Version: 1.2
+*  Latest update: Dec 11, 2015
 *
 * ---------------------------------------------------------------------------- */
 
+// Allow CSS transitions when page is loaded
+$(window).on('load', function() {
+    $('body').removeClass('no-transitions');
+});
+
+
 $(function() {
 
+    // Disable CSS transitions on page load
+    $('body').addClass('no-transitions');
+
+
 
     // ========================================
     //
-    // Layout
+    // Content area height
     //
     // ========================================
 
 
-    // Calculate page container height
-    // -------------------------
-
-    // Window height - navbars heights
+    // Calculate min height
     function containerHeight() {
-        var availableHeight = $(window).height() - $('body > .navbar').outerHeight() - $('body > .navbar + .navbar').outerHeight() - $('body > .navbar + .navbar-collapse').outerHeight();
+        var availableHeight = $(window).height() - $('.page-container').offset().top - $('.navbar-fixed-bottom').outerHeight();
 
         $('.page-container').attr('style', 'min-height:' + availableHeight + 'px');
     }
+
+    // Initialize
+    containerHeight();
 
 
 
@@ -43,7 +53,7 @@ $(function() {
     // -------------------------
 
     // Add control button toggler to page and panel headers if have heading elements
-    $('.panel-heading, .page-header-content, .panel-body').has('> .heading-elements').append('<a class="heading-elements-toggle"><i class="icon-menu"></i></a>');
+    $('.panel-heading, .page-header-content, .panel-body, .panel-footer').has('> .heading-elements').append('<a class="heading-elements-toggle"><i class="icon-more"></i></a>');
 
 
     // Toggle visible state of heading elements
@@ -224,7 +234,7 @@ $(function() {
 
 
     // Rotate icon if collapsed by default
-    $('.panel-collapsed').find('[data-action=collapse]').children('i').addClass('rotate-180');
+    $('.panel-collapsed').find('[data-action=collapse]').addClass('rotate-180');
 
 
     // Collapse on click
