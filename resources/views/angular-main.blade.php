@@ -14,7 +14,8 @@
     {{--<link href="{{asset('assets/css/colors.css')}}" rel="stylesheet" type="text/css">--}}
     <!-- /global stylesheets -->
     <!-- Angular Material style sheet -->
-    <link rel="stylesheet" href="http://ajax.googleapis.com/ajax/libs/angular_material/1.1.0-rc2/angular-material.min.css">
+    {{--<link rel="stylesheet" href="http://ajax.googleapis.com/ajax/libs/angular_material/1.1.0-rc2/angular-material.min.css">--}}
+    <link href="{{asset('assets/css/angular-material.min.css')}}" rel="stylesheet" type="text/css">
     <link href="{{asset('css/app.css')}}" rel="stylesheet" type="text/css">
 
     <style>
@@ -27,16 +28,9 @@
 
 @include('partials._navbar')
 
-<div class="container">
+<div class="container" id="popupContainer">
     <div class="content" ng-controller="AppCtrl">
-        <div class="row">
-            @foreach(\App\Question::$sections as $key=>$value)
-                @if((int)$key===0)
-                    @continue
-                @endif
-                <a href="{{url("html-loop-2")}}/{{$key}}">{{$value}}</a>|
-            @endforeach
-        </div>
+
         <form ng-submit="submit()">
             <input type="hidden" name="_token" value="<?php echo csrf_token(); ?>">
             <input type="hidden" name="section" value="{{$section}}">
@@ -65,6 +59,7 @@
 {{--<script type="text/javascript" src="{{asset('assets/js/plugins/loaders/pace.min.js')}}"></script>--}}
 <script type="text/javascript" src="{{asset('assets/js/core/libraries/jquery.min.js')}}"></script>
 <script type="text/javascript" src="{{asset('assets/js/core/libraries/bootstrap.min.js')}}"></script>
+
 {{--<script type="text/javascript" src="{{asset('assets/js/plugins/loaders/blockui.min.js')}}"></script>--}}
 {{--<script type="text/javascript" src="{{asset('assets/js/core/app.js')}}"></script>--}}
 <!-- /core JS files -->
@@ -84,7 +79,7 @@
      * You must include the dependency on 'ngMaterial'
      */
     angular.module('testAngular', ['ngMaterial']).
-    controller('AppCtrl', function ($scope, $http) {
+    controller('AppCtrl', function ($scope, $http, $mdDialog) {
         $scope.question = {};
 
         @foreach($scopeParameters as $aScope)
@@ -117,10 +112,26 @@
                 headers : { 'Content-Type': 'application/x-www-form-urlencoded' }
             }).success(function (data) {
                 console.log(data);
+                $scope.showAlert();
             }).error(function (data) {
                 console.log(data);
             });
-        }
+        };
+
+        $scope.showAlert = function(ev) {
+            // Appending dialog to document.body to cover sidenav in docs app
+            // Modal dialogs should fully cover application
+            // to prevent interaction outside of dialog
+            $mdDialog.show(
+                    $mdDialog.alert()
+                            .parent(angular.element(document.querySelector('#popupContainer')))
+                            .clickOutsideToClose(true)
+                            .title('บันทึกข้อมูลสำเร็จ')
+                            .textContent('ข้อมูลถูกบันทึกลงฐานข้อมูลเรียบร้อย')
+                            .ok('ตกลง')
+                            .targetEvent(ev)
+            );
+        };
     });
 </script>
 

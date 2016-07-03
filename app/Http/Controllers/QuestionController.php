@@ -138,7 +138,7 @@ class QuestionController extends Controller
 
     }
 
-    public function htmlLoop($id)
+    public function htmlLoop($id, $sub=null)
     {
         $section = "";
         foreach (Question::$sections as $key=>$value){
@@ -147,10 +147,18 @@ class QuestionController extends Controller
                 break;
             }
         }
+        $sub_section = "NULL";
+        if (!is_null($sub)) {
+            foreach (Question::$subSections as $key=>$value){
+                if ((int)$sub===(int)$key){
+                    $sub_section = $value;
+                    break;
+                }
+            }
+        }
         if (empty($section))
             abort(404);
         //test
-        $sub_section = "NULL";
         $radioText = Question::TYPE_RADIO;
         $checkboxText = Question::TYPE_CHECKBOX;
 
@@ -187,7 +195,7 @@ class QuestionController extends Controller
            ELSE TRUE
           END)
           and t4.main_id=1 and t4.question_id=t1.id
-        WHERE t1.section='{$section}'
+        WHERE t1.section='{$section}' and t1.sub_section='{$sub_section}'
         ORDER BY t1.id,t1.parent_id,t1.sibling_order,t2.id ";
         
         $result = \DB::select($str);
@@ -242,6 +250,7 @@ class QuestionController extends Controller
         $grouped = $t->groupBy('id');
 
         $forgetList =[];
+//        dd($grouped);
         foreach ($grouped as $aQuestion){
             
             $aQuestion->{"input_type"} = $aQuestion[0]->input_type;
@@ -271,7 +280,7 @@ class QuestionController extends Controller
 
             if(!is_null($aQuestion[0]->parent_id)){
                 $typeArr = [Question::TYPE_TITLE, Question::TYPE_TEXT, Question::TYPE_NUMBER];
-                $inArray = in_array($grouped[$aQuestion[0]->parent_id]->input_type, $typeArr);
+                $inArray = in_array($grouped[$aQuestion[0]->parent_id][0]->input_type, $typeArr);
                 if($inArray){
                     if(!isset($grouped[$aQuestion[0]->parent_id]->{"children"})){
                         $grouped[$aQuestion[0]->parent_id]->{"children"} = [];
@@ -281,18 +290,18 @@ class QuestionController extends Controller
                 }
 
                 $type2Arr = [Question::TYPE_CHECKBOX, Question::TYPE_RADIO];
-                $inArray2 = in_array($grouped[$aQuestion[0]->parent_id]->input_type, $type2Arr);
+                $inArray2 = in_array($grouped[$aQuestion[0]->parent_id][0]->input_type, $type2Arr);
                 if($inArray2){
                     $aQuestion->{"class"} = ' has-parent';
 
                     if (is_null($aQuestion->dependent_parent_option_id)){
-                        if ($grouped[$aQuestion[0]->parent_id]->input_type===Question::TYPE_RADIO){
+                        if ($grouped[$aQuestion[0]->parent_id][0]->input_type===Question::TYPE_RADIO){
                             if(!isset($grouped[$aQuestion[0]->parent_id]->{"children"})){
                                 $grouped[$aQuestion[0]->parent_id]->{"children"} = [];
                             }
                             $grouped[$aQuestion[0]->parent_id]->{"children"}[$aQuestion[0]->id] = $aQuestion;
                         }
-                        else if ($grouped[$aQuestion[0]->parent_id]->input_type===Question::TYPE_CHECKBOX){
+                        else if ($grouped[$aQuestion[0]->parent_id][0]->input_type===Question::TYPE_CHECKBOX){
                             foreach ($grouped[$aQuestion[0]->parent_id] as $each_parent_option){
                                 if (!isset($each_parent_option->{"children"})){
                                     $each_parent_option->{"children"} = [];
