@@ -1,7 +1,8 @@
 <div class="navbar navbar-inverse bg-teal navbar-component" style="position: relative; z-index: 30;">
     <div class="navbar-header">
+        <a class="navbar-brand">แบบสอบถามที่ {{$main_id}}</a>
 
-        <ul class="nav navbar-nav pull-right visible-xs-block">
+        <ul class="nav navbar-nav visible-xs-block">
             <li><a data-toggle="collapse" data-target="#navbar-mixed"><i class="icon-menu"></i></a></li>
         </ul>
     </div>
@@ -153,6 +154,7 @@
 
         <!-- Right Side Of Navbar -->
         <ul class="nav navbar-nav navbar-right">
+            <li><a href="{{ url('/main') }}">เปลี่ยนชุดแบบสอบถาม</a></li>
             <!-- Authentication Links -->
             <li><a href="{{ url('/logout') }}">Logout</a></li>
         </ul>
