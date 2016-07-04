@@ -78,8 +78,17 @@
     /**
      * You must include the dependency on 'ngMaterial'
      */
-    angular.module('testAngular', ['ngMaterial']).
-    controller('AppCtrl', function ($scope, $http, $mdDialog) {
+    angular.module('testAngular', ['ngMaterial'])
+            .directive("initFromForm", function ($parse) {
+                return {
+                    link: function (scope, element, attrs) {
+                        var attr = attrs.initFromForm || attrs.ngModel || element.attrs('name'),
+                                val = attrs.value;
+                        $parse(attr).assign(scope, val)
+                    }
+                };
+            })
+            .controller('AppCtrl', function ($scope, $http, $mdDialog) {
         $scope.question = {};
 
         @foreach($scopeParameters as $aScope)

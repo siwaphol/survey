@@ -338,12 +338,16 @@ class AnswerController extends Controller
                     $answer->answer_text = $value;
                     $answer->save();
                 }else if($curQuestion->input_type===Question::TYPE_NUMBER){
-                    $answer->answer_numeric = (int)$value;
+                    $answer->answer_numeric = (float)$value;
                     $answer->save();
                 }else if($curQuestion->input_type===Question::TYPE_RADIO){
                     $oq = $optionQuestions->where('question_id',(int)$insertingItem[2])
                         ->where('option_id', (int)$value)->first();
                     if ($oq){
+                        if ((int)$value===Option::OTHER_OPTION){
+                            $answer->other_text = isset($input['other_'.str_replace('no_', "" ,$key)])?$input['other_'.str_replace('no_', "" ,$key)]:"";
+                        }
+
                         $answer->option_question_id = $oq->id;
                         $answer->save();
                     }
@@ -351,6 +355,10 @@ class AnswerController extends Controller
                     $oq = $optionQuestions->where('question_id',(int)$insertingItem[2])
                         ->where('option_id', (int)$insertingItem[3])->first();
                     if ($oq){
+                        if ((int)$insertingItem[3]===Option::OTHER_OPTION){
+                            $answer->other_text = isset($input['other_'.str_replace('no_', "" ,$key)])?$input['other_'.str_replace('no_', "" ,$key)]:"";
+                        }
+
                         $answer->option_question_id = $oq->id;
                         $answer->save();
                     }
