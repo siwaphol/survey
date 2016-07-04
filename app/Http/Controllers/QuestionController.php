@@ -140,6 +140,11 @@ class QuestionController extends Controller
 
     public function htmlLoop($id, $sub=null)
     {
+        $main_id = \Session::get('main_id');
+        if (is_null($main_id) || empty($main_id))
+            return redirect('main');
+        $main_id = (int)$main_id;
+
         $section = "";
         foreach (Question::$sections as $key=>$value){
             if ((int)$id===(int)$key){
@@ -194,7 +199,7 @@ class QuestionController extends Controller
            WHEN '{$radioText}' THEN t2.id=option_question_id
            ELSE TRUE
           END)
-          and t4.main_id=1 and t4.question_id=t1.id
+          and t4.main_id={$main_id} and t4.question_id=t1.id
         WHERE t1.section='{$section}' and t1.sub_section='{$sub_section}'
         ORDER BY t1.id,t1.parent_id,t1.sibling_order,t2.id ";
         
@@ -243,8 +248,8 @@ class QuestionController extends Controller
             }
         }
 
-        $main_id= 1;
-        $answers = Answer::where('main_id',$main_id)->get();
+//        $main_id= 1;
+//        $answers = Answer::where('main_id',$main_id)->get();
 
         $t = collect($result);
         $grouped = $t->groupBy('id');

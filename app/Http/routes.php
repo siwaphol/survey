@@ -1,9 +1,22 @@
 <?php
-Route::get('/',function(){
-    return redirect('html-loop-2/1');
+
+Route::group(['middleware' => 'auth'], function () {
+    Route::get('/',function(){
+        return redirect('main');
+    });
+
+    Route::get('main', 'MainController@index');
+    Route::post('main', 'MainController@postHandle');
+
+    Route::get('html-loop-2/{id}', 'QuestionController@htmlLoop');
+    Route::get('html-loop-2/{id}/{sub}', 'QuestionController@htmlLoop');
+    Route::post('test-post','AnswerController@testPost');
+    Route::post('test-post-2','AnswerController@saveAnswersWithEasiestWay');
 });
-Route::post('test-post','AnswerController@testPost');
-Route::post('test-post-2','AnswerController@saveAnswersWithEasiestWay');
-Route::get('import-excel','QuestionController@importExcelQuestion');
-Route::get('html-loop-2/{id}', 'QuestionController@htmlLoop');
-Route::get('html-loop-2/{id}/{sub}', 'QuestionController@htmlLoop');
+
+
+//Route::get('login', function(){
+//    return view('login');
+//});
+//Route::get('import-excel','QuestionController@importExcelQuestion');
+Route::auth();

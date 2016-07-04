@@ -16,7 +16,7 @@ class CreateAnswersTable extends Migration
             $table->bigIncrements('id')->unsigned();
             
             $table->bigInteger('main_id')->unsigned();
-            $table->foreign('main_id')->references('id')->on('mains');
+//            $table->foreign('main_id')->references('id')->on('mains');
 
             $table->string('section');
             $table->string('sub_section');

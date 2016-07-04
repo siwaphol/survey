@@ -13,11 +13,11 @@ class CreateMainsTable extends Migration
     public function up()
     {
         Schema::create('mains', function (Blueprint $table) {
-            $table->bigInteger('id')->unsigned();
+            $table->increments('id');
 
+            $table->bigInteger('main_id')->unsigned();
             $table->integer('recorder_id');
-
-            $table->primary('id');
+            
             $table->timestamps();
         });
     }
