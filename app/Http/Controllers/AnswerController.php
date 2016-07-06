@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Answer;
+use App\Main;
 use App\Option;
 use App\OptionQuestion;
 use App\Question;
@@ -317,6 +318,10 @@ class AnswerController extends Controller
             ->where('section',$input['section'])
             ->where('sub_section',$input['sub_section'])
             ->delete();
+
+        $main = Main::where('main_id',(int)$input['main_id'])->first();
+        if ($main)
+            $main->touch();
 
         foreach ($input as $key=>$value){
             if (strpos($key,'no_')!==false){
