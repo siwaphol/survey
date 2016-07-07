@@ -123,6 +123,8 @@ class QuestionController extends Controller
                             break;
                         }
 
+                        if (is_null(Question::find((int)$sheetData[$i]["A"])))
+                            continue;
                         \DB::table('option_questions')
                             ->insert([
                                 'question_id'=>(int)$sheetData[$i]["A"],
