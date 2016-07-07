@@ -15,16 +15,16 @@
             {{--ก--}}
             <li class="dropdown mega-menu">
                 <a href="#" class="dropdown-toggle" data-toggle="dropdown">
-                    ก <span class="caret"></span>
+                    หมวด ก <span class="caret"></span>
                 </a>
 
                 <div class="dropdown-menu dropdown-content">
                     <div class="dropdown-content-body">
                             <div class="col-md-12">
                                 <ul class="menu-list">
-                                    <li><a href="{{url('html-loop-2')}}/2">ก.1</a></li>
-                                    <li><a href="{{url('html-loop-2')}}/3">ก.2</a></li>
-                                    <li><a href="{{url('html-loop-2')}}/4">ก.3</a></li>
+                                    <li><a href="{{url('html-loop-2')}}/2">{{\App\Question::$sections[2]}}</a></li>
+                                    <li><a href="{{url('html-loop-2')}}/3">{{\App\Question::$sections[3]}}</a></li>
+                                    <li><a href="{{url('html-loop-2')}}/4">{{\App\Question::$sections[4]}}</a></li>
                                 </ul>
                             </div>
                     </div>
@@ -33,20 +33,20 @@
             {{--ข--}}
             <li class="dropdown mega-menu mega-menu-wide">
                 <a href="#" class="dropdown-toggle" data-toggle="dropdown">
-                    ข <span class="caret"></span>
+                    หมวด ข <span class="caret"></span>
                 </a>
 
                 <div class="dropdown-menu dropdown-content">
                     <div class="dropdown-content-body">
                         <div class="row">
                             <div class="col-md-1">
-                                <span class="menu-heading underlined">ข.1</span>
+                                <span class="menu-heading underlined">{{\App\Question::$sections[5]}}</span>
                                 <ul class="menu-list">
                                     <li><a href="{{url('html-loop-2')}}/5/0">ไฟฟ้า</a></li>
                                 </ul>
                             </div>
                             <div class="col-md-1">
-                                <span class="menu-heading underlined">ข.2</span>
+                                <span class="menu-heading underlined">{{\App\Question::$sections[6]}}</span>
                                 <ul class="menu-list">
                                     <li><a href="{{url('html-loop-2')}}/6/0">ไฟฟ้า</a></li>
                                     <li><a href="{{url('html-loop-2')}}/6/1">น้ำมันสำเร็จรูป</a></li>
@@ -54,39 +54,39 @@
                                 </ul>
                             </div>
                             <div class="col-md-1">
-                                <span class="menu-heading underlined">ข.3</span>
+                                <span class="menu-heading underlined">{{\App\Question::$sections[7]}}</span>
                                 <ul class="menu-list">
                                     <li><a href="{{url('html-loop-2')}}/7/0">ไฟฟ้า</a></li>
                                 </ul>
                             </div>
                             <div class="col-md-1">
-                                <span class="menu-heading underlined">ข.4</span>
+                                <span class="menu-heading underlined">{{\App\Question::$sections[8]}}</span>
                                 <ul class="menu-list">
                                     <li><a href="{{url('html-loop-2')}}/8/0">ไฟฟ้า</a></li>
                                     <li><a href="{{url('html-loop-2')}}/8/1">น้ำมันสำเร็จรูป</a></li>
                                 </ul>
                             </div>
                             <div class="col-md-1">
-                                <span class="menu-heading underlined">ข.5</span>
+                                <span class="menu-heading underlined">{{\App\Question::$sections[9]}}</span>
                                 <ul class="menu-list">
                                     <li><a href="{{url('html-loop-2')}}/9/2">พลังงานหมุนเวียนดั้งเดิม</a></li>
                                 </ul>
                             </div>
                             <div class="col-md-1">
-                                <span class="menu-heading underlined">ข.6</span>
+                                <span class="menu-heading underlined">{{\App\Question::$sections[10]}}</span>
                                 <ul class="menu-list">
                                     <li><a href="{{url('html-loop-2')}}/10/0">ไฟฟ้า</a></li>
                                     <li><a href="{{url('html-loop-2')}}/10/2">พลังงานหมุนเวียนดั้งเดิม</a></li>
                                 </ul>
                             </div>
                             <div class="col-md-1">
-                                <span class="menu-heading underlined">ข.7</span>
+                                <span class="menu-heading underlined">{{\App\Question::$sections[11]}}</span>
                                 <ul class="menu-list">
                                     <li><a href="{{url('html-loop-2')}}/11/1">น้ำมันสำเร็จรูป</a></li>
                                 </ul>
                             </div>
                             <div class="col-md-1">
-                                <span class="menu-heading underlined">ข.8</span>
+                                <span class="menu-heading underlined">{{\App\Question::$sections[12]}}</span>
                                 <ul class="menu-list">
                                     <li><a href="{{url('html-loop-2')}}/12/1">น้ำมันสำเร็จรูป</a></li>
                                 </ul>
@@ -98,16 +98,15 @@
             {{--ค--}}
             <li class="dropdown mega-menu">
                 <a href="#" class="dropdown-toggle" data-toggle="dropdown">
-                    ค <span class="caret"></span>
+                    หมวด ค <span class="caret"></span>
                 </a>
 
                 <div class="dropdown-menu dropdown-content">
                     <div class="dropdown-content-body">
                             <div class="col-md-12">
                                 <ul class="menu-list">
-                                    <li><a href="{{url('html-loop-2')}}/13">ค.1</a></li>
-                                    <li><a href="{{url('html-loop-2')}}/14">ค.2</a></li>
-                                    <li><a href="{{url('html-loop-2')}}/15">ค.3</a></li>
+                                    <li><a href="{{url('html-loop-2')}}/13">{{\App\Question::$sections[13]}}</a></li>
+                                    <li><a href="{{url('html-loop-2')}}/14">{{\App\Question::$sections[14]}}</a></li>
                                 </ul>
                             </div>
                     </div>
@@ -116,17 +115,17 @@
             {{--ง--}}
             <li class="dropdown mega-menu">
                 <a href="#" class="dropdown-toggle" data-toggle="dropdown">
-                    ง <span class="caret"></span>
+                    หมวด ง <span class="caret"></span>
                 </a>
 
                 <div class="dropdown-menu dropdown-content">
                     <div class="dropdown-content-body">
                         <div class="col-md-12">
                             <ul class="menu-list">
-                                <li><a href="{{url('html-loop-2')}}/16">ง.1</a></li>
-                                <li><a href="{{url('html-loop-2')}}/17">ง.2</a></li>
-                                <li><a href="{{url('html-loop-2')}}/18">ง.3</a></li>
-                                <li><a href="{{url('html-loop-2')}}/19">ง.4</a></li>
+                                <li><a href="{{url('html-loop-2')}}/16">{{\App\Question::$sections[16]}}</a></li>
+                                <li><a href="{{url('html-loop-2')}}/17">{{\App\Question::$sections[17]}}</a></li>
+                                <li><a href="{{url('html-loop-2')}}/18">{{\App\Question::$sections[18]}}</a></li>
+                                <li><a href="{{url('html-loop-2')}}/19">{{\App\Question::$sections[19]}}</a></li>
                             </ul>
                         </div>
                     </div>
@@ -135,16 +134,16 @@
             {{--จ--}}
             <li class="dropdown mega-menu">
                 <a href="#" class="dropdown-toggle" data-toggle="dropdown">
-                    จ <span class="caret"></span>
+                    หมวด จ <span class="caret"></span>
                 </a>
 
                 <div class="dropdown-menu dropdown-content">
                     <div class="dropdown-content-body">
                             <div class="col-md-12">
                                 <ul class="menu-list">
-                                    <li><a href="{{url('html-loop-2')}}/20">จ.1</a></li>
-                                    <li><a href="{{url('html-loop-2')}}/21">จ.2</a></li>
-                                    <li><a href="{{url('html-loop-2')}}/22">จ.3</a></li>
+                                    <li><a href="{{url('html-loop-2')}}/20">{{\App\Question::$sections[20]}}</a></li>
+                                    <li><a href="{{url('html-loop-2')}}/21">{{\App\Question::$sections[21]}}</a></li>
+                                    <li><a href="{{url('html-loop-2')}}/22">{{\App\Question::$sections[22]}}</a></li>
                                 </ul>
                             </div>
                     </div>
