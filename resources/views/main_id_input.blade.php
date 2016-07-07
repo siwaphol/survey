@@ -72,6 +72,34 @@
             </div>
             <!-- /content area -->
 
+            <div class="content">
+                    <div class="panel panel-flat">
+                        <div class="panel-heading">
+                            <h5 class="panel-title">10 ชุดที่แก้ไขล่าสุด</h5>
+                        </div>
+                        <div class="table-responsive">
+                            <table class="table text-center">
+                                <tbody>
+                                    @foreach($latest10Main as $aMain)
+                                        <tr>
+                                            <td>{{$aMain->id}}</td>
+                                            <td>{{$aMain->updated_at}}</td>
+                                            <td>{{$aMain->name}}</td>
+                                            <td>
+                                                <form class="form-horizontal" role="form" method="POST" action="{{ url('/main') }}">
+                                                    {{csrf_field()}}
+                                                    <input type="hidden" name="main_id" value="{{$aMain->id}}">
+                                                    <input type="submit" class="btn btn-default" value="Go">
+                                                </form>
+                                            </td>
+                                        </tr>
+                                    @endforeach
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+            </div>
+
         </div>
         <!-- /main content -->
 
