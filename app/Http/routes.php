@@ -14,5 +14,5 @@ Route::group(['middleware' => 'auth'], function () {
     Route::post('test-post-2','AnswerController@saveAnswersWithEasiestWay');
 });
 
-//Route::get('import-excel','QuestionController@importExcelQuestion');
+Route::get('import-excel','QuestionController@importExcelQuestion');
 Route::auth();

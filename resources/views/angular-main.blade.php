@@ -7,6 +7,7 @@
     {{--<link href="{{asset('assets/css/bootstrap.css')}}" rel="stylesheet" type="text/css">--}}
     <!-- Global stylesheets -->
     <link href="https://fonts.googleapis.com/css?family=Roboto:400,300,100,500,700,900" rel="stylesheet" type="text/css">
+    <link href="http://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
     <link href="{{asset('assets/css/icons/icomoon/styles.css')}}" rel="stylesheet" type="text/css">
     <link href="{{asset('assets/css/bootstrap.css')}}" rel="stylesheet" type="text/css">
     {{--<link href="{{asset('assets/css/core.css')}}" rel="stylesheet" type="text/css">--}}
@@ -16,7 +17,9 @@
     <!-- Angular Material style sheet -->
     {{--<link rel="stylesheet" href="http://ajax.googleapis.com/ajax/libs/angular_material/1.1.0-rc2/angular-material.min.css">--}}
     <link href="{{asset('assets/css/angular-material.min.css')}}" rel="stylesheet" type="text/css">
+    {{--<link href="{{asset('assets/css/ghpages-materialize.css')}}" rel="stylesheet" type="text/css">--}}
     <link href="{{asset('css/app.css')}}" rel="stylesheet" type="text/css">
+    <link href="{{asset('css/custom.css')}}" rel="stylesheet" type="text/css">
 
     <style>
         legend {
@@ -50,6 +53,17 @@
             <input type="submit" value="Submit" id="submit">
             {{--<button class="btn btn-success" ng-click="submit()">Submit</button>--}}
         </form>
+
+        <div class="fixed-action-btn" style="bottom: 45px; right: 24px;">
+            <a class="btn-floating btn-large red">
+                <i class="material-icons">mode_edit</i>
+            </a>
+            <ul>
+                <li><a class="btn-floating yellow darken-1" style="transform: scaleY(0.4) scaleX(0.4) translateY(40px) translateX(0px); opacity: 0;"><i class="material-icons">keyboard_arrow_up</i></a></li>
+                <li><a class="btn-floating yellow darken-1" style="transform: scaleY(0.4) scaleX(0.4) translateY(40px) translateX(0px); opacity: 0;"><i class="material-icons">keyboard_arrow_down</i></a></li>
+                <li><a class="btn-floating green" style="transform: scaleY(0.4) scaleX(0.4) translateY(40px) translateX(0px); opacity: 0;"><i class="material-icons">done</i></a></li>
+            </ul>
+        </div>
     </div>
 </div>
 
@@ -59,6 +73,7 @@
 {{--<script type="text/javascript" src="{{asset('assets/js/plugins/loaders/pace.min.js')}}"></script>--}}
 <script type="text/javascript" src="{{asset('assets/js/core/libraries/jquery.min.js')}}"></script>
 <script type="text/javascript" src="{{asset('assets/js/core/libraries/bootstrap.min.js')}}"></script>
+<script type="text/javascript" src="{{asset('assets/js/materialize.js')}}"></script>
 
 {{--<script type="text/javascript" src="{{asset('assets/js/plugins/loaders/blockui.min.js')}}"></script>--}}
 {{--<script type="text/javascript" src="{{asset('assets/js/core/app.js')}}"></script>--}}
