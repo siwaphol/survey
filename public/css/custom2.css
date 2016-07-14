@@ -1,0 +1,4 @@
+.mfb-component__child-icon, .mfb-component__icon, .mfb-component__main-icon--active, .mfb-component__main-icon--resting {
+    font-size: 1.5em;
+    color: white;
+}

@@ -1,10 +1,18 @@
 <html lang="en" >
 <head>
     <meta name="viewport" content="width=device-width, initial-scale=1">
-    <link href="https://fonts.googleapis.com/css?family=Roboto:400,300,100,500,700,900" rel="stylesheet" type="text/css">
-    <link href="http://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
     <!-- Angular Material style sheet -->
     <link rel="stylesheet" href="http://ajax.googleapis.com/ajax/libs/angular_material/1.1.0-rc2/angular-material.min.css">
+
+    <link href="{{asset('assets/mfb/mfb.min.css')}}" rel="stylesheet"/>
+
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/normalize/3.0.1/normalize.min.css">
+    <link href="https://fonts.googleapis.com/css?family=Roboto:400,300,100,500,700,900" rel="stylesheet" type="text/css">
+    <link href="http://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
+    <link href="http://code.ionicframework.com/ionicons/2.0.1/css/ionicons.min.css" rel="stylesheet">
+
+    <script type="text/javascript" src="{{asset('assets/mfb/dist/lib/modernizr.touch.js')}}"></script>
+    <link href="{{asset('css/custom2.css')}}" rel="stylesheet">
 </head>
 <body ng-app="Survey" ng-controller="SurveyCtrl" class="docs-body" layout="row" ng-cloak>
 
@@ -13,7 +21,7 @@
             md-is-locked-open="$mdMedia('gt-sm')">
 
     <header class="nav-header">
-        <a ng-href="/" class="docs-logo">
+        <a ng-href="#index" class="docs-logo">
             <img src="{{asset('assets/img/icons/angular-logo.svg')}}" alt="" />
             <h1 class="docs-logotype md-heading">Logo here</h1>
         </a>
@@ -94,7 +102,6 @@
                 </div>
             </div>
         </div>
-
     </md-toolbar>
 
     <md-content md-scroll-y layout="column" flex>
@@ -109,8 +116,31 @@
             </div>
         </div>
     </md-content>
-
 </div>
+
+{{--<div class="fixed-action-btn" style="bottom: 45px; right: 24px;">--}}
+    {{--<a class="btn-floating btn-large red">--}}
+        {{--<i class="material-icons">mode_edit</i>--}}
+    {{--</a>--}}
+    {{--<ul>--}}
+        {{--<li><a class="btn-floating yellow darken-1" style="transform: scaleY(0.4) scaleX(0.4) translateY(40px) translateX(0px); opacity: 0;"><i class="material-icons">keyboard_arrow_up</i></a></li>--}}
+        {{--<li><a class="btn-floating yellow darken-1" style="transform: scaleY(0.4) scaleX(0.4) translateY(40px) translateX(0px); opacity: 0;"><i class="material-icons">keyboard_arrow_down</i></a></li>--}}
+        {{--<li><a class="btn-floating green" style="transform: scaleY(0.4) scaleX(0.4) translateY(40px) translateX(0px); opacity: 0;"><i class="material-icons">done</i></a></li>--}}
+    {{--</ul>--}}
+{{--</div>--}}
+{{--<nav mfb-menu position="br" effect="zoomin" label="hover here"--}}
+     {{--active-icon="ion-edit" resting-icon="ion-plus-round"--}}
+     {{--toggling-method="click">--}}
+    {{--<button mfb-button icon="paper-airplane" label="menu item"></button>--}}
+{{--</nav>--}}
+
+<nav mfb-menu position="br" effect="zoomin"
+     active-icon="ion-close-round" resting-icon="ion-plus-round"
+     ng-mouseenter="hovered()" ng-mouseleave="hovered()"
+     toggling-method="click" menu-state="ctrl.menuState" main-action="ctrl.mainAction()">
+    <button mfb-button icon="paper-airplane" ng-click="ctrl.loc(button.href)"
+            label="menu item" ng-repeat="button in buttons"></button>
+</nav>
 
 <!-- Angular Material requires Angular.js Libraries -->
 <script src="http://ajax.googleapis.com/ajax/libs/angularjs/1.5.3/angular.min.js"></script>
@@ -126,113 +156,130 @@
     /**
      * You must include the dependency on 'ngMaterial'
      */
-    angular.module('Survey', ['ngMaterial'])
-            .directive("initFromForm", function ($parse) {
-                return {
-                    link: function (scope, element, attrs) {
-                        var attr = attrs.initFromForm || attrs.ngModel || element.attrs('name'),
-                                val = attrs.value;
-                        $parse(attr).assign(scope, val)
-                    }
-                };
-            })
-            .filter('humanizeDoc', function() {
-                return function(doc) {
-                    if (!doc) return;
-                    if (doc.type === 'directive') {
-                        return doc.name.replace(/([A-Z])/g, function($1) {
-                            return '-'+$1.toLowerCase();
-                        });
-                    }
-                    return doc.label || doc.name;
-                };
-            })
-            .controller('SurveyCtrl', function ($scope, $http, $mdDialog, $mdSidenav, $timeout) {
-                $scope.question = {};
-                $scope.openMenu = openMenu;
+    angular.module('Survey', ['ngMaterial', 'ng-mfb'])
+    .directive("initFromForm", function ($parse) {
+        return {
+            link: function (scope, element, attrs) {
+                var attr = attrs.initFromForm || attrs.ngModel || element.attrs('name'),
+                        val = attrs.value;
+                $parse(attr).assign(scope, val)
+            }
+        };
+    })
+    .filter('humanizeDoc', function() {
+        return function(doc) {
+            if (!doc) return;
+            if (doc.type === 'directive') {
+                return doc.name.replace(/([A-Z])/g, function($1) {
+                    return '-'+$1.toLowerCase();
+                });
+            }
+            return doc.label || doc.name;
+        };
+    })
+    .controller('SurveyCtrl', function ($scope, $http, $mdDialog, $mdSidenav, $timeout) {
+        $scope.question = {};
+        $scope.openMenu = openMenu;
 
-                        {{--@foreach($scopeParameters as $aScope)--}}
-                        {{--{!! $aScope !!}--}}
-                        {{--@endforeach--}}
+                {{--@foreach($scopeParameters as $aScope)--}}
+                {{--{!! $aScope !!}--}}
+                {{--@endforeach--}}
 
-                var submitItems = [];
-                $scope.formData = {};
-                var postURL = '{{url('test-post-2')}}';
+        var submitItems = [];
+        $scope.formData = {};
+        var postURL = '{{url('test-post-2')}}';
 
-                $scope.submit = function () {
-                    submitItems = {};
-                    angular.forEach($scope.question,function (value, key) {
-                        if(value && value!='' && value!=0){
-                            this[key] = value;
-                        }
-                    }, submitItems);
-
-                    submitItems["_token"] = $('[name="_token"]').val();
-                    submitItems["section"] = $('[name="section"]').val();
-                    submitItems["sub_section"] = $('[name="sub_section"]').val();
-                    submitItems["main_id"] = $('[name="main_id"]').val();
-
-                    console.log(submitItems);
-
-                    $http({
-                        method: 'POST',
-                        url: postURL,
-                        data: $.param(submitItems),
-                        headers : { 'Content-Type': 'application/x-www-form-urlencoded' }
-                    }).success(function (data) {
-                        console.log(data);
-                        $scope.showAlert();
-                    }).error(function (data) {
-                        console.log(data);
-                    });
-                };
-
-                $scope.showAlert = function(ev) {
-                    // Appending dialog to document.body to cover sidenav in docs app
-                    // Modal dialogs should fully cover application
-                    // to prevent interaction outside of dialog
-                    $mdDialog.show(
-                            $mdDialog.alert()
-                                    .parent(angular.element(document.querySelector('#popupContainer')))
-                                    .clickOutsideToClose(true)
-                                    .title('บันทึกข้อมูลสำเร็จ')
-                                    .textContent('ข้อมูลถูกบันทึกลงฐานข้อมูลเรียบร้อย')
-                                    .ok('ตกลง')
-                                    .targetEvent(ev)
-                    );
-                };
-
-                function openMenu() {
-                    $timeout(function() { $mdSidenav('left').open(); });
+        $scope.submit = function () {
+            submitItems = {};
+            angular.forEach($scope.question,function (value, key) {
+                if(value && value!='' && value!=0){
+                    this[key] = value;
                 }
-            })
-            .controller('NavCtrl', function ($scope, $timeout, $mdSidenav, $log) {
-                $scope.toggleLeft = buildToggler('left');
-                $scope.isOpenLeft = function(){
-                    return $mdSidenav('left').isOpen();
-                };
+            }, submitItems);
 
-                function buildToggler(navID) {
-                    return function() {
-                        // Component lookup should always be available since we are not using `ng-if`
-                        $mdSidenav(navID)
-                                .toggle()
-                                .then(function () {
-                                    $log.debug("toggle " + navID + " is done");
-                                });
-                    }
-                }
-            })
-            .controller('LeftCtrl', function ($scope, $timeout, $mdSidenav, $log) {
-                $scope.close = function () {
-                    // Component lookup should always be available since we are not using `ng-if`
-                    $mdSidenav('left').close()
-                            .then(function () {
-                                $log.debug("close LEFT is done");
-                            });
-                };
+            submitItems["_token"] = $('[name="_token"]').val();
+            submitItems["section"] = $('[name="section"]').val();
+            submitItems["sub_section"] = $('[name="sub_section"]').val();
+            submitItems["main_id"] = $('[name="main_id"]').val();
+
+            console.log(submitItems);
+
+            $http({
+                method: 'POST',
+                url: postURL,
+                data: $.param(submitItems),
+                headers : { 'Content-Type': 'application/x-www-form-urlencoded' }
+            }).success(function (data) {
+                console.log(data);
+                $scope.showAlert();
+            }).error(function (data) {
+                console.log(data);
             });
+        };
+
+        $scope.showAlert = function(ev) {
+            // Appending dialog to document.body to cover sidenav in docs app
+            // Modal dialogs should fully cover application
+            // to prevent interaction outside of dialog
+            $mdDialog.show(
+                    $mdDialog.alert()
+                            .parent(angular.element(document.querySelector('#popupContainer')))
+                            .clickOutsideToClose(true)
+                            .title('บันทึกข้อมูลสำเร็จ')
+                            .textContent('ข้อมูลถูกบันทึกลงฐานข้อมูลเรียบร้อย')
+                            .ok('ตกลง')
+                            .targetEvent(ev)
+            );
+        };
+
+        $scope.buttons = [{
+            label: 'View on Github',
+            icon: 'ion-social-github',
+            href: 'https://github.com/nobitagit/ng-material-floating-button/'
+        },{
+            label: 'Follow me on Github',
+            icon: 'ion-social-octocat',
+            href: 'https://github.com/nobitagit'
+        },{
+            label: 'Share on Twitter',
+            icon: 'ion-social-twitter',
+            href: 'http://twitter.com/share?text=Amazing material floating action button directive!&url=http://nobitagit.github.io/ng-material-floating-button/&hashtags=angular,material,design,button'
+        }];
+
+        function openMenu() {
+            $timeout(function() { $mdSidenav('left').open(); });
+        }
+    })
+    .controller('NavCtrl', function ($scope, $timeout, $mdSidenav, $log) {
+        $scope.toggleLeft = buildToggler('left');
+        $scope.isOpenLeft = function(){
+            return $mdSidenav('left').isOpen();
+        };
+
+        function buildToggler(navID) {
+            return function() {
+                // Component lookup should always be available since we are not using `ng-if`
+                $mdSidenav(navID)
+                        .toggle()
+                        .then(function () {
+                            $log.debug("toggle " + navID + " is done");
+                        });
+            }
+        }
+    })
+    .controller('LeftCtrl', function ($scope, $timeout, $mdSidenav, $log) {
+        $scope.close = function () {
+            // Component lookup should always be available since we are not using `ng-if`
+            $mdSidenav('left').close()
+                    .then(function () {
+                        $log.debug("close LEFT is done");
+                    });
+        };
+    });
 </script>
+
+<!-- ng-material-floating-button -->
+<script src="{{asset('assets/mfb/mfb-directive.js')}}"></script>
 
 </body>
 </html>
