@@ -17,15 +17,14 @@
     <link href="{{asset('css/custom2.css')}}" rel="stylesheet">
 </head>
 <body ng-app="Survey" ng-controller="SurveyCtrl" class="docs-body" layout="row" ng-cloak>
-<input type="hidden" name="top">
 <md-sidenav class="site-sidenav md-sidenav-left md-whiteframe-z2"
             md-component-id="left" hide-print
             md-is-locked-open="$mdMedia('gt-sm')">
 
     <header class="nav-header">
         <a ng-href="#index" class="docs-logo">
-            <img src="{{asset('assets/img/icons/angular-logo.svg')}}" alt=""/>
-            <h1 class="docs-logotype md-heading">Logo here</h1>
+            {{--<img src="{{asset('assets/img/icons/angular-logo.svg')}}" alt=""/>--}}
+            <h1 class="docs-logotype md-heading">ชุดที่ X</h1>
         </a>
     </header>
 
@@ -67,40 +66,75 @@
 
                 <span flex></span> <!-- use up the empty space -->
 
-                <div class="md-toolbar-item docs-tools" layout="row">
-                    <md-button class="md-icon-button"
-                               aria-label="Install with Bower"
-                               ng-if="!currentComponent.docs.length && !currentComponent.isService"
-                               target="_blank"
-                               ng-href="https://github.com/angular/bower-material">
-                        <md-tooltip md-autohide>Install with Bower</md-tooltip>
-                        <md-icon md-svg-src="{{asset('assets/img/icons/bower-logo.svg')}}"></md-icon>
-                    </md-button>
-                    <md-button class="md-icon-button"
-                               aria-label="Install with NPM"
-                               ng-if="!currentComponent.docs.length && !currentComponent.isService"
-                               target="_blank"
-                               ng-href="https://www.npmjs.com/package/angular-material">
-                        <md-tooltip md-autohide>Install with NPM</md-tooltip>
-                        <md-icon md-svg-src="{{asset('assets/img/icons/npm-logo.svg')}}"
-                                 style="transform: scale(1.3)"></md-icon>
-                    </md-button>
-                    <md-button class="md-icon-button"
-                               aria-label="View Source on Github"
-                               ng-if="!currentComponent.docs.length && !currentComponent.isService"
-                               target="_blank"
-                               ng-href="#1234">
-                        <md-tooltip md-autohide>View Source on Github</md-tooltip>
-                        <md-icon md-svg-src="{{asset('assets/img/icons/github.svg')}}"
-                                 style="color: rgba(255,255,255,0.97);"></md-icon>
-                    </md-button>
-                </div>
+                {{--<div class="md-toolbar-item docs-tools" layout="row">--}}
+                    {{--<md-button class="md-icon-button"--}}
+                               {{--aria-label="Install with Bower"--}}
+                               {{--ng-if="!currentComponent.docs.length && !currentComponent.isService"--}}
+                               {{--target="_blank"--}}
+                               {{--ng-href="https://github.com/angular/bower-material">--}}
+                        {{--<md-tooltip md-autohide>Install with Bower</md-tooltip>--}}
+                        {{--<md-icon md-svg-src="{{asset('assets/img/icons/bower-logo.svg')}}"></md-icon>--}}
+                    {{--</md-button>--}}
+                    {{--<md-button class="md-icon-button"--}}
+                               {{--aria-label="Install with NPM"--}}
+                               {{--ng-if="!currentComponent.docs.length && !currentComponent.isService"--}}
+                               {{--target="_blank"--}}
+                               {{--ng-href="https://www.npmjs.com/package/angular-material">--}}
+                        {{--<md-tooltip md-autohide>Install with NPM</md-tooltip>--}}
+                        {{--<md-icon md-svg-src="{{asset('assets/img/icons/npm-logo.svg')}}"--}}
+                                 {{--style="transform: scale(1.3)"></md-icon>--}}
+                    {{--</md-button>--}}
+                    {{--<md-button class="md-icon-button"--}}
+                               {{--aria-label="View Source on Github"--}}
+                               {{--ng-if="!currentComponent.docs.length && !currentComponent.isService"--}}
+                               {{--target="_blank"--}}
+                               {{--ng-href="#1234">--}}
+                        {{--<md-tooltip md-autohide>View Source on Github</md-tooltip>--}}
+                        {{--<md-icon md-svg-src="{{asset('assets/img/icons/github.svg')}}"--}}
+                                 {{--style="color: rgba(255,255,255,0.97);"></md-icon>--}}
+                    {{--</md-button>--}}
+                {{--</div>--}}
             </div>
         </div>
     </md-toolbar>
 
     <md-content md-scroll-y layout="column" flex>
         <div ng-view layout-padding flex="noshrink" class="docs-ng-view"></div>
+
+        {{--Content goes here--}}
+        <md-content layout-padding>
+            <a id="top"></a>
+            <div>
+                <md-content>
+                    <md-button type="submit" class="md-primary" ng-click="submit()">Submit</md-button>
+                </md-content>
+
+                <form ng-submit="submit()">
+                    <input type="hidden" name="_token" value="<?php echo csrf_token(); ?>">
+                    <input type="hidden" name="section" value="{{$section}}">
+                    <input type="hidden" name="sub_section" value="{{$sub_section}}">
+                    {{--for test--}}
+                    <input type="hidden" name="main_id" value="{{$main_id}}">
+
+                    @include('partials.children4',[
+                        'questions'=>$grouped,
+                        'parentQuestions'=>null
+                        ,'parent_parent_id'=>null
+                        ,'parent_parent_option_id'=>null
+                        ,'margin'=>0
+                        ,'parent_id'=>''
+                        ,'parent_option_id'=>''
+                    ])
+                    
+                    <md-content>
+                        <md-button type="submit" class="md-primary" ng-click="submit()">Submit</md-button>
+                    </md-content>
+                    {{--<input type="submit" value="Submit" id="submit">--}}
+                    {{--<button class="btn btn-success" ng-click="submit()">Submit</button>--}}
+                </form>
+            </div>
+            <a id="bottom"></a>
+        </md-content>
 
         <div layout="row" flex="noshrink" layout-align="center center">
             <div id="license-footer" flex>
@@ -122,8 +156,6 @@
             label="@{{button.label}}" ng-repeat="button in buttons"></button>
 </nav>
 
-<input type="hidden" name="bottom">
-
 <!-- Angular Material requires Angular.js Libraries -->
 <script src="http://ajax.googleapis.com/ajax/libs/angularjs/1.5.3/angular.min.js"></script>
 <script src="http://ajax.googleapis.com/ajax/libs/angularjs/1.5.3/angular-animate.min.js"></script>
@@ -142,6 +174,9 @@
     myApp.constant('submitUrl', '{{url('test-post-2')}}');
     myApp.constant('siteBaseUrl', '{{url('/')}}');
 
+    myApp.factory('question', function () {
+
+    });
     myApp.directive("initFromForm", function ($parse) {
         return {
             link: function (scope, element, attrs) {

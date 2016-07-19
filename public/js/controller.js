@@ -5,10 +5,12 @@ myApp.controller('SurveyCtrl', [
     '$mdSidenav',
     '$timeout',
     '$window',
+    '$location',
+    '$anchorScroll',
     'submitUrl',
     'siteBaseUrl',
     'menu',
-    function ($scope, $http, $mdDialog, $mdSidenav, $timeout, $window, submitUrl, siteBaseUrl, menu) {
+    function ($scope, $http, $mdDialog, $mdSidenav, $timeout, $window, $location, $anchorScroll, submitUrl, siteBaseUrl, menu) {
         var self = this;
 
         $scope.question = {};
@@ -29,15 +31,6 @@ myApp.controller('SurveyCtrl', [
         $scope.formData = {};
         var postURL = submitUrl;
 
-        // $http({
-        //     method: 'GET',
-        //     url: siteBaseUrl + '/api/menus'
-        // }).then(function successCallback(response) {
-        //     $scope.menu.sections = response.data;
-        //     $scope.$apply();
-        // }, function errorCallback(response) {
-        //     console.log(response);
-        // });
         menu.get().then(function(response){
             // console.log(response);
             menu.sections = response.data;
@@ -101,8 +94,21 @@ myApp.controller('SurveyCtrl', [
             href: '#top'
         }];
 
+        // $scope.goto = function (aHashTag) {
+        //     aHashTag = aHashTag.replace("#","");
+        //     $location.hash(aHashTag);
+        //
+        //     $anchorScroll();
+        // };
+
         function loc(href) {
-            $window.location.href = href;
+            if(href.indexOf("#") > -1){
+                $location.hash(href.replace("#",""));
+                $anchorScroll();
+            }
+            else{
+                $window.location.href = href;
+            }
         }
 
         function openMenu() {

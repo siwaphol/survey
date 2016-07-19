@@ -342,6 +342,7 @@ class QuestionController extends Controller
         }
 
 //        return view('welcome2', compact('grouped','section','sub_section', 'main_id'));
-        return view('angular-main', compact('grouped','section','sub_section', 'main_id','scopeParameters'));
+//        return view('angular-main', compact('grouped','section','sub_section', 'main_id','scopeParameters'));
+        return view('angular_material_main', compact('grouped','section','sub_section', 'main_id','scopeParameters'));
     }
 }
