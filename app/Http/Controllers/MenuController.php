@@ -11,16 +11,34 @@ class MenuController extends Controller
 {
     public function index()
     {
-        $result = [];
+        $result = collect();
         $menus = Menu::orderBy('parent_id','ASC')
             ->orderBy('order', 'ASC')
             ->get();
 
         foreach ($menus as $row){
-            
+            if (is_null($row->parent_id)){
+                $result->push($row);
+                continue;
+            }
+
+            $parentId = $row->parent_id;
+            $foundParent = $result->first(function ($key, $value) use ($parentId){
+                return (int)$value->id===(int)$parentId;
+            });
+
+            if ($foundParent){
+                if (!isset($foundParent->children))
+                    $foundParent->children = collect();
+
+                $foundParent->children->push($row);
+                continue;
+            }
+
+            $result->push($row);
         }
 
-        return json_encode(['data'=>[]]);
+        return $result->toJson();
     }
 
     protected function createTree($data, &$result)

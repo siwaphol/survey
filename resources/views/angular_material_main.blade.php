@@ -31,23 +31,23 @@
 
     <md-content flex role="navigation">
         <ul class="docs-menu">
-            {{--<li ng-repeat="section in menu.sections" class="parent-list-item @{{section.className || ''}}" ng-class="{'parentActive' : isSectionSelected(section)}">--}}
-            {{--<h2 class="menu-heading md-subhead" ng-if="section.type === 'heading'" id="heading_@{{ section.name | nospace }}">--}}
-            {{--@{{section.name}}--}}
-            {{--</h2>--}}
-            {{--<menu-link section="section" ng-if="section.type === 'link' && !section.hidden"></menu-link>--}}
+            <li ng-repeat="section in menu.sections" class="parent-list-item @{{section.className || ''}}" ng-class="{'parentActive' : isSectionSelected(section)}">
+            <h2 class="menu-heading md-subhead" ng-if="section.type === 'heading'" id="heading_@{{ section.name }}">
+            @{{section.name}}
+            </h2>
+            <menu-link section="section" ng-if="section.type === 'link' && !section.hidden"></menu-link>
 
-            {{--<menu-toggle section="section" ng-if="section.type === 'toggle' && !section.hidden"></menu-toggle>--}}
+            <menu-toggle section="section" ng-if="section.type === 'toggle' && !section.hidden"></menu-toggle>
 
-            {{--<ul ng-if="section.children" class="menu-nested-list">--}}
-            {{--<li ng-repeat="child in section.children" ng-class="{'childActive' : isSectionSelected(child)}">--}}
-            {{--<menu-link section="child" ng-if="child.type === 'link'"></menu-link>--}}
+            <ul ng-if="section.children" class="menu-nested-list">
+            <li ng-repeat="child in section.children" ng-class="{'childActive' : isSectionSelected(child)}">
+            <menu-link section="child" ng-if="child.type === 'link'"></menu-link>
 
-            {{--<menu-toggle section="child" ng-if="child.type === 'toggle'"></menu-toggle>--}}
-            {{--</li>--}}
-            {{--</ul>--}}
-            {{--</li>--}}
-            <li><a href="#">link here</a></li>
+            <menu-toggle section="child" ng-if="child.type === 'toggle'"></menu-toggle>
+            </li>
+            </ul>
+            </li>
+            {{--<li><a href="#">link here</a></li>--}}
         </ul>
     </md-content>
 </md-sidenav>
@@ -165,6 +165,7 @@
      */
     var myApp = angular.module('Survey', ['ngMaterial', 'ng-mfb']);
     myApp.constant('submitUrl', '{{url('test-post-2')}}');
+    myApp.constant('siteBaseUrl', '{{url('/')}}');
 
     myApp.directive("initFromForm", function ($parse) {
         return {
@@ -186,149 +187,104 @@
             return doc.label || doc.name;
         };
     });
-    myApp.controller('SurveyCtrl', [
-        '$scope',
-        '$http',
-        '$mdDialog',
-        '$mdSidenav',
-        '$timeout',
-        '$window',
-        'submitUrl',
-        function ($scope, $http, $mdDialog, $mdSidenav, $timeout, $window, submitUrl) {
-            $scope.question = {};
-            $scope.openMenu = openMenu;
-            $scope.isSectionSelected = isSectionSelected;
-            $scope.menu = {currentPage: {name: ''}};
-            $scope.menu.currentPage.name = 'Section';
-            $scope.loc = loc;
-                    {{--@foreach($scopeParameters as $aScope)--}}
-                    {{--{!! $aScope !!}--}}
-                    {{--@endforeach--}}
 
-            var submitItems = [];
-            $scope.formData = {};
-            var postURL = submitUrl;
+    myApp.directive('menuLink',['siteBaseUrl', function(siteBaseUrl) {
+        return {
+            scope: {
+                section: '='
+            },
+            templateUrl: siteBaseUrl + '/partials/menu-link.tmpl.html',
+            link: function($scope, $element) {
+                var controller = $element.parent().controller();
 
-            $scope.submit = function () {
-                submitItems = {};
-                angular.forEach($scope.question, function (value, key) {
-                    if (value && value != '' && value != 0) {
-                        this[key] = value;
-                    }
-                }, submitItems);
+                $scope.isSelected = function() {
+                    return controller.isSelected($scope.section);
+                };
 
-                submitItems["_token"] = $('[name="_token"]').val();
-                submitItems["section"] = $('[name="section"]').val();
-                submitItems["sub_section"] = $('[name="sub_section"]').val();
-                submitItems["main_id"] = $('[name="main_id"]').val();
+                $scope.focusSection = function() {
+                    // set flag to be used later when
+                    // $locationChangeSuccess calls openPage()
+                    controller.autoFocusContent = true;
+                };
+            }
+        };
+    }]);
 
-                console.log(submitItems);
+    myApp.directive('menuToggle', [ '$timeout', '$mdUtil', 'siteBaseUrl', function($timeout, $mdUtil, siteBaseUrl) {
+        return {
+            scope: {
+                section: '='
+            },
+            templateUrl: siteBaseUrl + '/partials/menu-toggle.tmpl.html',
+            link: function($scope, $element) {
+                var controller = $element.parent().controller();
 
-                $http({
-                    method: 'POST',
-                    url: postURL,
-                    data: $.param(submitItems),
-                    headers: {'Content-Type': 'application/x-www-form-urlencoded'}
-                }).success(function (data) {
-                    console.log(data);
-                    $scope.showAlert();
-                }).error(function (data) {
-                    console.log(data);
+                $scope.isOpen = function() {
+                    return controller.isOpen($scope.section);
+                };
+                $scope.toggle = function() {
+                    controller.toggleOpen($scope.section);
+                };
+
+                $mdUtil.nextTick(function() {
+                    $scope.$watch(
+                            function () {
+                                return controller.isOpen($scope.section);
+                            },
+                            function (open) {
+                                // We must run this in a next tick so that the getTargetHeight function is correct
+                                $mdUtil.nextTick(function() {
+                                    var $ul = $element.find('ul');
+                                    var $li = $ul[0].querySelector('a.active');
+                                    var docsMenuContent = document.querySelector('.docs-menu').parentNode;
+                                    var targetHeight = open ? getTargetHeight() : 0;
+
+                                    $timeout(function () {
+                                        // Set the height of the list
+                                        $ul.css({height: targetHeight + 'px'});
+
+                                        // If we are open and the user has not scrolled the content div; scroll the active
+                                        // list item into view.
+                                        if (open && $li && $ul[0].scrollTop === 0) {
+                                            $timeout(function() {
+                                                var activeHeight = $li.scrollHeight;
+                                                var activeOffset = $li.offsetTop;
+                                                var parentOffset = $li.offsetParent.offsetTop;
+
+                                                // Reduce it a bit (2 list items' height worth) so it doesn't touch the nav
+                                                var negativeOffset = activeHeight * 2;
+                                                var newScrollTop = activeOffset + parentOffset - negativeOffset;
+
+                                                $mdUtil.animateScrollTo(docsMenuContent, newScrollTop);
+                                            }, 350, false);
+                                        }
+                                    }, 0, false);
+
+                                    function getTargetHeight() {
+                                        var targetHeight;
+                                        $ul.addClass('no-transition');
+                                        $ul.css('height', '');
+                                        targetHeight = $ul.prop('clientHeight');
+                                        $ul.css('height', 0);
+                                        $ul.removeClass('no-transition');
+                                        return targetHeight;
+                                    }
+                                }, false);
+                            }
+                    );
                 });
-            };
 
-            $scope.showAlert = function (ev) {
-                // Appending dialog to document.body to cover sidenav in docs app
-                // Modal dialogs should fully cover application
-                // to prevent interaction outside of dialog
-                $mdDialog.show(
-                        $mdDialog.alert()
-                                .parent(angular.element(document.querySelector('#popupContainer')))
-                                .clickOutsideToClose(true)
-                                .title('บันทึกข้อมูลสำเร็จ')
-                                .textContent('ข้อมูลถูกบันทึกลงฐานข้อมูลเรียบร้อย')
-                                .ok('ตกลง')
-                                .targetEvent(ev)
-                );
-            };
-
-            $scope.buttons = [{
-                label: 'Submit',
-                icon: 'ion-android-done',
-                href: '#done'
-            }, {
-                label: 'Go to Bottom',
-                icon: 'ion-arrow-down-a',
-                href: '#bottom'
-            }, {
-                label: 'Go to Top',
-                icon: 'ion-arrow-up-a',
-                href: '#top'
-            }];
-
-            function loc(href) {
-                $window.location.href = href;
-            }
-
-            function openMenu() {
-                $timeout(function () {
-                    $mdSidenav('left').open();
-                });
-            }
-
-            function isSectionSelected(section) {
-                var selected = false;
-                var openedSection = menu.openedSection;
-                if (openedSection === section) {
-                    selected = true;
-                }
-                else if (section.children) {
-                    section.children.forEach(function (childSection) {
-                        if (childSection === openedSection) {
-                            selected = true;
-                        }
-                    });
-                }
-                return selected;
-            }
-        }]);
-    myApp.controller('NavCtrl', [
-        '$scope',
-        '$timeout',
-        '$mdSidenav',
-        '$log',
-        function ($scope, $timeout, $mdSidenav, $log) {
-            $scope.toggleLeft = buildToggler('left');
-            $scope.isOpenLeft = function () {
-                return $mdSidenav('left').isOpen();
-            };
-
-            function buildToggler(navID) {
-                return function () {
-                    // Component lookup should always be available since we are not using `ng-if`
-                    $mdSidenav(navID)
-                            .toggle()
-                            .then(function () {
-                                $log.debug("toggle " + navID + " is done");
-                            });
+                var parentNode = $element[0].parentNode.parentNode.parentNode;
+                if(parentNode.classList.contains('parent-list-item')) {
+                    var heading = parentNode.querySelector('h2');
+                    $element[0].firstChild.setAttribute('aria-describedby', heading.id);
                 }
             }
-        }]);
-    myApp.controller('LeftCtrl', [
-            '$scope',
-            '$timeout',
-            '$mdSidenav',
-            '$log',
-        function ($scope, $timeout, $mdSidenav, $log) {
-        $scope.close = function () {
-            // Component lookup should always be available since we are not using `ng-if`
-            $mdSidenav('left').close()
-                    .then(function () {
-                        $log.debug("close LEFT is done");
-                    });
         };
     }]);
 </script>
+<script src="{{asset('js/factory.js')}}"></script>
+<script src="{{asset('js/controller.js')}}"></script>
 
 <!-- ng-material-floating-button -->
 <script src="{{asset('assets/mfb/mfb-directive.js')}}"></script>

@@ -14,6 +14,10 @@ Route::group(['middleware' => 'auth'], function () {
     Route::post('test-post-2','AnswerController@saveAnswersWithEasiestWay');
 });
 
+Route::group(['prefix'=>'api'], function (){
+    Route::get('menus','MenuController@index');
+});
+
 Route::get('angular-material', function(){
     return view('angular_material_main');
 });
