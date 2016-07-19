@@ -39,7 +39,7 @@ myApp.controller('SurveyCtrl', [
         //     console.log(response);
         // });
         menu.get().then(function(response){
-            console.log(response);
+            // console.log(response);
             menu.sections = response.data;
             // $scope.$apply();
         });

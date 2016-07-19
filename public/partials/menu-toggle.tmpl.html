@@ -15,8 +15,8 @@
   </span>
 </md-button>
 
-<ul id="docs-menu-{{section.name | nospace}}" class="menu-toggle-list">
-  <li ng-repeat="page in section.pages">
-    <menu-link section="page"></menu-link>
+<ul ng-if="section.children" id="docs-menu-@{{section.name | nospace}}" class="menu-toggle-list">
+  <li ng-repeat="child in section.children">
+    <menu-link section="child"></menu-link>
   </li>
 </ul>

@@ -38,16 +38,7 @@
             <menu-link section="section" ng-if="section.type === 'link'"></menu-link>
 
             <menu-toggle section="section" ng-if="section.type === 'toggle'"></menu-toggle>
-
-            <ul ng-if="section.children" class="menu-nested-list">
-            <li ng-repeat="child in section.children" ng-class="{'childActive' : isSectionSelected(child)}">
-            <menu-link section="child" ng-if="child.type === 'link'"></menu-link>
-
-            <menu-toggle section="child" ng-if="child.type === 'toggle'"></menu-toggle>
             </li>
-            </ul>
-            </li>
-            {{--<li><a href="#">link here</a></li>--}}
         </ul>
     </md-content>
 </md-sidenav>
@@ -122,22 +113,6 @@
         </div>
     </md-content>
 </div>
-
-{{--<div class="fixed-action-btn" style="bottom: 45px; right: 24px;">--}}
-{{--<a class="btn-floating btn-large red">--}}
-{{--<i class="material-icons">mode_edit</i>--}}
-{{--</a>--}}
-{{--<ul>--}}
-{{--<li><a class="btn-floating yellow darken-1" style="transform: scaleY(0.4) scaleX(0.4) translateY(40px) translateX(0px); opacity: 0;"><i class="material-icons">keyboard_arrow_up</i></a></li>--}}
-{{--<li><a class="btn-floating yellow darken-1" style="transform: scaleY(0.4) scaleX(0.4) translateY(40px) translateX(0px); opacity: 0;"><i class="material-icons">keyboard_arrow_down</i></a></li>--}}
-{{--<li><a class="btn-floating green" style="transform: scaleY(0.4) scaleX(0.4) translateY(40px) translateX(0px); opacity: 0;"><i class="material-icons">done</i></a></li>--}}
-{{--</ul>--}}
-{{--</div>--}}
-{{--<nav mfb-menu position="br" effect="zoomin" label="hover here"--}}
-{{--active-icon="ion-edit" resting-icon="ion-plus-round"--}}
-{{--toggling-method="click">--}}
-{{--<button mfb-button icon="paper-airplane" label="menu item"></button>--}}
-{{--</nav>--}}
 
 <nav mfb-menu position="br" effect="zoomin"
      active-icon="ion-close-round" resting-icon="ion-plus-round"
