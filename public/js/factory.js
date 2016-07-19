@@ -35,11 +35,15 @@ myApp.factory('menu', [
             toggleSelectSection: function(section) {
                 self.openedSection = (self.openedSection === section ? null : section);
             },
-            selectPage: function(section) {
+            selectPage: function(section, page) {
                 self.currentSection = section;
+                self.currentPage = page;
             },
             isSectionSelected: function(section) {
                 return self.openedSection === section;
+            },
+            isPageSelected: function(page) {
+                return self.currentPage === page;
             }
         };
 

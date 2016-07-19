@@ -35,9 +35,9 @@
             <h2 class="menu-heading md-subhead" ng-if="section.type === 'heading'" id="heading_@{{ section.name }}">
             @{{section.name}}
             </h2>
-            <menu-link section="section" ng-if="section.type === 'link' && !section.hidden"></menu-link>
+            <menu-link section="section" ng-if="section.type === 'link'"></menu-link>
 
-            <menu-toggle section="section" ng-if="section.type === 'toggle' && !section.hidden"></menu-toggle>
+            <menu-toggle section="section" ng-if="section.type === 'toggle'"></menu-toggle>
 
             <ul ng-if="section.children" class="menu-nested-list">
             <li ng-repeat="child in section.children" ng-class="{'childActive' : isSectionSelected(child)}">
@@ -185,6 +185,11 @@
                 });
             }
             return doc.label || doc.name;
+        };
+    });
+    myApp.filter('nospace', function () {
+        return function (value) {
+            return (!value) ? '' : value.replace(/ /g, '');
         };
     });
 

@@ -9,15 +9,20 @@ myApp.controller('SurveyCtrl', [
     'siteBaseUrl',
     'menu',
     function ($scope, $http, $mdDialog, $mdSidenav, $timeout, $window, submitUrl, siteBaseUrl, menu) {
+        var self = this;
+
         $scope.question = {};
         $scope.openMenu = openMenu;
 
         $scope.loc = loc;
         $scope.isSectionSelected = isSectionSelected;
-        $scope.isOpen = isOpen;
-        $scope.isSelected = isSelected;
-        $scope.toggleOpen = toggleOpen;
-        $scope.autoFocusContent = false;
+
+        // Methods used by menuLink and menuToggle directives
+        this.isOpen = isOpen;
+        this.isSelected = isSelected;
+        this.toggleOpen = toggleOpen;
+        this.autoFocusContent = false;
+
         $scope.menu = menu;
 
         var submitItems = [];
