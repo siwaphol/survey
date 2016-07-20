@@ -18,8 +18,5 @@ Route::group(['prefix'=>'api'], function (){
     Route::get('menus','MenuController@index');
 });
 
-Route::get('angular-material', function(){
-    return view('angular_material_main');
-});
 Route::get('import-excel','QuestionController@importExcelQuestion');
 Route::auth();

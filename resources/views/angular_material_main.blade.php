@@ -22,7 +22,7 @@
             md-is-locked-open="$mdMedia('gt-sm')">
 
     <header class="nav-header">
-        <a ng-href="#index" class="docs-logo">
+        <a ng-href="{{url('main')}}" class="docs-logo">
             {{--<img src="{{asset('assets/img/icons/angular-logo.svg')}}" alt=""/>--}}
             <h1 class="docs-logotype md-heading">ชุดที่ {{$main_id}}</h1>
         </a>
@@ -69,34 +69,13 @@
 
                 <span flex></span> <!-- use up the empty space -->
 
-                {{--<div class="md-toolbar-item docs-tools" layout="row">--}}
-                    {{--<md-button class="md-icon-button"--}}
-                               {{--aria-label="Install with Bower"--}}
-                               {{--ng-if="!currentComponent.docs.length && !currentComponent.isService"--}}
-                               {{--target="_blank"--}}
-                               {{--ng-href="https://github.com/angular/bower-material">--}}
-                        {{--<md-tooltip md-autohide>Install with Bower</md-tooltip>--}}
-                        {{--<md-icon md-svg-src="{{asset('assets/img/icons/bower-logo.svg')}}"></md-icon>--}}
-                    {{--</md-button>--}}
-                    {{--<md-button class="md-icon-button"--}}
-                               {{--aria-label="Install with NPM"--}}
-                               {{--ng-if="!currentComponent.docs.length && !currentComponent.isService"--}}
-                               {{--target="_blank"--}}
-                               {{--ng-href="https://www.npmjs.com/package/angular-material">--}}
-                        {{--<md-tooltip md-autohide>Install with NPM</md-tooltip>--}}
-                        {{--<md-icon md-svg-src="{{asset('assets/img/icons/npm-logo.svg')}}"--}}
-                                 {{--style="transform: scale(1.3)"></md-icon>--}}
-                    {{--</md-button>--}}
-                    {{--<md-button class="md-icon-button"--}}
-                               {{--aria-label="View Source on Github"--}}
-                               {{--ng-if="!currentComponent.docs.length && !currentComponent.isService"--}}
-                               {{--target="_blank"--}}
-                               {{--ng-href="#1234">--}}
-                        {{--<md-tooltip md-autohide>View Source on Github</md-tooltip>--}}
-                        {{--<md-icon md-svg-src="{{asset('assets/img/icons/github.svg')}}"--}}
-                                 {{--style="color: rgba(255,255,255,0.97);"></md-icon>--}}
-                    {{--</md-button>--}}
-                {{--</div>--}}
+                <div class="md-toolbar-item docs-tools" layout="row">
+                    <md-button class="md-icon-button"
+                               ng-href="{{url('main')}}">
+                        <md-tooltip md-autohide>เปลี่ยนชุดแบบสอบถาม</md-tooltip>
+                        <i class="ion-gear-b" style="font-size: 2em;"></i>
+                    </md-button>
+                </div>
             </div>
         </div>
     </md-toolbar>
