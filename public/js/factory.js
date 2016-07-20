@@ -10,17 +10,6 @@ myApp.factory('menu', [
 
         $rootScope.$on('$locationChangeSuccess', onLocationChange);
 
-        // $http.get("/docs.json");
-        // $http({
-        //     method: 'GET',
-        //     url: siteBaseUrl + '/api/menus'
-        // }).then(function successCallback(response) {
-        //     sections = response.data;
-        //     console.log(sections);
-        // }, function errorCallback(response) {
-        //     console.log(response);
-        // });
-
         return self = {
             sections: sections,
             get: function () {

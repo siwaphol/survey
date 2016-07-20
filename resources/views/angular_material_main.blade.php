@@ -61,7 +61,10 @@
                   {{--style="margin-top: -2px"></md-icon>--}}
               </span>
             </span>
-                    <span class="md-breadcrumb-page">Sub Section</span>
+                    <span class="md-breadcrumb-page">{{$section}}</span>
+                    @if($sub_section!=='NULL')
+                        <span class="md-breadcrumb-page" hide-xs> - {{$sub_section}}</span>
+                    @endif
                 </h2>
 
                 <span flex></span> <!-- use up the empty space -->
@@ -105,9 +108,9 @@
         <md-content layout-padding>
             <a id="top" style="padding: 0;"></a>
             <div>
-                <md-content>
-                    <md-button type="submit" class="md-primary" ng-click="submit()">Submit</md-button>
-                </md-content>
+                <div>
+                    <md-button type="submit" class="md-raised md-button md-ink-ripple" ng-click="submit()" >Submit</md-button>
+                </div>
 
                 <form ng-submit="submit()" name="myForm">
                     <input type="hidden" name="_token" value="<?php echo csrf_token(); ?>">
@@ -126,9 +129,9 @@
                         ,'parent_option_id'=>''
                     ])
                     
-                    <md-content>
-                        <md-button type="submit" class="md-primary" ng-click="submit()" ng-disabled="myForm.$valid && myForm.$submitted">Submit</md-button>
-                    </md-content>
+                    <div>
+                        <md-button type="submit" class="md-raised md-ink-ripple" ng-click="submit()">Submit</md-button>
+                    </div>
                 </form>
             </div>
             <a id="bottom" style="padding: 0;"></a>
@@ -251,14 +254,14 @@
             $scope.submit = function () {
                 submitItems = {};
                 angular.forEach($scope.question, function (value, key) {
-                    console.log('key: ',key,', value:',value);
                     if (value && value != '' && value != 0) {
                         this[key] = value;
                     }
                 }, submitItems);
 
-                if (submitItems.length<=0){
-                    $scope.showError();
+                console.log(submitItems);
+                if (angular.equals({}, submitItems)){
+                    $scope.showError(null, 'คำเตือน', 'โปรดกรอกข้อมูลก่อนกดยืนยัน');
                     return;
                 }
 
@@ -267,11 +270,10 @@
                 submitItems["sub_section"] = $('[name="sub_section"]').val();
                 submitItems["main_id"] = $('[name="main_id"]').val();
 
-                console.log(submitItems);
                 this.myForm.$setSubmitted();
 
                 if (!this.myForm.$valid){
-                    $scope.showError();
+                    $scope.showError(null, 'กรอกข้อมูลไม่ถูกต้อง','แก้ไขข้อมูลก่อนกดยืนยัน');
                     return;
                 }
 
@@ -304,9 +306,6 @@
             };
 
             $scope.showAlert = function (ev) {
-                // Appending dialog to document.body to cover sidenav in docs app
-                // Modal dialogs should fully cover application
-                // to prevent interaction outside of dialog
                 $mdDialog.show(
                         $mdDialog.alert()
                                 .parent(angular.element(document.querySelector('#popupContainer')))
@@ -318,13 +317,13 @@
                 );
             };
 
-            $scope.showError = function (ev) {
+            $scope.showError = function (ev, title, textContent) {
                 $mdDialog.show(
                         $mdDialog.alert()
                                 .parent(angular.element(document.querySelector('#popupContainer')))
                                 .clickOutsideToClose(true)
-                                .title('โปรดตรวจสอบข้อมูลก่อนบันทึก')
-                                .textContent('โปรดตรวจสอบข้อมูลก่อนบันทึก')
+                                .title(title)
+                                .textContent(textContent)
                                 .ok('ตกลง')
                                 .targetEvent(ev)
                 );
