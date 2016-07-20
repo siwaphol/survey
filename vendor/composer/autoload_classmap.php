@@ -6,7 +6,7 @@ $vendorDir = dirname(dirname(__FILE__));
 $baseDir = dirname($vendorDir);
 
 return array(
-    'AddMenusTypeAndOrderColumns' => $baseDir . '/database/migrations/2016_07_19_094700_add_menus_type_and_order_columns.php',
+    'AlterQuestionsSectionAndSubsectionToInteger' => $baseDir . '/database/migrations/2016_07_20_221740_alter_questions_section_and_subsection_to_integer.php',
     'CreateAnswersTable' => $baseDir . '/database/migrations/2016_05_10_061441_create_answers_table.php',
     'CreateMainsTable' => $baseDir . '/database/migrations/2016_05_10_060113_create_mains_table.php',
     'CreateMenusTable' => $baseDir . '/database/migrations/2016_07_19_083228_create_menus_table.php',

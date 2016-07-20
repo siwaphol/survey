@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Answer;
+use App\Menu;
 use App\Option;
 use App\OptionQuestion;
 use App\Question;
@@ -148,23 +149,37 @@ class QuestionController extends Controller
         $main_id = (int)$main_id;
 
         $section = "";
-        foreach (Question::$sections as $key=>$value){
-            if ((int)$id===(int)$key){
-                $section = $value;
-                break;
-            }
-        }
+        $menuSection = Menu::whereNull('parent_id')
+            ->find($id);
+        if (is_null($menuSection))
+            return abort(404);
+        $section = $menuSection->name;
+
+//        foreach (Question::$sections as $key=>$value){
+//            if ((int)$id===(int)$key){
+//                $section = $value;
+//                break;
+//            }
+//        }
         $sub_section = "NULL";
-        if (!is_null($sub)) {
-            foreach (Question::$subSections as $key=>$value){
-                if ((int)$sub===(int)$key){
-                    $sub_section = $value;
-                    break;
-                }
-            }
+        if(!is_null($sub)){
+            $subMenuSection = Menu::where('parent_id', $id)
+                ->find($sub);
+            if (is_null($subMenuSection))
+                return abort(404);
+            $sub_section = $subMenuSection->name;
         }
-        if (empty($section))
-            abort(404);
+
+//        if (!is_null($sub)) {
+//            foreach (Question::$subSections as $key=>$value){
+//                if ((int)$sub===(int)$key){
+//                    $sub_section = $value;
+//                    break;
+//                }
+//            }
+//        }
+//        if (empty($section))
+//            abort(404);
         //test
         $radioText = Question::TYPE_RADIO;
         $checkboxText = Question::TYPE_CHECKBOX;
@@ -207,8 +222,6 @@ class QuestionController extends Controller
         
         $result = \DB::select($str);
 
-//        dd($result);
-
         $scopeParameters = array();
         $duplicateRadio = array();
         $questions = Question::get();
@@ -230,7 +243,7 @@ class QuestionController extends Controller
                 }elseif ($row->input_type === Question::TYPE_TEXT)
                     $scopeName .= ' = ' . ($row->answer_text?"'".$row->answer_text."'":"''");
                 elseif ($row->input_type===Question::TYPE_NUMBER)
-                    $scopeName .= ' = ' . ($row->answer_numeric?:'0');
+                    $scopeName .= ' = ' . ($row->answer_numeric?:'null');
                 elseif ($row->input_type===Question::TYPE_RADIO){
                     if (!in_array($scopeName, $duplicateRadio)){
                         $oq = $optionQuestions->where('id',(int)$row->answer_option_question_id)->first();

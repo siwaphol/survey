@@ -17,9 +17,9 @@ myApp.directive('menuLink',['siteBaseUrl','surveyUrl', '$window', function(siteB
                 controller.autoFocusContent = true;
             };
 
-            $scope.openSurvey = function(sectionId, subSectionId) {
-                if (subSectionId)
-                    $window.location.href = surveyUrl + '/' +sectionId + '/' + subSectionId;
+            $scope.openSurvey = function(sectionId, parentId) {
+                if (parentId)
+                    $window.location.href = surveyUrl + '/' +parentId + '/' + sectionId;
                 else
                     $window.location.href = surveyUrl + '/' +sectionId;
             }

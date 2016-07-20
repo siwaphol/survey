@@ -24,7 +24,7 @@
     <header class="nav-header">
         <a ng-href="#index" class="docs-logo">
             {{--<img src="{{asset('assets/img/icons/angular-logo.svg')}}" alt=""/>--}}
-            <h1 class="docs-logotype md-heading">ชุดที่ X</h1>
+            <h1 class="docs-logotype md-heading">ชุดที่ {{$main_id}}</h1>
         </a>
     </header>
 
@@ -102,8 +102,6 @@
     </md-toolbar>
 
     <md-content md-scroll-y layout="column" flex>
-        <div ng-view layout-padding flex="noshrink" class="docs-ng-view"></div>
-
         {{--Content goes here--}}
         <md-content layout-padding>
             <a id="top" style="padding: 0;"></a>
@@ -276,6 +274,7 @@
                 this.myForm.$setSubmitted();
 
                 if (!this.myForm.$valid){
+                    angular.element("[name='" + this.myForm.$name + "']").find('.ng-invalid:visible:first').focus();
                     $scope.showError(null, 'กรอกข้อมูลไม่ถูกต้อง','แก้ไขข้อมูลก่อนกดยืนยัน');
                     return;
                 }
