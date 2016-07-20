@@ -1,3 +1,7 @@
+h4 {
+    margin-top: 0;
+    margin-bottom: 0;
+}
 .site-sidenav, .site-sidenav.md-locked-open-add-active, .site-sidenav.md-locked-open {
     width: 272px;
     min-width: 272px;

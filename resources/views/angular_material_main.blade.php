@@ -103,7 +103,7 @@
 
         {{--Content goes here--}}
         <md-content layout-padding>
-            <a id="top"></a>
+            <a id="top" style="padding: 0;"></a>
             <div>
                 <md-content>
                     <md-button type="submit" class="md-primary" ng-click="submit()">Submit</md-button>
@@ -127,14 +127,11 @@
                     ])
                     
                     <md-content>
-                        <md-button type="submit" class="md-primary" ng-click="submit()">Submit</md-button>
+                        <md-button type="submit" class="md-primary" ng-click="submit()" ng-disabled="myForm.$valid && myForm.$submitted">Submit</md-button>
                     </md-content>
-
-                    {{--<input type="submit" value="Submit" id="submit">--}}
-                    {{--<button class="btn btn-success" ng-click="submit()">Submit</button>--}}
                 </form>
             </div>
-            <a id="bottom"></a>
+            <a id="bottom" style="padding: 0;"></a>
         </md-content>
 
         {{--<div layout="row" flex="noshrink" layout-align="center center">--}}
@@ -220,7 +217,7 @@
         'submitUrl',
         'siteBaseUrl',
         'menu',
-        function ($scope, $http, $mdDialog, $mdSidenav, $timeout, $window, $location, $anchorScroll, submitUrl, siteBaseUrl, menu) {
+        function ($scope, $http, $mdDialog, $mdSidenav, $timeout, $window, $location, $anchorScroll,submitUrl, siteBaseUrl, menu) {
             var self = this;
 
             $scope.question = {};
@@ -271,6 +268,12 @@
                 submitItems["main_id"] = $('[name="main_id"]').val();
 
                 console.log(submitItems);
+                this.myForm.$setSubmitted();
+
+                if (!this.myForm.$valid){
+                    $scope.showError();
+                    return;
+                }
 
                 $http({
                     method: 'POST',

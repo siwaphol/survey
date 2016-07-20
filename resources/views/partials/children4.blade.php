@@ -3,7 +3,13 @@
 
         <?php
                 $ngIf = "";
+                $required = "";
             if (strpos($question->class,'has-parent')>-1 && !is_null($parentQuestions) && $parentQuestions[$parent_id]){
+                //set required for field that has parent and type text and number
+                if ($question->input_type===\App\Question::TYPE_NUMBER || $question->input_type===\App\Question::TYPE_TEXT){
+                    $required = "required";
+                }
+
                 $parentQ = $parentQuestions[$parent_id];
                 if (is_null($parent_option_id)){
                     $allOptions = "";$first = true;
@@ -22,38 +28,39 @@
                         else
                             $allOptions .= " || question.no_" . $parent_parent_id . "_" . $parent_parent_option_id . "_" . $parent_id . " == ".$p_option->option_id;
                     }
-                    $ngIf = 'ng-if="'.$allOptions.'"';
+                    $ngIf = 'ng-if='.$allOptions.'';
                 }else{
                     if($parentQ->input_type===\App\Question::TYPE_RADIO)
-                        $ngIf = 'ng-if="question.no_'. $parent_parent_id .'_'. $parent_parent_option_id .'_'.$parent_id.'=='.$parent_option_id.'"';
+                        $ngIf = 'ng-if=question.no_'. $parent_parent_id .'_'. $parent_parent_option_id .'_'.$parent_id.'=='.$parent_option_id.'';
                     elseif($parentQ->input_type===\App\Question::TYPE_CHECKBOX)
-                        $ngIf = 'ng-if="question.no_'. $parent_parent_id .'_'. $parent_parent_option_id .'_'.$parent_id.'_'.$parent_option_id .'"';
+                        $ngIf = 'ng-if=question.no_'. $parent_parent_id .'_'. $parent_parent_option_id .'_'.$parent_id.'_'.$parent_option_id .'';
                 }
             }
         ?>
 
             {{--ประเภท title--}}
             @if($question->input_type===\App\Question::TYPE_TITLE)
-                <md-input-container class="md-block" style="margin-left: {{$margin}}px;" {{$ngIf}}>
-                    <label for="">{{$question->name}}</label>
-                    </br>
+                <md-input-container class="md-block" style="margin-left: {{$margin}}px;" {!! $ngIf !!}>
+                    <h4>{{$question->name}}</h4>
                 </md-input-container>
                 {{--ประเภท textbox number --}}
             @elseif($question->input_type===\App\Question::TYPE_NUMBER)
-                <md-input-container class="md-block" style="margin-left: {{$margin}}px;" {{$ngIf}}>
-                    <label for="q_{{$parent_id}}_{{$parent_option_id}}_{{$question->id}}">{{$question->name}} ({{$question[0]->unit_of_measure}})</label>
-                    <input type="number" value="{{$question[0]->answer_numeric}}"
-                           ng-model="question.no_{{$parent_id}}_{{$parent_option_id}}_{{$question->id}}" min="1" name="no_{{$parent_id}}_{{$parent_option_id}}_{{$question->id}}">
-                    <div ng-messages="myForm.no_{{$parent_id}}_{{$parent_option_id}}_{{$question->id}}.$error" multiple>
-                        <div ng-message="required">This is required.</div>
-                        <div ng-message="min">Not less than 0</div>
-                    </div>
-                </md-input-container>
+                <div {{$ngIf}}>
+                    <md-input-container class="md-block" style="margin-left: {{$margin}}px;">
+                        <label for="q_{{$parent_id}}_{{$parent_option_id}}_{{$question->id}}">{{$question->name}} @if(!empty($question[0]->unit_of_measure))({{$question[0]->unit_of_measure}})@endif</label>
+                        <input type="number" value="{{$question[0]->answer_numeric}}" {{$required}}
+                               ng-model="question.no_{{$parent_id}}_{{$parent_option_id}}_{{$question->id}}" min="1" name="no_{{$parent_id}}_{{$parent_option_id}}_{{$question->id}}">
+                        <div ng-messages="myForm.no_{{$parent_id}}_{{$parent_option_id}}_{{$question->id}}.$error" multiple>
+                            <div ng-message="required">This is required.</div>
+                            <div ng-message="min">Not less than 1</div>
+                        </div>
+                    </md-input-container>
+                </div>
                 {{--ประเภท textbox text--}}
             @elseif($question->input_type===\App\Question::TYPE_TEXT)
-                <md-input-container class="md-block" style="margin-left: {{$margin}}px;" {{$ngIf}}>
-                    <label for="q_{{$parent_id}}_{{$parent_option_id}}_{{$question->id}}">{{$question->name}} ({{$question[0]->unit_of_measure}}) </label>
-                    <input type="text" value="{{$question[0]->answer_numeric}}"
+                <md-input-container class="md-block" style="margin-left: {{$margin}}px;" {!! $ngIf !!}>
+                    <label for="q_{{$parent_id}}_{{$parent_option_id}}_{{$question->id}}">{{$question->name}} @if(!empty($question[0]->unit_of_measure))({{$question[0]->unit_of_measure}})@endif </label>
+                    <input type="text" value="{{$question[0]->answer_numeric}}" {{$required}}
                            ng-model="question.no_{{$parent_id}}_{{$parent_option_id}}_{{$question->id}}" name="no_{{$parent_id}}_{{$parent_option_id}}_{{$question->id}}">
                     <div ng-messages="myForm.no_{{$parent_id}}_{{$parent_option_id}}_{{$question->id}}.$error">
                         <div ng-message="required">This is required.</div>
@@ -61,7 +68,7 @@
                 </md-input-container>
                 {{--ประเภท radio--}}
             @elseif($question->input_type===\App\Question::TYPE_RADIO)
-                <md-content flex layout-padding style="margin-left: {{$margin}}px;" {{$ngIf}}>
+                <md-content flex layout-padding style="margin-left: {{$margin}}px;" {!! $ngIf !!}>
                     <h4>{{$question->name}}</h4>
                     <md-radio-group ng-model="question.no_{{$parent_id}}_{{$parent_option_id}}_{{$question->id}}">
                         @foreach($question as $option)
@@ -86,7 +93,7 @@
                 </md-content>
                 {{--ประเภท checkbox--}}
             @elseif($question->input_type===\App\Question::TYPE_CHECKBOX)
-                <md-content flex layout-padding style="margin-left: {{$margin}}px;" {{$ngIf}}>
+                <md-content flex layout-padding style="margin-left: {{$margin}}px;" {!! $ngIf !!}>
                     <h4>{{$question->name}}</h4>
                     @foreach($question as $option)
                         <div>
