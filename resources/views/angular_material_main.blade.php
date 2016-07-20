@@ -243,7 +243,7 @@
             var postURL = submitUrl;
 
             menu.get().then(function(response){
-                // console.log(response);
+                 console.log(response);
                 menu.sections = response.data;
                 // $scope.$apply();
             });
@@ -284,6 +284,22 @@
                     $scope.showAlert();
                 }).error(function (data) {
                     console.log(data);
+                });
+            };
+
+            $scope.showConfirm = function (ev) {
+                var confirm = $mdDialog.confirm()
+                        .title('ยืนยันการแก้ไข')
+                        .textContent('เมื่อเอาออกแล้วค่าของลูกจะถูกลบออก')
+                        .targetEvent(ev)
+                        .ok('ตกลง')
+                        .cancel('ยกเลิก');
+                $mdDialog.show(confirm).then(function () {
+                    // change select box or radio state
+                    // remove all child data
+                },function () {
+                    // not change
+                    return;
                 });
             };
 

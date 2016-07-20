@@ -28,9 +28,10 @@ class MenuController extends Controller
             });
 
             if ($foundParent){
-                if (!isset($foundParent->children))
+                if (!isset($foundParent->children)){
                     $foundParent->pages = collect();
                     $foundParent->children = collect();
+                }
 
                 $foundParent->pages->push($row);
                 $foundParent->children->push($row);
