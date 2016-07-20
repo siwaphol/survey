@@ -175,6 +175,7 @@
     var myApp = angular.module('Survey', ['ngMaterial', 'ng-mfb','ngMessages']);
     myApp.constant('submitUrl', '{{url('test-post-2')}}');
     myApp.constant('siteBaseUrl', '{{url('/')}}');
+    myApp.constant('surveyUrl', '{{url('html-loop-2')}}');
 
     myApp.factory('question', function () {
 
@@ -219,14 +220,16 @@
         '$anchorScroll',
         'submitUrl',
         'siteBaseUrl',
+            'surveyUrl',
         'menu',
-        function ($scope, $http, $mdDialog, $mdSidenav, $timeout, $window, $location, $anchorScroll,submitUrl, siteBaseUrl, menu) {
+        function ($scope, $http, $mdDialog, $mdSidenav, $timeout, $window, $location, $anchorScroll,submitUrl, siteBaseUrl, surveyUrl, menu) {
             var self = this;
 
             $scope.question = {};
             $scope.openMenu = openMenu;
 
             $scope.loc = loc;
+//            $scope.openSurvey = openSurvey;
             $scope.isSectionSelected = isSectionSelected;
 
             @foreach($scopeParameters as $aScope)
@@ -342,6 +345,14 @@
                 icon: 'ion-arrow-up-a',
                 href: '#top'
             }];
+
+//            function openSurvey(sectionId, subSectionId) {
+//                console.log('test');
+//                if (subSectionId)
+//                    $window.location.href = surveyUrl + '/' +sectionId + '/' + subSectionId;
+//                else
+//                    $window.location.href = surveyUrl + '/' +sectionId;
+//            }
 
             function loc(href) {
                 if (href==='submit')

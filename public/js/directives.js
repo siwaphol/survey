@@ -1,4 +1,4 @@
-myApp.directive('menuLink',['siteBaseUrl', function(siteBaseUrl) {
+myApp.directive('menuLink',['siteBaseUrl','surveyUrl', '$window', function(siteBaseUrl, surveyUrl, $window) {
     return {
         scope: {
             section: '='
@@ -16,6 +16,13 @@ myApp.directive('menuLink',['siteBaseUrl', function(siteBaseUrl) {
                 // $locationChangeSuccess calls openPage()
                 controller.autoFocusContent = true;
             };
+
+            $scope.openSurvey = function(sectionId, subSectionId) {
+                if (subSectionId)
+                    $window.location.href = surveyUrl + '/' +sectionId + '/' + subSectionId;
+                else
+                    $window.location.href = surveyUrl + '/' +sectionId;
+            }
         }
     };
 }]);

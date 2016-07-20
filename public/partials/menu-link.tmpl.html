@@ -1,7 +1,7 @@
 <md-button
     ng-class="{'active' : isSelected()}"
     ng-href="{{section.url}}"
-    ng-click="focusSection()">
+    ng-click="openSurvey(section.id,section.parent_id)">
   {{section | humanizeDoc}}
   <span class="md-visually-hidden"
     ng-if="isSelected()">
