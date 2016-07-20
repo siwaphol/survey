@@ -13,7 +13,7 @@
     <link href="http://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
     <link href="http://code.ionicframework.com/ionicons/2.0.1/css/ionicons.min.css" rel="stylesheet">
 
-    <script type="text/javascript" src="{{asset('assets/mfb/dist/lib/modernizr.touch.js')}}"></script>
+    <script type="text/javascript" src="{{asset('assets/mfb/lib/modernizr.touch.js')}}"></script>
     <link href="{{asset('css/custom2.css')}}" rel="stylesheet">
 </head>
 <body ng-app="Survey" ng-controller="SurveyCtrl" class="docs-body" layout="row" ng-cloak>
@@ -109,7 +109,7 @@
                     <md-button type="submit" class="md-primary" ng-click="submit()">Submit</md-button>
                 </md-content>
 
-                <form ng-submit="submit()">
+                <form ng-submit="submit()" name="myForm">
                     <input type="hidden" name="_token" value="<?php echo csrf_token(); ?>">
                     <input type="hidden" name="section" value="{{$section}}">
                     <input type="hidden" name="sub_section" value="{{$sub_section}}">
@@ -129,6 +129,7 @@
                     <md-content>
                         <md-button type="submit" class="md-primary" ng-click="submit()">Submit</md-button>
                     </md-content>
+
                     {{--<input type="submit" value="Submit" id="submit">--}}
                     {{--<button class="btn btn-success" ng-click="submit()">Submit</button>--}}
                 </form>
@@ -136,15 +137,15 @@
             <a id="bottom"></a>
         </md-content>
 
-        <div layout="row" flex="noshrink" layout-align="center center">
-            <div id="license-footer" flex>
-                Powered by Google &copy;2014&#8211;@{{thisYear}}.
-                Code licensed under the <a ng-href="./license" class="md-accent">MIT License</a>.
-                Documentation licensed under
-                <a href="http://creativecommons.org/licenses/by/4.0/" target="_blank"
-                   class="md-default-theme md-accent">CC BY 4.0</a>.
-            </div>
-        </div>
+        {{--<div layout="row" flex="noshrink" layout-align="center center">--}}
+            {{--<div id="license-footer" flex>--}}
+                {{--Powered by Google &copy;2014&#8211;@{{thisYear}}.--}}
+                {{--Code licensed under the <a ng-href="./license" class="md-accent">MIT License</a>.--}}
+                {{--Documentation licensed under--}}
+                {{--<a href="http://creativecommons.org/licenses/by/4.0/" target="_blank"--}}
+                   {{--class="md-default-theme md-accent">CC BY 4.0</a>.--}}
+            {{--</div>--}}
+        {{--</div>--}}
     </md-content>
 </div>
 
@@ -156,6 +157,7 @@
             label="@{{button.label}}" ng-repeat="button in buttons"></button>
 </nav>
 
+<script type="text/javascript" src="{{asset('assets/js/core/libraries/jquery.min.js')}}"></script>
 <!-- Angular Material requires Angular.js Libraries -->
 <script src="http://ajax.googleapis.com/ajax/libs/angularjs/1.5.3/angular.min.js"></script>
 <script src="http://ajax.googleapis.com/ajax/libs/angularjs/1.5.3/angular-animate.min.js"></script>
@@ -170,7 +172,7 @@
     /**
      * You must include the dependency on 'ngMaterial'
      */
-    var myApp = angular.module('Survey', ['ngMaterial', 'ng-mfb']);
+    var myApp = angular.module('Survey', ['ngMaterial', 'ng-mfb','ngMessages']);
     myApp.constant('submitUrl', '{{url('test-post-2')}}');
     myApp.constant('siteBaseUrl', '{{url('/')}}');
 
@@ -202,104 +204,179 @@
             return (!value) ? '' : value.replace(/ /g, '');
         };
     });
+</script>
+<script src="{{asset('js/directives.js')}}"></script>
+<script src="{{asset('js/factory.js')}}"></script>
+<script>
+    myApp.controller('SurveyCtrl', [
+        '$scope',
+        '$http',
+        '$mdDialog',
+        '$mdSidenav',
+        '$timeout',
+        '$window',
+        '$location',
+        '$anchorScroll',
+        'submitUrl',
+        'siteBaseUrl',
+        'menu',
+        function ($scope, $http, $mdDialog, $mdSidenav, $timeout, $window, $location, $anchorScroll, submitUrl, siteBaseUrl, menu) {
+            var self = this;
 
-    myApp.directive('menuLink',['siteBaseUrl', function(siteBaseUrl) {
-        return {
-            scope: {
-                section: '='
-            },
-            templateUrl: siteBaseUrl + '/partials/menu-link.tmpl.html',
-            link: function($scope, $element) {
-                var controller = $element.parent().controller();
+            $scope.question = {};
+            $scope.openMenu = openMenu;
 
-                $scope.isSelected = function() {
-                    return controller.isSelected($scope.section);
-                };
+            $scope.loc = loc;
+            $scope.isSectionSelected = isSectionSelected;
 
-                $scope.focusSection = function() {
-                    // set flag to be used later when
-                    // $locationChangeSuccess calls openPage()
-                    controller.autoFocusContent = true;
-                };
-            }
-        };
-    }]);
+            @foreach($scopeParameters as $aScope)
+            {!! $aScope !!}
+            @endforeach
 
-    myApp.directive('menuToggle', [ '$timeout', '$mdUtil', 'siteBaseUrl', function($timeout, $mdUtil, siteBaseUrl) {
-        return {
-            scope: {
-                section: '='
-            },
-            templateUrl: siteBaseUrl + '/partials/menu-toggle.tmpl.html',
-            link: function($scope, $element) {
-                var controller = $element.parent().controller();
+            // Methods used by menuLink and menuToggle directives
+            this.isOpen = isOpen;
+            this.isSelected = isSelected;
+            this.toggleOpen = toggleOpen;
+            this.autoFocusContent = false;
 
-                $scope.isOpen = function() {
-                    return controller.isOpen($scope.section);
-                };
-                $scope.toggle = function() {
-                    controller.toggleOpen($scope.section);
-                };
+            $scope.menu = menu;
 
-                $mdUtil.nextTick(function() {
-                    $scope.$watch(
-                            function () {
-                                return controller.isOpen($scope.section);
-                            },
-                            function (open) {
-                                // We must run this in a next tick so that the getTargetHeight function is correct
-                                $mdUtil.nextTick(function() {
-                                    var $ul = $element.find('ul');
-                                    var $li = $ul[0].querySelector('a.active');
-                                    var docsMenuContent = document.querySelector('.docs-menu').parentNode;
-                                    var targetHeight = open ? getTargetHeight() : 0;
+            var submitItems = [];
+            $scope.formData = {};
+            var postURL = submitUrl;
 
-                                    $timeout(function () {
-                                        // Set the height of the list
-                                        $ul.css({height: targetHeight + 'px'});
+            menu.get().then(function(response){
+                // console.log(response);
+                menu.sections = response.data;
+                // $scope.$apply();
+            });
 
-                                        // If we are open and the user has not scrolled the content div; scroll the active
-                                        // list item into view.
-                                        if (open && $li && $ul[0].scrollTop === 0) {
-                                            $timeout(function() {
-                                                var activeHeight = $li.scrollHeight;
-                                                var activeOffset = $li.offsetTop;
-                                                var parentOffset = $li.offsetParent.offsetTop;
+            $scope.submit = function () {
+                submitItems = {};
+                angular.forEach($scope.question, function (value, key) {
+                    console.log('key: ',key,', value:',value);
+                    if (value && value != '' && value != 0) {
+                        this[key] = value;
+                    }
+                }, submitItems);
 
-                                                // Reduce it a bit (2 list items' height worth) so it doesn't touch the nav
-                                                var negativeOffset = activeHeight * 2;
-                                                var newScrollTop = activeOffset + parentOffset - negativeOffset;
+                if (submitItems.length<=0){
+                    $scope.showError();
+                    return;
+                }
 
-                                                $mdUtil.animateScrollTo(docsMenuContent, newScrollTop);
-                                            }, 350, false);
-                                        }
-                                    }, 0, false);
+                submitItems["_token"] = $('[name="_token"]').val();
+                submitItems["section"] = $('[name="section"]').val();
+                submitItems["sub_section"] = $('[name="sub_section"]').val();
+                submitItems["main_id"] = $('[name="main_id"]').val();
 
-                                    function getTargetHeight() {
-                                        var targetHeight;
-                                        $ul.addClass('no-transition');
-                                        $ul.css('height', '');
-                                        targetHeight = $ul.prop('clientHeight');
-                                        $ul.css('height', 0);
-                                        $ul.removeClass('no-transition');
-                                        return targetHeight;
-                                    }
-                                }, false);
-                            }
-                    );
+                console.log(submitItems);
+
+                $http({
+                    method: 'POST',
+                    url: postURL,
+                    data: $.param(submitItems),
+                    headers: {'Content-Type': 'application/x-www-form-urlencoded'}
+                }).success(function (data) {
+                    $scope.showAlert();
+                }).error(function (data) {
+                    console.log(data);
                 });
+            };
 
-                var parentNode = $element[0].parentNode.parentNode.parentNode;
-                if(parentNode.classList.contains('parent-list-item')) {
-                    var heading = parentNode.querySelector('h2');
-                    $element[0].firstChild.setAttribute('aria-describedby', heading.id);
+            $scope.showAlert = function (ev) {
+                // Appending dialog to document.body to cover sidenav in docs app
+                // Modal dialogs should fully cover application
+                // to prevent interaction outside of dialog
+                $mdDialog.show(
+                        $mdDialog.alert()
+                                .parent(angular.element(document.querySelector('#popupContainer')))
+                                .clickOutsideToClose(true)
+                                .title('บันทึกข้อมูลสำเร็จ')
+                                .textContent('ข้อมูลถูกบันทึกลงฐานข้อมูลเรียบร้อย')
+                                .ok('ตกลง')
+                                .targetEvent(ev)
+                );
+            };
+
+            $scope.showError = function (ev) {
+                $mdDialog.show(
+                        $mdDialog.alert()
+                                .parent(angular.element(document.querySelector('#popupContainer')))
+                                .clickOutsideToClose(true)
+                                .title('โปรดตรวจสอบข้อมูลก่อนบันทึก')
+                                .textContent('โปรดตรวจสอบข้อมูลก่อนบันทึก')
+                                .ok('ตกลง')
+                                .targetEvent(ev)
+                );
+            };
+
+            $scope.buttons = [{
+                label: 'Submit',
+                icon: 'ion-android-done',
+                href: 'submit'
+            }, {
+                label: 'Go to Bottom',
+                icon: 'ion-arrow-down-a',
+                href: '#bottom'
+            }, {
+                label: 'Go to Top',
+                icon: 'ion-arrow-up-a',
+                href: '#top'
+            }];
+
+            function loc(href) {
+                if (href==='submit')
+                    $scope.submit();
+                else if(href.indexOf("#") > -1){
+                    $location.hash(href.replace("#",""));
+                    $anchorScroll();
+                }
+                else{
+                    $window.location.href = href;
                 }
             }
-        };
-    }]);
+
+            function openMenu() {
+                $timeout(function () {
+                    $mdSidenav('left').open();
+                });
+            }
+
+            function isSectionSelected(section) {
+                var selected = false;
+                var openedSection = menu.openedSection;
+                if (openedSection === section) {
+                    selected = true;
+                }
+                else if (section.children) {
+                    section.children.forEach(function (childSection) {
+                        if (childSection === openedSection) {
+                            selected = true;
+                        }
+                    });
+                }
+                return selected;
+            }
+
+            function path() {
+                return $location.path();
+            }
+
+            function isSelected(page) {
+                return menu.isPageSelected(page);
+            }
+
+            function isOpen(section) {
+                return menu.isSectionSelected(section);
+            }
+
+            function toggleOpen(section) {
+                menu.toggleSelectSection(section);
+            }
+        }]);
 </script>
-<script src="{{asset('js/factory.js')}}"></script>
-<script src="{{asset('js/controller.js')}}"></script>
+{{--<script src="{{asset('js/controller.js')}}"></script>--}}
 
 <!-- ng-material-floating-button -->
 <script src="{{asset('assets/mfb/mfb-directive.js')}}"></script>

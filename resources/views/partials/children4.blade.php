@@ -36,14 +36,15 @@
             @if($question->input_type===\App\Question::TYPE_TITLE)
                 <md-input-container class="md-block" style="margin-left: {{$margin}}px;" {{$ngIf}}>
                     <label for="">{{$question->name}}</label>
+                    </br>
                 </md-input-container>
                 {{--ประเภท textbox number --}}
             @elseif($question->input_type===\App\Question::TYPE_NUMBER)
                 <md-input-container class="md-block" style="margin-left: {{$margin}}px;" {{$ngIf}}>
-                    <label for="q_{{$parent_id}}_{{$parent_option_id}}_{{$question->id}}">{{$question->name}}</label>
+                    <label for="q_{{$parent_id}}_{{$parent_option_id}}_{{$question->id}}">{{$question->name}} ({{$question[0]->unit_of_measure}})</label>
                     <input type="number" value="{{$question[0]->answer_numeric}}"
-                           ng-model="question.no_{{$parent_id}}_{{$parent_option_id}}_{{$question->id}}" min="1">
-                    <div ng-messages="question.no_{{$parent_id}}_{{$parent_option_id}}_{{$question->id}}.$error">
+                           ng-model="question.no_{{$parent_id}}_{{$parent_option_id}}_{{$question->id}}" min="1" name="no_{{$parent_id}}_{{$parent_option_id}}_{{$question->id}}">
+                    <div ng-messages="myForm.no_{{$parent_id}}_{{$parent_option_id}}_{{$question->id}}.$error" multiple>
                         <div ng-message="required">This is required.</div>
                         <div ng-message="min">Not less than 0</div>
                     </div>
@@ -51,11 +52,10 @@
                 {{--ประเภท textbox text--}}
             @elseif($question->input_type===\App\Question::TYPE_TEXT)
                 <md-input-container class="md-block" style="margin-left: {{$margin}}px;" {{$ngIf}}>
-                    <label for="q_{{$parent_id}}_{{$parent_option_id}}_{{$question->id}}">{{$question->name}}</label>
+                    <label for="q_{{$parent_id}}_{{$parent_option_id}}_{{$question->id}}">{{$question->name}} ({{$question[0]->unit_of_measure}}) </label>
                     <input type="text" value="{{$question[0]->answer_numeric}}"
-                           ng-model="question.no_{{$parent_id}}_{{$parent_option_id}}_{{$question->id}}">
-                    <label>{{$question[0]->unit_of_measure}}</label>
-                    <div ng-messages="question.no_{{$parent_id}}_{{$parent_option_id}}_{{$question->id}}.$error" multiple>
+                           ng-model="question.no_{{$parent_id}}_{{$parent_option_id}}_{{$question->id}}" name="no_{{$parent_id}}_{{$parent_option_id}}_{{$question->id}}">
+                    <div ng-messages="myForm.no_{{$parent_id}}_{{$parent_option_id}}_{{$question->id}}.$error">
                         <div ng-message="required">This is required.</div>
                     </div>
                 </md-input-container>
@@ -71,7 +71,7 @@
                             @endif
                             {{--each option has children--}}
                             @if(isset($option->children) && count($option->children)>0)
-                                @include('partials.children3',[
+                                @include('partials.children4',[
                                     'questions'=>$option->children
                                     ,'parentQuestions'=> $questions
                                     ,'parent_parent_option_id'=> $parent_option_id
@@ -97,7 +97,7 @@
                             @endif
                             {{--each option has children--}}
                             @if(isset($option->children) && count($option->children)>0)
-                                @include('partials.children3',[
+                                @include('partials.children4',[
                                     'questions'=>$option->children
                                     ,'parentQuestions'=> $questions
                                     ,'parent_parent_option_id'=> $parent_option_id
