@@ -226,9 +226,7 @@
             var postURL = submitUrl;
 
             menu.get().then(function(response){
-                 console.log(response);
                 menu.sections = response.data;
-                // $scope.$apply();
             });
 
             $scope.submit = function () {
@@ -265,6 +263,9 @@
                     headers: {'Content-Type': 'application/x-www-form-urlencoded'}
                 }).success(function (data) {
                     $scope.showAlert();
+                    menu.get().then(function(response){
+                        menu.sections = response.data;
+                    });
                 }).error(function (data) {
                     console.log(data);
                 });
