@@ -153,6 +153,7 @@
     myApp.constant('submitUrl', '{{url('test-post-2')}}');
     myApp.constant('siteBaseUrl', '{{url('/')}}');
     myApp.constant('surveyUrl', '{{url('html-loop-2')}}');
+    myApp.constant('section_name', '{{$section}}');
 
     myApp.factory('question', function () {
 
@@ -198,8 +199,9 @@
         'submitUrl',
         'siteBaseUrl',
             'surveyUrl',
+            'section_name',
         'menu',
-        function ($scope, $http, $mdDialog, $mdSidenav, $timeout, $window, $location, $anchorScroll,submitUrl, siteBaseUrl, surveyUrl, menu) {
+        function ($scope, $http, $mdDialog, $mdSidenav, $timeout, $window, $location, $anchorScroll,submitUrl, siteBaseUrl, surveyUrl, section_name,menu) {
             var self = this;
 
             $scope.question = {};
