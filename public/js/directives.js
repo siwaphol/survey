@@ -11,6 +11,14 @@ myApp.directive('menuLink',['siteBaseUrl','surveyUrl', '$window', function(siteB
                 return controller.isSelected($scope.section);
             };
 
+            $scope.isEdited = function () {
+                if ($scope.section.parent_id && $scope.section.sub_section_count)
+                    return true;
+                else if (!$scope.section.parent_id && $scope.section.section_count)
+                    return true;
+                return false;
+            };
+
             $scope.focusSection = function() {
                 // set flag to be used later when
                 // $locationChangeSuccess calls openPage()

@@ -2,6 +2,7 @@
     ng-class="{'active' : isSelected()}"
     ng-href="{{section.url}}"
     ng-click="openSurvey(section.id,section.parent_id)">
+  <i class="ion-edit" ng-if="isEdited()"></i>
   {{section | humanizeDoc}}
   <span class="md-visually-hidden"
     ng-if="isSelected()">
