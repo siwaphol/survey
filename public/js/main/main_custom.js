@@ -6,6 +6,7 @@ $(function () {
             orderable: false,
             targets: [ 3 ]
         }],
+        order: [[1, "desc"]],
         dom: '<"datatable-header"fl><"datatable-scroll"t><"datatable-footer"ip>',
         language: {
             search: '<span>Filter:</span> _INPUT_',
