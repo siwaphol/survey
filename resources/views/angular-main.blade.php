@@ -76,7 +76,7 @@
 <script type="text/javascript" src="{{asset('assets/js/materialize.js')}}"></script>
 
 {{--<script type="text/javascript" src="{{asset('assets/js/plugins/loaders/blockui.min.js')}}"></script>--}}
-{{--<script type="text/javascript" src="{{asset('assets/js/core/app.js')}}"></script>--}}
+{{--<script type="text/javascript" src="{{asset('assets/js/core/main_custom.js')}}"></script>--}}
 <!-- /core JS files -->
 
 <!-- Angular Material requires Angular.js Libraries -->

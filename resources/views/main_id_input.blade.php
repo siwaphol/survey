@@ -14,17 +14,30 @@
     <link href="{{asset('assets/css/components.css')}}" rel="stylesheet" type="text/css">
     <link href="{{asset('assets/css/colors.css')}}" rel="stylesheet" type="text/css">
     <!-- /global stylesheets -->
+    <style>
+        table>tr {
+            text-align: center;
+        }
+    </style>
 
     <!-- Core JS files -->
+    <script type="text/javascript" src="{{asset('assets/js/plugins/loaders/pace.min.js')}}"></script>
     <script type="text/javascript" src="{{asset('assets/js/core/libraries/jquery.min.js')}}"></script>
     <script type="text/javascript" src="{{asset('assets/js/core/libraries/bootstrap.min.js')}}"></script>
+    <script type="text/javascript" src="{{asset('assets/js/plugins/loaders/blockui.min.js')}}"></script>
     <!-- /core JS files -->
 
     <!-- Theme JS files -->
-    <script type="text/javascript" src="{{asset('assets/js/plugins/forms/styling/uniform.min.js')}}"></script>
-    <script type="text/javascript" src="{{asset('assets/js/core/app')}}.js"></script>
-    <script type="text/javascript" src="{{asset('assets/js/pages/login')}}.js"></script>
+    {{--<script type="text/javascript" src="{{asset('assets/js/plugins/forms/styling/uniform.min.js')}}"></script>--}}
+    <script type="text/javascript" src="{{asset('assets/js/plugins/tables/datatables/datatables.min.js')}}"></script>
+    <script type="text/javascript" src="{{asset('assets/js/plugins/forms/selects/select2.min.js')}}"></script>
+
+    <script type="text/javascript" src="{{asset('assets/js/core/app.js')}}"></script>
+    {{--<script type="text/javascript" src="{{asset('assets/js/pages/login.js')}}"></script>--}}
     <!-- /theme JS files -->
+    <script type="text/javascript" src="{{asset('js/main/main_custom.js')}}"></script>
+
+    <script type="text/javascript" src="{{asset('assets/js/plugins/ui/ripple.min.js')}}"></script>
 
 </head>
 
@@ -75,12 +88,20 @@
             <div class="content">
                     <div class="panel panel-flat">
                         <div class="panel-heading">
-                            <h5 class="panel-title">10 ชุดที่แก้ไขล่าสุด</h5>
+                            <h5 class="panel-title">ชุดที่แก้ไขล่าสุด</h5>
                         </div>
-                        <div class="table-responsive">
-                            <table class="table text-center">
+                        {{--<div class="table-responsive">--}}
+                            <table class="table datatable-basic text-center">
+                                <thead>
+                                    <tr>
+                                        <th class="text-center text-bold">หมายเลขชุด</th>
+                                        <th class="text-center text-bold">แก้ไขครั้งล่าสุด</th>
+                                        <th class="text-center text-bold">ชื่อผู้แก้ไข</th>
+                                        <th class="text-center text-bold"></th>
+                                    </tr>
+                                </thead>
                                 <tbody>
-                                    @foreach($latest10Main as $aMain)
+                                    @foreach($mainList as $aMain)
                                         <tr>
                                             <td>{{$aMain->id}}</td>
                                             <td>{{$aMain->updated_at}}</td>
@@ -96,7 +117,7 @@
                                     @endforeach
                                 </tbody>
                             </table>
-                        </div>
+                        {{--</div>--}}
                     </div>
             </div>
 
