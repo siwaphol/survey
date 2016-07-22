@@ -142,8 +142,8 @@
 <script src="http://ajax.googleapis.com/ajax/libs/angularjs/1.5.3/angular-messages.min.js"></script>
 
 <!-- Angular Material Library -->
-<script src="http://ajax.googleapis.com/ajax/libs/angular_material/1.1.0-rc2/angular-material.min.js"></script>
-
+{{--<script src="http://ajax.googleapis.com/ajax/libs/angular_material/1.1.0-rc2/angular-material.min.js"></script>--}}
+<script src="{{asset('assets/js/angular-material.js')}}"></script>
 <!-- Your application bootstrap  -->
 <script type="text/javascript">
     /**
@@ -210,6 +210,7 @@
             $scope.loc = loc;
 //            $scope.openSurvey = openSurvey;
             $scope.isSectionSelected = isSectionSelected;
+            $scope.showConfirm = showConfirm;
 
             @foreach($scopeParameters as $aScope)
             {!! $aScope !!}
@@ -230,6 +231,14 @@
             menu.get().then(function(response){
                 menu.sections = response.data;
             });
+
+            $scope.sample = function(model,a,b){
+                console.log('old:',a);
+                console.log('new:',b);
+                if(showConfirm()){
+                    return false;
+                }
+            };
 
             $scope.submit = function () {
                 submitItems = {};
@@ -273,7 +282,7 @@
                 });
             };
 
-            $scope.showConfirm = function (ev) {
+            function showConfirm(ev) {
                 var confirm = $mdDialog.confirm()
                         .title('ยืนยันการแก้ไข')
                         .textContent('เมื่อเอาออกแล้วค่าของลูกจะถูกลบออก')
@@ -283,10 +292,12 @@
                 $mdDialog.show(confirm).then(function () {
                     // change select box or radio state
                     // remove all child data
+                    return true;
                 },function () {
                     // not change
-                    return;
+                    return false;
                 });
+
             };
 
             $scope.showAlert = function (ev) {
