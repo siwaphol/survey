@@ -73,7 +73,7 @@ class QuestionController extends Controller
             if($sheetNo%2){
                 echo ' (odd)';
                 // questions sheet
-                \DB::transaction(function ()use($worksheetData,$chunkFilter,$objReader,$chunkSize,$path,$sheetNo) {
+//                \DB::transaction(function ()use($worksheetData,$chunkFilter,$objReader,$chunkSize,$path,$sheetNo) {
                     $totalRows = $worksheetData[$sheetNo]['totalRows'];
 
                     for ($startRow = 2; $startRow <= $totalRows; $startRow += $chunkSize) {
@@ -102,7 +102,7 @@ class QuestionController extends Controller
                             $question->save();
                         }
                     }
-                });
+//                });
                 continue;
             }
             echo ' (even)';
@@ -218,7 +218,7 @@ class QuestionController extends Controller
           END)
           and t4.main_id={$main_id} and t4.question_id=t1.id
         WHERE t1.section='{$section}' and t1.sub_section='{$sub_section}'
-        ORDER BY t1.id,t1.parent_id,t1.sibling_order,t2.id ";
+        ORDER BY t1.parent_id,t1.sibling_order,t2.id ";
         
         $result = \DB::select($str);
 
