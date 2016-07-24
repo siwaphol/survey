@@ -70,9 +70,11 @@
             @elseif($question->input_type===\App\Question::TYPE_RADIO)
                 <md-content flex layout-padding style="margin-left: {{$margin}}px;" {!! $ngIf !!}>
                     <h4>{{$question->name}}</h4>
-                    <md-radio-group ng-model="question.no_{{$parent_id}}_{{$parent_option_id}}_{{$question->id}}">
+                    <?php $modelName = "no_" .$parent_id."_".$parent_option_id."_".$question->id; ?>
+                    <md-radio-group ng-model="question.{{$modelName}}" >
                         @foreach($question as $option)
-                            <md-radio-button value="{{$option->option_id}}">{{$option->option_name}}</md-radio-button>
+                            <md-radio-button value="{{$option->option_id}}"
+                                             ng-click="sample('{{$modelName}}',question.{{$modelName}},'{{$option->option_id}}')">{{$option->option_name}}</md-radio-button>
                             @if($option->option_id===1)
                                 <input type="text" ng-model="question.other_{{$parent_id}}_{{$parent_option_id}}_{{$question->id}}" value="{{$option->other_text}}" init-from-form>
                             @endif

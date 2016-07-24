@@ -11,13 +11,12 @@ class MainController extends Controller
 {
     public function index()
     {
-        $latest10Main = Main::orderBy('mains.updated_at','desc')
-            ->take(10)
+        $mainList = Main::orderBy('mains.updated_at','desc')
             ->leftJoin('users', 'mains.recorder_id','=','users.id')
             ->select('mains.*','users.name')
             ->get();
 
-        return view('main_id_input', compact('latest10Main'));
+        return view('main_id_input', compact('mainList'));
     }
 
     public function postHandle(Request $request)

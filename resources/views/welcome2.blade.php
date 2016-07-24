@@ -25,7 +25,7 @@
         {{--<script type="text/javascript" src="assets/js/plugins/forms/styling/switchery.min.js"></script>--}}
         {{--<script type="text/javascript" src="assets/js/plugins/forms/styling/switch.min.js"></script>--}}
 
-        {{--<script type="text/javascript" src="assets/js/core/app.js"></script>--}}
+        {{--<script type="text/javascript" src="assets/js/core/main_custom.js"></script>--}}
         {{--<script type="text/javascript" src="assets/js/pages/form_checkboxes_radios.js"></script>--}}
 
         <style>
