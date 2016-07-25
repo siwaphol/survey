@@ -109,7 +109,7 @@
                                             <td>
                                                 <form class="form-horizontal" role="form" method="POST" action="{{ url('/main') }}">
                                                     {{csrf_field()}}
-                                                    <input type="hidden" name="main_id" value="{{$aMain->id}}">
+                                                    <input type="hidden" name="main_id" value="{{$aMain->main_id}}">
                                                     <input type="submit" class="btn btn-default" value="Go">
                                                 </form>
                                             </td>
