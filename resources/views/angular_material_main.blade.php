@@ -143,8 +143,8 @@
 <script src="http://ajax.googleapis.com/ajax/libs/angularjs/1.5.3/angular-messages.min.js"></script>
 
 <!-- Angular Material Library -->
-{{--<script src="http://ajax.googleapis.com/ajax/libs/angular_material/1.1.0-rc2/angular-material.min.js"></script>--}}
-<script src="{{asset('assets/js/angular-material.js')}}"></script>
+<script src="http://ajax.googleapis.com/ajax/libs/angular_material/1.1.0-rc2/angular-material.min.js"></script>
+{{--<script src="{{asset('assets/js/angular-material.js')}}"></script>--}}
 <!-- Your application bootstrap  -->
 <script type="text/javascript">
     /**
