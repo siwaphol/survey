@@ -24,7 +24,7 @@
     <header class="nav-header">
         <a ng-href="{{url('main')}}" class="docs-logo">
             {{--<img src="{{asset('assets/img/icons/angular-logo.svg')}}" alt=""/>--}}
-            <h1 class="docs-logotype md-heading">ชุดที่ {{$main_id}}</h1>
+            <h1 class="docs-logotype md-heading">bbชุดที่ {{$main_id}}</h1>
         </a>
     </header>
 
