@@ -4,9 +4,12 @@ myApp.factory('menu', [
     '$http',
     '$window',
     'siteBaseUrl',
-    function( $location, $rootScope, $http, $window, siteBaseUrl) {
+    'section_name',
+    'subsection_name',
+    function( $location, $rootScope, $http, $window, siteBaseUrl, section_name, subsection_name) {
         var self;
         var sections = [];
+        var path = $location.path();
 
         $rootScope.$on('$locationChangeSuccess', onLocationChange);
 
@@ -33,6 +36,12 @@ myApp.factory('menu', [
             },
             isPageSelected: function(page) {
                 return self.currentPage === page;
+            },
+            matchPage: function (section, page) {
+                if (section.name === section_name) {
+                    self.selectSection(section);
+                    self.selectPage(section, page);
+                }
             }
         };
 
@@ -49,12 +58,5 @@ myApp.factory('menu', [
                 self.selectPage(introLink);
                 return;
             }
-
-            var matchPage = function(section, page) {
-                if (path.indexOf(page.url) !== -1) {
-                    self.selectSection(section);
-                    self.selectPage(section, page);
-                }
-            };
         }
     }]);

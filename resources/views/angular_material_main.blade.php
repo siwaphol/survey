@@ -51,16 +51,6 @@
             </md-button>
             <div layout="row" flex class="fill-height">
                 <h2 class="md-toolbar-item md-breadcrumb md-headline">
-            <span ng-if="menu.currentPage.name">
-              <span hide-sm hide-md>@{{menu.currentPage.name}}</span>
-              <span class="docs-menu-separator-icon" hide-sm hide-md style="transform: translate3d(0, 1px, 0)">
-                <span class="md-visually-hidden">-</span>
-                  {{--<md-icon--}}
-                  {{--aria-hidden="true"--}}
-                  {{--md-svg-src="img/icons/ic_chevron_right_24px.svg"--}}
-                  {{--style="margin-top: -2px"></md-icon>--}}
-              </span>
-            </span>
                     <span class="md-breadcrumb-page">{{$section}}</span>
                     @if($sub_section!=='NULL')
                         <span class="md-breadcrumb-page" hide-xs> - {{$sub_section}}</span>
@@ -155,6 +145,7 @@
     myApp.constant('siteBaseUrl', '{{url('/')}}');
     myApp.constant('surveyUrl', '{{url('html-loop-2')}}');
     myApp.constant('section_name', '{{$section}}');
+    myApp.constant('subsection_name', '{{$sub_section}}');
 
     myApp.factory('question', function () {
 
@@ -201,8 +192,9 @@
         'siteBaseUrl',
             'surveyUrl',
             'section_name',
+            'subsection_name',
         'menu',
-        function ($scope, $http, $mdDialog, $mdSidenav, $timeout, $window, $location, $anchorScroll,submitUrl, siteBaseUrl, surveyUrl, section_name,menu) {
+        function ($scope, $http, $mdDialog, $mdSidenav, $timeout, $window, $location, $anchorScroll,submitUrl, siteBaseUrl, surveyUrl, section_name,subsection_name,menu) {
             var self = this;
 
             $scope.question = {};
@@ -231,6 +223,23 @@
 
             menu.get().then(function(response){
                 menu.sections = response.data;
+
+//                menu.selectSection(menu.sections[0]);
+//                console.log(menu.isSectionSelected(menu.sections[0]));
+
+                menu.sections.forEach(function(section) {
+                    if (section.children) {
+                        // matches nested section toggles, such as API or Customization
+                        section.children.forEach(function(childSection){
+                            menu.matchPage(section, childSection);
+                        });
+                    }
+                    else if (section.type === 'link') {
+                        // matches top-level links, such as "Getting Started"
+                        menu.matchPage(section, section);
+                    }
+                });
+
             });
 
             $scope.sample = function(model,a,b){
