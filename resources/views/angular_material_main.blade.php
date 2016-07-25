@@ -104,6 +104,7 @@
                         ,'margin'=>0
                         ,'parent_id'=>''
                         ,'parent_option_id'=>''
+                        ,'title_parent_ng_if'=>''
                     ])
                     
                     <div>
@@ -233,11 +234,11 @@
             });
 
             $scope.sample = function(model,a,b){
-                console.log('old:',a);
-                console.log('new:',b);
-                if(showConfirm()){
-                    return false;
-                }
+//                console.log('old:',a);
+//                console.log('new:',b);
+//                if(showConfirm()){
+//                    return false;
+//                }
             };
 
             $scope.submit = function () {

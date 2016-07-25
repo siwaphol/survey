@@ -40,12 +40,12 @@
 
             {{--ประเภท title--}}
             @if($question->input_type===\App\Question::TYPE_TITLE)
-                <md-input-container class="md-block" style="margin-left: {{$margin}}px;" {!! $ngIf !!}>
+                <md-input-container class="md-block" style="margin-left: {{$margin}}px;" {!! $ngIf !!} {!! $title_parent_ng_if !!}>
                     <h4>{{$question->name}}</h4>
                 </md-input-container>
                 {{--ประเภท textbox number --}}
             @elseif($question->input_type===\App\Question::TYPE_NUMBER)
-                <div {{$ngIf}}>
+                <div {{$ngIf}} {!! $title_parent_ng_if !!}>
                     <md-input-container class="md-block" style="margin-left: {{$margin}}px;">
                         <label for="q_{{$parent_id}}_{{$parent_option_id}}_{{$question->id}}">{{$question->name}} @if(!empty($question[0]->unit_of_measure))({{$question[0]->unit_of_measure}})@endif</label>
                         <input type="number" value="{{$question[0]->answer_numeric}}" {{$required}}
@@ -58,7 +58,7 @@
                 </div>
                 {{--ประเภท textbox text--}}
             @elseif($question->input_type===\App\Question::TYPE_TEXT)
-                <md-input-container class="md-block" style="margin-left: {{$margin}}px;" {!! $ngIf !!}>
+                <md-input-container class="md-block" style="margin-left: {{$margin}}px;" {!! $ngIf !!} {!! $title_parent_ng_if !!}>
                     <label for="q_{{$parent_id}}_{{$parent_option_id}}_{{$question->id}}">{{$question->name}} @if(!empty($question[0]->unit_of_measure))({{$question[0]->unit_of_measure}})@endif </label>
                     <input type="text" value="{{$question[0]->answer_numeric}}" {{$required}}
                            ng-model="question.no_{{$parent_id}}_{{$parent_option_id}}_{{$question->id}}" name="no_{{$parent_id}}_{{$parent_option_id}}_{{$question->id}}">
@@ -68,7 +68,7 @@
                 </md-input-container>
                 {{--ประเภท radio--}}
             @elseif($question->input_type===\App\Question::TYPE_RADIO)
-                <md-content flex layout-padding style="margin-left: {{$margin}}px;" {!! $ngIf !!}>
+                <md-content flex layout-padding style="margin-left: {{$margin}}px;" {!! $ngIf !!} {!! $title_parent_ng_if !!}>
                     <h4>{{$question->name}}</h4>
                     <?php $modelName = "no_" .$parent_id."_".$parent_option_id."_".$question->id; ?>
                     <md-radio-group ng-model="question.{{$modelName}}" >
@@ -88,6 +88,7 @@
                                     ,'margin'=>($margin+20)
                                     ,'parent_id'=>$option->id
                                     ,'parent_option_id'=>$option->option_id
+                                    ,'title_parent_ng_if'=>''
                                 ])
                             @endif
                         @endforeach
@@ -95,7 +96,7 @@
                 </md-content>
                 {{--ประเภท checkbox--}}
             @elseif($question->input_type===\App\Question::TYPE_CHECKBOX)
-                <md-content flex layout-padding style="margin-left: {{$margin}}px;" {!! $ngIf !!}>
+                <md-content flex layout-padding style="margin-left: {{$margin}}px;" {!! $ngIf !!} {!! $title_parent_ng_if !!}>
                     <h4>{{$question->name}}</h4>
                     @foreach($question as $option)
                         <div>
@@ -114,6 +115,7 @@
                                     ,'margin'=>($margin+20)
                                     ,'parent_id'=>$option->id
                                     ,'parent_option_id'=>$option->option_id
+                                    ,'title_parent_ng_if'=>''
                                 ])
                             @endif
                         </div>
@@ -129,6 +131,12 @@
 
             {{--main question has children--}}
             @if(isset($question->children) && count($question->children)>0)
+                <?php
+                    $title_parent_ng_if='';
+                    if ($question->input_type===\App\Question::TYPE_TITLE){
+                        $title_parent_ng_if = $ngIf;
+                    }
+                ?>
                 @include('partials.children4',[
                     'questions'=>$question->children
                     ,'parentQuestions'=> $questions
@@ -137,6 +145,7 @@
                     ,'margin'=>($margin+20)
                     ,'parent_id'=>$next_parent_id
                     ,'parent_option_id'=>null
+                    ,'title_parent_ng_if'=>$title_parent_ng_if
                 ])
             @endif
 
