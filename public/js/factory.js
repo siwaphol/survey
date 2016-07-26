@@ -39,8 +39,17 @@ myApp.factory('menu', [
             },
             matchPage: function (section, page) {
                 if (section.name === section_name) {
-                    self.selectSection(section);
-                    self.selectPage(section, page);
+                    if (section===page){
+                        self.selectSection(section);
+                        self.selectPage(section, page);
+                        return;
+                    }
+
+                    if (section!==page && page.name===subsection_name){
+                        self.selectSection(section);
+                        self.selectPage(section, page);
+                        return;
+                    }
                 }
             }
         };
