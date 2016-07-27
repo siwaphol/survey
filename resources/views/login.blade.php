@@ -46,6 +46,10 @@
             <div class="form-group">
                 <button type="submit" class="btn bg-pink-400 btn-block">Login <i class="icon-arrow-right14 position-right"></i></button>
             </div>
+
+            <div class="content-divider text-muted form-group"><span>Don't have an account?</span></div>
+            <a href="login_registration.html" class="btn btn-default btn-block content-group legitRipple">Sign up</a>
+
         </div>
     </form>
     <!-- /advanced login -->

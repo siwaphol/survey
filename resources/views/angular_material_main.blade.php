@@ -65,6 +65,11 @@
                         <md-tooltip md-autohide>เปลี่ยนชุดแบบสอบถาม</md-tooltip>
                         <i class="ion-gear-b" style="font-size: 2em;"></i>
                     </md-button>
+                    <md-button class="md-icon-button"
+                               ng-href="{{url('logout')}}">
+                        <md-tooltip md-autohide>logout</md-tooltip>
+                        <i class="ion-power" style="font-size: 1.8em;"></i>
+                    </md-button>
                 </div>
             </div>
         </div>
