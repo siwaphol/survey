@@ -319,7 +319,9 @@ class AnswerController extends Controller
             ->where('sub_section',$input['sub_section'])
             ->delete();
 
-        $main = Main::where('main_id',(int)$input['main_id'])->first();
+        $main = Main::where('main_id',(int)$input['main_id'])
+            ->where('recorder_id', \Auth::user()->id)
+            ->first();
         if ($main)
             $main->touch();
 

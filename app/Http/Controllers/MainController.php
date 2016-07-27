@@ -17,6 +17,15 @@ class MainController extends Controller
             ->select('mains.*','users.name')
             ->get();
 
+        $dupMainId = [];
+        foreach ($mainList as $key => $model) {
+            if (in_array($model->main_id, $dupMainId)){
+                unset($mainList[$key]);
+                continue;
+            }
+            $dupMainId[] = $model->main_id;
+        }
+
         return view('main_id_input', compact('mainList'));
     }
 

@@ -45,18 +45,6 @@
                 @endif
             </div>
 
-            <div class="form-group has-feedback has-feedback-left{{ $errors->has('password_confirmation') ? ' has-error' : '' }}">
-                <input type="password" class="form-control" name="password_confirmation" placeholder="Confirm Password">
-                <div class="form-control-feedback">
-                    <i class="icon-lock2 text-muted"></i>
-                </div>
-                @if ($errors->has('password_confirmation'))
-                    <span class="help-block">
-                        <strong>{{ $errors->first('password_confirmation') }}</strong>
-                    </span>
-                @endif
-            </div>
-
             <div class="form-group">
                 <button type="submit" class="btn bg-pink-400 btn-block">Register <i class="icon-arrow-right14 position-right"></i></button>
             </div>
