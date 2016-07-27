@@ -103,7 +103,7 @@
                                 <tbody>
                                     @foreach($mainList as $aMain)
                                         <tr>
-                                            <td>{{$aMain->id}}</td>
+                                            <td>{{$aMain->main_id}}</td>
                                             <td>{{$aMain->updated_at}}</td>
                                             <td>{{$aMain->name}}</td>
                                             <td>
