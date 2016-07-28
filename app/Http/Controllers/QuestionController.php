@@ -326,15 +326,6 @@ class QuestionController extends Controller
                                 if (!isset($each_parent_option->{"children"})){
                                     $each_parent_option->{"children"} = [];
                                 }
-                                //TODO-nong create a copy of question, remove unrelated answer
-                                //TODO-nong problem is this will remove reference capability, we cannot create more children for a ref
-//                                $childQuestion = $aQuestion->copy();
-//                                $childForgetList = [];
-//                                foreach ($childQuestion as $key => $c_option){
-//                                    if ($c_option->selected){
-//                                        // ถ้ามีคำตอบแต่ไม่ใช่ข้อนี้ให้ reset
-//                                    }
-//                                }
 
                                 $each_parent_option->{"children"}[$aQuestion[0]->id] = $aQuestion;
                             }
@@ -350,13 +341,7 @@ class QuestionController extends Controller
                                 }
 
                                 // ให้หาว่ากรณีที่มีคำตอบอยู่แล้ว parent_option_selected_id เท่ากับค่าของแม่จริงๆ
-//                                if ($aQuestion->has_answer){
-//                                    if(in_array($aQuestion->parent_option_selected_id, $dependentArr)){
-//                                        $each_parent_option->{"children"}[$aQuestion[0]->id] = $aQuestion;
-//                                    }
-//                                }else{
-                                    $each_parent_option->{"children"}[$aQuestion[0]->id] = $aQuestion;
-//                                }
+                                $each_parent_option->{"children"}[$aQuestion[0]->id] = $aQuestion;
                             }
                         }
                     }
@@ -372,50 +357,85 @@ class QuestionController extends Controller
             $grouped->forget((string)$aId);
         }
 
-        $this->generateUniqueKey($grouped);
+        $scope = [];
+        $new = $this->generateUniqueKey($grouped, $scope);
+//        dd($new[0][1]->children[0]->children[0]);
 //        return view('welcome2', compact('grouped','section','sub_section', 'main_id'));
 //        return view('angular-main', compact('grouped','section','sub_section', 'main_id','scopeParameters'));
-        return view('angular_material_main', compact('grouped','section','sub_section', 'main_id','scopeParameters'));
+        return view('angular_material_main2', compact('grouped','section','sub_section', 'main_id','scopeParameters','scope','new'));
     }
 
-    function generateUniqueKey(&$questionArr, $key='no_'){
+    function generateUniqueKey(&$questionArr, &$scope, $key='question.no', $hideable=false, $condition=null){
+        $list = [];
         foreach ($questionArr as $aQuestion){
+            $myObj = clone $aQuestion;
             if ($aQuestion->input_type===Question::TYPE_TITLE){
-                $qKey = $key . 'ti'.$aQuestion->id.'_';
+                $qKey = $key .'_'. 'ti'.$aQuestion->id;
                 $aQuestion->{"unique_key"} = $qKey;
+                $myObj->{"unique_key"} = $qKey;
             }elseif ($aQuestion->input_type===Question::TYPE_NUMBER){
-                $qKey = $key . 'nu'.$aQuestion->id.'_';
+                $qKey = $key .'_'. 'nu'.$aQuestion->id;
                 $aQuestion->{"unique_key"} = $qKey;
+                $myObj->{"unique_key"} = $qKey;
+                $scope[] = '$scope.' . $qKey . ' = 0;';
             }elseif ($aQuestion->input_type===Question::TYPE_TEXT){
-                $qKey = $key . 'te'.$aQuestion->id.'_';
+                $qKey = $key .'_'. 'te'.$aQuestion->id;
                 $aQuestion->{"unique_key"} = $qKey;
+                $myObj->{"unique_key"} = $qKey;
+                $scope[] = '$scope.' . $qKey . ' = "";';
             }elseif ($aQuestion->input_type===Question::TYPE_CHECKBOX){
-                $qKey = $key . 'ch'.$aQuestion->id . '_';
+                $qKey = $key .'_'. 'ch'.$aQuestion->id ;
                 $aQuestion->{"unique_key"} = $qKey;
+                $myObj->{"unique_key"} = $qKey;
+                $i = 0;
                 foreach ($aQuestion as $option){
-                    $optionKey = $qKey . 'o' .$option->option_id;
-                    $option->{"unique_key"} = $optionKey .'_';
+                    $optionKey = $qKey . '_o' .$option->option_id;
+                    $option->{"unique_key"} = $optionKey;
+                    $myObj[$i] = clone $option;
+                    $myObj[$i]->{"unique_key"} = $optionKey;
+
+                    $scope[] = '$scope.' . $optionKey . ' = false;';
 
                     if (isset($option->children)){
-                        $this->generateUniqueKey($option->children, $option->{"unique_key"});
+                        $myObj[$i]->children = $this->generateUniqueKey($option->children, $scope, $option->{"unique_key"}, true,$optionKey);
                     }
+                    $i++;
                 }
             }elseif ($aQuestion->input_type===Question::TYPE_RADIO){
-                $qKey = $key . 'ra'.$aQuestion->id . '_';
+                $qKey = $key . '_ra'.$aQuestion->id;
                 $aQuestion->{"unique_key"} = $qKey;
+                $myObj->{"unique_key"} = $qKey;
+                $i = 0;
                 foreach ($aQuestion as $option){
-                    $optionKey = $qKey . 'o' .$option->option_id;
-                    $option->{"unique_key"} = $optionKey .'_';
+                    $optionKey = $qKey . '_o' .$option->option_id;
+                    $option->{"unique_key"} = $optionKey;
+                    $myObj[$i] = clone $option;
+                    $myObj[$i]->{"unique_key"} = $optionKey;
 
                     if (isset($option->children)){
-                        $this->generateUniqueKey($option->children, $option->{"unique_key"});
+                        $optionCon = $qKey . "==" . $option->option_id;
+                        $myObj[$i]->children = $this->generateUniqueKey($option->children, $scope, $option->{"unique_key"}, true,$optionCon);
                     }
+                    $i++;
                 }
+                $scope[] = '$scope.' . $qKey . ' = "";';
+            }
+
+            if ($hideable && !is_null($condition)){
+                $aQuestion->{"ngIf"} = $condition;
+                $myObj->{"ngIf"} = $condition;
             }
 
             if (isset($aQuestion->children)){
-                $this->generateUniqueKey($aQuestion->children, $qKey);
+                if ($aQuestion->input_type===Question::TYPE_RADIO){
+                    $myObj->children =  $this->generateUniqueKey($aQuestion->children, $scope, $qKey, true, $qKey);
+                }
+                $myObj->children = $this->generateUniqueKey($aQuestion->children, $scope, $qKey, $hideable, $condition);
             }
+
+            $list[] = $myObj;
         }
+
+        return $list;
     }
 }
