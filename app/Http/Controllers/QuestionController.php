@@ -326,6 +326,16 @@ class QuestionController extends Controller
                                 if (!isset($each_parent_option->{"children"})){
                                     $each_parent_option->{"children"} = [];
                                 }
+                                //TODO-nong create a copy of question, remove unrelated answer
+                                //TODO-nong problem is this will remove reference capability, we cannot create more children for a ref
+//                                $childQuestion = $aQuestion->copy();
+//                                $childForgetList = [];
+//                                foreach ($childQuestion as $key => $c_option){
+//                                    if ($c_option->selected){
+//                                        // ถ้ามีคำตอบแต่ไม่ใช่ข้อนี้ให้ reset
+//                                    }
+//                                }
+
                                 $each_parent_option->{"children"}[$aQuestion[0]->id] = $aQuestion;
                             }
                         }
@@ -338,7 +348,15 @@ class QuestionController extends Controller
                                 if (!isset($each_parent_option->{"children"})){
                                     $each_parent_option->{"children"} = [];
                                 }
-                                $each_parent_option->{"children"}[$aQuestion[0]->id] = $aQuestion;
+
+                                // ให้หาว่ากรณีที่มีคำตอบอยู่แล้ว parent_option_selected_id เท่ากับค่าของแม่จริงๆ
+//                                if ($aQuestion->has_answer){
+//                                    if(in_array($aQuestion->parent_option_selected_id, $dependentArr)){
+//                                        $each_parent_option->{"children"}[$aQuestion[0]->id] = $aQuestion;
+//                                    }
+//                                }else{
+                                    $each_parent_option->{"children"}[$aQuestion[0]->id] = $aQuestion;
+//                                }
                             }
                         }
                     }
@@ -354,8 +372,50 @@ class QuestionController extends Controller
             $grouped->forget((string)$aId);
         }
 
+        $this->generateUniqueKey($grouped);
 //        return view('welcome2', compact('grouped','section','sub_section', 'main_id'));
 //        return view('angular-main', compact('grouped','section','sub_section', 'main_id','scopeParameters'));
         return view('angular_material_main', compact('grouped','section','sub_section', 'main_id','scopeParameters'));
+    }
+
+    function generateUniqueKey(&$questionArr, $key='no_'){
+        foreach ($questionArr as $aQuestion){
+            if ($aQuestion->input_type===Question::TYPE_TITLE){
+                $qKey = $key . 'ti'.$aQuestion->id.'_';
+                $aQuestion->{"unique_key"} = $qKey;
+            }elseif ($aQuestion->input_type===Question::TYPE_NUMBER){
+                $qKey = $key . 'nu'.$aQuestion->id.'_';
+                $aQuestion->{"unique_key"} = $qKey;
+            }elseif ($aQuestion->input_type===Question::TYPE_TEXT){
+                $qKey = $key . 'te'.$aQuestion->id.'_';
+                $aQuestion->{"unique_key"} = $qKey;
+            }elseif ($aQuestion->input_type===Question::TYPE_CHECKBOX){
+                $qKey = $key . 'ch'.$aQuestion->id . '_';
+                $aQuestion->{"unique_key"} = $qKey;
+                foreach ($aQuestion as $option){
+                    $optionKey = $qKey . 'o' .$option->option_id;
+                    $option->{"unique_key"} = $optionKey .'_';
+
+                    if (isset($option->children)){
+                        $this->generateUniqueKey($option->children, $option->{"unique_key"});
+                    }
+                }
+            }elseif ($aQuestion->input_type===Question::TYPE_RADIO){
+                $qKey = $key . 'ra'.$aQuestion->id . '_';
+                $aQuestion->{"unique_key"} = $qKey;
+                foreach ($aQuestion as $option){
+                    $optionKey = $qKey . 'o' .$option->option_id;
+                    $option->{"unique_key"} = $optionKey .'_';
+
+                    if (isset($option->children)){
+                        $this->generateUniqueKey($option->children, $option->{"unique_key"});
+                    }
+                }
+            }
+
+            if (isset($aQuestion->children)){
+                $this->generateUniqueKey($aQuestion->children, $qKey);
+            }
+        }
     }
 }
