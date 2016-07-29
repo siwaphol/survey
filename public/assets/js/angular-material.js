@@ -11859,6 +11859,10 @@ function mdInputContainerDirective($mdTheming, $parse) {
 
     if (leftIcon) { element.addClass('md-icon-left'); }
     if (rightIcon) { element.addClass('md-icon-right'); }
+
+    scope.$on('$destroy', function() {
+      console.log("In destroy of:" , scope);
+    });
   }
 
   function ContainerCtrl($scope, $element, $attrs, $animate) {
