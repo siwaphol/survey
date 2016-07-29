@@ -372,8 +372,9 @@ class QuestionController extends Controller
             if (isset($aQuestion->children)){
                 if ($aQuestion->input_type===Question::TYPE_RADIO){
                     $myObj->children =  $this->generateUniqueKey($aQuestion->children, $scope, $answers,$qKey, true, $qKey);
+                }else{
+                    $myObj->children = $this->generateUniqueKey($aQuestion->children, $scope, $answers,$qKey, $hideable, $condition);
                 }
-                $myObj->children = $this->generateUniqueKey($aQuestion->children, $scope, $answers,$qKey, $hideable, $condition);
             }
 
             $list[] = $myObj;

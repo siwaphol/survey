@@ -26,20 +26,20 @@ class MenuController extends Controller
                     LEFT JOIN menus m2 ON m2.id=menus.parent_id
                     LEFT JOIN
                     (
-                      SELECT count(*) as answer_count,section,sub_section
+                      SELECT count(*) as answer_count,section_id,sub_section_id
                       FROM answers
-                      WHERE sub_section='NULL' AND main_id={$mainId}
+                      WHERE sub_section_id is null AND main_id={$mainId}
                       GROUP BY section,sub_section
                     ) a
-                    ON menus.name=a.section
+                    ON menus.id=a.section_id
                     LEFT JOIN
                     (
-                      SELECT count(*) as answer_count,section,sub_section
+                      SELECT count(*) as answer_count,section_id,sub_section_id
                       FROM answers
                       WHERE main_id={$mainId}
                       GROUP BY section,sub_section
                     ) a2
-                    ON m2.name=a2.section and menus.name=a2.sub_section
+                    ON m2.id=a2.section_id and menus.id=a2.sub_section_id
                     ORDER BY menus.parent_id,menus.order";
         $menus = \DB::select($sqlStr);
 
