@@ -378,13 +378,13 @@ class AnswerController extends Controller
     public function saveAnswersWithEasiestWay2(Request $request)
     {
         $input = $request->input();
-        $questions = Question::where('section',$request->input('section'))->get();
+        $questions = Question::where('section_id',$request->input('section'))->get();
         $optionQuestions = OptionQuestion::get();
 
         //ลบของเดิม
         \DB::table('answers')->where('main_id',$input['main_id'])
-            ->where('section',$input['section'])
-            ->where('sub_section',$input['sub_section'])
+            ->where('section_id',$input['section'])
+            ->where('sub_section_id',$input['sub_section'])
             ->delete();
 
         $main = Main::where('main_id',(int)$input['main_id'])
@@ -409,8 +409,8 @@ class AnswerController extends Controller
 
                 $answer = new Answer();
                 $answer->main_id = $input['main_id'];
-                $answer->section = $input['section'];
-                $answer->sub_section = $input['sub_section'];
+                $answer->section_id = $input['section'];
+                $answer->sub_section_id = $input['sub_section']?:null;
                 $answer->question_id = $questionId;
 //                $answer->parent_option_selected_id = empty($insertingItem[1])?null:$insertingItem[1];
                 $answer->unique_key = $key;

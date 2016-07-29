@@ -44,4 +44,31 @@ class Question extends Model
         1=>'น้ำมันสำเร็จรูป',
         2=>'พลังงานหมุนเวียนดั้งเดิม'
     );
+
+    public static function updateSectionId()
+    {
+        $menus = Menu::all();
+
+        foreach ($menus as $menu){
+            if (is_null($menu->parent_id)){
+                \DB::table('questions')->where('section', $menu->name)
+                    ->where('sub_section', 'NULL')
+                    ->update(['section_id'=>$menu->id]);
+                \DB::table('answers')->where('section', $menu->name)
+                    ->where('sub_section', 'NULL')
+                    ->update(['section_id'=>$menu->id]);
+                continue;
+            }
+
+            $pMenu = $menus->where('id', $menu->parent_id)->first();
+            \DB::table('questions')->where('section', $pMenu->name)
+                ->where('sub_section', $menu->name)
+                ->update(['section_id'=>$pMenu->id, 'sub_section_id'=>$menu->id]);
+            \DB::table('answers')->where('section', $pMenu->name)
+                ->where('sub_section', $menu->name)
+                ->update(['section_id'=>$pMenu->id, 'sub_section_id'=>$menu->id]);
+        }
+
+        echo 'success';
+    }
 }

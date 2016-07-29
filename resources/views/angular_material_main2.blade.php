@@ -51,9 +51,9 @@
             </md-button>
             <div layout="row" flex class="fill-height">
                 <h2 class="md-toolbar-item md-breadcrumb md-headline">
-                    <span class="md-breadcrumb-page">{{$section}}</span>
-                    @if($sub_section!=='NULL')
-                        <span class="md-breadcrumb-page" hide-xs> - {{$sub_section}}</span>
+                    <span class="md-breadcrumb-page">{{$sectionName}}</span>
+                    @if($subSectionName)
+                        <span class="md-breadcrumb-page" hide-xs> - {{$subSectionName}}</span>
                     @endif
                 </h2>
 
@@ -81,7 +81,7 @@
             <a id="top" style="padding: 0;"></a>
             <div>
                 <div>
-                    <md-button type="submit" class="md-raised md-button md-ink-ripple" ng-click="submit()" >Submit</md-button>
+                    <md-button class="md-raised md-button md-ink-ripple" ng-click="submit()" >Submit</md-button>
                 </div>
 
                 <form ng-submit="submit()" name="myForm">
@@ -94,7 +94,7 @@
                     @include('partials.children5',['questions'=>$new,'margin'=>0])
                     
                     <div>
-                        <md-button type="submit" class="md-raised md-ink-ripple" ng-click="submit()">Submit</md-button>
+                        <md-button class="md-raised md-ink-ripple" ng-click="submit()">Submit</md-button>
                     </div>
                 </form>
             </div>

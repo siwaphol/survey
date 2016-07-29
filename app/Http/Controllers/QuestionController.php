@@ -148,24 +148,30 @@ class QuestionController extends Controller
             return redirect('main');
         $main_id = (int)$main_id;
 
-        $section = "";
-        $menuSection = Menu::whereNull('parent_id')
-            ->find($id);
-        if (is_null($menuSection))
-            return abort(404);
-        $section = $menuSection->name;
-
-        $sub_section = "NULL";
-        if(!is_null($sub)){
-            $subMenuSection = Menu::where('parent_id', $id)
-                ->find($sub);
-            if (is_null($subMenuSection))
-                return abort(404);
-            $sub_section = $subMenuSection->name;
+//        $section = "";
+//        $menuSection = Menu::whereNull('parent_id')
+//            ->find($id);
+//        if (is_null($menuSection))
+//            return abort(404);
+//        $section = $menuSection->name;
+//
+//        $sub_section = "NULL";
+//        if(!is_null($sub)){
+//            $subMenuSection = Menu::where('parent_id', $id)
+//                ->find($sub);
+//            if (is_null($subMenuSection))
+//                return abort(404);
+//            $sub_section = $subMenuSection->name;
+//        }
+        $section = $id;
+        $sub_section = $sub;
+        $whereSubSql = ' and t1.sub_section_id ';
+        if ($sub){
+            $whereSubSql .= ' = ' . $sub;
         }
-
-        $radioText = Question::TYPE_RADIO;
-        $checkboxText = Question::TYPE_CHECKBOX;
+        else{
+            $whereSubSql .= ' IS NULL ';
+        }
 
         $str = "select 
         t1.id,
@@ -186,10 +192,13 @@ class QuestionController extends Controller
         on t1.id=t2.question_id
         LEFT JOIN options t3
         on t2.option_id=t3.id
-        WHERE t1.section='{$section}' and t1.sub_section='{$sub_section}'
-        ORDER BY t1.parent_id,t1.sibling_order,t2.id ";
+        WHERE t1.section_id={$section} " . $whereSubSql .
+        " ORDER BY t1.parent_id,t1.sibling_order,t2.id ";
         
         $result = \DB::select($str);
+
+        if (count($result)<=0)
+            return abort(404);
 
         $t = collect($result);
         $grouped = $t->groupBy('id');
@@ -263,8 +272,6 @@ class QuestionController extends Controller
                     }
                 }
 
-//                $grouped[$aQuestion[0]->parent_id]->{"children"}[] = [$aQuestion[0]->id=>$aQuestion];
-
                 $forgetList[] = $aQuestion[0]->id;
             }
         }
@@ -274,12 +281,18 @@ class QuestionController extends Controller
         }
 
         $scope = [];
-        $answers = Answer::where('section', $section)
-            ->where('sub_section', $sub_section)
+        $answers = Answer::where('section_id', $section)
+            ->where('sub_section_id', $sub_section)
             ->where('main_id', $main_id)
             ->get();
         $new = $this->generateUniqueKey($grouped, $scope, $answers);
-        return view('angular_material_main2', compact('grouped','section','sub_section', 'main_id','scope','new'));
+
+        $sectionName = Menu::find($section)->name;
+        $hasSub = Menu::find($sub_section);
+        $subSectionName = null;
+        if ($hasSub)
+            $subSectionName = $hasSub->name;
+        return view('angular_material_main2', compact('grouped','section','sub_section', 'main_id','scope','new', 'sectionName', 'subSectionName'));
     }
 
     function generateUniqueKey(&$questionArr, &$scope, $answers,$key='question.no', $hideable=false, $condition=null){
