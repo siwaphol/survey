@@ -314,7 +314,7 @@ class ComposerStaticInit972b56837168c16a3339717f041e3e16
     );
 
     public static $classMap = array (
-        'AlterQuestionsSectionAndSubsectionToInteger' => __DIR__ . '/../..' . '/database/migrations/2016_07_20_221740_alter_questions_section_and_subsection_to_integer.php',
+        'AddUniqueKeyToAnswers' => __DIR__ . '/../..' . '/database/migrations/2016_07_28_122904_add_unique_key_to_answers.php',
         'CreateAnswersTable' => __DIR__ . '/../..' . '/database/migrations/2016_05_10_061441_create_answers_table.php',
         'CreateMainsTable' => __DIR__ . '/../..' . '/database/migrations/2016_05_10_060113_create_mains_table.php',
         'CreateMenusTable' => __DIR__ . '/../..' . '/database/migrations/2016_07_19_083228_create_menus_table.php',

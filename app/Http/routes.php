@@ -12,6 +12,7 @@ Route::group(['middleware' => 'auth'], function () {
     Route::get('html-loop-2/{id}/{sub}', 'QuestionController@htmlLoop');
     Route::post('test-post','AnswerController@testPost');
     Route::post('test-post-2','AnswerController@saveAnswersWithEasiestWay');
+    Route::post('test-post-3','AnswerController@saveAnswersWithEasiestWay2');
 });
 
 Route::group(['prefix'=>'api'], function (){
