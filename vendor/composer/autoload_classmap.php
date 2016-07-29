@@ -7,6 +7,8 @@ $baseDir = dirname($vendorDir);
 
 return array(
     'AddOptionIdToAnswers' => $baseDir . '/database/migrations/2016_07_29_083822_add_option_id_to_answers.php',
+    'AddSectionIdAndSubSectionIdToAnswers' => $baseDir . '/database/migrations/2016_07_29_093943_add_section_id_and_sub_section_id_to_answers.php',
+    'AddSectionIdAndSubSectionIdToQuestions' => $baseDir . '/database/migrations/2016_07_29_093926_add_section_id_and_sub_section_id_to_questions.php',
     'AddUniqueKeyToAnswers' => $baseDir . '/database/migrations/2016_07_28_122904_add_unique_key_to_answers.php',
     'CreateAnswersTable' => $baseDir . '/database/migrations/2016_05_10_061441_create_answers_table.php',
     'CreateMainsTable' => $baseDir . '/database/migrations/2016_05_10_060113_create_mains_table.php',

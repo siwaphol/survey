@@ -207,19 +207,12 @@ class QuestionController extends Controller
             $aQuestion->{"class"} = "";
 //            if (!is_null($aQuestion->parent_id)){
 //                // 1.ถ้าไม่ขึ้นกับแม่สัก option เลย
-//
 //                // 1.1 title ให้อยู่ล่างแม่ปกติ
-//
 //                // 1.2 text และ number ให้อยู่ล่างแม่ปกติ
-//
 //                // 1.3 checkbox ให้ไปอยู่ให้ทุก option ของแม่
-//
 //                // 1.4 radio ให้อยู่ล่างแม่ปกติ
-//
 //                // 2.ถ้าขึ้นกับแม่
-//
 //                // 2.1 ทั้ง checkbox และ radio ให้อยู่ล่าง option ของแม่ทั้งหมด
-//
 
             if(!is_null($aQuestion[0]->parent_id)){
                 $typeArr = [Question::TYPE_TITLE, Question::TYPE_TEXT, Question::TYPE_NUMBER];
@@ -286,9 +279,6 @@ class QuestionController extends Controller
             ->where('main_id', $main_id)
             ->get();
         $new = $this->generateUniqueKey($grouped, $scope, $answers);
-//        dd($new[0][1]->children[0]->children[0]);
-//        return view('welcome2', compact('grouped','section','sub_section', 'main_id'));
-//        return view('angular-main', compact('grouped','section','sub_section', 'main_id','scopeParameters'));
         return view('angular_material_main2', compact('grouped','section','sub_section', 'main_id','scope','new'));
     }
 
@@ -355,7 +345,7 @@ class QuestionController extends Controller
                 $answer = $answers->where('unique_key', str_replace("question.", "", $qKey))
                     ->first();
                 if ($answer){
-                    $optionId = OptionQuestion::find($answer->option_question_id)->option_id;
+                    $optionId = $answer->option_id;
                     if (!empty($answer->other_text))
                         $scope[] ='$scope.' . str_replace("no","other",$qKey) . ' = "'.$answer->other_text.'";';
                 }
