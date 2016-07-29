@@ -6,6 +6,7 @@ $vendorDir = dirname(dirname(__FILE__));
 $baseDir = dirname($vendorDir);
 
 return array(
+    'AddOptionIdToAnswers' => $baseDir . '/database/migrations/2016_07_29_083822_add_option_id_to_answers.php',
     'AddUniqueKeyToAnswers' => $baseDir . '/database/migrations/2016_07_28_122904_add_unique_key_to_answers.php',
     'CreateAnswersTable' => $baseDir . '/database/migrations/2016_05_10_061441_create_answers_table.php',
     'CreateMainsTable' => $baseDir . '/database/migrations/2016_05_10_060113_create_mains_table.php',

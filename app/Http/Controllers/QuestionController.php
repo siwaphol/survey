@@ -155,12 +155,6 @@ class QuestionController extends Controller
             return abort(404);
         $section = $menuSection->name;
 
-//        foreach (Question::$sections as $key=>$value){
-//            if ((int)$id===(int)$key){
-//                $section = $value;
-//                break;
-//            }
-//        }
         $sub_section = "NULL";
         if(!is_null($sub)){
             $subMenuSection = Menu::where('parent_id', $id)
@@ -170,17 +164,6 @@ class QuestionController extends Controller
             $sub_section = $subMenuSection->name;
         }
 
-//        if (!is_null($sub)) {
-//            foreach (Question::$subSections as $key=>$value){
-//                if ((int)$sub===(int)$key){
-//                    $sub_section = $value;
-//                    break;
-//                }
-//            }
-//        }
-//        if (empty($section))
-//            abort(404);
-        //test
         $radioText = Question::TYPE_RADIO;
         $checkboxText = Question::TYPE_CHECKBOX;
 
@@ -197,87 +180,27 @@ class QuestionController extends Controller
         t3.id as option_id,
         t3.name as option_name,
         t2.order as option_order,
-        t2.id as option_question_id,
-        t4.id as selected,
-        t4.parent_option_selected_id,
-        t4.option_question_id as answer_option_question_id,
-        t4.answer_numeric,
-        t4.answer_text,
-        t4.other_text
+        t2.id as option_question_id
         from questions t1
         LEFT JOIN option_questions t2
         on t1.id=t2.question_id
         LEFT JOIN options t3
         on t2.option_id=t3.id
-        LEFT JOIN answers t4
-        on 
-        (CASE t1.input_type
-           WHEN  '{$checkboxText}' THEN t2.id=option_question_id
-           WHEN '{$radioText}' THEN t2.id=option_question_id
-           ELSE TRUE
-          END)
-          and t4.main_id={$main_id} and t4.question_id=t1.id
         WHERE t1.section='{$section}' and t1.sub_section='{$sub_section}'
         ORDER BY t1.parent_id,t1.sibling_order,t2.id ";
         
         $result = \DB::select($str);
 
-        $scopeParameters = array();
-        $duplicateRadio = array();
-        $questions = Question::get();
-        $optionQuestions = OptionQuestion::get();
-        foreach ($result as $row){
-            if ($row->input_type!==Question::TYPE_TITLE){
-                $parentIsTitle = false;
-                if (!is_null($row->parent_id)){
-                    if($questions->where('id',(int)$row->parent_id)->first()->input_type===Question::TYPE_TITLE){
-                        $parentIsTitle = true;
-                    }
-                }
-
-                $scopeName = '$scope.question.no_'.($parentIsTitle?'':$row->parent_id) . '_' . $row->parent_option_selected_id
-                    . '_' .$row->id;
-                if ($row->input_type === Question::TYPE_CHECKBOX){
-                    $scopeName .= '_' . $row->option_id;
-                    $scopeName .= ' = '. ($row->selected?'true':'false');
-                }elseif ($row->input_type === Question::TYPE_TEXT)
-                    $scopeName .= ' = ' . ($row->answer_text?"'".$row->answer_text."'":"''");
-                elseif ($row->input_type===Question::TYPE_NUMBER)
-                    $scopeName .= ' = ' . ($row->answer_numeric?:'null');
-                elseif ($row->input_type===Question::TYPE_RADIO){
-                    if (!in_array($scopeName, $duplicateRadio)){
-                        $oq = $optionQuestions->where('id',(int)$row->answer_option_question_id)->first();
-
-                        if ($oq)
-                            $duplicateRadio[] = $scopeName;
-
-                        $scopeName .= ' = ' . ($oq?"'".$oq->option_id."'":"''");
-                        $scopeName .= ';';
-                        $scopeParameters[] = $scopeName;
-                    }
-                    continue;
-                }
-
-                $scopeName .= ';';
-                $scopeParameters[] = $scopeName;
-            }
-        }
-
-//        $main_id= 1;
-//        $answers = Answer::where('main_id',$main_id)->get();
-
         $t = collect($result);
         $grouped = $t->groupBy('id');
 
         $forgetList =[];
-//        dd($grouped);
         foreach ($grouped as $aQuestion){
             
             $aQuestion->{"input_type"} = $aQuestion[0]->input_type;
             $aQuestion->{"id"} = $aQuestion[0]->id;
             $aQuestion->{"parent_id"} = $aQuestion[0]->parent_id;
             $aQuestion->{"name"} = $aQuestion[0]->text;
-//        $aQuestion->{"subtext"} = $aQuestion[0]->subtext;
             $aQuestion->{"subtext"} = null;
             $aQuestion->{"dependent_parent_option_id"} = $aQuestion[0]->dependent_parent_option_id;
 
@@ -358,79 +281,96 @@ class QuestionController extends Controller
         }
 
         $scope = [];
-        $new = $this->generateUniqueKey($grouped, $scope);
+        $answers = Answer::where('section', $section)
+            ->where('sub_section', $sub_section)
+            ->where('main_id', $main_id)
+            ->get();
+        $new = $this->generateUniqueKey($grouped, $scope, $answers);
 //        dd($new[0][1]->children[0]->children[0]);
 //        return view('welcome2', compact('grouped','section','sub_section', 'main_id'));
 //        return view('angular-main', compact('grouped','section','sub_section', 'main_id','scopeParameters'));
-        return view('angular_material_main2', compact('grouped','section','sub_section', 'main_id','scopeParameters','scope','new'));
+        return view('angular_material_main2', compact('grouped','section','sub_section', 'main_id','scope','new'));
     }
 
-    function generateUniqueKey(&$questionArr, &$scope, $key='question.no', $hideable=false, $condition=null){
+    function generateUniqueKey(&$questionArr, &$scope, $answers,$key='question.no', $hideable=false, $condition=null){
         $list = [];
         foreach ($questionArr as $aQuestion){
             $myObj = clone $aQuestion;
             if ($aQuestion->input_type===Question::TYPE_TITLE){
                 $qKey = $key .'_'. 'ti'.$aQuestion->id;
-                $aQuestion->{"unique_key"} = $qKey;
                 $myObj->{"unique_key"} = $qKey;
             }elseif ($aQuestion->input_type===Question::TYPE_NUMBER){
                 $qKey = $key .'_'. 'nu'.$aQuestion->id;
-                $aQuestion->{"unique_key"} = $qKey;
                 $myObj->{"unique_key"} = $qKey;
-                $scope[] = '$scope.' . $qKey . ' = 0;';
+
+                $answer = $answers->where('unique_key', str_replace("question.", "", $qKey))
+                    ->first();
+                $scope[] = '$scope.' . $qKey . ' = '.(is_null($answer)?'0':$answer->answer_numeric).';';
             }elseif ($aQuestion->input_type===Question::TYPE_TEXT){
                 $qKey = $key .'_'. 'te'.$aQuestion->id;
-                $aQuestion->{"unique_key"} = $qKey;
                 $myObj->{"unique_key"} = $qKey;
-                $scope[] = '$scope.' . $qKey . ' = "";';
+
+                $answer = $answers->where('unique_key', str_replace("question.", "", $qKey))
+                    ->first();
+                $scope[] = '$scope.' . $qKey . ' = '.(is_null($answer)?'""':'"'.$answer->answer_text.'"').';';
             }elseif ($aQuestion->input_type===Question::TYPE_CHECKBOX){
                 $qKey = $key .'_'. 'ch'.$aQuestion->id ;
-                $aQuestion->{"unique_key"} = $qKey;
                 $myObj->{"unique_key"} = $qKey;
                 $i = 0;
                 foreach ($aQuestion as $option){
                     $optionKey = $qKey . '_o' .$option->option_id;
-                    $option->{"unique_key"} = $optionKey;
                     $myObj[$i] = clone $option;
                     $myObj[$i]->{"unique_key"} = $optionKey;
 
-                    $scope[] = '$scope.' . $optionKey . ' = false;';
+                    $answer = $answers->where('unique_key', str_replace("question.", "", $optionKey))
+                        ->first();
+                    $scopeAnswer = 'false';
+                    if ($answer){
+                        $scopeAnswer = 'true';
+                        if (!empty($answer->other_text))
+                            $scope[] ='$scope.' . str_replace("no","other",$optionKey) . ' = "'.$answer->other_text.'";';
+                    }
+                    $scope[] = '$scope.' . $optionKey . ' = '.$scopeAnswer.';';
 
                     if (isset($option->children)){
-                        $myObj[$i]->children = $this->generateUniqueKey($option->children, $scope, $option->{"unique_key"}, true,$optionKey);
+                        $myObj[$i]->children = $this->generateUniqueKey($option->children, $scope, $answers,$optionKey, true,$optionKey);
                     }
                     $i++;
                 }
             }elseif ($aQuestion->input_type===Question::TYPE_RADIO){
                 $qKey = $key . '_ra'.$aQuestion->id;
-                $aQuestion->{"unique_key"} = $qKey;
                 $myObj->{"unique_key"} = $qKey;
                 $i = 0;
                 foreach ($aQuestion as $option){
                     $optionKey = $qKey . '_o' .$option->option_id;
-                    $option->{"unique_key"} = $optionKey;
                     $myObj[$i] = clone $option;
                     $myObj[$i]->{"unique_key"} = $optionKey;
 
                     if (isset($option->children)){
                         $optionCon = $qKey . "==" . $option->option_id;
-                        $myObj[$i]->children = $this->generateUniqueKey($option->children, $scope, $option->{"unique_key"}, true,$optionCon);
+                        $myObj[$i]->children = $this->generateUniqueKey($option->children, $scope, $answers,$optionKey, true,$optionCon);
                     }
                     $i++;
                 }
-                $scope[] = '$scope.' . $qKey . ' = "";';
+                $answer = $answers->where('unique_key', str_replace("question.", "", $qKey))
+                    ->first();
+                if ($answer){
+                    $optionId = OptionQuestion::find($answer->option_question_id)->option_id;
+                    if (!empty($answer->other_text))
+                        $scope[] ='$scope.' . str_replace("no","other",$qKey) . ' = "'.$answer->other_text.'";';
+                }
+                $scope[] = '$scope.' . $qKey . ' = '.(is_null($answer)?'""':'"'.$optionId.'"').';';
             }
 
             if ($hideable && !is_null($condition)){
-                $aQuestion->{"ngIf"} = $condition;
                 $myObj->{"ngIf"} = $condition;
             }
 
             if (isset($aQuestion->children)){
                 if ($aQuestion->input_type===Question::TYPE_RADIO){
-                    $myObj->children =  $this->generateUniqueKey($aQuestion->children, $scope, $qKey, true, $qKey);
+                    $myObj->children =  $this->generateUniqueKey($aQuestion->children, $scope, $answers,$qKey, true, $qKey);
                 }
-                $myObj->children = $this->generateUniqueKey($aQuestion->children, $scope, $qKey, $hideable, $condition);
+                $myObj->children = $this->generateUniqueKey($aQuestion->children, $scope, $answers,$qKey, $hideable, $condition);
             }
 
             $list[] = $myObj;

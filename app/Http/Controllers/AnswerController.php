@@ -377,7 +377,6 @@ class AnswerController extends Controller
     }
     public function saveAnswersWithEasiestWay2(Request $request)
     {
-//        dd($request->input());
         $input = $request->input();
         $questions = Question::where('section',$request->input('section'))->get();
         $optionQuestions = OptionQuestion::get();
@@ -396,18 +395,23 @@ class AnswerController extends Controller
 
         foreach ($input as $key=>$value){
             if (strpos($key,'no_')!==false){
-                // 0 = parent_id
-                // 1 = dependent_parent_option_id
-                // 2 = question_id
-                // 4 = option_id (checkbox only)
                 $insertingItem = explode("_",str_replace('no_','',$key));
-                $curQuestion = $questions->where('id',(int)$insertingItem[count($insertingItem)-1])->first();
+                if ($insertingItem[count($insertingItem)-1][0]!=='o'){
+                    $stringId = $insertingItem[count($insertingItem)-1];
+                    $questionId = (int)substr($stringId,2);
+                }else{
+                    $stringId = $insertingItem[count($insertingItem)-2];
+                    $questionId = (int)substr($stringId,2);
+                    $strOptionKey = $insertingItem[count($insertingItem)-1];
+                    $optionId = (int)substr($strOptionKey,1);
+                }
+                $curQuestion = $questions->where('id',$questionId)->first();
 
                 $answer = new Answer();
                 $answer->main_id = $input['main_id'];
                 $answer->section = $input['section'];
                 $answer->sub_section = $input['sub_section'];
-                $answer->question_id = $insertingItem[2];
+                $answer->question_id = $questionId;
 //                $answer->parent_option_selected_id = empty($insertingItem[1])?null:$insertingItem[1];
                 $answer->unique_key = $key;
 
@@ -418,25 +422,27 @@ class AnswerController extends Controller
                     $answer->answer_numeric = (float)$value;
                     $answer->save();
                 }else if($curQuestion->input_type===Question::TYPE_RADIO){
-                    $oq = $optionQuestions->where('question_id',(int)$insertingItem[2])
+                    $oq = $optionQuestions->where('question_id',$questionId)
                         ->where('option_id', (int)$value)->first();
                     if ($oq){
                         if ((int)$value===Option::OTHER_OPTION){
-                            $answer->other_text = isset($input['other_'.str_replace('no_', "" ,$key)])?$input['other_'.str_replace('no_', "" ,$key)]:"";
+                            $answer->other_text = isset($input[str_replace('no_', 'other_' ,$key)])?$input[str_replace('no_', 'other_' ,$key)]:"";
                         }
 
                         $answer->option_question_id = $oq->id;
+                        $answer->option_id = (int)$value;
                         $answer->save();
                     }
                 }else if($curQuestion->input_type===Question::TYPE_CHECKBOX){
-                    $oq = $optionQuestions->where('question_id',(int)$insertingItem[2])
-                        ->where('option_id', (int)$insertingItem[3])->first();
+                    $oq = $optionQuestions->where('question_id',$questionId)
+                        ->where('option_id', (int)$optionId)->first();
                     if ($oq){
-                        if ((int)$insertingItem[3]===Option::OTHER_OPTION){
-                            $answer->other_text = isset($input['other_'.str_replace('no_', "" ,$key)])?$input['other_'.str_replace('no_', "" ,$key)]:"";
+                        if ((int)$optionId===Option::OTHER_OPTION){
+                            $answer->other_text = isset($input[str_replace('no_', "other_" ,$key)])?$input[str_replace('no_', "other_" ,$key)]:"";
                         }
 
                         $answer->option_question_id = $oq->id;
+                        $answer->option_id = $optionId;
                         $answer->save();
                     }
                 }

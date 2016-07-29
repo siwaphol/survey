@@ -127,7 +127,7 @@
      * You must include the dependency on 'ngMaterial'
      */
     var myApp = angular.module('Survey', ['ngMaterial', 'ng-mfb','ngMessages']);
-    myApp.constant('submitUrl', '{{url('test-post-2')}}');
+    myApp.constant('submitUrl', '{{url('test-post-3')}}');
     myApp.constant('siteBaseUrl', '{{url('/')}}');
     myApp.constant('surveyUrl', '{{url('html-loop-2')}}');
     myApp.constant('section_name', '{{$section}}');
@@ -263,20 +263,20 @@
                     return;
                 }
 
-                console.log($.param(submitItems));
-//                $http({
-//                    method: 'POST',
-//                    url: postURL,
-//                    data: $.param(submitItems),
-//                    headers: {'Content-Type': 'application/x-www-form-urlencoded'}
-//                }).success(function (data) {
-//                    $scope.showAlert();
-//                    menu.get().then(function(response){
-//                        menu.sections = response.data;
-//                    });
-//                }).error(function (data) {
-//                    console.log(data);
-//                });
+//                console.log($.param(submitItems));
+                $http({
+                    method: 'POST',
+                    url: postURL,
+                    data: $.param(submitItems),
+                    headers: {'Content-Type': 'application/x-www-form-urlencoded'}
+                }).success(function (data) {
+                    $scope.showAlert();
+                    menu.get().then(function(response){
+                        menu.sections = response.data;
+                    });
+                }).error(function (data) {
+                    console.log(data);
+                });
             };
 
             function showConfirm(ev) {
