@@ -263,19 +263,20 @@
                     return;
                 }
 
-                $http({
-                    method: 'POST',
-                    url: postURL,
-                    data: $.param(submitItems),
-                    headers: {'Content-Type': 'application/x-www-form-urlencoded'}
-                }).success(function (data) {
-                    $scope.showAlert();
-                    menu.get().then(function(response){
-                        menu.sections = response.data;
-                    });
-                }).error(function (data) {
-                    console.log(data);
-                });
+                console.log($.param(submitItems));
+//                $http({
+//                    method: 'POST',
+//                    url: postURL,
+//                    data: $.param(submitItems),
+//                    headers: {'Content-Type': 'application/x-www-form-urlencoded'}
+//                }).success(function (data) {
+//                    $scope.showAlert();
+//                    menu.get().then(function(response){
+//                        menu.sections = response.data;
+//                    });
+//                }).error(function (data) {
+//                    console.log(data);
+//                });
             };
 
             function showConfirm(ev) {
