@@ -281,10 +281,13 @@ class QuestionController extends Controller
         }
 
         $scope = [];
+        $edited = false;
         $answers = Answer::where('section_id', $section)
             ->where('sub_section_id', $sub_section)
             ->where('main_id', $main_id)
             ->get();
+        if (count($answers)>0)
+            $edited = true;
         $new = $this->generateUniqueKey($grouped, $scope, $answers);
 
         $sectionName = Menu::find($section)->name;
@@ -292,7 +295,8 @@ class QuestionController extends Controller
         $subSectionName = null;
         if ($hasSub)
             $subSectionName = $hasSub->name;
-        return view('angular_material_main2', compact('grouped','section','sub_section', 'main_id','scope','new', 'sectionName', 'subSectionName'));
+        return view('angular_material_main2',
+            compact('grouped','section','sub_section', 'main_id','scope','new', 'sectionName', 'subSectionName','edited'));
     }
 
     function generateUniqueKey(&$questionArr, &$scope, $answers,$key='question.no', $hideable=false, $condition=null){

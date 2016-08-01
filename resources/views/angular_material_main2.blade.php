@@ -186,6 +186,8 @@
             $scope.question = {};
             $scope.openMenu = openMenu;
 
+            var isEdited = {!! $edited?:0 !!};
+
             $scope.loc = loc;
 //            $scope.openSurvey = openSurvey;
             $scope.isSectionSelected = isSectionSelected;
@@ -244,7 +246,7 @@
                     }
                 }, submitItems);
 
-                console.log(submitItems);
+//                console.log(submitItems);
                 if (angular.equals({}, submitItems)){
                     $scope.showError(null, 'คำเตือน', 'โปรดกรอกข้อมูลก่อนกดยืนยัน');
                     return;
@@ -263,7 +265,28 @@
                     return;
                 }
 
-//                console.log($.param(submitItems));
+                console.log(submitItems);
+                if (isEdited){
+                    showConfirmBeforeSubmit().then(function () {
+                        $http({
+                            method: 'POST',
+                            url: postURL,
+                            data: $.param(submitItems),
+                            headers: {'Content-Type': 'application/x-www-form-urlencoded'}
+                        }).success(function (data) {
+                            $scope.showAlert();
+                            menu.get().then(function(response){
+                                menu.sections = response.data;
+                            });
+                        }).error(function (data) {
+                            console.log(data);
+                            $scope.showError(null,'เกิดข้อผิดพลาด','ไม่สามารถบันทึกข้อมูลได้');
+                        });
+                    },function () {
+                        console.log('cancel button');
+                    });
+                    return;
+                }
                 $http({
                     method: 'POST',
                     url: postURL,
@@ -276,25 +299,32 @@
                     });
                 }).error(function (data) {
                     console.log(data);
+                    $scope.showError(null,'เกิดข้อผิดพลาด','ไม่สามารถบันทึกข้อมูลได้ห');
                 });
             };
 
             function showConfirm(ev) {
                 var confirm = $mdDialog.confirm()
                         .title('ยืนยันการแก้ไข')
-                        .textContent('เมื่อเอาออกแล้วค่าของลูกจะถูกลบออก')
+                        .textContent('ค่าที่่ลบ หรือไม่ถูกเลือกจะไม่ถูกบันทึกลงฐานข้อมูล')
                         .targetEvent(ev)
                         .ok('ตกลง')
                         .cancel('ยกเลิก');
                 $mdDialog.show(confirm).then(function () {
-                    // change select box or radio state
-                    // remove all child data
                     return true;
                 },function () {
-                    // not change
                     return false;
                 });
+            };
 
+            function showConfirmBeforeSubmit(ev) {
+                var confirm = $mdDialog.confirm()
+                        .title('ยืนยันการแก้ไข')
+                        .textContent('ค่าที่่ลบ หรือไม่ถูกเลือกจะไม่ถูกบันทึกลงฐานข้อมูล')
+                        .targetEvent(ev)
+                        .ok('ตกลง')
+                        .cancel('ยกเลิก');
+                return $mdDialog.show(confirm)
             };
 
             $scope.showAlert = function (ev) {

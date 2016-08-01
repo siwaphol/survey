@@ -11861,7 +11861,7 @@ function mdInputContainerDirective($mdTheming, $parse) {
     if (rightIcon) { element.addClass('md-icon-right'); }
 
     scope.$on('$destroy', function() {
-      console.log("In destroy of:" , scope);
+      console.log("In destroy of:" , element);
     });
   }
 
@@ -12117,6 +12117,8 @@ function inputTextareaDirective($mdUtil, $window, $mdAria, $timeout) {
       containerCtrl.setFocused(false);
       containerCtrl.setHasValue(false);
       containerCtrl.input = null;
+
+      console.log('destroy input',ctrls[1]);
     });
 
     /**

@@ -29,7 +29,7 @@ class MenuController extends Controller
                       SELECT count(*) as answer_count,section_id,sub_section_id
                       FROM answers
                       WHERE sub_section_id is null AND main_id={$mainId}
-                      GROUP BY section,sub_section
+                      GROUP BY section_id,sub_section_id
                     ) a
                     ON menus.id=a.section_id
                     LEFT JOIN
@@ -37,7 +37,7 @@ class MenuController extends Controller
                       SELECT count(*) as answer_count,section_id,sub_section_id
                       FROM answers
                       WHERE main_id={$mainId}
-                      GROUP BY section,sub_section
+                      GROUP BY section_id,sub_section_id
                     ) a2
                     ON m2.id=a2.section_id and menus.id=a2.sub_section_id
                     ORDER BY menus.parent_id,menus.order";

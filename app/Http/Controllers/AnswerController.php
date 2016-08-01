@@ -382,10 +382,18 @@ class AnswerController extends Controller
         $optionQuestions = OptionQuestion::get();
 
         //ลบของเดิม
-        \DB::table('answers')->where('main_id',$input['main_id'])
-            ->where('section_id',$input['section'])
-            ->where('sub_section_id',$input['sub_section'])
-            ->delete();
+        if(empty($input['sub_section'])){
+            \DB::table('answers')->where('main_id',$input['main_id'])
+                ->where('section_id',$input['section'])
+                ->whereNull('sub_section_id')
+                ->delete();
+        }else{
+            \DB::table('answers')->where('main_id',$input['main_id'])
+                ->where('section_id',$input['section'])
+                ->where('sub_section_id', (int)$input['sub_section'])
+                ->delete();
+        }
+
 
         $main = Main::where('main_id',(int)$input['main_id'])
             ->where('recorder_id', \Auth::user()->id)
@@ -395,6 +403,11 @@ class AnswerController extends Controller
 
         foreach ($input as $key=>$value){
             if (strpos($key,'no_')!==false){
+                
+                $checkLegit = explode("_", $key);
+                if (!Answer::parentIsSelectedOrNoParent($checkLegit,$input))
+                    continue;
+                
                 $insertingItem = explode("_",str_replace('no_','',$key));
                 if ($insertingItem[count($insertingItem)-1][0]!=='o'){
                     $stringId = $insertingItem[count($insertingItem)-1];
@@ -451,6 +464,7 @@ class AnswerController extends Controller
 
         return json_encode(['success'=>true]);
     }
+
     /**
      * @param $q_null_null_questionId
      * @param $input

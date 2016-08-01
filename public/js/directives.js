@@ -12,9 +12,9 @@ myApp.directive('menuLink',['siteBaseUrl','surveyUrl', '$window', function(siteB
             };
 
             $scope.isEdited = function () {
-                if ($scope.section.parent_id && $scope.section.sub_section_count)
+                if ($scope.section.parent_id && $scope.section.sub_section_count>0)
                     return true;
-                else if (!$scope.section.parent_id && $scope.section.section_count)
+                else if (!$scope.section.parent_id && $scope.section.section_count>0)
                     return true;
                 return false;
             };

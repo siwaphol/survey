@@ -23,8 +23,8 @@
                 <md-input-container class="md-block" style="margin-left: {{$margin}}px;">
                     <label for="{{$question->unique_key}}">{{$question->name}} @if(!empty($question[0]->unit_of_measure))({{$question[0]->unit_of_measure}})@endif</label>
                     <input type="number" {{$required}}
-                    ng-model="{{$question->unique_key}}" min="1" name="{{$question->unique_key}}">
-                    <div ng-messages="myForm.{{$question->unique_key}}.$error" multiple>
+                    ng-model="{{$question->unique_key}}" min="1" name="{{str_replace("question.","",$question->unique_key)}}">
+                    <div ng-messages="myForm.{{str_replace("question.","",$question->unique_key)}}.$error" multiple>
                         <div ng-message="required">This is required.</div>
                         <div ng-message="min">Not less than 1</div>
                     </div>
@@ -35,8 +35,8 @@
             <md-input-container class="md-block" style="margin-left: {{$margin}}px;" {!! $ngIf !!}>
                 <label for="{{$question->unique_key}}">{{$question->name}} @if(!empty($question[0]->unit_of_measure))({{$question[0]->unit_of_measure}})@endif </label>
                 <input type="text" {{$required}}
-                ng-model="{{$question->unique_key}}" name="{{$question->unique_key}}">
-                <div ng-messages="myForm.{{$question->unique_key}}.$error">
+                ng-model="{{$question->unique_key}}" name="{{str_replace("question.","",$question->unique_key)}}">
+                <div ng-messages="myForm.{{str_replace("question.","",$question->unique_key)}}.$error">
                     <div ng-message="required">This is required.</div>
                 </div>
             </md-input-container>
@@ -66,7 +66,7 @@
                         <md-checkbox
                                 ng-model="{{$option->unique_key}}">{{$option->option_name}}</md-checkbox>
                         @if($option->option_id===1)
-                            <input type="text" ng-model="{{str_replace("no","other",$question->unique_key)}}">
+                            <input type="text" ng-model="{{str_replace("no","other",$option->unique_key)}}">
                         @endif
                         {{--each option has children--}}
                         @if(isset($option->children) && count($option->children)>0)

@@ -38,14 +38,15 @@ myApp.factory('menu', [
                 return self.currentPage === page;
             },
             matchPage: function (section, page) {
-                if (section.name === section_name) {
+                if (section.id === parseInt(section_name)) {
                     if (section===page){
                         self.selectSection(section);
                         self.selectPage(section, page);
                         return;
                     }
 
-                    if (section!==page && page.name===subsection_name){
+                    console.log(subsection_name);
+                    if (section!==page && subsection_name && page.id===parseInt(subsection_name)){
                         self.selectSection(section);
                         self.selectPage(section, page);
                         return;
