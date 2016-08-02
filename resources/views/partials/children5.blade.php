@@ -23,10 +23,10 @@
                 <md-input-container class="md-block" style="margin-left: {{$margin}}px;">
                     <label for="{{$question->unique_key}}">{{$question->name}} @if(!empty($question[0]->unit_of_measure))({{$question[0]->unit_of_measure}})@endif</label>
                     <input type="number" {{$required}}
-                    ng-model="{{$question->unique_key}}" min="1" name="{{str_replace("question.","",$question->unique_key)}}">
+                    ng-model="{{$question->unique_key}}" min="0.1" name="{{str_replace("question.","",$question->unique_key)}}">
                     <div ng-messages="myForm.{{str_replace("question.","",$question->unique_key)}}.$error" multiple>
                         <div ng-message="required">This is required.</div>
-                        <div ng-message="min">Not less than 1</div>
+                        <div ng-message="min">More than 0</div>
                     </div>
                 </md-input-container>
             </div>
