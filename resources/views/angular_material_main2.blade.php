@@ -2,16 +2,17 @@
 <head>
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <!-- Angular Material style sheet -->
-    <link rel="stylesheet"
-          href="http://ajax.googleapis.com/ajax/libs/angular_material/1.1.0-rc2/angular-material.min.css">
-
+    {{--<link rel="stylesheet"--}}
+          {{--href="http://ajax.googleapis.com/ajax/libs/angular_material/1.1.0-rc2/angular-material.min.css">--}}
+    <link rel="stylesheet" href="{{asset('css/angular-material.min.css')}}">
     <link href="{{asset('assets/mfb/mfb.min.css')}}" rel="stylesheet"/>
 
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/normalize/3.0.1/normalize.min.css">
-    <link href="https://fonts.googleapis.com/css?family=Roboto:400,300,100,500,700,900" rel="stylesheet"
-          type="text/css">
+    {{--<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/normalize/3.0.1/normalize.min.css">--}}
+    <link rel="stylesheet" href="{{asset('css/normalize.min.css')}}">
+    <link href="https://fonts.googleapis.com/css?family=Roboto:400,300,100,500,700,900" rel="stylesheet" type="text/css">
     <link href="http://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
-    <link href="http://code.ionicframework.com/ionicons/2.0.1/css/ionicons.min.css" rel="stylesheet">
+    {{--<link href="http://code.ionicframework.com/ionicons/2.0.1/css/ionicons.min.css" rel="stylesheet">--}}
+    <link rel="stylesheet" href="{{asset('css/ionicons.min.css')}}">
 
     <script type="text/javascript" src="{{asset('assets/mfb/lib/modernizr.touch.js')}}"></script>
     <link href="{{asset('css/custom2.css')}}" rel="stylesheet">
@@ -113,13 +114,18 @@
 
 <script type="text/javascript" src="{{asset('assets/js/core/libraries/jquery.min.js')}}"></script>
 <!-- Angular Material requires Angular.js Libraries -->
-<script src="http://ajax.googleapis.com/ajax/libs/angularjs/1.5.3/angular.min.js"></script>
-<script src="http://ajax.googleapis.com/ajax/libs/angularjs/1.5.3/angular-animate.min.js"></script>
-<script src="http://ajax.googleapis.com/ajax/libs/angularjs/1.5.3/angular-aria.min.js"></script>
-<script src="http://ajax.googleapis.com/ajax/libs/angularjs/1.5.3/angular-messages.min.js"></script>
+{{--<script src="http://ajax.googleapis.com/ajax/libs/angularjs/1.5.3/angular.min.js"></script>--}}
+{{--<script src="http://ajax.googleapis.com/ajax/libs/angularjs/1.5.3/angular-animate.min.js"></script>--}}
+{{--<script src="http://ajax.googleapis.com/ajax/libs/angularjs/1.5.3/angular-aria.min.js"></script>--}}
+{{--<script src="http://ajax.googleapis.com/ajax/libs/angularjs/1.5.3/angular-messages.min.js"></script>--}}
+<script src="{{asset('js/angular1.5.3/angular.min.js')}}"></script>
+<script src="{{asset('js/angular1.5.3/angular-animate.min.js')}}"></script>
+<script src="{{asset('js/angular1.5.3/angular-aria.min.js')}}"></script>
+<script src="{{asset('js/angular1.5.3/angular-messages.min.js')}}"></script>
 
 <!-- Angular Material Library -->
-<script src="http://ajax.googleapis.com/ajax/libs/angular_material/1.1.0-rc2/angular-material.min.js"></script>
+{{--<script src="http://ajax.googleapis.com/ajax/libs/angular_material/1.1.0-rc2/angular-material.min.js"></script>--}}
+<script src="{{asset('js/angular-material.min.js')}}"></script>
 {{--<script src="{{asset('assets/js/angular-material.js')}}"></script>--}}
 <!-- Your application bootstrap  -->
 <script type="text/javascript">
