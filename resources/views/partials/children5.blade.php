@@ -21,12 +21,15 @@
         @elseif($question->input_type===\App\Question::TYPE_NUMBER)
             <div {!! $ngIf !!}>
                 <md-input-container class="md-block" style="margin-left: {{$margin}}px;">
-                    <label for="{{$question->unique_key}}">{{$question->name}} @if(!empty($question[0]->unit_of_measure))({{$question[0]->unit_of_measure}})@endif</label>
+                    <?php if(in_array($question->unique_key,['question.no_ti62_ch63_o63_nu64','question.no_ti62_ch63_o64_nu64']))
+                    { $newUnitOfMeasure="บาท/เทอม"; }else{ $newUnitOfMeasure=$question[0]->unit_of_measure;}
+                    ?>
+                    <label for="{{$question->unique_key}}">{{$question->name}} @if(!empty($question[0]->unit_of_measure))({{$newUnitOfMeasure}})@endif</label>
                     <input type="number" {{$required}}
-                    ng-model="{{$question->unique_key}}" min="1" name="{{str_replace("question.","",$question->unique_key)}}">
+                    ng-model="{{$question->unique_key}}" min="0.1" name="{{str_replace("question.","",$question->unique_key)}}">
                     <div ng-messages="myForm.{{str_replace("question.","",$question->unique_key)}}.$error" multiple>
                         <div ng-message="required">This is required.</div>
-                        <div ng-message="min">Not less than 1</div>
+                        <div ng-message="min">More than 0</div>
                     </div>
                 </md-input-container>
             </div>
