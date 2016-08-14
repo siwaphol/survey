@@ -7,6 +7,7 @@ use App\Main;
 use App\Option;
 use App\OptionQuestion;
 use App\Question;
+use Carbon\Carbon;
 use Illuminate\Http\Request;
 
 use App\Http\Requests;
@@ -398,8 +399,10 @@ class AnswerController extends Controller
         $main = Main::where('main_id',(int)$input['main_id'])
             ->where('recorder_id', \Auth::user()->id)
             ->first();
-        if ($main)
-            $main->touch();
+        if ($main){
+            $main->submitted_at = new Carbon();
+            $main->save();
+        }
 
         foreach ($input as $key=>$value){
             if (strpos($key,'no_')!==false){

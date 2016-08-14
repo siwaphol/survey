@@ -13,6 +13,11 @@ class Question extends Model
     const TYPE_NUMBER = 'number';
     const TYPE_TEXT = 'text';
 
+    static $notRequireUniqueKey = array(
+        'question.no_ra700_o81_nu708',
+        'question.no_ra700_o81_nu709'
+    );
+
     static $sections = array(
         0=>'',
         1=>'ทั่วไป',
@@ -70,5 +75,14 @@ class Question extends Model
         }
 
         echo 'success';
+    }
+
+    public static function isNotRequireKey($uniqueKey){
+        return in_array($uniqueKey, Question::$notRequireUniqueKey);
+    }
+
+    public static function isRequireInput($questionType)
+    {
+        return in_array($questionType, array(Question::TYPE_NUMBER, Question::TYPE_TEXT));
     }
 }

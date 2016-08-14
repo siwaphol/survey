@@ -46,7 +46,9 @@
 
             </div>
             <!-- /content area -->
-
+            <div class="content">
+                @yield('big-content')
+            </div>
         </div>
         <!-- /main content -->
 

@@ -8,6 +8,9 @@ class Answer extends Model
 {
     protected $guarded = [];
 
+    public static $summaryTable1 = array('no_ra14'=>array(6,7));
+    public static $summaryTable2 = array('no_ra14'=>array(6,7));
+
     public static function parentIsSelectedOrNoParent($splitUniqueKey=[], $input)
     {
         $parentPos = 2;

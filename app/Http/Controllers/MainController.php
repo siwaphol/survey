@@ -12,7 +12,7 @@ class MainController extends Controller
 {
     public function index()
     {
-        $mainList = Main::orderBy('mains.updated_at','desc')
+        $mainList = Main::orderBy('mains.submitted_at','desc')
             ->leftJoin('users', 'mains.recorder_id','=','users.id')
             ->select('mains.*','users.name')
             ->get();

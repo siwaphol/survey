@@ -104,7 +104,7 @@
                                     @foreach($mainList as $aMain)
                                         <tr>
                                             <td>{{$aMain->main_id}}</td>
-                                            <td>{{$aMain->updated_at}}</td>
+                                            <td>{{is_null($aMain->submitted_at)?$aMain->updated_at:$aMain->submitted_at}}</td>
                                             <td>{{$aMain->name}}</td>
                                             <td>
                                                 <form class="form-horizontal" role="form" method="POST" action="{{ url('/main') }}">

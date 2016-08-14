@@ -4,10 +4,14 @@
         <?php
         $ngIf = isset($question->ngIf)?'ng-if="'.$question->ngIf .'"':"";
         $required = "";
+        $min = '0.1';
         if (strpos($question->class,'has-parent')>-1){
             //set required for field that has parent and type text and number
-            if ($question->input_type===\App\Question::TYPE_NUMBER || $question->input_type===\App\Question::TYPE_TEXT){
+            if (\App\Question::isRequireInput($question->input_type) && !\App\Question::isNotRequireKey($question->unique_key)){
                 $required = "required";
+            }
+            if (\App\Question::isNotRequireKey($question->unique_key)){
+                $min = '0';
             }
         }
         ?>
@@ -26,7 +30,9 @@
                     ?>
                     <label for="{{$question->unique_key}}">{{$question->name}} @if(!empty($question[0]->unit_of_measure))({{$newUnitOfMeasure}})@endif</label>
                     <input type="number" {{$required}}
-                    ng-model="{{$question->unique_key}}" min="0.1" name="{{str_replace("question.","",$question->unique_key)}}">
+                    ng-model="{{$question->unique_key}}"
+                           min="{{$min}}"
+                           name="{{str_replace("question.","",$question->unique_key)}}">
                     <div ng-messages="myForm.{{str_replace("question.","",$question->unique_key)}}.$error" multiple>
                         <div ng-message="required">This is required.</div>
                         <div ng-message="min">More than 0</div>
