@@ -2,8 +2,10 @@
 
 Route::group(['middleware' => 'auth'], function () {
     Route::get('/',function(){
-        return redirect('main');
+        return redirect('dashboard');
     });
+
+    Route::get('dashboard', 'HomeController@dashboard');
 
     Route::get('main', 'MainController@index');
     Route::post('main', 'MainController@postHandle');
