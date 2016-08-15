@@ -105,6 +105,7 @@ class HomeController extends Controller
         $sumTable1 = (int)$table1Result->northernIN + (int)$table1Result->northernOUT + (int)$table1Result->bangkokIN + (int)$table1Result->bangkokOUT;
 
         $chart2Columns = array('จังหวัด','ในเขตเทศบาล','นอกเขตเทศบาล', $role);
+        $chart2ColumnShort = array('จังหวัด','ในเขต','นอกเขต', $role);
         $chart2Data = [
             $chart2Columns
         ];
@@ -130,7 +131,7 @@ class HomeController extends Controller
             $annotation = '';
             foreach ($value as $column){
                 $rowArr[] = $table2Result->{$column};
-                $annotation .= ' ' . $chart2Columns[$i] . ' ' . $table2Result->{$column};
+                $annotation .= ' ' . $chart2ColumnShort[$i] . ' ' . $table2Result->{$column};
                 $sumTable2 += (int)$table2Result->{$column};
                 $sum += (int)$table2Result->{$column};
                 $i++;
@@ -140,21 +141,42 @@ class HomeController extends Controller
             $chart2Data[] = $rowArr;
         }
         $chart2Data = json_encode($chart2Data, JSON_NUMERIC_CHECK);
+        \File::put(public_path('/json/chart2.json'), $chart2Data);
 
-        $table3Arr = Main::orderBy('submitted_at','asc')
-            ->whereNotNull('submitted_at')
-            ->groupBy(\DB::raw('DATE(submitted_at)'))
-            ->select(\DB::raw('DATE(submitted_at) as submitted_at, COUNT(DISTINCT main_id) as count'))
-            ->get();
+        $table3Sql = "select DATE(submitted_at) as submitted_at,count(*) as count
+        FROM
+        (
+        SELECT DISTINCT main_id,submitted_at from mains
+        where submitted_at is NOT null
+        and submitted_at = (select max(submitted_at) from mains sub1 where sub1.main_id=mains.main_id)
+        ORDER BY submitted_at desc
+        ) t1
+        GROUP BY DATE(submitted_at)
+        ORDER BY DATE(submitted_at) ASC";
+        $chart3Col = ['วันที่','จำนวน'];
+        \DB::connection()->setFetchMode(\PDO::FETCH_NUM);
+        $table3Arr = \DB::select($table3Sql);
+        $sumTable3 = 0;
+        foreach ($table3Arr as $row)
+            $sumTable3+=$row[1];
+        $table3Arr = [$chart3Col] + $table3Arr;
+        $chart3Data = json_encode($table3Arr, JSON_NUMERIC_CHECK);
+        \File::put(public_path('/json/chart3.json'), $chart3Data);
 
-        $table4Arr = Main::orderBy('mains.submitted_at','desc')
-            ->leftJoin('users', 'mains.recorder_id','=','users.id')
-            ->whereNotNull('mains.submitted_at')
-            ->groupBy('users.name')
-            ->select(\DB::raw('COUNT(DISTINCT mains.main_id) as count, users.name'))
-            ->get();
+        \DB::connection()->setFetchMode(\PDO::FETCH_CLASS);
+        $table4Sql = "select users.id,users.name,count(*) as count
+            FROM
+            (
+            SELECT DISTINCT main_id,submitted_at,recorder_id from mains
+            where submitted_at is NOT null
+            and submitted_at = (select max(submitted_at) from mains sub1 where sub1.main_id=mains.main_id)
+            ORDER BY submitted_at desc
+            ) t1
+            LEFT JOIN users ON t1.recorder_id=users.id
+            GROUP BY users.id,users.name";
+        $table4Arr = \DB::select($table4Sql);
 
 //        dd($table1Arr, $table2Arr, $table3Arr, $table4Arr);
-        return view('dashboard', compact('table1Arr', 'table2Arr', 'table3Arr','table4Arr', 'countAll', 'sumTable1'));
+        return view('dashboard', compact('table1Arr', 'table2Arr', 'table3Arr','table4Arr', 'countAll', 'sumTable1', 'sumTable2', 'sumTable3'));
     }
 }
