@@ -1,6 +1,9 @@
 @extends('layouts.afterlogin')
 
 @section('script')
+    <script>
+        var mainPageURL = '{{url('main')}}';
+    </script>
     <script src="{{asset('js/dashboard.js')}}"></script>
 @endsection
 
@@ -119,11 +122,13 @@
                 <tr>
                     <th class="text-center text-bold">ชื่อผู้บันทึก</th>
                     <th class="text-center text-bold">จำนวน</th>
+                    <th class="text-center text-bold"></th>
                 </tr>
                 </thead>
                 <tfoot>
                 <tr>
                     <th style="text-align:right"></th>
+                    <th style="text-align:center"></th>
                     <th style="text-align:center"></th>
                 </tr>
                 </tfoot>
@@ -132,6 +137,7 @@
                     <tr>
                         <td>{{$row->name}}</td>
                         <td>{{$row->count}}</td>
+                        <td><button class="btn btn-default person-list-btn" data-name="{{$row->name}}">ดูรายละเอียด</button></td>
                     </tr>
                 @endforeach
                 </tbody>

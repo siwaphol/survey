@@ -21,7 +21,7 @@ $(function () {
         }
     });
 
-    $('.datatable-basic').DataTable();
+    var table = $('.datatable-basic').DataTable();
 
     // External table additions
     $('.dataTables_filter input[type=search]').attr('placeholder','Type to filter...');
@@ -30,4 +30,11 @@ $(function () {
         minimumResultsForSearch: Infinity,
         width: 'auto'
     });
+
+    if ($.cookie('main-filter')){
+        console.log('filter apply');
+        var filter = $.cookie('main-filter');
+        $.removeCookie('main-filter');
+        table.search(filter).draw();
+    }
 });

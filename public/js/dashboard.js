@@ -2,7 +2,6 @@ $(function () {
 
     $.extend( $.fn.dataTable.defaults, {
         autoWidth: false,
-        order: [[1, "desc"]],
         dom: '<"datatable-header"fl><"datatable-scroll"t><"datatable-footer"ip>',
         language: {
             search: '<span>Filter:</span> _INPUT_',
@@ -41,7 +40,8 @@ $(function () {
             $( api.column( 3 ).footer() ).html(
                 ' รวม : '+total
             );
-        }
+        },
+        "ordering":false
     });
     $('#table2').DataTable({
         "footerCallback": function ( row, data, start, end, display ) {
@@ -67,7 +67,8 @@ $(function () {
             $( api.column( 3 ).footer() ).html(
                 ' รวม : '+total
             );
-        }
+        },
+        "ordering": false
     });
     $('#table3').DataTable({
         "footerCallback": function ( row, data, start, end, display ) {
@@ -93,7 +94,8 @@ $(function () {
             $( api.column( 1 ).footer() ).html(
                 ' รวม : '+total
             );
-        }
+        },
+        order: [[0, "desc"]],
     });
     $('#table4').DataTable({
         "footerCallback": function ( row, data, start, end, display ) {
@@ -128,5 +130,12 @@ $(function () {
     $('.dataTables_length select').select2({
         minimumResultsForSearch: Infinity,
         width: 'auto'
+    });
+
+    $('#table4 tbody').on('click','button.person-list-btn', function (e) {
+        e.preventDefault();
+
+        $.cookie('main-filter', $(this).attr('data-name'));
+        window.location.href = mainPageURL;
     });
 });

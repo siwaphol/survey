@@ -137,14 +137,14 @@ class HomeController extends Controller
         $table3Arr = Main::orderBy('submitted_at','asc')
             ->whereNotNull('submitted_at')
             ->groupBy(\DB::raw('DATE(submitted_at)'))
-            ->select(\DB::raw('DATE(submitted_at) as submitted_at, COUNT(*) as count'))
+            ->select(\DB::raw('DATE(submitted_at) as submitted_at, COUNT(DISTINCT main_id) as count'))
             ->get();
 
         $table4Arr = Main::orderBy('mains.submitted_at','desc')
             ->leftJoin('users', 'mains.recorder_id','=','users.id')
             ->whereNotNull('mains.submitted_at')
             ->groupBy('users.name')
-            ->select(\DB::raw('COUNT(*) as count, users.name'))
+            ->select(\DB::raw('COUNT(DISTINCT mains.main_id) as count, users.name'))
             ->get();
 
 //        dd($table1Arr, $table2Arr, $table3Arr, $table4Arr);
