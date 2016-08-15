@@ -1,8 +1,11 @@
 @extends('layouts.afterlogin')
 
 @section('script')
+    <script type="text/javascript" src="https://www.google.com/jsapi"></script>
+
     <script>
         var mainPageURL = '{{url('main')}}';
+        var baseURL = '{{url('/')}}';
     </script>
     <script src="{{asset('js/dashboard.js')}}"></script>
 @endsection
@@ -16,35 +19,42 @@
 
         <div class="panel panel-flat">
             <div class="panel-heading">
-                <h5 class="panel-title">ตารางที่ 1 จำนวนของแบบสอบถามที่ได้กรอกเสร็จสิ้นจำแนกตามภูมิภาคและเขตปกครอง</h5>
+                <h5 class="panel-title">กราฟจำนวนของแบบสอบถามที่ได้กรอกเสร็จสิ้นจำแนกตามภูมิภาคและเขตปกครอง</h5>
             </div>
-            {{--<div class="table-responsive">--}}
-            <table class="table datatable-basic text-center" id="table1">
-                <thead>
-                <tr>
-                    <th class="text-center text-bold">ภูมิภาค</th>
-                    <th class="text-center text-bold">เขตปกครอง ในเขตเทศบาล</th>
-                    <th class="text-center text-bold">เขตปกครอง นอกเขตเทศบาล</th>
-                    <th class="text-center text-bold">รวม</th>
-                </tr>
-                </thead>
-                <tfoot>
-                <tr>
-                    <th colspan="3" style="text-align:right"></th>
-                    <th style="text-align:center"></th>
-                </tr>
-                </tfoot>
-                <tbody>
-                @foreach($table1Arr as $row)
-                    <tr>
-                        <td>{{$row->column1}}</td>
-                        <td>{{$row->column2}}</td>
-                        <td>{{$row->column3}}</td>
-                        <td>{{$row->column4}}</td>
-                    </tr>
-                @endforeach
-                </tbody>
-            </table>
+            <div class="panel body">
+                <div class="chart-container">
+                    <div class="chart" id="chart1-column-stacked"></div>
+                </div>
+            </div>
+            <div class="panel-footer">
+                <h5 style="float: right; margin-right: 5px;">รวม {{$sumTable1}} ชุด</h5>
+            </div>
+            {{--<table class="table datatable-basic text-center" id="table1">--}}
+                {{--<thead>--}}
+                {{--<tr>--}}
+                    {{--<th class="text-center text-bold">ภูมิภาค</th>--}}
+                    {{--<th class="text-center text-bold">เขตปกครอง ในเขตเทศบาล</th>--}}
+                    {{--<th class="text-center text-bold">เขตปกครอง นอกเขตเทศบาล</th>--}}
+                    {{--<th class="text-center text-bold">รวม</th>--}}
+                {{--</tr>--}}
+                {{--</thead>--}}
+                {{--<tfoot>--}}
+                {{--<tr>--}}
+                    {{--<th colspan="3" style="text-align:right"></th>--}}
+                    {{--<th style="text-align:center"></th>--}}
+                {{--</tr>--}}
+                {{--</tfoot>--}}
+                {{--<tbody>--}}
+                {{--@foreach($table1Arr as $row)--}}
+                    {{--<tr>--}}
+                        {{--<td>{{$row->column1}}</td>--}}
+                        {{--<td>{{$row->column2}}</td>--}}
+                        {{--<td>{{$row->column3}}</td>--}}
+                        {{--<td>{{$row->column4}}</td>--}}
+                    {{--</tr>--}}
+                {{--@endforeach--}}
+                {{--</tbody>--}}
+            {{--</table>--}}
             {{--</div>--}}
         </div>
 

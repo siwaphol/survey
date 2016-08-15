@@ -90,22 +90,24 @@ class HomeController extends Controller
         GROUP BY main_id) as t1";
         $table2Result = \DB::select($table2Sql)[0];
 
-//        dd($table1Result,$table2Result, $countAll->allCount);
+        $role = new \stdClass();
+        $role->role = 'annotation';
+        $chart1Data = json_encode([
+            ['เขตปกครอง','ในเขตเทศบาล','นอกเขตเทศบาล', $role ],
+            ['ภาคเหนือ', $table1Result->northernIN, $table1Result->northernOUT
+                , 'ในเขต '.$table1Result->northernIN . ' นอกเขต ' . $table1Result->northernOUT . ' รวม '
+                . ((int)$table1Result->northernIN + (int)$table1Result->northernOUT)],
+            ['กทม. และปริมณฑล', $table1Result->bangkokIN, $table1Result->bangkokOUT
+                , 'ในเขต '.$table1Result->bangkokIN. ' นอกเขต ' . $table1Result->bangkokOUT . ' รวม '
+                . ((int)$table1Result->bangkokIN + (int)$table1Result->bangkokOUT)]
+        ], JSON_NUMERIC_CHECK);
+        \File::put(public_path('/json/chart1.json'), $chart1Data);
+        $sumTable1 = (int)$table1Result->northernIN + (int)$table1Result->northernOUT + (int)$table1Result->bangkokIN + (int)$table1Result->bangkokOUT;
 
-        $table1Arr = [];
-        $table1Obj = new \stdClass();
-        $table1Obj->column1 = 'ภาคเหนือ';
-        $table1Obj->column2 = $table1Result->northernIN;
-        $table1Obj->column3 = $table1Result->northernOUT;
-        $table1Obj->column4 = (int)$table1Result->northernIN + (int)$table1Result->northernOUT;
-        $table1Arr[] = $table1Obj;
-        $table1Obj = new \stdClass();
-        $table1Obj->column1 = 'กทม. และปริมณฑล';
-        $table1Obj->column2 = $table1Result->bangkokIN;
-        $table1Obj->column3 = $table1Result->bangkokOUT;
-        $table1Obj->column4 = (int)$table1Result->bangkokIN + (int)$table1Result->bangkokOUT;
-        $table1Arr[] = $table1Obj;
-
+        $chart2Columns = array('จังหวัด','ในเขตเทศบาล','นอกเขตเทศบาล', $role);
+        $chart2Data = [
+            $chart2Columns
+        ];
         $table2Arr = [];
         $template = [
             'เชียงใหม่'=>['chiangmaiIN','chiangmaiOUT']
@@ -118,21 +120,26 @@ class HomeController extends Controller
             ,'นนทบุรี'=>['nontaburiIN','nontaburiOUT']
             ,'สมุทรปราการ'=>['samutprakarnIN','samutprakarnOUT']
         ];
+        $sumTable2 = 0;
         foreach ($template as $key=>$value){
-            $table2Obj = new \stdClass();
-            $table2Obj->column1 = $key;
+            $rowArr = [];
+            $rowArr[] = $key;
 
-            $i = 2;
+            $i = 1;
             $sum = 0;
+            $annotation = '';
             foreach ($value as $column){
-                $table2Obj->{"column".$i} = $table2Result->{$column};
+                $rowArr[] = $table2Result->{$column};
+                $annotation .= ' ' . $chart2Columns[$i] . ' ' . $table2Result->{$column};
+                $sumTable2 += (int)$table2Result->{$column};
                 $sum += (int)$table2Result->{$column};
                 $i++;
             }
-            $table2Obj->{"column".$i} = $sum;
-
-            $table2Arr[] = $table2Obj;
+            $annotation .= ' รวม ' . $sum;
+            $rowArr[] = $annotation;
+            $chart2Data[] = $rowArr;
         }
+        $chart2Data = json_encode($chart2Data, JSON_NUMERIC_CHECK);
 
         $table3Arr = Main::orderBy('submitted_at','asc')
             ->whereNotNull('submitted_at')
@@ -148,6 +155,6 @@ class HomeController extends Controller
             ->get();
 
 //        dd($table1Arr, $table2Arr, $table3Arr, $table4Arr);
-        return view('dashboard', compact('table1Arr', 'table2Arr', 'table3Arr','table4Arr', 'countAll'));
+        return view('dashboard', compact('table1Arr', 'table2Arr', 'table3Arr','table4Arr', 'countAll', 'sumTable1'));
     }
 }
