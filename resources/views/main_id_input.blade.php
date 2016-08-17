@@ -42,6 +42,57 @@
             <div class="panel-heading">
                 <h5 class="panel-title">ชุดที่แก้ไขล่าสุด</h5>
             </div>
+            <div class="panel-body">
+                <form action="{{url('filter-main')}}" method="post" class="form-horizontal">
+                    {{csrf_field()}}
+                    <fieldset class="content-group">
+                        <legend class="text-bold">Filter</legend>
+
+                        <div class="form-group">
+                            <label for="" class="control-label col-lg-2">เขตเทศบาล</label>
+                            <div class="col-lg-2">
+                                <select name="no_ra11" id="" class="select">
+                                    <option value="all">ทั้งหมด</option>
+                                    <option value="inborder" {{isset($no_ra11)&&$no_ra11==='inborder'?'selected="selected"':""}}>ในเขต</option>
+                                    <option value="outborder" {{isset($no_ra11)&&$no_ra11==='outborder'?'selected="selected"':""}}>นอกเขต</option>
+                                </select>
+                            </div>
+
+                            <label for="" class="control-label col-lg-1">ภูมิภาค</label>
+                            <div class="col-lg-2">
+                                <select name="no_ra14" id="" class="select">
+                                    <option value="all">ทั้งหมด</option>
+                                    <option value="northern" {{isset($no_ra14)&&$no_ra14==='northern'?'selected="selected"':""}}>ภาคเหนือ</option>
+                                    <option value="bangkok" {{isset($no_ra14)&&$no_ra14==='bangkok'?'selected="selected"':""}}>กรุงเทพฯ และปริมณฑล</option>
+                                </select>
+                            </div>
+
+                            <label for="" class="control-label col-lg-1">จังหวัด</label>
+                            <div class="col-lg-2">
+                                <select name="no_ra14_o7_ra2003" id="" class="select">
+                                    <option value="all">ทั้งหมด</option>
+                                    <option value="chiangmai" {{isset($no_ra14_o7_ra2003)&&$no_ra14_o7_ra2003==='chiangmai'?'selected="selected"':""}}>เชียงใหม่</option>
+                                    <option value="nan" {{isset($no_ra14_o7_ra2003)&&$no_ra14_o7_ra2003==='nan'?'selected="selected"':""}}>น่าน</option>
+                                    <option value="utaradit" {{isset($no_ra14_o7_ra2003)&&$no_ra14_o7_ra2003==='utaradit'?'selected="selected"':""}}>อุตรดิตถ์</option>
+                                    <option value="pitsanurok" {{isset($no_ra14_o7_ra2003)&&$no_ra14_o7_ra2003==='pitsanurok'?'selected="selected"':""}}>พิษณุโลก</option>
+                                    <option value="petchabul" {{isset($no_ra14_o7_ra2003)&&$no_ra14_o7_ra2003==='petchabul'?'selected="selected"':""}}>เพชรบูรณ์</option>
+                                    <option value="bangkok" {{isset($no_ra14_o7_ra2003)&&$no_ra14_o7_ra2003==='bangkok'?'selected="selected"':""}}>กรุงเทพ</option>
+                                    <option value="patumtani" {{isset($no_ra14_o7_ra2003)&&$no_ra14_o7_ra2003==='patumtani'?'selected="selected"':""}}>ปทุมธานี</option>
+                                    <option value="nontaburi" {{isset($no_ra14_o7_ra2003)&&$no_ra14_o7_ra2003==='nontaburi'?'selected="selected"':""}}>นนทบุรี</option>
+                                    <option value="samutprakarn" {{isset($no_ra14_o7_ra2003)&&$no_ra14_o7_ra2003==='samutprakarn'?'selected="selected"':""}}>สมุทรปราการ</option>
+                                </select>
+                            </div>
+
+                            <div class="col-lg-1">
+                                <input type="submit" class="btn border-slate text-slate-800 btn-flat" value="Filter">
+                            </div>
+                            <div class="col-lg-1">
+                                <a class="btn border-slate text-slate-800 btn-flat" href="{{url('main')}}">Clear</a>
+                            </div>
+                        </div>
+                    </fieldset>
+                </form>
+            </div>
             {{--<div class="table-responsive">--}}
             <table class="table datatable-basic text-center">
                 <thead>

@@ -10,6 +10,8 @@ Route::group(['middleware' => 'auth'], function () {
     Route::get('main', 'MainController@index');
     Route::post('main', 'MainController@postHandle');
 
+    Route::post('filter-main', 'MainController@filter');
+
     Route::get('html-loop-2/{id}', 'QuestionController@htmlLoop');
     Route::get('html-loop-2/{id}/{sub}', 'QuestionController@htmlLoop');
     Route::post('test-post','AnswerController@testPost');

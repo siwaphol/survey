@@ -36,10 +36,10 @@ class HomeController extends Controller
             ->first();
 
         $table1Sql = "SELECT 
-          sum(if(t1.bangkok=1 and t1.inborder=1,1,0)) as bangkokIN
-          ,sum(if(t1.bangkok=1 and t1.outborder=1,1,0)) as bangkokOUT
-          ,sum(if(t1.northern=1 and t1.inborder=1,1,0)) as northernIN
-          ,sum(if(t1.northern=1 and t1.outborder=1,1,0)) as northernOUT
+          sum(if(t1.bangkok>=1 and t1.inborder>=1,1,0)) as bangkokIN
+          ,sum(if(t1.bangkok>=1 and t1.outborder>=1,1,0)) as bangkokOUT
+          ,sum(if(t1.northern>=1 and t1.inborder>=1,1,0)) as northernIN
+          ,sum(if(t1.northern>=1 and t1.outborder>=1,1,0)) as northernOUT
         FROM
           (SELECT sum(if(unique_key='no_ra14' and option_id=7,1,0)) as bangkok
         ,sum(if(unique_key='no_ra14' and option_id=6,1,0)) as northern
@@ -51,25 +51,25 @@ class HomeController extends Controller
         $table1Result = \DB::select($table1Sql)[0];
 
         $table2Sql = "SELECT
-          sum(if(t1.chiangmai=1 and t1.inborder=1,1,0)) as chiangmaiIN
-          ,sum(if(t1.chiangmai=1 and t1.outborder=1,1,0)) as chiangmaiOUT
-          ,sum(if(t1.nan=1 and t1.inborder=1,1,0)) as nanIN
-          ,sum(if(t1.nan=1 and t1.outborder=1,1,0)) as nanOUT
-          ,sum(if(t1.utaradit=1 and t1.inborder=1,1,0)) as utaraditIN
-          ,sum(if(t1.utaradit=1 and t1.outborder=1,1,0)) as utaraditOUT
-          ,sum(if(t1.pitsanurok=1 and t1.inborder=1,1,0)) as pitsanurokIN
-          ,sum(if(t1.pitsanurok=1 and t1.outborder=1,1,0)) as pitsanurokOUT
-          ,sum(if(t1.petchabul=1 and t1.inborder=1,1,0)) as petchabulIN
-          ,sum(if(t1.petchabul=1 and t1.outborder=1,1,0)) as petchabulOUT
+          sum(if(t1.chiangmai>=1 and t1.inborder>=1,1,0)) as chiangmaiIN
+          ,sum(if(t1.chiangmai>=1 and t1.outborder>=1,1,0)) as chiangmaiOUT
+          ,sum(if(t1.nan>=1 and t1.inborder>=1,1,0)) as nanIN
+          ,sum(if(t1.nan>=1 and t1.outborder>=1,1,0)) as nanOUT
+          ,sum(if(t1.utaradit>=1 and t1.inborder>=1,1,0)) as utaraditIN
+          ,sum(if(t1.utaradit>=1 and t1.outborder>=1,1,0)) as utaraditOUT
+          ,sum(if(t1.pitsanurok>=1 and t1.inborder>=1,1,0)) as pitsanurokIN
+          ,sum(if(t1.pitsanurok>=1 and t1.outborder>=1,1,0)) as pitsanurokOUT
+          ,sum(if(t1.petchabul>=1 and t1.inborder>=1,1,0)) as petchabulIN
+          ,sum(if(t1.petchabul>=1 and t1.outborder>=1,1,0)) as petchabulOUT
         
-          ,sum(if(t1.bangkok=1 and t1.inborder=1,1,0)) as bangkokIN
-          ,sum(if(t1.bangkok=1 and t1.outborder=1,1,0)) as bangkokOUT
-          ,sum(if(t1.patumtani=1 and t1.inborder=1,1,0)) as patumtaniIN
-          ,sum(if(t1.patumtani=1 and t1.outborder=1,1,0)) as patumtaniOUT
-          ,sum(if(t1.nontaburi=1 and t1.inborder=1,1,0)) as nontaburiIN
-          ,sum(if(t1.nontaburi=1 and t1.outborder=1,1,0)) as nontaburiOUT
-          ,sum(if(t1.samutprakarn=1 and t1.inborder=1,1,0)) as samutprakarnIN
-          ,sum(if(t1.samutprakarn=1 and t1.outborder=1,1,0)) as samutprakarnOUT
+          ,sum(if(t1.bangkok>=1 and t1.inborder>=1,1,0)) as bangkokIN
+          ,sum(if(t1.bangkok>=1 and t1.outborder>=1,1,0)) as bangkokOUT
+          ,sum(if(t1.patumtani>=1 and t1.inborder>=1,1,0)) as patumtaniIN
+          ,sum(if(t1.patumtani>=1 and t1.outborder>=1,1,0)) as patumtaniOUT
+          ,sum(if(t1.nontaburi>=1 and t1.inborder>=1,1,0)) as nontaburiIN
+          ,sum(if(t1.nontaburi>=1 and t1.outborder>=1,1,0)) as nontaburiOUT
+          ,sum(if(t1.samutprakarn>=1 and t1.inborder>=1,1,0)) as samutprakarnIN
+          ,sum(if(t1.samutprakarn>=1 and t1.outborder>=1,1,0)) as samutprakarnOUT
         FROM
           (SELECT
              sum(if(unique_key='no_ra14_o6_ra2002' and option_id=310,1,0)) as chiangmai

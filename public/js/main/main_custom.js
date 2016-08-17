@@ -37,4 +37,8 @@ $(function () {
         $.removeCookie('main-filter');
         table.search(filter).draw();
     }
+
+    $('.select').select2({
+        minimumResultsForSearch: Infinity
+    });
 });

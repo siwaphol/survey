@@ -64,4 +64,107 @@ class MainController extends Controller
 
         return redirect('html-loop-2/1');
     }
+
+    public function filter(Request $request)
+    {
+        $input = $request->input();
+        if ($input['no_ra11']  ==='all'
+            && $input['no_ra14']  ==='all'
+            && $input['no_ra14_o7_ra2003'] ==='all'
+        )
+            return redirect('/main');
+
+        $no_ra11 = $input['no_ra11'];
+        $no_ra14 = $input['no_ra14'];
+        $no_ra14_o7_ra2003 = $input['no_ra14_o7_ra2003'];
+
+        $borderWhere = " and (t1.inborder>=1 or t1.outborder>=1) ";
+        if ($input['no_ra11']!=='all')
+            $borderWhere = " and t1." . $input['no_ra11'] . ">=1 ";
+
+        $region = " (t1.bangkok>=1 or t1.northern>=1) ";
+        if ($input['no_ra14']!=='all')
+            $region = "t1.".$input['no_ra14'].">=1 ";
+
+        if($input['no_ra14_o7_ra2003']!=='all'){
+            $provinceWhere = " 1 ";
+            if ($input['no_ra14_o7_ra2003']!=='all')
+                $provinceWhere = ' t1.' . $input['no_ra14_o7_ra2003'] .">=1 ";
+
+            $sqlStr = "SELECT main_id
+              FROM
+                (SELECT
+                  main_id,
+                sum(if(unique_key='no_ra14_o6_ra2002' and option_id=310,1,0)) as chiangmai
+                ,sum(if(unique_key='no_ra14_o6_ra2002' and option_id=311,1,0)) as nan
+                ,sum(if(unique_key='no_ra14_o6_ra2002' and option_id=312,1,0)) as utaradit
+                ,sum(if(unique_key='no_ra14_o6_ra2002' and option_id=313,1,0)) as pitsanurok
+                ,sum(if(unique_key='no_ra14_o6_ra2002' and option_id=314,1,0)) as petchabul
+            
+                ,sum(if(unique_key='no_ra14_o7_ra2003' and option_id=315,1,0)) as bangkok
+                ,sum(if(unique_key='no_ra14_o7_ra2003' and option_id=316,1,0)) as patumtani
+                ,sum(if(unique_key='no_ra14_o7_ra2003' and option_id=317,1,0)) as nontaburi
+                ,sum(if(unique_key='no_ra14_o7_ra2003' and option_id=318,1,0)) as samutprakarn
+            
+                   ,sum(if(unique_key='no_ra14' and option_id=7,1,0)) as bangkok_region
+                   ,sum(if(unique_key='no_ra14' and option_id=6,1,0)) as northern
+            
+                ,sum(if(unique_key='no_ra11' and option_id=4,1,0)) as inborder
+                ,sum(if(unique_key='no_ra11' and option_id=5,1,0)) as outborder
+                from answers
+                WHERE unique_key in ('no_ra11','no_ra14_o6_ra2002','no_ra14_o7_ra2003', 'no_ra14')
+                GROUP BY main_id) as t1
+            WHERE " . $provinceWhere . $borderWhere;
+        }
+        else if ($input['no_ra14']!=='all'){
+            $sqlStr = "SELECT main_id
+            FROM
+              (SELECT 
+              main_id
+              ,sum(if(unique_key='no_ra14' and option_id=7,1,0)) as bangkok
+            ,sum(if(unique_key='no_ra14' and option_id=6,1,0)) as northern
+            ,sum(if(unique_key='no_ra11' and option_id=4,1,0)) as inborder
+            ,sum(if(unique_key='no_ra11' and option_id=5,1,0)) as outborder
+            from answers
+            WHERE unique_key in ('no_ra11','no_ra14')
+            GROUP BY main_id) as t1
+            WHERE " . $region . $borderWhere;
+        }
+        else{
+            $sqlStr = "SELECT main_id
+            FROM
+              (SELECT 
+              main_id
+              ,sum(if(unique_key='no_ra14' and option_id=7,1,0)) as bangkok
+            ,sum(if(unique_key='no_ra14' and option_id=6,1,0)) as northern
+            ,sum(if(unique_key='no_ra11' and option_id=4,1,0)) as inborder
+            ,sum(if(unique_key='no_ra11' and option_id=5,1,0)) as outborder
+            from answers
+            WHERE unique_key in ('no_ra11','no_ra14')
+            GROUP BY main_id) as t1
+            WHERE 1 " . $borderWhere;
+        }
+
+        $result = \DB::select($sqlStr);
+        $filterMain = [];
+        foreach ($result as $row){
+            $filterMain[] = $row->main_id;
+        }
+
+        $mainList = Main::orderBy('mains.submitted_at','desc')
+            ->leftJoin('users', 'mains.recorder_id','=','users.id')
+            ->select('mains.*','users.name')
+            ->get();
+
+        $dupMainId = [];
+        foreach ($mainList as $key => $model) {
+            if (in_array($model->main_id, $dupMainId) || !in_array($model->main_id, $filterMain)){
+                unset($mainList[$key]);
+                continue;
+            }
+            $dupMainId[] = $model->main_id;
+        }
+
+        return view('main_id_input', compact('mainList','no_ra11','no_ra14','no_ra14_o7_ra2003'));
+    }
 }
