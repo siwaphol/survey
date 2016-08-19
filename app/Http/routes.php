@@ -25,3 +25,8 @@ Route::group(['prefix'=>'api'], function (){
 
 Route::get('import-excel','QuestionController@importExcelQuestion');
 Route::auth();
+
+Route::get('test-sum', 'SummaryController@sum');
+Route::get('sum-page', function(){
+    return view('summary.test');
+});
