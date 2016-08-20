@@ -7,6 +7,57 @@ use Illuminate\Database\Eloquent\Model;
 class Main extends Model
 {
     protected $fillable = ['main_id', 'recorder_id'];
+    const INNER_GROUP_1 = 1;
+    const INNER_GROUP_2 = 2;
+    const OUTER_GROUP_1 = 3;
+    const OUTER_GROUP_2 = 4;
+    const CHIANGMAI_INNER = 5;
+    const CHIANGMAI_OUTER = 6;
+    const UTARADIT_INNER = 7;
+    const UTARADIT_OUTER = 8;
+    const NAN_INNER = 9;
+    const NAN_OUTER = 10;
+    const PITSANULOK_INNER = 11;
+    const PITSANULOK_OUTER = 12;
+    const PETCHABUL_INNER = 13;
+    const PETCHABUL_OUTER = 14;
+
+    public static $weight = [
+        Main::INNER_GROUP_1=>0.66,
+        Main::INNER_GROUP_2=>0.34,
+        Main::OUTER_GROUP_1=>0.50,
+        Main::OUTER_GROUP_2=>0.50,
+        Main::CHIANGMAI_INNER=>0.853,
+        Main::CHIANGMAI_OUTER=>0.799,
+        Main::UTARADIT_INNER=>0.147,
+        Main::UTARADIT_OUTER=>0.201,
+        Main::NAN_INNER=>0.150,
+        Main::NAN_OUTER=>0.27,
+        Main::PITSANULOK_INNER=>0.436,
+        Main::PITSANULOK_OUTER=>0.36,
+        Main::PETCHABUL_INNER=>0.413,
+        Main::PETCHABUL_OUTER=>0.38
+    ];
+
+    public static $provinceWeight = [
+        Main::CHIANGMAI_INNER=>0.853,
+        Main::CHIANGMAI_OUTER=>0.799,
+        Main::UTARADIT_INNER=>0.147,
+        Main::UTARADIT_OUTER=>0.201,
+        Main::NAN_INNER=>0.150,
+        Main::NAN_OUTER=>0.27,
+        Main::PITSANULOK_INNER=>0.436,
+        Main::PITSANULOK_OUTER=>0.36,
+        Main::PETCHABUL_INNER=>0.413,
+        Main::PETCHABUL_OUTER=>0.38
+    ];
+
+    public static $borderWeight = [
+        Main::INNER_GROUP_1=>0.66,
+        Main::INNER_GROUP_2=>0.34,
+        Main::OUTER_GROUP_1=>0.50,
+        Main::OUTER_GROUP_2=>0.50,
+    ];
 
     public static function getMainList($groupId)
     {
@@ -27,21 +78,71 @@ class Main extends Model
 
         $result = collect($result);
 
-        if ($groupId===1){
+        if ($groupId===Main::INNER_GROUP_1){
             return $result->filter(function ($value, $key){
                 return (int)$value->inborder===1 && ((int)$value->chiangmai===1 || (int)$value->utaradit===1);
             })->lists('main_id')->toArray();
-        }elseif ($groupId===2){
+        }elseif ($groupId===Main::INNER_GROUP_2){
             return $result->filter(function ($value, $key){
                 return (int)$value->inborder===1 && ((int)$value->nan===1 || (int)$value->pitsanurok===1 || (int)$value->petchabul===1);
             })->lists('main_id')->toArray();
-        }elseif ($groupId===3){
+        }elseif ($groupId===Main::OUTER_GROUP_1){
             return $result->filter(function ($value, $key){
                 return (int)$value->outborder===1 && ((int)$value->chiangmai===1 || (int)$value->utaradit===1);
             })->lists('main_id')->toArray();
-        }elseif ($groupId===4){
+        }elseif ($groupId===Main::OUTER_GROUP_2){
             return $result->filter(function ($value, $key){
                 return (int)$value->outborder===1 && ((int)$value->nan===1 || (int)$value->pitsanurok===1 || (int)$value->petchabul===1);
+            })->lists('main_id')->toArray();
+        }
+        elseif ($groupId===Main::CHIANGMAI_INNER){
+            return $result->filter(function ($value, $key){
+                return ((int)$value->chiangmai===1) && (int)$value->inborder===1;
+            })->lists('main_id')->toArray();
+        }
+        elseif ($groupId===Main::CHIANGMAI_OUTER){
+            return $result->filter(function ($value, $key){
+                return ((int)$value->chiangmai===1) && (int)$value->outborder===1;
+            })->lists('main_id')->toArray();
+        }
+        elseif ($groupId===Main::UTARADIT_INNER){
+            return $result->filter(function ($value, $key){
+                return ((int)$value->utaradit===1)&& (int)$value->inborder===1;
+            })->lists('main_id')->toArray();
+        }
+        elseif ($groupId===Main::UTARADIT_OUTER){
+            return $result->filter(function ($value, $key){
+                return ((int)$value->utaradit===1) && (int)$value->outborder===1;
+            })->lists('main_id')->toArray();
+        }
+        elseif ($groupId===Main::NAN_INNER){
+            return $result->filter(function ($value, $key){
+                return ((int)$value->nan===1)&& (int)$value->inborder===1;
+            })->lists('main_id')->toArray();
+        }
+        elseif ($groupId===Main::NAN_OUTER){
+            return $result->filter(function ($value, $key){
+                return ((int)$value->nan===1) && (int)$value->outborder===1;
+            })->lists('main_id')->toArray();
+        }
+        elseif ($groupId===Main::PITSANULOK_INNER){
+            return $result->filter(function ($value, $key){
+                return ((int)$value->pitsanurok===1)&& (int)$value->inborder===1;
+            })->lists('main_id')->toArray();
+        }
+        elseif ($groupId===Main::PITSANULOK_OUTER){
+            return $result->filter(function ($value, $key){
+                return ((int)$value->pitsanurok===1) && (int)$value->outborder===1;
+            })->lists('main_id')->toArray();
+        }
+        elseif ($groupId===Main::PETCHABUL_INNER){
+            return $result->filter(function ($value, $key){
+                return ((int)$value->pitsanurok===1)&& (int)$value->inborder===1;
+            })->lists('main_id')->toArray();
+        }
+        elseif ($groupId===Main::PETCHABUL_OUTER){
+            return $result->filter(function ($value, $key){
+                return ((int)$value->pitsanurok===1) && (int)$value->outborder===1;
             })->lists('main_id')->toArray();
         }
 

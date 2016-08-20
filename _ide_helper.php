@@ -1,7 +1,7 @@
 <?php
 /**
  * A helper file for Laravel 5, to provide autocomplete information to your IDE
- * Generated for Laravel 5.2.41 on 2016-07-20.
+ * Generated for Laravel 5.2.43 on 2016-08-20.
  *
  * @author Barry vd. Heuvel <barryvdh@gmail.com>
  * @see https://github.com/barryvdh/laravel-ide-helper
@@ -3876,7 +3876,7 @@ namespace {
         /**
          * Get the underlying query builder instance.
          *
-         * @return \Illuminate\Database\Query\Builder|static 
+         * @return \Illuminate\Database\Query\Builder 
          * @static 
          */
         public static function getQuery(){
@@ -4459,6 +4459,33 @@ namespace {
          */
         public static function orWhereDate($column, $operator, $value){
             return \Illuminate\Database\Query\Builder::orWhereDate($column, $operator, $value);
+        }
+        
+        /**
+         * Add a "where time" statement to the query.
+         *
+         * @param string $column
+         * @param string $operator
+         * @param int $value
+         * @param string $boolean
+         * @return \Illuminate\Database\Query\Builder|static 
+         * @static 
+         */
+        public static function whereTime($column, $operator, $value, $boolean = 'and'){
+            return \Illuminate\Database\Query\Builder::whereTime($column, $operator, $value, $boolean);
+        }
+        
+        /**
+         * Add an "or where time" statement to the query.
+         *
+         * @param string $column
+         * @param string $operator
+         * @param int $value
+         * @return \Illuminate\Database\Query\Builder|static 
+         * @static 
+         */
+        public static function orWhereTime($column, $operator, $value){
+            return \Illuminate\Database\Query\Builder::orWhereTime($column, $operator, $value);
         }
         
         /**
@@ -5224,6 +5251,131 @@ namespace {
     }
 
 
+    class Excel extends \Maatwebsite\Excel\Facades\Excel{
+        
+        /**
+         * Create a new file
+         *
+         * @param $filename
+         * @param callable|null $callback
+         * @return \Maatwebsite\Excel\LaravelExcelWriter 
+         * @static 
+         */
+        public static function create($filename, $callback = null){
+            return \Maatwebsite\Excel\Excel::create($filename, $callback);
+        }
+        
+        /**
+         * Load an existing file
+         *
+         * @param string $file The file we want to load
+         * @param callback|null $callback
+         * @param string|null $encoding
+         * @param bool $noBasePath
+         * @return \Maatwebsite\Excel\LaravelExcelReader 
+         * @static 
+         */
+        public static function load($file, $callback = null, $encoding = null, $noBasePath = false, $callbackConfigReader = null){
+            return \Maatwebsite\Excel\Excel::load($file, $callback, $encoding, $noBasePath, $callbackConfigReader);
+        }
+        
+        /**
+         * Set select sheets
+         *
+         * @param $sheets
+         * @return \Maatwebsite\Excel\LaravelExcelReader 
+         * @static 
+         */
+        public static function selectSheets($sheets = array()){
+            return \Maatwebsite\Excel\Excel::selectSheets($sheets);
+        }
+        
+        /**
+         * Select sheets by index
+         *
+         * @param array $sheets
+         * @return $this 
+         * @static 
+         */
+        public static function selectSheetsByIndex($sheets = array()){
+            return \Maatwebsite\Excel\Excel::selectSheetsByIndex($sheets);
+        }
+        
+        /**
+         * Batch import
+         *
+         * @param $files
+         * @param callback $callback
+         * @return \PHPExcel 
+         * @static 
+         */
+        public static function batch($files, $callback){
+            return \Maatwebsite\Excel\Excel::batch($files, $callback);
+        }
+        
+        /**
+         * Create a new file and share a view
+         *
+         * @param string $view
+         * @param array $data
+         * @param array $mergeData
+         * @return \Maatwebsite\Excel\LaravelExcelWriter 
+         * @static 
+         */
+        public static function shareView($view, $data = array(), $mergeData = array()){
+            return \Maatwebsite\Excel\Excel::shareView($view, $data, $mergeData);
+        }
+        
+        /**
+         * Create a new file and load a view
+         *
+         * @param string $view
+         * @param array $data
+         * @param array $mergeData
+         * @return \Maatwebsite\Excel\LaravelExcelWriter 
+         * @static 
+         */
+        public static function loadView($view, $data = array(), $mergeData = array()){
+            return \Maatwebsite\Excel\Excel::loadView($view, $data, $mergeData);
+        }
+        
+        /**
+         * Set filters
+         *
+         * @param array $filters
+         * @return \Excel 
+         * @static 
+         */
+        public static function registerFilters($filters = array()){
+            return \Maatwebsite\Excel\Excel::registerFilters($filters);
+        }
+        
+        /**
+         * Enable certain filters
+         *
+         * @param string|array $filter
+         * @param bool|false|string $class
+         * @return \Excel 
+         * @static 
+         */
+        public static function filter($filter, $class = false){
+            return \Maatwebsite\Excel\Excel::filter($filter, $class);
+        }
+        
+        /**
+         * Get register, enabled (or both) filters
+         *
+         * @param string|boolean $key [description]
+         * @return array 
+         * @static 
+         */
+        public static function getFilters($key = false){
+            return \Maatwebsite\Excel\Excel::getFilters($key);
+        }
+        
+    }
+
+
     class File extends \Illuminate\Support\Facades\File{
         
         /**
@@ -5747,7 +5899,7 @@ namespace {
         }
         
         /**
-         * Get a guard instance for the given user.
+         * Get a gate instance for the given user.
          *
          * @param \Illuminate\Contracts\Auth\Authenticatable|mixed $user
          * @return static 
@@ -7254,7 +7406,7 @@ namespace {
          *
          * @param string $key
          * @param mixed $default
-         * @return \Symfony\Component\HttpFoundation\File\UploadedFile|array|null 
+         * @return \Illuminate\Http\UploadedFile|array|null 
          * @static 
          */
         public static function file($key = null, $default = null){
