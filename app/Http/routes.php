@@ -17,6 +17,9 @@ Route::group(['middleware' => 'auth'], function () {
     Route::post('test-post','AnswerController@testPost');
     Route::post('test-post-2','AnswerController@saveAnswersWithEasiestWay');
     Route::post('test-post-3','AnswerController@saveAnswersWithEasiestWay2');
+
+    Route::get('report', 'SummaryController@index');
+    Route::get('test-get-report', 'SummaryController@testReport');
 });
 
 Route::group(['prefix'=>'api'], function (){
@@ -28,6 +31,8 @@ Route::auth();
 
 Route::get('test-sum', 'SummaryController@sum');
 Route::get('test-average', 'SummaryController@average');
+Route::get('test-usage', 'SummaryController@usage');
+Route::get('test-avg2', 'SummaryController@average2');
 Route::get('sum-page', function(){
     return view('summary.test');
 });

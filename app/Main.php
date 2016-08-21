@@ -22,6 +22,12 @@ class Main extends Model
     const PETCHABUL_INNER = 13;
     const PETCHABUL_OUTER = 14;
 
+    const NORTHERN = 15;
+    const NORTHERN_INNER = 16;
+    const NORTHERN_OUTER = 17;
+
+    const NUMBER_FORMAT = '#,##0.00';
+
     public static $weight = [
         Main::INNER_GROUP_1=>0.66,
         Main::INNER_GROUP_2=>0.34,
@@ -37,6 +43,19 @@ class Main extends Model
         Main::PITSANULOK_OUTER=>0.36,
         Main::PETCHABUL_INNER=>0.413,
         Main::PETCHABUL_OUTER=>0.38
+    ];
+
+    public static $sample = [
+      Main::INNER_GROUP_1=>526.00,
+        Main::INNER_GROUP_2=>274.00,
+        Main::OUTER_GROUP_1=>850.00,
+        Main::OUTER_GROUP_2=>850.00
+    ];
+
+    public static $population = [
+        Main::NORTHERN=>4467077,
+        Main::NORTHERN_INNER=>1432284,
+        Main::NORTHERN_OUTER=>3034793
     ];
 
     public static $provinceWeight = [
@@ -58,6 +77,8 @@ class Main extends Model
         Main::OUTER_GROUP_1=>0.50,
         Main::OUTER_GROUP_2=>0.50,
     ];
+
+
 
     public static function getMainList($groupId)
     {
