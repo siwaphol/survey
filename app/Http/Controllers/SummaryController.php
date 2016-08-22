@@ -6,6 +6,7 @@ use App\Answer;
 use App\Main;
 use App\Menu;
 use App\Parameter;
+use App\Summary;
 use Illuminate\Http\Request;
 
 use App\Http\Requests;
@@ -163,59 +164,72 @@ class SummaryController extends Controller
                 $p[$b_key] = $avg[$b_key]*$b_weight;
             }
 
-            $answers[$key] = $p[Main::INNER_GROUP_1] + $p[Main::INNER_GROUP_2];
-            $A[Main::INNER_GROUP_1] = (1.0/($count[Main::INNER_GROUP_1]-1))
-                * (
-                    pow(($avg[Main::CHIANGMAI_INNER] - $avg[Main::INNER_GROUP_1]), 2)
-                    +pow(($avg[Main::UTARADIT_INNER] - $avg[Main::INNER_GROUP_1]),2)
-                );
-            $A[Main::INNER_GROUP_2] = (1.0/($count[Main::INNER_GROUP_2]-1))
-                *(
-                    pow(($avg[Main::NAN_INNER] - $avg[Main::INNER_GROUP_2]), 2)
-                    +pow(($avg[Main::PITSANULOK_INNER] - $avg[Main::INNER_GROUP_2]),2)
-                    +pow(($avg[Main::PETCHABUL_INNER] - $avg[Main::INNER_GROUP_2]),2)
-                );
             $key2 = str_replace('U','V',$key);
+            $key3 = str_replace('U','W',$key);
+            $key4 = str_replace('U','X',$key);
+
+            $answers[$key] = $p[Main::INNER_GROUP_1] + $p[Main::INNER_GROUP_2];
+            if ($count[Main::INNER_GROUP_1]-1===0)
+                $A[Main::INNER_GROUP_1] = 0;
+            else
+                $A[Main::INNER_GROUP_1] = (1.0/($count[Main::INNER_GROUP_1]-1))
+                    * (
+                        pow(($avg[Main::CHIANGMAI_INNER] - $avg[Main::INNER_GROUP_1]), 2)
+                        +pow(($avg[Main::UTARADIT_INNER] - $avg[Main::INNER_GROUP_1]),2)
+                    );
+
+            if ($count[Main::INNER_GROUP_2]-1===0)
+                $A[Main::INNER_GROUP_2] = 0;
+            else
+                $A[Main::INNER_GROUP_2] = (1.0/($count[Main::INNER_GROUP_2]-1))
+                    *(
+                        pow(($avg[Main::NAN_INNER] - $avg[Main::INNER_GROUP_2]), 2)
+                        +pow(($avg[Main::PITSANULOK_INNER] - $avg[Main::INNER_GROUP_2]),2)
+                        +pow(($avg[Main::PETCHABUL_INNER] - $avg[Main::INNER_GROUP_2]),2)
+                    );
+            if (($count[Main::INNER_GROUP_1] + $count[Main::INNER_GROUP_2])===0)
+                $part1 = 0;
+            else
+                $part1 = $count[Main::INNER_GROUP_1]/($count[Main::INNER_GROUP_1] + $count[Main::INNER_GROUP_2]);
+            $part2 = ($count[Main::INNER_GROUP_1]===0)?0:($A[Main::INNER_GROUP_1] / $count[Main::INNER_GROUP_1]);
+            $part3 = ($count[Main::INNER_GROUP_1] + $count[Main::INNER_GROUP_2])===0?
+                0:($count[Main::INNER_GROUP_2]/($count[Main::INNER_GROUP_1] + $count[Main::INNER_GROUP_2]));
+            $part4 = $count[Main::INNER_GROUP_2]===0?0:($A[Main::INNER_GROUP_2] / $count[Main::INNER_GROUP_2]);
 
             $answers[$key2] = sqrt(
-                (
-                    Main::$weight[Main::INNER_GROUP_1]
-                    * (1.0-($count[Main::INNER_GROUP_1]/($count[Main::INNER_GROUP_1] + $count[Main::INNER_GROUP_2])))
-                    * ($A[Main::INNER_GROUP_1] / $count[Main::INNER_GROUP_1])
-                )
-                +
-                (
-                    Main::$weight[Main::INNER_GROUP_2]
-                    * (1.0-($count[Main::INNER_GROUP_2]/($count[Main::INNER_GROUP_1] + $count[Main::INNER_GROUP_2])))
-                    * ($A[Main::INNER_GROUP_2] / $count[Main::INNER_GROUP_2])
-                )
+                (Main::$weight[Main::INNER_GROUP_1] * (1.0-$part1) * $part2) +
+                (Main::$weight[Main::INNER_GROUP_2] * (1.0-$part3) * $part4)
             );
-            $key3 = str_replace('U','W',$key);
             $answers[$key3] = $p[Main::OUTER_GROUP_1] + $p[Main::OUTER_GROUP_2];
-            $A[Main::OUTER_GROUP_1] = (1.0/($count[Main::OUTER_GROUP_1]-1))
+            if ($count[Main::OUTER_GROUP_1]-1===0)
+                $A[Main::OUTER_GROUP_1] = 0;
+            else
+                $A[Main::OUTER_GROUP_1] = (1.0/($count[Main::OUTER_GROUP_1]-1))
                 *(
                     pow(($avg[Main::CHIANGMAI_OUTER] - $avg[Main::OUTER_GROUP_1]), 2)
                     +pow(($avg[Main::UTARADIT_OUTER] - $avg[Main::OUTER_GROUP_1]),2)
                 );
-            $A[Main::OUTER_GROUP_2] = (1.0/($count[Main::OUTER_GROUP_2]-1))
-                *(
-                    pow(($avg[Main::NAN_OUTER] - $avg[Main::OUTER_GROUP_2]), 2)
-                    +pow(($avg[Main::PITSANULOK_OUTER] - $avg[Main::OUTER_GROUP_2]),2)
-                    +pow(($avg[Main::PETCHABUL_OUTER] - $avg[Main::OUTER_GROUP_2]),2)
-                );
-            $key4 = str_replace('U','X',$key);
+            if ($count[Main::OUTER_GROUP_2]-1===0)
+                $A[Main::OUTER_GROUP_2] = 0;
+            else
+                $A[Main::OUTER_GROUP_2] = (1.0/($count[Main::OUTER_GROUP_2]-1))
+                    *(
+                        pow(($avg[Main::NAN_OUTER] - $avg[Main::OUTER_GROUP_2]), 2)
+                        +pow(($avg[Main::PITSANULOK_OUTER] - $avg[Main::OUTER_GROUP_2]),2)
+                        +pow(($avg[Main::PETCHABUL_OUTER] - $avg[Main::OUTER_GROUP_2]),2)
+                    );
+            if (($count[Main::OUTER_GROUP_1] + $count[Main::OUTER_GROUP_2])===0)
+                $part1 = 0;
+            else
+                $part1 = $count[Main::OUTER_GROUP_1]/($count[Main::OUTER_GROUP_1] + $count[Main::OUTER_GROUP_2]);
+            $part2 = ($count[Main::OUTER_GROUP_1]===0)?0:($A[Main::OUTER_GROUP_1] / $count[Main::OUTER_GROUP_1]);
+            $part3 = ($count[Main::OUTER_GROUP_1] + $count[Main::OUTER_GROUP_2])===0?
+                0:($count[Main::OUTER_GROUP_2]/($count[Main::OUTER_GROUP_1] + $count[Main::OUTER_GROUP_2]));
+            $part4 = $count[Main::OUTER_GROUP_2]===0?0:($A[Main::OUTER_GROUP_2] / $count[Main::OUTER_GROUP_2]);
+
             $answers[$key4] = sqrt(
-                (
-                    Main::$weight[Main::OUTER_GROUP_1]
-                    * (1.0-($count[Main::OUTER_GROUP_1]/($count[Main::OUTER_GROUP_1] + $count[Main::OUTER_GROUP_2])))
-                    * ($A[Main::OUTER_GROUP_1] / $count[Main::OUTER_GROUP_1])
-                )
-                +
-                (
-                    Main::$weight[Main::OUTER_GROUP_2]
-                    * (1.0-($count[Main::OUTER_GROUP_2]/($count[Main::OUTER_GROUP_1] + $count[Main::OUTER_GROUP_2])))
-                    * ($A[Main::OUTER_GROUP_2] / $count[Main::OUTER_GROUP_2])
-                )
+                (Main::$weight[Main::OUTER_GROUP_1] * (1.0-$part1) * $part2) +
+                (Main::$weight[Main::OUTER_GROUP_2] * (1.0-$part3) * $part4)
             );
 
             $objPHPExcel->getActiveSheet()->setCellValue($key,  round($answers[$key], 2));
@@ -550,5 +564,146 @@ class SummaryController extends Controller
         app('App\Http\Controllers\SummaryController')->average2();
 
         return response()->download(storage_path('excel/sum91.xlsx'), 'ตารางสรุปหมวดแสงสว่าง.xlsx');
+    }
+
+    public function test2()
+    {
+        // หมวดประกอบอาหาร
+        $amount = [
+            'no_ch1024_o331_ch123_o75_ch124_o78',
+            'no_ch1024_o331_ch123_o75_ch124_o79',
+            'no_ch1024_o331_ch123_o75_ch124_o80',
+            'no_ch1024_o331_ch123_o76_ch1011_o78',
+            'no_ch1024_o331_ch123_o76_ch1011_o79',
+            'no_ch1024_o331_ch123_o77_ch1011_o78',
+            'no_ch1024_o331_ch123_o77_ch1011_o79',
+            'no_ch1024_o332_ch132_o83',
+            'no_ch1024_o332_ch132_o84',
+            'no_ch1024_o332_ch132_o85',
+            'no_ch1024_o333',
+            'no_ch1024_o334',
+            'no_ch1024_o335_ch156_o287',
+            'no_ch1024_o335_ch156_o288',
+            'no_ch1024_o336',
+            'no_ch1024_o337',
+            'no_ch1024_o338',
+            'no_ch1024_o339',
+            'no_ch1024_o340',
+            'no_ch1025_o341_ch202_o94',
+            'no_ch1025_o341_ch202_o95',
+            'no_ch1025_o341_ch202_o96',
+            'no_ch1026_o342_ch210_o100',
+            'no_ch1026_o342_ch210_o101',
+            'no_ch1026_o342_ch210_o102',
+            'no_ch1026_o342_ch210_o103',
+            'no_ch1026_o343_ch216_o100',
+            'no_ch1026_o343_ch216_o101',
+            'no_ch1026_o343_ch216_o102',
+            'no_ch1026_o343_ch216_o103',
+            'no_ch1026_o344_ch222_o100',
+            'no_ch1026_o344_ch222_o101',
+            'no_ch1026_o344_ch222_o102',
+            'no_ch1026_o344_ch222_o103',
+            'no_ch1026_o345_ch228_o100',
+            'no_ch1026_o345_ch228_o101',
+            'no_ch1026_o345_ch228_o102',
+            'no_ch1026_o345_ch228_o103',
+            'no_ch1026_o346_ch234_o100',
+            'no_ch1026_o346_ch234_o101',
+            'no_ch1026_o346_ch234_o102',
+            'no_ch1026_o346_ch234_o103'
+        ];
+        $startColumn = 'E';
+        $startRow = 13;
+        $outputFile = 'sum92.xlsx';
+        Summary::sum($amount, $startColumn, $startRow, $outputFile);
+
+//        $amountUniqueKey = [
+//            'no_ch1024_o331_ch123_o75_ch124_o78_nu125',
+//            'no_ch1024_o331_ch123_o75_ch124_o79_nu125',
+//            'no_ch1024_o331_ch123_o75_ch124_o80_nu125',
+//            'no_ch1024_o331_ch123_o76_ch1011_o78_nu1012',
+//            'no_ch1024_o331_ch123_o76_ch1011_o79_nu1012',
+//            'no_ch1024_o331_ch123_o77_ch1011_o78_nu1012',
+//            'no_ch1024_o331_ch123_o77_ch1011_o79_nu1012',
+//            'no_ch1024_o332_ch132_o83_nu133',
+//            'no_ch1024_o332_ch132_o84_nu133',
+//            'no_ch1024_o332_ch132_o85_nu133',
+//            'no_ch1024_o333_nu141',
+//            'no_ch1024_o334_nu149',
+//            'no_ch1024_o335_ch156_o287_nu157',
+//            'no_ch1024_o335_ch156_o288_nu157',
+//            'no_ch1024_o336_nu166',
+//            'no_ch1024_o337_nu174',
+//            'no_ch1024_o338_nu182',
+//            'no_ch1024_o339_nu189',
+//            'no_ch1024_o340_nu196',
+//            'no_ch1025_o341_ch202_o94_nu203',
+//            'no_ch1025_o341_ch202_o95_nu203',
+//            'no_ch1025_o341_ch202_o96_nu203',
+//            'no_ch1026_o342_ch210_o100_nu211',
+//            'no_ch1026_o342_ch210_o101_nu211',
+//            'no_ch1026_o342_ch210_o102_nu211',
+//            'no_ch1026_o342_ch210_o103_nu211',
+//            'no_ch1026_o343_ch216_o100_nu217',
+//            'no_ch1026_o343_ch216_o101_nu217',
+//            'no_ch1026_o343_ch216_o102_nu217',
+//            'no_ch1026_o343_ch216_o103_nu217',
+//            'no_ch1026_o344_ch222_o100_nu223',
+//            'no_ch1026_o344_ch222_o101_nu223',
+//            'no_ch1026_o344_ch222_o102_nu223',
+//            'no_ch1026_o344_ch222_o103_nu223',
+//            'no_ch1026_o345_ch228_o100_nu229',
+//            'no_ch1026_o345_ch228_o101_nu229',
+//            'no_ch1026_o345_ch228_o102_nu229',
+//            'no_ch1026_o345_ch228_o103_nu229',
+//            'no_ch1026_o346_ch234_o100_nu235',
+//            'no_ch1026_o346_ch234_o101_nu235',
+//            'no_ch1026_o346_ch234_o102_nu235',
+//            'no_ch1026_o346_ch234_o103_nu235'
+//        ];
+//        $startColumn = 'U';
+//        $startRow = 13;
+//        $outputFile = 'sum92.xlsx';
+//        Summary::average($amountUniqueKey, $startColumn, $startRow, $outputFile);
+
+        //usage and ktoe
+        $usage = [
+            ['no_ch1024_o331_ch123_o75_ch124_o78_nu126', 'no_ch1024_o331_ch123_o75_ch124_o78_nu127','no_ch1024_o331_ch123_o75_ch124_o78_nu128',0.4,'no_ch1024_o331_ch123_o75_ch124_o78_nu125'],
+            ['no_ch1024_o331_ch123_o75_ch124_o79_nu126', 'no_ch1024_o331_ch123_o75_ch124_o79_nu127','no_ch1024_o331_ch123_o75_ch124_o79_nu128',0.7,'no_ch1024_o331_ch123_o75_ch124_o79_nu125'],
+            ['no_ch1024_o331_ch123_o75_ch124_o80_nu126', 'no_ch1024_o331_ch123_o75_ch124_o80_nu127','no_ch1024_o331_ch123_o75_ch124_o80_nu128',1.3,'no_ch1024_o331_ch123_o75_ch124_o80_nu125'],
+            ['no_ch1024_o331_ch123_o76_ch1011_o78_nu1013', 'no_ch1024_o331_ch123_o76_ch1011_o78_nu1014','no_ch1024_o331_ch123_o76_ch1011_o78_nu1015',0.4,'no_ch1024_o331_ch123_o76_ch1011_o78_nu1012'],
+            ['no_ch1024_o331_ch123_o76_ch1011_o79_nu1013', 'no_ch1024_o331_ch123_o76_ch1011_o79_nu1014','no_ch1024_o331_ch123_o76_ch1011_o79_nu1015',0.7,'no_ch1024_o331_ch123_o76_ch1011_o79_nu1012'],
+            ['no_ch1024_o331_ch123_o77_ch1011_o78_nu1013', 'no_ch1024_o331_ch123_o77_ch1011_o78_nu1014','no_ch1024_o331_ch123_o77_ch1011_o78_nu1015',0.7,'no_ch1024_o331_ch123_o77_ch1011_o78_nu1012'],
+            ['no_ch1024_o331_ch123_o77_ch1011_o79_nu1013', 'no_ch1024_o331_ch123_o77_ch1011_o79_nu1014','no_ch1024_o331_ch123_o77_ch1011_o79_nu1015',0.8,'no_ch1024_o331_ch123_o77_ch1011_o79_nu1012'],
+            ['no_ch1024_o332_ch132_o83_nu134', 'no_ch1024_o332_ch132_o83_nu135','no_ch1024_o332_ch132_o83_nu136',1.5,'no_ch1024_o332_ch132_o83_nu133'],
+            ['no_ch1024_o332_ch132_o84_nu134', 'no_ch1024_o332_ch132_o84_nu135','no_ch1024_o332_ch132_o84_nu136',1.8,'no_ch1024_o332_ch132_o84_nu133'],
+            ['no_ch1024_o332_ch132_o85_nu134', 'no_ch1024_o332_ch132_o85_nu135','no_ch1024_o332_ch132_o85_nu136',2,'no_ch1024_o332_ch132_o85_nu133'],
+            ['no_ch1024_o333_nu142', 'no_ch1024_o333_nu143','no_ch1024_o333_nu144',0.8,'no_ch1024_o333_nu141'],
+            ['no_ch1024_o334_nu150', 'no_ch1024_o334_nu151','no_ch1024_o334_nu152',1.2,'no_ch1024_o334_nu149'],
+            ['no_ch1024_o335_ch156_o287_nu158', 'no_ch1024_o335_ch156_o287_nu159','no_ch1024_o335_ch156_o287_nu160',0.6,'no_ch1024_o335_ch156_o287_nu157'],
+            ['no_ch1024_o335_ch156_o288_nu158', 'no_ch1024_o335_ch156_o288_nu159','no_ch1024_o335_ch156_o288_nu160',0.7,'no_ch1024_o335_ch156_o288_nu157'],
+            ['no_ch1024_o336_nu167', 'no_ch1024_o336_nu168','no_ch1024_o336_nu169',1.5,'no_ch1024_o336_nu166'],
+            ['no_ch1024_o337_nu175', 'no_ch1024_o337_nu176','no_ch1024_o337_nu177',1,'no_ch1024_o337_nu174'],
+            ['no_ch1024_o338_nu183', 'no_ch1024_o338_nu184','no_ch1024_o338_nu185',0.8,'no_ch1024_o338_nu182'],
+            ['no_ch1024_o339_nu190', 'no_ch1024_o339_nu191','no_ch1024_o339_nu192',0.7,'no_ch1024_o339_nu189'],
+            ['no_ch1024_o340_nu197', 'no_ch1024_o340_nu198','no_ch1024_o340_nu199',2,'no_ch1024_o340_nu196']
+        ];
+        $week = 52.14;
+        $ktoe = 0.08521;
+        $outputFile = 'sum92.xlsx';
+        $sumAmountSQL = " (sum(IF(unique_key='param1',answer_numeric,0))/60.0 * sum(if(unique_key='param2', answer_numeric,0)) * sum(if(unique_key='param3', answer_numeric,0)) * {$week})* (param4) * sum(if(unique_key='param5',1,0)) as sumAmount ";
+        $params = [
+            'param1'=>0,
+            'param2'=>1,
+            'param3'=>2,
+            'param4'=>3,
+            'param5'=>4
+        ];
+        $startColumn = 'AL';
+        $startRow = 13;
+        Summary::usageElectric($usage, $startColumn, $startRow,$outputFile,$sumAmountSQL,$params,$ktoe);
+
+        echo 'success';
     }
 }
