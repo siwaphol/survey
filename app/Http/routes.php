@@ -20,6 +20,7 @@ Route::group(['middleware' => 'auth'], function () {
 
     Route::get('report', 'SummaryController@index');
     Route::get('test-get-report', 'SummaryController@testReport');
+    Route::get('test-get-report2', 'SummaryController@test2');
 });
 
 Route::group(['prefix'=>'api'], function (){
@@ -33,6 +34,6 @@ Route::get('test-sum', 'SummaryController@sum');
 Route::get('test-average', 'SummaryController@average');
 Route::get('test-usage', 'SummaryController@usage');
 Route::get('test-avg2', 'SummaryController@average2');
-Route::get('sum-page', function(){
-    return view('summary.test');
+Route::get('test-page', function(){
+    app('App\Http\Controllers\SummaryController')->test2();
 });

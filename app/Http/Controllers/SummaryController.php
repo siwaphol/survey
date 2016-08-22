@@ -238,8 +238,8 @@ class SummaryController extends Controller
             $objPHPExcel->getActiveSheet()->setCellValue($key4, round($answers[$key4], 2));
             $key5 = str_replace('U','Y',$key);
             $key6 = str_replace('U','Z',$key);
-            $objPHPExcel->getActiveSheet()->setCellValue($key5, round(($answers[$key]+$answers[$key3])/2.0, 2));
-            $objPHPExcel->getActiveSheet()->setCellValue($key6, round(($answers[$key2]+$answers[$key4])/2.0, 2));
+            $objPHPExcel->getActiveSheet()->setCellValue($key5, ($answers[$key]+$answers[$key3])/2.0, 2);
+            $objPHPExcel->getActiveSheet()->setCellValue($key6, ($answers[$key2]+$answers[$key4])/2.0, 2);
 
             $objPHPExcel->getActiveSheet()->getStyle($key)->getNumberFormat()->setFormatCode(Main::NUMBER_FORMAT);
             $objPHPExcel->getActiveSheet()->getStyle($key2)->getNumberFormat()->setFormatCode(Main::NUMBER_FORMAT);
@@ -257,6 +257,12 @@ class SummaryController extends Controller
     {
         $objPHPExcel = \PHPExcel_IOFactory::load(storage_path('excel/sum91.xlsx'));
         $objPHPExcel->setActiveSheetIndex(0);
+        $parameterExcel = \PHPExcel_IOFactory::load(storage_path('excel/parameters.xlsx'));
+        $parameterExcel->setActiveSheetIndex(2);
+        $paramSheet = $parameterExcel->getActiveSheet();
+        $population = [];
+        $population[Main::NORTHERN_INNER] = (float)$paramSheet->getCell(Parameter::$populationColumn[Main::NORTHERN_INNER])->getValue();
+        $population[Main::NORTHERN_OUTER] = (float)$paramSheet->getCell(Parameter::$populationColumn[Main::NORTHERN_OUTER])->getValue();
 
         $power = [
             'AL13'=>60,
@@ -303,13 +309,21 @@ class SummaryController extends Controller
         foreach ($attributes as $key=>$value){
             $sum = [];
             $avg = [];
+            $count = [];
 
             foreach (Main::$borderWeight as $b_key=>$b_weight){
                 $mainList = Main::getMainList($b_key);
 
+                $count[$b_key] = Answer::whereIn('unique_key', $value)
+                    ->whereIn('main_id', $mainList)
+                    ->groupBy('main_id')
+                    ->get()
+                    ->count();
+
                 $resultQuery2 = Answer::whereIn('unique_key', $value)
                     ->whereIn('main_id', $mainList)
                     ->select(\DB::raw(" (sum(IF(unique_key='{$value[$hourPerDay]}',answer_numeric,0))* sum(if(unique_key='{$value[$dayPerWeek]}', answer_numeric,0))* {$week})* ({$power[$key]}/1000.0) * sum(if(unique_key='{$value[$amount]}',1,0)) as sumAmount "))
+                    ->groupBy('main_id')
                     ->get();
                 $sum[$b_key] = 0.0;
                 foreach ($resultQuery2 as $row){
@@ -317,11 +331,19 @@ class SummaryController extends Controller
                 }
             }
 
-            $answers[$key] = ($sum[Main::INNER_GROUP_1]*Main::$weight[Main::INNER_GROUP_1]
-                + $sum[Main::INNER_GROUP_2]* Main::$weight[Main::INNER_GROUP_2]) / 1000000.0;
+            $average = [];
+            $average[Main::INNER_GROUP_1] = $count[Main::INNER_GROUP_1]===0?0:($sum[Main::INNER_GROUP_1]/$count[Main::INNER_GROUP_1]);
+            $average[Main::INNER_GROUP_2] = $count[Main::INNER_GROUP_2]===0?0:($sum[Main::INNER_GROUP_2]/$count[Main::INNER_GROUP_2]);
+            $average[Main::OUTER_GROUP_1] = $count[Main::OUTER_GROUP_1]===0?0:($sum[Main::OUTER_GROUP_1]/$count[Main::OUTER_GROUP_1]);
+            $average[Main::OUTER_GROUP_2] = $count[Main::OUTER_GROUP_2]===0?0:($sum[Main::OUTER_GROUP_2]/$count[Main::OUTER_GROUP_2]);
+
             $key3 = str_replace('AL', 'AN', $key);
-            $answers[$key3] = ($sum[Main::OUTER_GROUP_1]*Main::$weight[Main::OUTER_GROUP_1]
-                + $sum[Main::OUTER_GROUP_2]* Main::$weight[Main::OUTER_GROUP_2]) / 1000000.0;
+            $answers[$key] = ($average[Main::INNER_GROUP_1]*Main::$weight[Main::INNER_GROUP_1]
+                    + $average[Main::INNER_GROUP_2]* Main::$weight[Main::INNER_GROUP_2]) * $population[Main::NORTHERN_INNER];
+            $answers[$key] = $answers[$key]/1000000.0;
+            $answers[$key3] = ($average[Main::OUTER_GROUP_1]*Main::$weight[Main::OUTER_GROUP_1]
+                    + $average[Main::OUTER_GROUP_2]* Main::$weight[Main::OUTER_GROUP_2]) * $population[Main::NORTHERN_OUTER];
+            $answers[$key3] = $answers[$key3]/1000000.0;
             //ktoe
             $key2 = str_replace('AL', 'AM', $key);
             $answers[$key2] = $answers[$key] * $ktoe;
@@ -333,12 +355,12 @@ class SummaryController extends Controller
             $answers[$key5] = $answers[$key] + $answers[$key3];
             $answers[$key6] = $answers[$key5] * $ktoe;
 
-            $objPHPExcel->getActiveSheet()->setCellValue($key,  round($answers[$key], 2));
-            $objPHPExcel->getActiveSheet()->setCellValue($key2, round($answers[$key2], 2));
-            $objPHPExcel->getActiveSheet()->setCellValue($key3, round($answers[$key3], 2));
-            $objPHPExcel->getActiveSheet()->setCellValue($key4, round($answers[$key4], 2));
-            $objPHPExcel->getActiveSheet()->setCellValue($key5, round($answers[$key5], 2));
-            $objPHPExcel->getActiveSheet()->setCellValue($key6, round($answers[$key6], 2));
+            $objPHPExcel->getActiveSheet()->setCellValue($key,  $answers[$key]);
+            $objPHPExcel->getActiveSheet()->setCellValue($key2, $answers[$key2]);
+            $objPHPExcel->getActiveSheet()->setCellValue($key3, $answers[$key3]);
+            $objPHPExcel->getActiveSheet()->setCellValue($key4, $answers[$key4]);
+            $objPHPExcel->getActiveSheet()->setCellValue($key5, $answers[$key5]);
+            $objPHPExcel->getActiveSheet()->setCellValue($key6, $answers[$key6]);
 
             $objPHPExcel->getActiveSheet()->getStyle($key)->getNumberFormat()->setFormatCode(Main::NUMBER_FORMAT);
             $objPHPExcel->getActiveSheet()->getStyle($key2)->getNumberFormat()->setFormatCode(Main::NUMBER_FORMAT);
@@ -618,54 +640,54 @@ class SummaryController extends Controller
         $outputFile = 'sum92.xlsx';
         Summary::sum($amount, $startColumn, $startRow, $outputFile);
 
-//        $amountUniqueKey = [
-//            'no_ch1024_o331_ch123_o75_ch124_o78_nu125',
-//            'no_ch1024_o331_ch123_o75_ch124_o79_nu125',
-//            'no_ch1024_o331_ch123_o75_ch124_o80_nu125',
-//            'no_ch1024_o331_ch123_o76_ch1011_o78_nu1012',
-//            'no_ch1024_o331_ch123_o76_ch1011_o79_nu1012',
-//            'no_ch1024_o331_ch123_o77_ch1011_o78_nu1012',
-//            'no_ch1024_o331_ch123_o77_ch1011_o79_nu1012',
-//            'no_ch1024_o332_ch132_o83_nu133',
-//            'no_ch1024_o332_ch132_o84_nu133',
-//            'no_ch1024_o332_ch132_o85_nu133',
-//            'no_ch1024_o333_nu141',
-//            'no_ch1024_o334_nu149',
-//            'no_ch1024_o335_ch156_o287_nu157',
-//            'no_ch1024_o335_ch156_o288_nu157',
-//            'no_ch1024_o336_nu166',
-//            'no_ch1024_o337_nu174',
-//            'no_ch1024_o338_nu182',
-//            'no_ch1024_o339_nu189',
-//            'no_ch1024_o340_nu196',
-//            'no_ch1025_o341_ch202_o94_nu203',
-//            'no_ch1025_o341_ch202_o95_nu203',
-//            'no_ch1025_o341_ch202_o96_nu203',
-//            'no_ch1026_o342_ch210_o100_nu211',
-//            'no_ch1026_o342_ch210_o101_nu211',
-//            'no_ch1026_o342_ch210_o102_nu211',
-//            'no_ch1026_o342_ch210_o103_nu211',
-//            'no_ch1026_o343_ch216_o100_nu217',
-//            'no_ch1026_o343_ch216_o101_nu217',
-//            'no_ch1026_o343_ch216_o102_nu217',
-//            'no_ch1026_o343_ch216_o103_nu217',
-//            'no_ch1026_o344_ch222_o100_nu223',
-//            'no_ch1026_o344_ch222_o101_nu223',
-//            'no_ch1026_o344_ch222_o102_nu223',
-//            'no_ch1026_o344_ch222_o103_nu223',
-//            'no_ch1026_o345_ch228_o100_nu229',
-//            'no_ch1026_o345_ch228_o101_nu229',
-//            'no_ch1026_o345_ch228_o102_nu229',
-//            'no_ch1026_o345_ch228_o103_nu229',
-//            'no_ch1026_o346_ch234_o100_nu235',
-//            'no_ch1026_o346_ch234_o101_nu235',
-//            'no_ch1026_o346_ch234_o102_nu235',
-//            'no_ch1026_o346_ch234_o103_nu235'
-//        ];
-//        $startColumn = 'U';
-//        $startRow = 13;
-//        $outputFile = 'sum92.xlsx';
-//        Summary::average($amountUniqueKey, $startColumn, $startRow, $outputFile);
+        $amountUniqueKey = [
+            'no_ch1024_o331_ch123_o75_ch124_o78_nu125',
+            'no_ch1024_o331_ch123_o75_ch124_o79_nu125',
+            'no_ch1024_o331_ch123_o75_ch124_o80_nu125',
+            'no_ch1024_o331_ch123_o76_ch1011_o78_nu1012',
+            'no_ch1024_o331_ch123_o76_ch1011_o79_nu1012',
+            'no_ch1024_o331_ch123_o77_ch1011_o78_nu1012',
+            'no_ch1024_o331_ch123_o77_ch1011_o79_nu1012',
+            'no_ch1024_o332_ch132_o83_nu133',
+            'no_ch1024_o332_ch132_o84_nu133',
+            'no_ch1024_o332_ch132_o85_nu133',
+            'no_ch1024_o333_nu141',
+            'no_ch1024_o334_nu149',
+            'no_ch1024_o335_ch156_o287_nu157',
+            'no_ch1024_o335_ch156_o288_nu157',
+            'no_ch1024_o336_nu166',
+            'no_ch1024_o337_nu174',
+            'no_ch1024_o338_nu182',
+            'no_ch1024_o339_nu189',
+            'no_ch1024_o340_nu196',
+            'no_ch1025_o341_ch202_o94_nu203',
+            'no_ch1025_o341_ch202_o95_nu203',
+            'no_ch1025_o341_ch202_o96_nu203',
+            'no_ch1026_o342_ch210_o100_nu211',
+            'no_ch1026_o342_ch210_o101_nu211',
+            'no_ch1026_o342_ch210_o102_nu211',
+            'no_ch1026_o342_ch210_o103_nu211',
+            'no_ch1026_o343_ch216_o100_nu217',
+            'no_ch1026_o343_ch216_o101_nu217',
+            'no_ch1026_o343_ch216_o102_nu217',
+            'no_ch1026_o343_ch216_o103_nu217',
+            'no_ch1026_o344_ch222_o100_nu223',
+            'no_ch1026_o344_ch222_o101_nu223',
+            'no_ch1026_o344_ch222_o102_nu223',
+            'no_ch1026_o344_ch222_o103_nu223',
+            'no_ch1026_o345_ch228_o100_nu229',
+            'no_ch1026_o345_ch228_o101_nu229',
+            'no_ch1026_o345_ch228_o102_nu229',
+            'no_ch1026_o345_ch228_o103_nu229',
+            'no_ch1026_o346_ch234_o100_nu235',
+            'no_ch1026_o346_ch234_o101_nu235',
+            'no_ch1026_o346_ch234_o102_nu235',
+            'no_ch1026_o346_ch234_o103_nu235'
+        ];
+        $startColumn = 'U';
+        $startRow = 13;
+        $outputFile = 'sum92.xlsx';
+        Summary::average($amountUniqueKey, $startColumn, $startRow, $outputFile);
 
         //usage and ktoe
         $usage = [
@@ -692,7 +714,7 @@ class SummaryController extends Controller
         $week = 52.14;
         $ktoe = 0.08521;
         $outputFile = 'sum92.xlsx';
-        $sumAmountSQL = " (sum(IF(unique_key='param1',answer_numeric,0))/60.0 * sum(if(unique_key='param2', answer_numeric,0)) * sum(if(unique_key='param3', answer_numeric,0)) * {$week})* (param4) * sum(if(unique_key='param5',1,0)) as sumAmount ";
+        $sumAmountSQL = " (sum(IF(unique_key='param1',answer_numeric,0)) * sum(if(unique_key='param2', answer_numeric,0)) * sum(if(unique_key='param3', answer_numeric,0))) * {$week} / 60 * (param4) * sum(if(unique_key='param5',answer_numeric,0)) as sumAmount ";
         $params = [
             'param1'=>0,
             'param2'=>1,
@@ -703,7 +725,102 @@ class SummaryController extends Controller
         $startColumn = 'AL';
         $startRow = 13;
         Summary::usageElectric($usage, $startColumn, $startRow,$outputFile,$sumAmountSQL,$params,$ktoe);
+        $usage2 = [
+            [4,'no_ch1025_o341_ch202_o94_ch204_o97_nu205','no_ch1025_o341_ch202_o94_ch204_o97_nu206'],
+            [15,'no_ch1025_o341_ch202_o94_ch204_o98_nu205','no_ch1025_o341_ch202_o94_ch204_o98_nu206'],
+            [48,'no_ch1025_o341_ch202_o94_ch204_o99_nu205','no_ch1025_o341_ch202_o94_ch204_o99_nu206'],
+            [4,'no_ch1025_o341_ch202_o95_ch204_o97_nu205','no_ch1025_o341_ch202_o95_ch204_o97_nu206'],
+            [15,'no_ch1025_o341_ch202_o95_ch204_o98_nu205','no_ch1025_o341_ch202_o95_ch204_o98_nu206'],
+            [48,'no_ch1025_o341_ch202_o95_ch204_o99_nu205','no_ch1025_o341_ch202_o95_ch204_o99_nu206'],
+            [4,'no_ch1025_o341_ch202_o96_ch1018_o97_nu1019','no_ch1025_o341_ch202_o96_ch1018_o97_nu1020']
+        ];
+        $params = [
+          'param1'=>0,
+            'param2'=>1,
+            'param3'=>2
+        ];
+        $ktoe =0.024;
+        $startRow = 32;
+        $sumAmountSQL = " param1 * sum(IF(unique_key='param2',answer_numeric,0)) * sum(if(unique_key='param3', answer_numeric,0)) as sumAmount ";
+        Summary::usageElectric($usage2, $startColumn, $startRow, $outputFile, $sumAmountSQL, $params,$ktoe,true);
+        $usage3 = [
+          ['no_ch1026_o342_ch210_o100_nu211','no_ch1026_o342_ch210_o100_nu212','no_ch1026_o342_ch210_o100_nu213',0.378 ],
+          ['no_ch1026_o342_ch210_o101_nu211','no_ch1026_o342_ch210_o101_nu212','no_ch1026_o342_ch210_o101_nu213',0.684 ],
+          ['no_ch1026_o342_ch210_o102_nu211','no_ch1026_o342_ch210_o102_nu212','no_ch1026_o342_ch210_o102_nu213',0.341 ],
+          ['no_ch1026_o342_ch210_o103_nu211','no_ch1026_o342_ch210_o103_nu212','no_ch1026_o342_ch210_o103_nu213',0.3 ],
+          ['no_ch1026_o343_ch216_o100_nu217','no_ch1026_o343_ch216_o100_nu218','no_ch1026_o343_ch216_o100_nu219',0.378 ],
+          ['no_ch1026_o343_ch216_o101_nu217','no_ch1026_o343_ch216_o101_nu218','no_ch1026_o343_ch216_o101_nu219',0.684 ],
+          ['no_ch1026_o343_ch216_o102_nu217','no_ch1026_o343_ch216_o102_nu218','no_ch1026_o343_ch216_o102_nu219',0.341 ],
+          ['no_ch1026_o343_ch216_o103_nu217','no_ch1026_o343_ch216_o103_nu218','no_ch1026_o343_ch216_o103_nu219',0.3 ],
+          ['no_ch1026_o344_ch222_o100_nu223','no_ch1026_o344_ch222_o100_nu224','no_ch1026_o344_ch222_o100_nu225',0.378 ],
+          ['no_ch1026_o344_ch222_o101_nu223','no_ch1026_o344_ch222_o101_nu224','no_ch1026_o344_ch222_o101_nu225',0.684 ],
+          ['no_ch1026_o344_ch222_o102_nu223','no_ch1026_o344_ch222_o102_nu224','no_ch1026_o344_ch222_o102_nu225',0.341 ],
+          ['no_ch1026_o344_ch222_o103_nu223','no_ch1026_o344_ch222_o103_nu224','no_ch1026_o344_ch222_o103_nu225',0.3 ],
+          ['no_ch1026_o345_ch228_o100_nu229','no_ch1026_o345_ch228_o100_nu230','no_ch1026_o345_ch228_o100_nu231',0.378 ],
+          ['no_ch1026_o345_ch228_o101_nu229','no_ch1026_o345_ch228_o101_nu230','no_ch1026_o345_ch228_o101_nu231',0.684 ],
+          ['no_ch1026_o345_ch228_o102_nu229','no_ch1026_o345_ch228_o102_nu230','no_ch1026_o345_ch228_o102_nu231',0.341 ],
+          ['no_ch1026_o345_ch228_o103_nu229','no_ch1026_o345_ch228_o103_nu230','no_ch1026_o345_ch228_o103_nu231',0.3 ],
+          ['no_ch1026_o346_ch234_o100_nu235','no_ch1026_o346_ch234_o100_nu236','no_ch1026_o346_ch234_o100_nu237',0.378 ],
+          ['no_ch1026_o346_ch234_o101_nu235','no_ch1026_o346_ch234_o101_nu236','no_ch1026_o346_ch234_o101_nu237',0.684 ],
+          ['no_ch1026_o346_ch234_o102_nu235','no_ch1026_o346_ch234_o102_nu236','no_ch1026_o346_ch234_o102_nu237',0.341 ],
+          ['no_ch1026_o346_ch234_o103_nu235','no_ch1026_o346_ch234_o103_nu236','no_ch1026_o346_ch234_o103_nu237',0.3 ],
+        ];
+        $ktoeIdx = 3;
+        $startRow = 35;
+        $sumAmountSQL = " sum(IF(unique_key='param1',answer_numeric,0)) * sum(IF(unique_key='param2',answer_numeric,0)) * sum(IF(unique_key='param3',answer_numeric,0)) * 12.0 as sumAmount ";
+        $params = ['param1'=>0, 'param2'=>1, 'param3'=>2];
+        Summary::usageElectric($usage3, $startColumn, $startRow, $outputFile, $sumAmountSQL, $params,$ktoe,true, $ktoeIdx);
 
-        echo 'success';
+        //Table4
+        $amount4 = [
+            'no_ch1024_o331_ch123_o75_ch124_o78_nu129',
+            'no_ch1024_o331_ch123_o75_ch124_o79_nu129',
+            'no_ch1024_o331_ch123_o75_ch124_o80_nu129',
+            'no_ch1024_o331_ch123_o76_ch1011_o78_nu1016',
+            'no_ch1024_o331_ch123_o76_ch1011_o79_nu1016',
+            'no_ch1024_o331_ch123_o77_ch1011_o78_nu1016',
+            'no_ch1024_o331_ch123_o77_ch1011_o79_nu1016',
+            'no_ch1024_o332_ch132_o83_nu137',
+            'no_ch1024_o332_ch132_o84_nu137',
+            'no_ch1024_o332_ch132_o85_nu137',
+            'no_ch1024_o333_nu144',
+            'no_ch1024_o334_nu153',
+            'no_ch1024_o335_ch156_o287_nu161',
+            'no_ch1024_o335_ch156_o288_nu161',
+            'no_ch1024_o336_nu170',
+            'no_ch1024_o337_nu178',
+            'no_ch1024_o338_nu186',
+            'no_ch1024_o339_nu193',
+            'no_ch1024_o340_nu200',
+            ['no_ch1025_o341_ch202_o94_ch204_o97_nu207', 'no_ch1025_o341_ch202_o94_ch204_o98_nu207', 'no_ch1025_o341_ch202_o94_ch204_o99_nu207'],
+            ['no_ch1025_o341_ch202_o95_ch204_o97_nu207', 'no_ch1025_o341_ch202_o95_ch204_o98_nu207', 'no_ch1025_o341_ch202_o95_ch204_o99_nu207'],
+            'no_ch1025_o341_ch202_o96_ch1018_o97_nu1021',
+            'no_ch1026_o342_ch210_o100_nu214',
+            'no_ch1026_o342_ch210_o101_nu214',
+            'no_ch1026_o342_ch210_o102_nu214',
+            'no_ch1026_o342_ch210_o103_nu214',
+            'no_ch1026_o343_ch216_o100_nu220',
+            'no_ch1026_o343_ch216_o101_nu220',
+            'no_ch1026_o343_ch216_o102_nu220',
+            'no_ch1026_o343_ch216_o103_nu220',
+            'no_ch1026_o344_ch222_o100_nu226',
+            'no_ch1026_o344_ch222_o101_nu226',
+            'no_ch1026_o344_ch222_o102_nu226',
+            'no_ch1026_o344_ch222_o103_nu226',
+            'no_ch1026_o345_ch228_o100_nu232',
+            'no_ch1026_o345_ch228_o101_nu232',
+            'no_ch1026_o345_ch228_o102_nu232',
+            'no_ch1026_o345_ch228_o103_nu232',
+            'no_ch1026_o346_ch228_o100_nu232',
+            'no_ch1026_o346_ch228_o101_nu232',
+            'no_ch1026_o346_ch228_o102_nu232',
+            'no_ch1026_o346_ch228_o103_nu232'
+        ];
+        $startColumn = 'BB';
+        $startRow = 13;
+        $outputFile = 'sum92.xlsx';
+        Summary::average($amount4, $startColumn, $startRow, $outputFile);
+
+        return response()->download(storage_path('excel/sum92.xlsx'), 'ตารางสรุปหมวดประกอบอาหาร.xlsx');
     }
 }
