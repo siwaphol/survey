@@ -37,7 +37,7 @@
                                         <td>
                                             @if($row->id===5&&$subRow->id===6)
                                                 <a class="btn btn-success" href="{{url('test-get-report')}}">Download</a>
-                                            @elseif($row->id===5&&$subRow->id===7)
+                                            @elseif($row->id===7&&$subRow->id===8)
                                                 <a class="btn btn-success" href="{{url('test-get-report2')}}">Download</a>
                                             @else
                                                 -
