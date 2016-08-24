@@ -6,7 +6,7 @@ use Illuminate\Database\Eloquent\Model;
 
 class Summary extends Model
 {
-    public static function sum($uniqueKeyArr, $startCol, $startRow, $outputFile)
+    public static function sum($uniqueKeyArr, $startCol, $startRow, $objPHPExcel, $mainObj)
     {
         $w = [];
         $w[1] = Main::$weight[Main::INNER_GROUP_1];
@@ -29,9 +29,6 @@ class Summary extends Model
         $S[3] = (float)$paramSheet->getCell(Parameter::$populationColumn[Main::NORTHERN_OUTER])->getValue();
         $S[4] = (float)$paramSheet->getCell(Parameter::$populationColumn[Main::NORTHERN_OUTER])->getValue();
 
-        $objPHPExcel = \PHPExcel_IOFactory::load(storage_path('excel/'. $outputFile));
-        $objPHPExcel->setActiveSheetIndex(0);
-
         $rows = [];
         $rowNumber = $startRow;
         foreach ($uniqueKeyArr as $uniqueKey){
@@ -39,20 +36,28 @@ class Summary extends Model
             $rowNumber++;
         }
 
+        $answerObj = Answer::whereIn('unique_key', $uniqueKeyArr)->get();
+
         $whereIn = [];
         $answers = [];
         foreach ($rows as $key=>$value){
             $whereIn[] = $value;
+            echo $value . "\n";
 
             $p = [];
             $count = [];
             for ($i=1; $i<=4; $i++){
-                $mainList = Main::getMainList($i);
-                $count[$i] = Answer::where('unique_key', $value)
-                    ->whereIn('main_id', $mainList)
-                    ->groupBy('main_id')
-                    ->get()
-                    ->count();
+                $mainList = $mainObj->filterMain($i);
+                $dupMainId = [];
+                $count[$i] = $answerObj->filter(function($item, $key)use($mainList, $value, &$dupMainId){
+                    $condition = (!in_array($item->main_id, $dupMainId)) && $item->unique_key===$value
+                        && in_array($item->main_id, $mainList);
+                    if ($item->unique_key===$value)
+                        $dupMainId[] = $item->unique_key;
+
+                    return $condition;
+                })->count();
+
                 $p[$i] = $w[$i] * ((float)$count[$i]/ $s[$i]) * $S[$i];
             }
             $answers[$key] = (int)($p[1] + $p[2]);
@@ -89,15 +94,11 @@ class Summary extends Model
             $objPHPExcel->getActiveSheet()->getStyle($key6)->getNumberFormat()->setFormatCode(Main::NUMBER_FORMAT);
         }
 
-        $objWriter = new \PHPExcel_Writer_Excel2007($objPHPExcel);
-        $objWriter->save(storage_path(iconv('UTF-8', 'windows-874', 'excel/'.$outputFile)));
+        return $objPHPExcel;
     }
 
-    public static function average($uniqueKeyArr, $startCol, $startRow, $outputFile)
+    public static function average($uniqueKeyArr, $startCol, $startRow, $objPHPExcel, $mainObj)
     {
-        $objPHPExcel = \PHPExcel_IOFactory::load(storage_path('excel/'. $outputFile));
-        $objPHPExcel->setActiveSheetIndex(0);
-
         $rows = [];
         $rowNumber = $startRow;
         foreach ($uniqueKeyArr as $uniqueKey){
@@ -105,10 +106,22 @@ class Summary extends Model
             $rowNumber++;
         }
 
+        $allUniqueArr = [];
+        foreach ($uniqueKeyArr as $item){
+            if (!is_array($item))
+                $allUniqueArr[] = $item;
+            else{
+                foreach ($item as $subItem)
+                    $allUniqueArr[] = $subItem;
+            }
+        }
+        $answerObj = Answer::whereIn('unique_key', $allUniqueArr)->get();
+
         $whereIn = [];
         $answers = [];
         $count = [];
         $A = [];
+
         foreach ($rows as $key=>$value){
             $whereIn[] = $value;
 
@@ -116,14 +129,18 @@ class Summary extends Model
             $avg = [];
 
             foreach (Main::$provinceWeight as $p_key=>$p_weight){
-                $mainList = Main::getMainList($p_key);
+                $mainList = $mainObj->filterMain($p_key);
 
+                $dupMainId = [];
                 if (is_array($value)){
-                    $count[$p_key] = Answer::whereIn('unique_key', $value)
-                        ->whereIn('main_id', $mainList)
-                        ->groupBy('main_id')
-                        ->get()
-                        ->count();
+                    $count[$p_key] = $answerObj->filter(function($item, $key) use ($value, $mainList, &$dupMainId){
+                        $condition = (!in_array($item->main_id, $dupMainId)) && in_array($item->unique_key, $value)
+                            && in_array($item->main_id, $mainList);
+                        if (in_array($item->unique_key, $value))
+                            $dupMainId[] = $item->main_id;
+                        return $condition;
+                    })->count();
+
                     $avg[$p_key]=0;
                     foreach ($value as $eachValue){
                         $avg[$p_key] += Answer::where('unique_key', $eachValue)
@@ -133,11 +150,14 @@ class Summary extends Model
                     }
                     $avg[$p_key] = $avg[$p_key]/count($value);
                 }else{
-                    $count[$p_key] = Answer::where('unique_key', $value)
-                        ->whereIn('main_id', $mainList)
-                        ->groupBy('main_id')
-                        ->get()
-                        ->count();
+                    $count[$p_key] = $answerObj->filter(function($item, $key) use ($value, $mainList, &$dupMainId){
+                        $condition = (!in_array($item->main_id, $dupMainId)) && $item->unique_key===$value
+                            && in_array($item->main_id, $mainList);
+                        if ($item->unique_key===$value)
+                            $dupMainId[] = $item->unique_key;
+
+                        return $condition;
+                    })->count();
 
                     $avg[$p_key] = Answer::where('unique_key', $value)
                         ->whereIn('main_id', $mainList)
@@ -148,14 +168,17 @@ class Summary extends Model
             }
 
             foreach (Main::$borderWeight as $b_key=>$b_weight){
-                $mainList = Main::getMainList($b_key);
+                $mainList = $mainObj->filterMain($b_key);
 
+                $dupMainId = [];
                 if (is_array($value)){
-                    $count[$b_key] = Answer::whereIn('unique_key', $value)
-                        ->whereIn('main_id', $mainList)
-                        ->groupBy('main_id')
-                        ->get()
-                        ->count();
+                    $count[$b_key] = $answerObj->filter(function($item, $key) use ($value, $mainList, &$dupMainId){
+                        $condition = (!in_array($item->main_id, $dupMainId)) && in_array($item->unique_key, $value)
+                            && in_array($item->main_id, $mainList);
+                        if (in_array($item->unique_key, $value))
+                            $dupMainId[] = $item->main_id;
+                        return $condition;
+                    })->count();
                     $avg[$b_key]=0;
                     foreach ($value as $eachValue){
                         $avg[$b_key] += Answer::where('unique_key', $eachValue)
@@ -163,18 +186,23 @@ class Summary extends Model
                             ->select(\DB::raw(" AVG(answer_numeric) as average "))
                             ->first()->average;
                     }
-                    $avg[$p_key] = $avg[$p_key]/count($value);
+                    $avg[$b_key] = $avg[$b_key]/count($value);
                 }else{
-                    $count[$b_key] = Answer::where('unique_key', $value)
-                        ->whereIn('main_id', $mainList)
-                        ->groupBy('main_id')
-                        ->get()
-                        ->count();
+                    $count[$b_key] = $answerObj->filter(function($item, $key) use ($value, $mainList, &$dupMainId){
+                        $condition = (!in_array($item->main_id, $dupMainId)) && $item->unique_key===$value
+                            && in_array($item->main_id, $mainList);
+                        if ($item->unique_key===$value)
+                            $dupMainId[] = $item->unique_key;
+
+                        return $condition;
+                    })->count();
 
                     $avg[$b_key] = Answer::where('unique_key', $value)
                         ->whereIn('main_id', $mainList)
                         ->select(\DB::raw(" AVG(answer_numeric) as average "))
                         ->first()->average;
+
+//                    echo $value . " count: $count[$b_key], average: $avg[$b_key] \n";
                 }
 
                 $p[$b_key] = $avg[$b_key]*$b_weight;
@@ -271,11 +299,10 @@ class Summary extends Model
             $objPHPExcel->getActiveSheet()->getStyle($key6)->getNumberFormat()->setFormatCode(Main::NUMBER_FORMAT);
         }
 
-        $objWriter = new \PHPExcel_Writer_Excel2007($objPHPExcel);
-        $objWriter->save(storage_path(iconv('UTF-8', 'windows-874', 'excel/'.$outputFile)));
+        return $objPHPExcel;
     }
 
-    public static function usageElectric($uniqueKeyArr, $startCol, $startRow, $outputFile, $sqlSum, $param,$ktoe,$gas=false, $ktoeIdx=false)
+    public static function usageElectric($uniqueKeyArr, $startCol, $startRow, $objPHPExcel,$mainObj, $sqlSum, $param,$ktoe,$gas=false, $ktoeIdx=false)
     {
         $parameterExcel = \PHPExcel_IOFactory::load(storage_path('excel/parameters.xlsx'));
         $parameterExcel->setActiveSheetIndex(2);
@@ -284,12 +311,18 @@ class Summary extends Model
         $population[Main::NORTHERN_INNER] = (float)$paramSheet->getCell(Parameter::$populationColumn[Main::NORTHERN_INNER])->getValue();
         $population[Main::NORTHERN_OUTER] = (float)$paramSheet->getCell(Parameter::$populationColumn[Main::NORTHERN_OUTER])->getValue();
 
-        $objPHPExcel = \PHPExcel_IOFactory::load(storage_path('excel/'.$outputFile));
-        $objPHPExcel->setActiveSheetIndex(0);
+        $allUniqueKey = [];
+        foreach ($uniqueKeyArr as $item){
+            foreach ($item as $subItem){
+                if (is_string($subItem))
+                    $allUniqueKey[] = $subItem;
+            }
+        }
+        $answerObj = Answer::whereIn('unique_key', $allUniqueKey)->get();
 
-        $sumAll = [];
-        $sumRow = 26;
-        $sumKey = [];
+//        $sumAll = [];
+//        $sumRow = 26;
+//        $sumKey = [];
 
         $rows = [];
         $count = [];
@@ -304,18 +337,22 @@ class Summary extends Model
             $sum = [];
 
             foreach (Main::$borderWeight as $b_key=>$b_weight){
-                $mainList = Main::getMainList($b_key);
+                $mainList = $mainObj->filterMain($b_key);
 
                 $finalSql = $sqlSum;
                 foreach ($param as $pKey=>$pValue){
                     $finalSql = str_replace($pKey, $value[$pValue], $finalSql);
                 }
 
-                $count[$b_key] = Answer::whereIn('unique_key', $value)
-                    ->whereIn('main_id', $mainList)
-                    ->groupBy('main_id')
-                    ->get()
-                    ->count();
+                $dupMainId = [];
+                $count[$b_key] = $answerObj->filter(function($item, $key) use ($value, $mainList, &$dupMainId){
+                    $condition = (!in_array($item->main_id, $dupMainId)) && in_array($item->unique_key, $value)
+                        && in_array($item->main_id, $mainList);
+                    if (in_array($item->unique_key, $value))
+                        $dupMainId[] = $item->main_id;
+
+                    return $condition;
+                })->count();
 
                 $resultQuery2 = Answer::whereIn('unique_key', $value)
                     ->whereIn('main_id', $mainList)
@@ -327,6 +364,8 @@ class Summary extends Model
                 foreach ($resultQuery2 as $row){
                     $sum[$b_key] += $row->sumAmount;
                 }
+
+                echo $finalSql ." count: $count[$b_key] , sum: $sum[$b_key] </br>";
             }
 
             $col = $startCol;
@@ -387,36 +426,23 @@ class Summary extends Model
             $objPHPExcel->getActiveSheet()->getStyle($key5)->getNumberFormat()->setFormatCode(Main::NUMBER_FORMAT);
             $objPHPExcel->getActiveSheet()->getStyle($key6)->getNumberFormat()->setFormatCode(Main::NUMBER_FORMAT);
 
-            $sumKey[1] = preg_replace('/[0-9]+/', $sumRow, $key);
-            if (!isset($sumAll[$sumKey[1]]))
-                $sumAll[$sumKey[1]]= 0;
-            $sumAll[$sumKey[1]] += $answers[$key];
-
-            $sumKey[3] = preg_replace('/[0-9]+/', $sumRow, $key3);
-            if (!isset($sumAll[$sumKey[3]]))
-                $sumAll[$sumKey[3]]= 0;
-            $sumAll[$sumKey[3]] += $answers[$key3];
-
-            $sumKey[5] = preg_replace('/[0-9]+/', $sumRow, $key5);
-            if (!isset($sumAll[$sumKey[5]]))
-                $sumAll[$sumKey[5]]= 0;
-            $sumAll[$sumKey[5]] += $answers[$key5];
+//            $sumKey[1] = preg_replace('/[0-9]+/', $sumRow, $key);
+//            if (!isset($sumAll[$sumKey[1]]))
+//                $sumAll[$sumKey[1]]= 0;
+//            $sumAll[$sumKey[1]] += $answers[$key];
+//
+//            $sumKey[3] = preg_replace('/[0-9]+/', $sumRow, $key3);
+//            if (!isset($sumAll[$sumKey[3]]))
+//                $sumAll[$sumKey[3]]= 0;
+//            $sumAll[$sumKey[3]] += $answers[$key3];
+//
+//            $sumKey[5] = preg_replace('/[0-9]+/', $sumRow, $key5);
+//            if (!isset($sumAll[$sumKey[5]]))
+//                $sumAll[$sumKey[5]]= 0;
+//            $sumAll[$sumKey[5]] += $answers[$key5];
         }
 
-//        $sumKey[2] = preg_replace('/[0-9]+/', $sumRow, $key2);
-//        $sumKey[4] = preg_replace('/[0-9]+/', $sumRow, $key4);
-//        $sumKey[6] = preg_replace('/[0-9]+/', $sumRow, $key6);
-//        $sumAll[$sumKey[2]] = $sumAll[$sumKey[1]]*$ktoe;
-//        $sumAll[$sumKey[4]] = $sumAll[$sumKey[3]]*$ktoe;
-//        $sumAll[$sumKey[6]] = $sumAll[$sumKey[5]]*$ktoe;
-//
-//        for ($i=1;$i<=6;$i++){
-//            $objPHPExcel->getActiveSheet()->setCellValue($sumKey[$i], round($sumAll[$sumKey[$i]], 2));
-//            $objPHPExcel->getActiveSheet()->getStyle($sumKey[$i])->getNumberFormat()->setFormatCode(Main::NUMBER_FORMAT);
-//        }
-
-        $objWriter = new \PHPExcel_Writer_Excel2007($objPHPExcel);
-        $objWriter->save(storage_path(iconv('UTF-8', 'windows-874', 'excel/'.$outputFile)));
+        return $objPHPExcel;
     }
 
 }

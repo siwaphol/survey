@@ -78,7 +78,100 @@ class Main extends Model
         Main::OUTER_GROUP_2=>0.50,
     ];
 
+    protected $mainList;
 
+    public function initList()
+    {
+        $sql = "SELECT
+                  main_id,
+                sum(if(unique_key='no_ra14_o6_ra2002' and option_id=310,1,0)) as chiangmai
+                ,sum(if(unique_key='no_ra14_o6_ra2002' and option_id=311,1,0)) as nan
+                ,sum(if(unique_key='no_ra14_o6_ra2002' and option_id=312,1,0)) as utaradit
+                ,sum(if(unique_key='no_ra14_o6_ra2002' and option_id=313,1,0)) as pitsanurok
+                ,sum(if(unique_key='no_ra14_o6_ra2002' and option_id=314,1,0)) as petchabul
+            
+                ,sum(if(unique_key='no_ra11' and option_id=4,1,0)) as inborder
+                ,sum(if(unique_key='no_ra11' and option_id=5,1,0)) as outborder
+                from answers
+                WHERE unique_key in ('no_ra11','no_ra14_o6_ra2002','no_ra14_o7_ra2003', 'no_ra14')
+                GROUP BY main_id";
+        $result = \DB::select($sql);
+        echo 'Init complete' . "\n";
+        $this->mainList = collect($result);
+    }
+
+    public function filterMain($groupId)
+    {
+        if ($groupId===Main::INNER_GROUP_1){
+            return $this->mainList->filter(function ($value, $key){
+                return (int)$value->inborder===1 && ((int)$value->chiangmai===1 || (int)$value->utaradit===1);
+            })->lists('main_id')->toArray();
+        }elseif ($groupId===Main::INNER_GROUP_2){
+            return $this->mainList->filter(function ($value, $key){
+                return (int)$value->inborder===1 && ((int)$value->nan===1 || (int)$value->pitsanurok===1 || (int)$value->petchabul===1);
+            })->lists('main_id')->toArray();
+        }elseif ($groupId===Main::OUTER_GROUP_1){
+            return $this->mainList->filter(function ($value, $key){
+                return (int)$value->outborder===1 && ((int)$value->chiangmai===1 || (int)$value->utaradit===1);
+            })->lists('main_id')->toArray();
+        }elseif ($groupId===Main::OUTER_GROUP_2){
+            return $this->mainList->filter(function ($value, $key){
+                return (int)$value->outborder===1 && ((int)$value->nan===1 || (int)$value->pitsanurok===1 || (int)$value->petchabul===1);
+            })->lists('main_id')->toArray();
+        }
+        elseif ($groupId===Main::CHIANGMAI_INNER){
+            return $this->mainList->filter(function ($value, $key){
+                return ((int)$value->chiangmai===1) && (int)$value->inborder===1;
+            })->lists('main_id')->toArray();
+        }
+        elseif ($groupId===Main::CHIANGMAI_OUTER){
+            return $this->mainList->filter(function ($value, $key){
+                return ((int)$value->chiangmai===1) && (int)$value->outborder===1;
+            })->lists('main_id')->toArray();
+        }
+        elseif ($groupId===Main::UTARADIT_INNER){
+            return $this->mainList->filter(function ($value, $key){
+                return ((int)$value->utaradit===1)&& (int)$value->inborder===1;
+            })->lists('main_id')->toArray();
+        }
+        elseif ($groupId===Main::UTARADIT_OUTER){
+            return $this->mainList->filter(function ($value, $key){
+                return ((int)$value->utaradit===1) && (int)$value->outborder===1;
+            })->lists('main_id')->toArray();
+        }
+        elseif ($groupId===Main::NAN_INNER){
+            return $this->mainList->filter(function ($value, $key){
+                return ((int)$value->nan===1)&& (int)$value->inborder===1;
+            })->lists('main_id')->toArray();
+        }
+        elseif ($groupId===Main::NAN_OUTER){
+            return $this->mainList->filter(function ($value, $key){
+                return ((int)$value->nan===1) && (int)$value->outborder===1;
+            })->lists('main_id')->toArray();
+        }
+        elseif ($groupId===Main::PITSANULOK_INNER){
+            return $this->mainList->filter(function ($value, $key){
+                return ((int)$value->pitsanurok===1)&& (int)$value->inborder===1;
+            })->lists('main_id')->toArray();
+        }
+        elseif ($groupId===Main::PITSANULOK_OUTER){
+            return $this->mainList->filter(function ($value, $key){
+                return ((int)$value->pitsanurok===1) && (int)$value->outborder===1;
+            })->lists('main_id')->toArray();
+        }
+        elseif ($groupId===Main::PETCHABUL_INNER){
+            return $this->mainList->filter(function ($value, $key){
+                return ((int)$value->pitsanurok===1)&& (int)$value->inborder===1;
+            })->lists('main_id')->toArray();
+        }
+        elseif ($groupId===Main::PETCHABUL_OUTER){
+            return $this->mainList->filter(function ($value, $key){
+                return ((int)$value->pitsanurok===1) && (int)$value->outborder===1;
+            })->lists('main_id')->toArray();
+        }
+
+        return null;
+    }
 
     public static function getMainList($groupId)
     {
@@ -96,6 +189,8 @@ class Main extends Model
                 WHERE unique_key in ('no_ra11','no_ra14_o6_ra2002','no_ra14_o7_ra2003', 'no_ra14')
                 GROUP BY main_id";
         $result = \DB::select($sql);
+
+        echo 'getMainListQuery complete' . "\n";
 
         $result = collect($result);
 

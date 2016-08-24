@@ -590,6 +590,19 @@ class SummaryController extends Controller
 
     public function test2()
     {
+        $mainObj = new Main();
+        $mainObj->initList();
+
+        $inputFile = 'summary9.xlsx';
+        $inputSheet = '9.1.2';
+        $startRow = 13;
+        $outputFile = 'sum912.xlsx';
+
+        $objPHPExcel = new \PHPExcel();
+        $objPHPExcelMain = \PHPExcel_IOFactory::load(storage_path('excel/'. $inputFile));
+        $objPHPExcel->addExternalSheet($objPHPExcelMain->getSheetByName($inputSheet));
+        $objPHPExcel->removeSheetByIndex(0);
+        $objPHPExcel->setActiveSheetIndexByName($inputSheet);
         // หมวดประกอบอาหาร
         $amount = [
             'no_ch1024_o331_ch123_o75_ch124_o78',
@@ -636,9 +649,7 @@ class SummaryController extends Controller
             'no_ch1026_o346_ch234_o103'
         ];
         $startColumn = 'E';
-        $startRow = 13;
-        $outputFile = 'sum92.xlsx';
-        Summary::sum($amount, $startColumn, $startRow, $outputFile);
+        $objPHPExcel = Summary::sum($amount, $startColumn, $startRow, $objPHPExcel, $mainObj);
 
         $amountUniqueKey = [
             'no_ch1024_o331_ch123_o75_ch124_o78_nu125',
@@ -685,9 +696,7 @@ class SummaryController extends Controller
             'no_ch1026_o346_ch234_o103_nu235'
         ];
         $startColumn = 'U';
-        $startRow = 13;
-        $outputFile = 'sum92.xlsx';
-        Summary::average($amountUniqueKey, $startColumn, $startRow, $outputFile);
+        $objPHPExcel = Summary::average($amountUniqueKey, $startColumn, $startRow, $objPHPExcel, $mainObj);
 
         //usage and ktoe
         $usage = [
@@ -713,7 +722,6 @@ class SummaryController extends Controller
         ];
         $week = 52.14;
         $ktoe = 0.08521;
-        $outputFile = 'sum92.xlsx';
         $sumAmountSQL = " (sum(IF(unique_key='param1',answer_numeric,0)) * sum(if(unique_key='param2', answer_numeric,0)) * sum(if(unique_key='param3', answer_numeric,0))) * {$week} / 60 * (param4) * sum(if(unique_key='param5',answer_numeric,0)) as sumAmount ";
         $params = [
             'param1'=>0,
@@ -723,8 +731,7 @@ class SummaryController extends Controller
             'param5'=>4
         ];
         $startColumn = 'AL';
-        $startRow = 13;
-        Summary::usageElectric($usage, $startColumn, $startRow,$outputFile,$sumAmountSQL,$params,$ktoe);
+        $objPHPExcel = Summary::usageElectric($usage, $startColumn, $startRow, $objPHPExcel,$mainObj,$sumAmountSQL,$params,$ktoe);
         $usage2 = [
             [4,'no_ch1025_o341_ch202_o94_ch204_o97_nu205','no_ch1025_o341_ch202_o94_ch204_o97_nu206'],
             [15,'no_ch1025_o341_ch202_o94_ch204_o98_nu205','no_ch1025_o341_ch202_o94_ch204_o98_nu206'],
@@ -742,7 +749,7 @@ class SummaryController extends Controller
         $ktoe =0.024;
         $startRow = 32;
         $sumAmountSQL = " param1 * sum(IF(unique_key='param2',answer_numeric,0)) * sum(if(unique_key='param3', answer_numeric,0)) as sumAmount ";
-        Summary::usageElectric($usage2, $startColumn, $startRow, $outputFile, $sumAmountSQL, $params,$ktoe,true);
+        $objPHPExcel = Summary::usageElectric($usage2, $startColumn, $startRow, $objPHPExcel,$mainObj, $sumAmountSQL, $params,$ktoe,true);
         $usage3 = [
           ['no_ch1026_o342_ch210_o100_nu211','no_ch1026_o342_ch210_o100_nu212','no_ch1026_o342_ch210_o100_nu213',0.378 ],
           ['no_ch1026_o342_ch210_o101_nu211','no_ch1026_o342_ch210_o101_nu212','no_ch1026_o342_ch210_o101_nu213',0.684 ],
@@ -769,7 +776,7 @@ class SummaryController extends Controller
         $startRow = 35;
         $sumAmountSQL = " sum(IF(unique_key='param1',answer_numeric,0)) * sum(IF(unique_key='param2',answer_numeric,0)) * sum(IF(unique_key='param3',answer_numeric,0)) * 12.0 as sumAmount ";
         $params = ['param1'=>0, 'param2'=>1, 'param3'=>2];
-        Summary::usageElectric($usage3, $startColumn, $startRow, $outputFile, $sumAmountSQL, $params,$ktoe,true, $ktoeIdx);
+        $objPHPExcel = Summary::usageElectric($usage3, $startColumn, $startRow, $objPHPExcel, $mainObj, $sumAmountSQL, $params,$ktoe,true, $ktoeIdx);
 
         //Table4
         $amount4 = [
@@ -818,18 +825,30 @@ class SummaryController extends Controller
         ];
         $startColumn = 'BB';
         $startRow = 13;
-        $outputFile = 'sum92.xlsx';
-        Summary::average($amount4, $startColumn, $startRow, $outputFile);
+        $objPHPExcel = Summary::average($amount4, $startColumn, $startRow, $objPHPExcel, $mainObj);
 
-        return response()->download(storage_path('excel/sum92.xlsx'), 'ตารางสรุปหมวดประกอบอาหาร.xlsx');
+        $objWriter = new \PHPExcel_Writer_Excel2007($objPHPExcel);
+        $objWriter->save(storage_path(iconv('UTF-8', 'windows-874', 'excel/'.$outputFile)));
+
+        return response()->download(storage_path('excel/'.$inputFile), 'ตารางสรุปหมวดประกอบอาหาร.xlsx');
     }
 
     //หมวดความสะดวกสบาย
     public function report913()
     {
-        $parameterExcel = \PHPExcel_IOFactory::load(storage_path('excel/parameters.xlsx'));
-        $parameterExcel->setActiveSheetIndex(2);
-        $paramSheet = $parameterExcel->getActiveSheet();
+        $mainObj = new Main();
+        $mainObj->initList();
+
+        $inputFile = 'summary9.xlsx';
+        $inputSheet = '9.1.3';
+        $startRow = 13;
+        $outputFile = 'sum913.xlsx';
+
+        $objPHPExcel = new \PHPExcel();
+        $objPHPExcelMain = \PHPExcel_IOFactory::load(storage_path('excel/'. $inputFile));
+        $objPHPExcel->addExternalSheet($objPHPExcelMain->getSheetByName($inputSheet));
+        $objPHPExcel->removeSheetByIndex(0);
+        $objPHPExcel->setActiveSheetIndexByName($inputSheet);
 
         $table1 = [
             'no_ch1027_o347_ch240_o104_ch241_o108',
@@ -893,9 +912,7 @@ class SummaryController extends Controller
             'no_ch1027_o355_ch317_o148',
         ];
         $startColumn = 'E';
-        $startRow = 13;
-        $outputFile = 'sum93.xlsx';
-        Summary::sum($table1, $startColumn, $startRow, $outputFile);
+        $objPHPExcel = Summary::sum($table1, $startColumn, $startRow, $objPHPExcel, $mainObj);
 
         $table2 = [
             'no_ch1027_o347_ch240_o104_ch241_o108_nu242',
@@ -959,147 +976,150 @@ class SummaryController extends Controller
             'no_ch1027_o355_ch317_o148_nu318',
         ];
         $startColumn = 'U';
-        Summary::average($table2, $startColumn, $startRow, $outputFile);
+        $objPHPExcel = Summary::average($table2, $startColumn, $startRow, $objPHPExcel, $mainObj);
 
         //table 3
-//        $table3 = [
-//            ['o_ch1027_o347_ch240_o104_ch241_o108_nu242','o_ch1027_o347_ch240_o104_ch241_o108_nu243','o_ch1027_o347_ch240_o104_ch241_o108_nu244',0.04],
-//            ['o_ch1027_o347_ch240_o104_ch241_o109_nu242','o_ch1027_o347_ch240_o104_ch241_o109_nu243','o_ch1027_o347_ch240_o104_ch241_o109_nu244',0.05],
-//            ['o_ch1027_o347_ch240_o104_ch241_o110_nu242','o_ch1027_o347_ch240_o104_ch241_o110_nu243','o_ch1027_o347_ch240_o104_ch241_o110_nu244',0.078],
-//            ['o_ch1027_o347_ch240_o104_ch241_o111_nu242','o_ch1027_o347_ch240_o104_ch241_o111_nu243','o_ch1027_o347_ch240_o104_ch241_o111_nu244',0.04],
-//            ['o_ch1027_o347_ch240_o104_ch241_o112_nu242','o_ch1027_o347_ch240_o104_ch241_o112_nu243','o_ch1027_o347_ch240_o104_ch241_o112_nu244',0.05],
-//            ['o_ch1027_o347_ch240_o104_ch241_o113_nu242','o_ch1027_o347_ch240_o104_ch241_o113_nu243','o_ch1027_o347_ch240_o104_ch241_o113_nu244',0.078],
-//            ['o_ch1027_o347_ch240_o104_ch241_o114_nu242','o_ch1027_o347_ch240_o104_ch241_o114_nu243','o_ch1027_o347_ch240_o104_ch241_o114_nu244',0.04],
-//            ['o_ch1027_o347_ch240_o105_ch248_o115_nu249','o_ch1027_o347_ch240_o105_ch248_o115_nu250','o_ch1027_o347_ch240_o105_ch248_o115_nu251',0.05],
-//            ['o_ch1027_o347_ch240_o105_ch248_o116_nu249','o_ch1027_o347_ch240_o105_ch248_o116_nu250','o_ch1027_o347_ch240_o105_ch248_o116_nu251',0.078],
-//            ['o_ch1027_o347_ch240_o105_ch248_o117_nu249','o_ch1027_o347_ch240_o105_ch248_o117_nu250','o_ch1027_o347_ch240_o105_ch248_o117_nu251',0.05],
-//            ['o_ch1027_o347_ch240_o105_ch248_o118_nu249','o_ch1027_o347_ch240_o105_ch248_o118_nu250','o_ch1027_o347_ch240_o105_ch248_o118_nu251',0.095],
-//            ['o_ch1027_o347_ch240_o105_ch248_o119_nu249','o_ch1027_o347_ch240_o105_ch248_o119_nu250','o_ch1027_o347_ch240_o105_ch248_o119_nu251',0.125],
-//            ['o_ch1027_o347_ch240_o106_ch254_o108_nu255','o_ch1027_o347_ch240_o106_ch254_o108_nu256','o_ch1027_o347_ch240_o106_ch254_o108_nu257',0.2],
-//            ['o_ch1027_o347_ch240_o106_ch254_o109_nu255','o_ch1027_o347_ch240_o106_ch254_o109_nu256','o_ch1027_o347_ch240_o106_ch254_o109_nu257',0.225],
-//            ['o_ch1027_o347_ch240_o106_ch254_o110_nu255','o_ch1027_o347_ch240_o106_ch254_o110_nu256','o_ch1027_o347_ch240_o106_ch254_o110_nu257',0.045],
-//            ['o_ch1027_o347_ch240_o106_ch254_o111_nu255','o_ch1027_o347_ch240_o106_ch254_o111_nu256','o_ch1027_o347_ch240_o106_ch254_o111_nu257',0.1],
-//            ['o_ch1027_o347_ch240_o106_ch254_o112_nu255','o_ch1027_o347_ch240_o106_ch254_o112_nu256','o_ch1027_o347_ch240_o106_ch254_o112_nu257',0.03],
-//            ['o_ch1027_o347_ch240_o106_ch254_o113_nu255','o_ch1027_o347_ch240_o106_ch254_o113_nu256','o_ch1027_o347_ch240_o106_ch254_o113_nu257',0.035],
-//            ['o_ch1027_o347_ch240_o106_ch254_o114_nu255','o_ch1027_o347_ch240_o106_ch254_o114_nu256','o_ch1027_o347_ch240_o106_ch254_o114_nu257',0.042],
-//            ['o_ch1027_o347_ch240_o106_ch254_o115_nu255','o_ch1027_o347_ch240_o106_ch254_o115_nu256','o_ch1027_o347_ch240_o106_ch254_o115_nu257',0.05],
-//            ['o_ch1027_o347_ch240_o106_ch254_o116_nu255','o_ch1027_o347_ch240_o106_ch254_o116_nu256','o_ch1027_o347_ch240_o106_ch254_o116_nu257',3.5],
-//            ['o_ch1027_o347_ch240_o106_ch254_o117_nu255','o_ch1027_o347_ch240_o106_ch254_o117_nu256','o_ch1027_o347_ch240_o106_ch254_o117_nu257',1.6],
-//            ['o_ch1027_o347_ch240_o106_ch254_o118_nu255','o_ch1027_o347_ch240_o106_ch254_o118_nu256','o_ch1027_o347_ch240_o106_ch254_o118_nu257',0.025],
-//            ['o_ch1027_o347_ch240_o106_ch254_o119_nu255','o_ch1027_o347_ch240_o106_ch254_o119_nu256','o_ch1027_o347_ch240_o106_ch254_o119_nu257',0.8],
-//            ['o_ch1027_o347_ch240_o107_ch260_o108_nu261','o_ch1027_o347_ch240_o107_ch260_o108_nu262','o_ch1027_o347_ch240_o107_ch260_o108_nu261',1],
-//            ['o_ch1027_o347_ch240_o107_ch260_o109_nu261','o_ch1027_o347_ch240_o107_ch260_o109_nu262','o_ch1027_o347_ch240_o107_ch260_o109_nu261',1.2],
-//            ['o_ch1027_o347_ch240_o107_ch260_o110_nu261','o_ch1027_o347_ch240_o107_ch260_o110_nu262','o_ch1027_o347_ch240_o107_ch260_o110_nu261',2.4],
-//            ['o_ch1027_o347_ch240_o107_ch260_o111_nu261','o_ch1027_o347_ch240_o107_ch260_o111_nu262','o_ch1027_o347_ch240_o107_ch260_o111_nu263',1.6],
-//            ['o_ch1027_o347_ch240_o107_ch260_o112_nu261','o_ch1027_o347_ch240_o107_ch260_o112_nu262','o_ch1027_o347_ch240_o107_ch260_o112_nu263',1.5],
-//            ['o_ch1027_o347_ch240_o107_ch260_o113_nu261','o_ch1027_o347_ch240_o107_ch260_o113_nu262','o_ch1027_o347_ch240_o107_ch260_o113_nu263',0.06],
-//            ['o_ch1027_o347_ch240_o107_ch260_o114_nu261','o_ch1027_o347_ch240_o107_ch260_o114_nu262','o_ch1027_o347_ch240_o107_ch260_o114_nu263',0.075],
-//            ['o_ch1027_o347_ch240_o107_ch260_o115_nu261','o_ch1027_o347_ch240_o107_ch260_o115_nu262','o_ch1027_o347_ch240_o107_ch260_o115_nu263',0.09],
-//            ['o_ch1027_o347_ch240_o107_ch260_o116_nu261','o_ch1027_o347_ch240_o107_ch260_o116_nu262','o_ch1027_o347_ch240_o107_ch260_o116_nu263',0.25],
-//            ['o_ch1027_o347_ch240_o107_ch260_o117_nu261','o_ch1027_o347_ch240_o107_ch260_o117_nu262','o_ch1027_o347_ch240_o107_ch260_o117_nu263',0.6],
-//            ['o_ch1027_o347_ch240_o107_ch260_o118_nu261','o_ch1027_o347_ch240_o107_ch260_o118_nu262','o_ch1027_o347_ch240_o107_ch260_o118_nu263',0.95],
-//            ['o_ch1027_o347_ch240_o107_ch260_o119_nu261','o_ch1027_o347_ch240_o107_ch260_o119_nu262','o_ch1027_o347_ch240_o107_ch260_o119_nu263',1.3],
-//            ['o_ch1027_o348_ch267_o122_nu268','o_ch1027_o348_ch267_o122_nu269','o_ch1027_o348_ch267_o122_nu270',1.6],
-//            ['o_ch1027_o348_ch267_o123_nu268','o_ch1027_o348_ch267_o123_nu269','o_ch1027_o348_ch267_o123_nu270',2],
-//            ['o_ch1027_o348_ch267_o124_nu268','o_ch1027_o348_ch267_o124_nu269','o_ch1027_o348_ch267_o124_nu270',2.3],
-//            ['o_ch1027_o349_nu274','o_ch1027_o349_nu275','o_ch1027_o349_nu276',1.55],
-//            ['o_ch1027_o350_nu280','o_ch1027_o350_nu281','o_ch1027_o350_nu282',1.75],
-//            ['o_ch1027_o351_nu286','o_ch1027_o351_nu287','o_ch1027_o351_nu288',2.15],
-//            ['o_ch1027_o352_ch291_o128_ch293_o134_nu294','o_ch1027_o352_ch291_o128_ch293_o134_nu295','o_ch1027_o352_ch291_o128_ch293_o134_nu296',2.3],
-//            ['o_ch1027_o352_ch291_o128_ch293_o135_nu294','o_ch1027_o352_ch291_o128_ch293_o135_nu295','o_ch1027_o352_ch291_o128_ch293_o135_nu296',3],
-//            ['o_ch1027_o352_ch291_o128_ch293_o136_nu294','o_ch1027_o352_ch291_o128_ch293_o136_nu295','o_ch1027_o352_ch291_o128_ch293_o136_nu296',3.5],
-//            ['o_ch1027_o352_ch291_o128_ch293_o137_nu294','o_ch1027_o352_ch291_o128_ch293_o137_nu295','o_ch1027_o352_ch291_o128_ch293_o137_nu296',5.3],
-//            ['o_ch1027_o352_ch291_o128_ch293_o138_nu294','o_ch1027_o352_ch291_o128_ch293_o138_nu295','o_ch1027_o352_ch291_o128_ch293_o138_nu296',2],
-//            ['o_ch1027_o352_ch291_o129_ch298_o132_nu299','o_ch1027_o352_ch291_o129_ch298_o132_nu300','o_ch1027_o352_ch291_o129_ch298_o132_nu301',2.2],
-//            ['o_ch1027_o352_ch291_o129_ch298_o133_nu299','o_ch1027_o352_ch291_o129_ch298_o133_nu300','o_ch1027_o352_ch291_o129_ch298_o133_nu301',2.2],
-//            ['o_ch1027_o352_ch291_o129_ch298_o134_nu299','o_ch1027_o352_ch291_o129_ch298_o134_nu300','o_ch1027_o352_ch291_o129_ch298_o134_nu301',2.3],
-//            ['o_ch1027_o353_ch304_o139_nu305','o_ch1027_o353_ch304_o139_nu306','o_ch1027_o353_ch304_o139_nu307',0.35],
-//            ['o_ch1027_o353_ch304_o140_nu305','o_ch1027_o353_ch304_o140_nu306','o_ch1027_o353_ch304_o140_nu307',0.4],
-//            ['o_ch1027_o353_ch304_o141_nu305','o_ch1027_o353_ch304_o141_nu306','o_ch1027_o353_ch304_o141_nu307',0.5],
-//            ['o_ch1027_o354_ch310_o142_nu311','o_ch1027_o354_ch310_o142_nu312','o_ch1027_o354_ch310_o142_nu313',0.55],
-//            ['o_ch1027_o354_ch310_o143_nu311','o_ch1027_o354_ch310_o143_nu312','o_ch1027_o354_ch310_o143_nu313',0.3],
-//            ['o_ch1027_o354_ch310_o144_nu311','o_ch1027_o354_ch310_o144_nu312','o_ch1027_o354_ch310_o144_nu313',0.35],
-//            ['o_ch1027_o355_ch317_o146_nu318','o_ch1027_o355_ch317_o146_nu319','o_ch1027_o355_ch317_o146_nu320',0.4],
-//            ['o_ch1027_o355_ch317_o147_nu318','o_ch1027_o355_ch317_o147_nu319','o_ch1027_o355_ch317_o147_nu320',0.45],
-//            ['o_ch1027_o355_ch317_o148_nu318','o_ch1027_o355_ch317_o148_nu319','o_ch1027_o355_ch317_o148_nu320',1.1],
-//        ];
-//        $startColumn = 'AL';
-//        $ktoe = 0.08521;
-//        $week = Parameter::WEEK_PER_YEAR;
-//        $sumAmountSQL = " (sum(IF(unique_key='param1',answer_numeric,0)) * sum(if(unique_key='param2', answer_numeric,0)) * sum(if(unique_key='param3', answer_numeric,0))) * {$week}  * (param4) as sumAmount ";
-//        $params = [
-//            'param1'=>0,
-//            'param2'=>1,
-//            'param3'=>2,
-//            'param4'=>3
-//        ];
-//        Summary::usageElectric($table3, $startColumn, $startRow,$outputFile,$sumAmountSQL,$params,$ktoe);
-//
-//        // Table 4
-//        $table4 = [
-//            'no_ch1027_o347_ch240_o104_ch241_o108_nu245',
-//            'no_ch1027_o347_ch240_o104_ch241_o109_nu245',
-//            'no_ch1027_o347_ch240_o104_ch241_o110_nu245',
-//            'no_ch1027_o347_ch240_o104_ch241_o111_nu245',
-//            'no_ch1027_o347_ch240_o104_ch241_o112_nu245',
-//            'no_ch1027_o347_ch240_o104_ch241_o113_nu245',
-//            'no_ch1027_o347_ch240_o104_ch241_o114_nu245',
-//            'no_ch1027_o347_ch240_o105_ch248_o115_nu252',
-//            'no_ch1027_o347_ch240_o105_ch248_o116_nu252',
-//            'no_ch1027_o347_ch240_o105_ch248_o117_nu252',
-//            'no_ch1027_o347_ch240_o105_ch248_o118_nu252',
-//            'no_ch1027_o347_ch240_o105_ch248_o119_nu252',
-//            'no_ch1027_o347_ch240_o106_ch254_o108_nu258',
-//            'no_ch1027_o347_ch240_o106_ch254_o109_nu258',
-//            'no_ch1027_o347_ch240_o106_ch254_o110_nu258',
-//            'no_ch1027_o347_ch240_o106_ch254_o111_nu258',
-//            'no_ch1027_o347_ch240_o106_ch254_o112_nu258',
-//            'no_ch1027_o347_ch240_o106_ch254_o113_nu258',
-//            'no_ch1027_o347_ch240_o106_ch254_o114_nu258',
-//            'no_ch1027_o347_ch240_o106_ch254_o115_nu258',
-//            'no_ch1027_o347_ch240_o106_ch254_o116_nu258',
-//            'no_ch1027_o347_ch240_o106_ch254_o117_nu258',
-//            'no_ch1027_o347_ch240_o106_ch254_o118_nu258',
-//            'no_ch1027_o347_ch240_o106_ch254_o119_nu258',
-//            'no_ch1027_o347_ch240_o107_ch260_o108_nu264',
-//            'no_ch1027_o347_ch240_o107_ch260_o109_nu264',
-//            'no_ch1027_o347_ch240_o107_ch260_o110_nu264',
-//            'no_ch1027_o347_ch240_o107_ch260_o111_nu264',
-//            'no_ch1027_o347_ch240_o107_ch260_o112_nu264',
-//            'no_ch1027_o347_ch240_o107_ch260_o113_nu264',
-//            'no_ch1027_o347_ch240_o107_ch260_o114_nu264',
-//            'no_ch1027_o347_ch240_o107_ch260_o115_nu264',
-//            'no_ch1027_o347_ch240_o107_ch260_o116_nu264',
-//            'no_ch1027_o347_ch240_o107_ch260_o117_nu264',
-//            'no_ch1027_o347_ch240_o107_ch260_o118_nu264',
-//            'no_ch1027_o347_ch240_o107_ch260_o119_nu264',
-//            'no_ch1027_o348_ch267_o122_nu271',
-//            'no_ch1027_o348_ch267_o123_nu271',
-//            'no_ch1027_o348_ch267_o124_nu271',
-//            'no_ch1027_o349_nu277',
-//            'no_ch1027_o350_nu283',
-//            'no_ch1027_o351_nu289',
-//            'no_ch1027_o352_ch291_o128_ch293_o134_nu297',
-//            'no_ch1027_o352_ch291_o128_ch293_o135_nu297',
-//            'no_ch1027_o352_ch291_o128_ch293_o136_nu297',
-//            'no_ch1027_o352_ch291_o128_ch293_o137_nu297',
-//            'no_ch1027_o352_ch291_o128_ch293_o138_nu297',
-//            'no_ch1027_o352_ch291_o129_ch298_o132_nu302',
-//            'no_ch1027_o352_ch291_o129_ch298_o133_nu302',
-//            'no_ch1027_o352_ch291_o129_ch298_o134_nu302',
-//            'no_ch1027_o353_ch304_o139_nu308',
-//            'no_ch1027_o353_ch304_o140_nu308',
-//            'no_ch1027_o353_ch304_o141_nu308',
-//            'no_ch1027_o354_ch310_o142_nu314',
-//            'no_ch1027_o354_ch310_o143_nu314',
-//            'no_ch1027_o354_ch310_o144_nu314',
-//            'no_ch1027_o355_ch317_o146_nu321',
-//            'no_ch1027_o355_ch317_o147_nu321',
-//            'no_ch1027_o355_ch317_o148_nu321',
-//        ];
-//        $startColumn = 'BB';
-//        Summary::average($table4, $startColumn, $startRow, $outputFile);
+        $table3 = [
+            ['no_ch1027_o347_ch240_o104_ch241_o108_nu242','no_ch1027_o347_ch240_o104_ch241_o108_nu243','no_ch1027_o347_ch240_o104_ch241_o108_nu244',0.04],
+            ['no_ch1027_o347_ch240_o104_ch241_o109_nu242','no_ch1027_o347_ch240_o104_ch241_o109_nu243','no_ch1027_o347_ch240_o104_ch241_o109_nu244',0.05],
+            ['no_ch1027_o347_ch240_o104_ch241_o110_nu242','no_ch1027_o347_ch240_o104_ch241_o110_nu243','no_ch1027_o347_ch240_o104_ch241_o110_nu244',0.078],
+            ['no_ch1027_o347_ch240_o104_ch241_o111_nu242','no_ch1027_o347_ch240_o104_ch241_o111_nu243','no_ch1027_o347_ch240_o104_ch241_o111_nu244',0.04],
+            ['no_ch1027_o347_ch240_o104_ch241_o112_nu242','no_ch1027_o347_ch240_o104_ch241_o112_nu243','no_ch1027_o347_ch240_o104_ch241_o112_nu244',0.05],
+            ['no_ch1027_o347_ch240_o104_ch241_o113_nu242','no_ch1027_o347_ch240_o104_ch241_o113_nu243','no_ch1027_o347_ch240_o104_ch241_o113_nu244',0.078],
+            ['no_ch1027_o347_ch240_o104_ch241_o114_nu242','no_ch1027_o347_ch240_o104_ch241_o114_nu243','no_ch1027_o347_ch240_o104_ch241_o114_nu244',0.04],
+            ['no_ch1027_o347_ch240_o105_ch248_o115_nu249','no_ch1027_o347_ch240_o105_ch248_o115_nu250','no_ch1027_o347_ch240_o105_ch248_o115_nu251',0.05],
+            ['no_ch1027_o347_ch240_o105_ch248_o116_nu249','no_ch1027_o347_ch240_o105_ch248_o116_nu250','no_ch1027_o347_ch240_o105_ch248_o116_nu251',0.078],
+            ['no_ch1027_o347_ch240_o105_ch248_o117_nu249','no_ch1027_o347_ch240_o105_ch248_o117_nu250','no_ch1027_o347_ch240_o105_ch248_o117_nu251',0.05],
+            ['no_ch1027_o347_ch240_o105_ch248_o118_nu249','no_ch1027_o347_ch240_o105_ch248_o118_nu250','no_ch1027_o347_ch240_o105_ch248_o118_nu251',0.095],
+            ['no_ch1027_o347_ch240_o105_ch248_o119_nu249','no_ch1027_o347_ch240_o105_ch248_o119_nu250','no_ch1027_o347_ch240_o105_ch248_o119_nu251',0.125],
+            ['no_ch1027_o347_ch240_o106_ch254_o108_nu255','no_ch1027_o347_ch240_o106_ch254_o108_nu256','no_ch1027_o347_ch240_o106_ch254_o108_nu257',0.2],
+            ['no_ch1027_o347_ch240_o106_ch254_o109_nu255','no_ch1027_o347_ch240_o106_ch254_o109_nu256','no_ch1027_o347_ch240_o106_ch254_o109_nu257',0.225],
+            ['no_ch1027_o347_ch240_o106_ch254_o110_nu255','no_ch1027_o347_ch240_o106_ch254_o110_nu256','no_ch1027_o347_ch240_o106_ch254_o110_nu257',0.045],
+            ['no_ch1027_o347_ch240_o106_ch254_o111_nu255','no_ch1027_o347_ch240_o106_ch254_o111_nu256','no_ch1027_o347_ch240_o106_ch254_o111_nu257',0.1],
+            ['no_ch1027_o347_ch240_o106_ch254_o112_nu255','no_ch1027_o347_ch240_o106_ch254_o112_nu256','no_ch1027_o347_ch240_o106_ch254_o112_nu257',0.03],
+            ['no_ch1027_o347_ch240_o106_ch254_o113_nu255','no_ch1027_o347_ch240_o106_ch254_o113_nu256','no_ch1027_o347_ch240_o106_ch254_o113_nu257',0.035],
+            ['no_ch1027_o347_ch240_o106_ch254_o114_nu255','no_ch1027_o347_ch240_o106_ch254_o114_nu256','no_ch1027_o347_ch240_o106_ch254_o114_nu257',0.042],
+            ['no_ch1027_o347_ch240_o106_ch254_o115_nu255','no_ch1027_o347_ch240_o106_ch254_o115_nu256','no_ch1027_o347_ch240_o106_ch254_o115_nu257',0.05],
+            ['no_ch1027_o347_ch240_o106_ch254_o116_nu255','no_ch1027_o347_ch240_o106_ch254_o116_nu256','no_ch1027_o347_ch240_o106_ch254_o116_nu257',3.5],
+            ['no_ch1027_o347_ch240_o106_ch254_o117_nu255','no_ch1027_o347_ch240_o106_ch254_o117_nu256','no_ch1027_o347_ch240_o106_ch254_o117_nu257',1.6],
+            ['no_ch1027_o347_ch240_o106_ch254_o118_nu255','no_ch1027_o347_ch240_o106_ch254_o118_nu256','no_ch1027_o347_ch240_o106_ch254_o118_nu257',0.025],
+            ['no_ch1027_o347_ch240_o106_ch254_o119_nu255','no_ch1027_o347_ch240_o106_ch254_o119_nu256','no_ch1027_o347_ch240_o106_ch254_o119_nu257',0.8],
+            ['no_ch1027_o347_ch240_o107_ch260_o108_nu261','no_ch1027_o347_ch240_o107_ch260_o108_nu262','no_ch1027_o347_ch240_o107_ch260_o108_nu261',1],
+            ['no_ch1027_o347_ch240_o107_ch260_o109_nu261','no_ch1027_o347_ch240_o107_ch260_o109_nu262','no_ch1027_o347_ch240_o107_ch260_o109_nu261',1.2],
+            ['no_ch1027_o347_ch240_o107_ch260_o110_nu261','no_ch1027_o347_ch240_o107_ch260_o110_nu262','no_ch1027_o347_ch240_o107_ch260_o110_nu261',2.4],
+            ['no_ch1027_o347_ch240_o107_ch260_o111_nu261','no_ch1027_o347_ch240_o107_ch260_o111_nu262','no_ch1027_o347_ch240_o107_ch260_o111_nu263',1.6],
+            ['no_ch1027_o347_ch240_o107_ch260_o112_nu261','no_ch1027_o347_ch240_o107_ch260_o112_nu262','no_ch1027_o347_ch240_o107_ch260_o112_nu263',1.5],
+            ['no_ch1027_o347_ch240_o107_ch260_o113_nu261','no_ch1027_o347_ch240_o107_ch260_o113_nu262','no_ch1027_o347_ch240_o107_ch260_o113_nu263',0.06],
+            ['no_ch1027_o347_ch240_o107_ch260_o114_nu261','no_ch1027_o347_ch240_o107_ch260_o114_nu262','no_ch1027_o347_ch240_o107_ch260_o114_nu263',0.075],
+            ['no_ch1027_o347_ch240_o107_ch260_o115_nu261','no_ch1027_o347_ch240_o107_ch260_o115_nu262','no_ch1027_o347_ch240_o107_ch260_o115_nu263',0.09],
+            ['no_ch1027_o347_ch240_o107_ch260_o116_nu261','no_ch1027_o347_ch240_o107_ch260_o116_nu262','no_ch1027_o347_ch240_o107_ch260_o116_nu263',0.25],
+            ['no_ch1027_o347_ch240_o107_ch260_o117_nu261','no_ch1027_o347_ch240_o107_ch260_o117_nu262','no_ch1027_o347_ch240_o107_ch260_o117_nu263',0.6],
+            ['no_ch1027_o347_ch240_o107_ch260_o118_nu261','no_ch1027_o347_ch240_o107_ch260_o118_nu262','no_ch1027_o347_ch240_o107_ch260_o118_nu263',0.95],
+            ['no_ch1027_o347_ch240_o107_ch260_o119_nu261','no_ch1027_o347_ch240_o107_ch260_o119_nu262','no_ch1027_o347_ch240_o107_ch260_o119_nu263',1.3],
+            ['no_ch1027_o348_ch267_o122_nu268','no_ch1027_o348_ch267_o122_nu269','no_ch1027_o348_ch267_o122_nu270',1.6],
+            ['no_ch1027_o348_ch267_o123_nu268','no_ch1027_o348_ch267_o123_nu269','no_ch1027_o348_ch267_o123_nu270',2],
+            ['no_ch1027_o348_ch267_o124_nu268','no_ch1027_o348_ch267_o124_nu269','no_ch1027_o348_ch267_o124_nu270',2.3],
+            ['no_ch1027_o349_nu274','no_ch1027_o349_nu275','no_ch1027_o349_nu276',1.55],
+            ['no_ch1027_o350_nu280','no_ch1027_o350_nu281','no_ch1027_o350_nu282',1.75],
+            ['no_ch1027_o351_nu286','no_ch1027_o351_nu287','no_ch1027_o351_nu288',2.15],
+            ['no_ch1027_o352_ch291_o128_ch293_o134_nu294','no_ch1027_o352_ch291_o128_ch293_o134_nu295','no_ch1027_o352_ch291_o128_ch293_o134_nu296',2.3],
+            ['no_ch1027_o352_ch291_o128_ch293_o135_nu294','no_ch1027_o352_ch291_o128_ch293_o135_nu295','no_ch1027_o352_ch291_o128_ch293_o135_nu296',3],
+            ['no_ch1027_o352_ch291_o128_ch293_o136_nu294','no_ch1027_o352_ch291_o128_ch293_o136_nu295','no_ch1027_o352_ch291_o128_ch293_o136_nu296',3.5],
+            ['no_ch1027_o352_ch291_o128_ch293_o137_nu294','no_ch1027_o352_ch291_o128_ch293_o137_nu295','no_ch1027_o352_ch291_o128_ch293_o137_nu296',5.3],
+            ['no_ch1027_o352_ch291_o128_ch293_o138_nu294','no_ch1027_o352_ch291_o128_ch293_o138_nu295','no_ch1027_o352_ch291_o128_ch293_o138_nu296',2],
+            ['no_ch1027_o352_ch291_o129_ch298_o132_nu299','no_ch1027_o352_ch291_o129_ch298_o132_nu300','no_ch1027_o352_ch291_o129_ch298_o132_nu301',2.2],
+            ['no_ch1027_o352_ch291_o129_ch298_o133_nu299','no_ch1027_o352_ch291_o129_ch298_o133_nu300','no_ch1027_o352_ch291_o129_ch298_o133_nu301',2.2],
+            ['no_ch1027_o352_ch291_o129_ch298_o134_nu299','no_ch1027_o352_ch291_o129_ch298_o134_nu300','no_ch1027_o352_ch291_o129_ch298_o134_nu301',2.3],
+            ['no_ch1027_o353_ch304_o139_nu305','no_ch1027_o353_ch304_o139_nu306','no_ch1027_o353_ch304_o139_nu307',0.35],
+            ['no_ch1027_o353_ch304_o140_nu305','no_ch1027_o353_ch304_o140_nu306','no_ch1027_o353_ch304_o140_nu307',0.4],
+            ['no_ch1027_o353_ch304_o141_nu305','no_ch1027_o353_ch304_o141_nu306','no_ch1027_o353_ch304_o141_nu307',0.5],
+            ['no_ch1027_o354_ch310_o142_nu311','no_ch1027_o354_ch310_o142_nu312','no_ch1027_o354_ch310_o142_nu313',0.55],
+            ['no_ch1027_o354_ch310_o143_nu311','no_ch1027_o354_ch310_o143_nu312','no_ch1027_o354_ch310_o143_nu313',0.3],
+            ['no_ch1027_o354_ch310_o144_nu311','no_ch1027_o354_ch310_o144_nu312','no_ch1027_o354_ch310_o144_nu313',0.35],
+            ['no_ch1027_o355_ch317_o146_nu318','no_ch1027_o355_ch317_o146_nu319','no_ch1027_o355_ch317_o146_nu320',0.4],
+            ['no_ch1027_o355_ch317_o147_nu318','no_ch1027_o355_ch317_o147_nu319','no_ch1027_o355_ch317_o147_nu320',0.45],
+            ['no_ch1027_o355_ch317_o148_nu318','no_ch1027_o355_ch317_o148_nu319','no_ch1027_o355_ch317_o148_nu320',1.1],
+        ];
+        $startColumn = 'AL';
+        $ktoe = 0.08521;
+        $week = Parameter::WEEK_PER_YEAR;
+        $sumAmountSQL = " (sum(IF(unique_key='param1',answer_numeric,0)) * sum(if(unique_key='param2', answer_numeric,0)) * sum(if(unique_key='param3', answer_numeric,0))) * {$week}  * (param4) as sumAmount ";
+        $params = [
+            'param1'=>0,
+            'param2'=>1,
+            'param3'=>2,
+            'param4'=>3
+        ];
+        $objPHPExcel = Summary::usageElectric($table3, $startColumn, $startRow,$objPHPExcel, $mainObj,$sumAmountSQL,$params,$ktoe);
 
-        echo 'success';
+        // Table 4
+        $table4 = [
+            'no_ch1027_o347_ch240_o104_ch241_o108_nu245',
+            'no_ch1027_o347_ch240_o104_ch241_o109_nu245',
+            'no_ch1027_o347_ch240_o104_ch241_o110_nu245',
+            'no_ch1027_o347_ch240_o104_ch241_o111_nu245',
+            'no_ch1027_o347_ch240_o104_ch241_o112_nu245',
+            'no_ch1027_o347_ch240_o104_ch241_o113_nu245',
+            'no_ch1027_o347_ch240_o104_ch241_o114_nu245',
+            'no_ch1027_o347_ch240_o105_ch248_o115_nu252',
+            'no_ch1027_o347_ch240_o105_ch248_o116_nu252',
+            'no_ch1027_o347_ch240_o105_ch248_o117_nu252',
+            'no_ch1027_o347_ch240_o105_ch248_o118_nu252',
+            'no_ch1027_o347_ch240_o105_ch248_o119_nu252',
+            'no_ch1027_o347_ch240_o106_ch254_o108_nu258',
+            'no_ch1027_o347_ch240_o106_ch254_o109_nu258',
+            'no_ch1027_o347_ch240_o106_ch254_o110_nu258',
+            'no_ch1027_o347_ch240_o106_ch254_o111_nu258',
+            'no_ch1027_o347_ch240_o106_ch254_o112_nu258',
+            'no_ch1027_o347_ch240_o106_ch254_o113_nu258',
+            'no_ch1027_o347_ch240_o106_ch254_o114_nu258',
+            'no_ch1027_o347_ch240_o106_ch254_o115_nu258',
+            'no_ch1027_o347_ch240_o106_ch254_o116_nu258',
+            'no_ch1027_o347_ch240_o106_ch254_o117_nu258',
+            'no_ch1027_o347_ch240_o106_ch254_o118_nu258',
+            'no_ch1027_o347_ch240_o106_ch254_o119_nu258',
+            'no_ch1027_o347_ch240_o107_ch260_o108_nu264',
+            'no_ch1027_o347_ch240_o107_ch260_o109_nu264',
+            'no_ch1027_o347_ch240_o107_ch260_o110_nu264',
+            'no_ch1027_o347_ch240_o107_ch260_o111_nu264',
+            'no_ch1027_o347_ch240_o107_ch260_o112_nu264',
+            'no_ch1027_o347_ch240_o107_ch260_o113_nu264',
+            'no_ch1027_o347_ch240_o107_ch260_o114_nu264',
+            'no_ch1027_o347_ch240_o107_ch260_o115_nu264',
+            'no_ch1027_o347_ch240_o107_ch260_o116_nu264',
+            'no_ch1027_o347_ch240_o107_ch260_o117_nu264',
+            'no_ch1027_o347_ch240_o107_ch260_o118_nu264',
+            'no_ch1027_o347_ch240_o107_ch260_o119_nu264',
+            'no_ch1027_o348_ch267_o122_nu271',
+            'no_ch1027_o348_ch267_o123_nu271',
+            'no_ch1027_o348_ch267_o124_nu271',
+            'no_ch1027_o349_nu277',
+            'no_ch1027_o350_nu283',
+            'no_ch1027_o351_nu289',
+            'no_ch1027_o352_ch291_o128_ch293_o134_nu297',
+            'no_ch1027_o352_ch291_o128_ch293_o135_nu297',
+            'no_ch1027_o352_ch291_o128_ch293_o136_nu297',
+            'no_ch1027_o352_ch291_o128_ch293_o137_nu297',
+            'no_ch1027_o352_ch291_o128_ch293_o138_nu297',
+            'no_ch1027_o352_ch291_o129_ch298_o132_nu302',
+            'no_ch1027_o352_ch291_o129_ch298_o133_nu302',
+            'no_ch1027_o352_ch291_o129_ch298_o134_nu302',
+            'no_ch1027_o353_ch304_o139_nu308',
+            'no_ch1027_o353_ch304_o140_nu308',
+            'no_ch1027_o353_ch304_o141_nu308',
+            'no_ch1027_o354_ch310_o142_nu314',
+            'no_ch1027_o354_ch310_o143_nu314',
+            'no_ch1027_o354_ch310_o144_nu314',
+            'no_ch1027_o355_ch317_o146_nu321',
+            'no_ch1027_o355_ch317_o147_nu321',
+            'no_ch1027_o355_ch317_o148_nu321',
+        ];
+        $startColumn = 'BB';
+        $objPHPExcel = Summary::average($table4, $startColumn, $startRow, $objPHPExcel, $mainObj);
+
+        $objWriter = new \PHPExcel_Writer_Excel2007($objPHPExcel);
+        $objWriter->save(storage_path(iconv('UTF-8', 'windows-874', 'excel/'.$outputFile)));
+
+        return response()->download(storage_path('excel/'.$inputFile), 'ตารางสรุปหมวดข่าวสารบันเทิง.xlsx');
     }
 }

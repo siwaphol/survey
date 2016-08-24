@@ -24,4 +24,9 @@ class Parameter extends Model
 
     const WEEK_PER_YEAR = 52.14;
 
+    const ELECTRIC_KTOE = 0.08521;
+    const GAS_KTOE = 0.024;
+
+    const INPUT_FILE_SUMMARY_9 = 'summary9.xlsx';
+
 }
