@@ -21,6 +21,8 @@ Route::group(['middleware' => 'auth'], function () {
     Route::get('report', 'SummaryController@index');
     Route::get('test-get-report', 'SummaryController@testReport');
     Route::get('test-get-report2', 'SummaryController@test2');
+    // หมวดความสะดวกสบาย
+    Route::get('get-report3', 'SummaryController@report913');
 });
 
 Route::group(['prefix'=>'api'], function (){

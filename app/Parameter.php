@@ -22,4 +22,6 @@ class Parameter extends Model
         Main::PETCHABUL_OUTER=>'D22',
     ];
 
+    const WEEK_PER_YEAR = 52.14;
+
 }
