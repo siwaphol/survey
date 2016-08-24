@@ -19,23 +19,22 @@ Route::group(['middleware' => 'auth'], function () {
     Route::post('test-post-3','AnswerController@saveAnswersWithEasiestWay2');
 
     Route::get('report', 'SummaryController@index');
-    Route::get('test-get-report', 'SummaryController@testReport');
-    Route::get('test-get-report2', 'SummaryController@test2');
+    Route::get('get-report911', 'SummaryController@report911');
+    Route::get('get-report912', 'SummaryController@report912');
     // หมวดความสะดวกสบาย
-    Route::get('get-report3', 'SummaryController@report913');
+    Route::get('get-report913', 'SummaryController@report913');
+    Route::get('get-report914', 'SummaryController@report914');
+    Route::get('get-report915', 'SummaryController@report915');
+    Route::get('get-report916', 'SummaryController@report916');
+
+    Route::get('download911', function (){
+        return response()->download(storage_path('excel/sum911.xlsx'), 'ตารางสรุปหมวดแสงสว่าง.xlsx');
+    });
 });
 
 Route::group(['prefix'=>'api'], function (){
     Route::get('menus','MenuController@index');
 });
 
-Route::get('import-excel','QuestionController@importExcelQuestion');
+//Route::get('import-excel','QuestionController@importExcelQuestion');
 Route::auth();
-
-Route::get('test-sum', 'SummaryController@sum');
-Route::get('test-average', 'SummaryController@average');
-Route::get('test-usage', 'SummaryController@usage');
-Route::get('test-avg2', 'SummaryController@average2');
-Route::get('test-page', function(){
-    app('App\Http\Controllers\SummaryController')->test2();
-});

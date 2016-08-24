@@ -42,7 +42,7 @@ class Summary extends Model
         $answers = [];
         foreach ($rows as $key=>$value){
             $whereIn[] = $value;
-            echo $value . "\n";
+//            echo $value . "\n";
 
             $p = [];
             $count = [];
@@ -365,7 +365,7 @@ class Summary extends Model
                     $sum[$b_key] += $row->sumAmount;
                 }
 
-                echo $finalSql ." count: $count[$b_key] , sum: $sum[$b_key] </br>";
+//                echo $finalSql ." count: $count[$b_key] , sum: $sum[$b_key] </br>";
             }
 
             $col = $startCol;

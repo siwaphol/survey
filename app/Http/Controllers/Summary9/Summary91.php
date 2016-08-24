@@ -12,7 +12,7 @@ use App\Http\Controllers\Controller;
 
 class Summary91 extends Controller
 {
-    public static function summary914()
+    public static function report914()
     {
         // หมวดความสะดวกสบาย
         $mainObj = new Main();
@@ -325,10 +325,182 @@ class Summary91 extends Controller
             'no_ch1028_o369_nu456',
             ['no_ch1029_o370_ch461_o208_nu464', 'no_ch1029_o370_ch461_o209_nu464', 'no_ch1029_o370_ch461_o210_nu464']
         ];
+        $startColumn = 'BB';
+        $objPHPExcel = Summary::average($table4, $startColumn, $startRow, $objPHPExcel, $mainObj);
 
         $objWriter = new \PHPExcel_Writer_Excel2007($objPHPExcel);
         $objWriter->save(storage_path(iconv('UTF-8', 'windows-874', 'excel/'.$outputFile)));
 
         return true;
+    }
+
+    public static function report915()
+    {
+        // หมวดเพื่อความอบอุ่น
+        $mainObj = new Main();
+        $mainObj->initList();
+
+        $inputFile = 'summary9.xlsx';
+        $inputSheet = '9.1.5';
+        $outputFile = 'sum915.xlsx';
+
+        $objPHPExcel = new \PHPExcel();
+        $objPHPExcelMain = \PHPExcel_IOFactory::load(storage_path('excel/'. $inputFile));
+        $objPHPExcel->addExternalSheet($objPHPExcelMain->getSheetByName($inputSheet));
+        $objPHPExcel->removeSheetByIndex(0);
+        $objPHPExcel->setActiveSheetIndexByName($inputSheet);
+        $table1 = [
+            'no_ch1030_o371_ch466_o100',
+            'no_ch1030_o371_ch466_o101',
+            'no_ch1030_o371_ch466_o102',
+            'no_ch1030_o371_ch466_o103',
+            'no_ch1030_o372_ch472_o100',
+            'no_ch1030_o372_ch472_o101',
+            'no_ch1030_o372_ch472_o102',
+            'no_ch1030_o372_ch472_o103'
+        ];
+
+        $table2 = [
+            'no_ch1030_o371_ch466_o100_nu467',
+            'no_ch1030_o371_ch466_o101_nu467',
+            'no_ch1030_o371_ch466_o102_nu467',
+            'no_ch1030_o371_ch466_o103_nu467',
+            'no_ch1030_o372_ch472_o100_nu473',
+            'no_ch1030_o372_ch472_o101_nu473',
+            'no_ch1030_o372_ch472_o102_nu473',
+            'no_ch1030_o372_ch472_o103_nu473',
+        ];
+
+        $table3 = [
+            ['no_ch1030_o371_ch466_o100_nu467','no_ch1030_o371_ch466_o100_nu468','no_ch1030_o371_ch466_o100_nu469',0.37848],
+            ['no_ch1030_o371_ch466_o101_nu467','no_ch1030_o371_ch466_o101_nu468','no_ch1030_o371_ch466_o101_nu469',0.68364],
+            ['no_ch1030_o371_ch466_o102_nu467','no_ch1030_o371_ch466_o102_nu468','no_ch1030_o371_ch466_o102_nu469',0.34083],
+            ['no_ch1030_o371_ch466_o103_nu467','no_ch1030_o371_ch466_o103_nu468','no_ch1030_o371_ch466_o103_nu469',0.30021],
+            ['no_ch1030_o372_ch472_o100_nu473','no_ch1030_o372_ch472_o100_nu474','no_ch1030_o372_ch472_o100_nu475',0.37848],
+            ['no_ch1030_o372_ch472_o101_nu473','no_ch1030_o372_ch472_o101_nu474','no_ch1030_o372_ch472_o101_nu475',0.68364],
+            ['no_ch1030_o372_ch472_o102_nu473','no_ch1030_o372_ch472_o102_nu474','no_ch1030_o372_ch472_o102_nu475',0.34083],
+            ['no_ch1030_o372_ch472_o103_nu473','no_ch1030_o372_ch472_o103_nu474','no_ch1030_o372_ch472_o103_nu475',0.30021],
+        ];
+
+        $table4 = [
+            'no_ch1030_o371_ch466_o100_nu470',
+            'no_ch1030_o371_ch466_o101_nu470',
+            'no_ch1030_o371_ch466_o102_nu470',
+            'no_ch1030_o371_ch466_o103_nu470',
+            'no_ch1030_o372_ch472_o100_nu476',
+            'no_ch1030_o372_ch472_o101_nu476',
+            'no_ch1030_o372_ch472_o102_nu476',
+            'no_ch1030_o372_ch472_o103_nu476',
+        ];
+
+        $startColumn = ['E','U','AL','BB'];
+        $startRow = 13;
+
+        $objPHPExcel = Summary::sum($table1, $startColumn, $startRow, $objPHPExcel, $mainObj);
+        $objPHPExcel = Summary::average($table2, $startColumn, $startRow, $objPHPExcel, $mainObj);
+        $sumAmountSQL = " (sum(IF(unique_key='param1',answer_numeric,0)) * (sum(IF(unique_key='param2',answer_numeric,0)) 
+        (sum(IF(unique_key='param3',answer_numeric,0)) * 12 as sumAmount ";
+        $params = [
+            'param1'=>0,
+            'param2'=>1,
+            'param3'=>2
+        ];
+        $objPHPExcel = Summary::usageElectric($table3, $startColumn, $startRow,$objPHPExcel, $mainObj,$sumAmountSQL,$params,0,false,3);
+        $objPHPExcel = Summary::average($table4, $startColumn, $startRow, $objPHPExcel, $mainObj);
+        $objWriter = new \PHPExcel_Writer_Excel2007($objPHPExcel);
+        $objWriter->save(storage_path(iconv('UTF-8', 'windows-874', 'excel/'.$outputFile)));
+    }
+
+    public static function report916()
+    {
+        // หมวดไล่และล่อแมลง
+        $mainObj = new Main();
+        $mainObj->initList();
+
+        $inputFile = 'summary9.xlsx';
+        $inputSheet = '9.1.6';
+        $outputFile = 'sum916.xlsx';
+
+        $objPHPExcel = new \PHPExcel();
+        $objPHPExcelMain = \PHPExcel_IOFactory::load(storage_path('excel/'. $inputFile));
+        $objPHPExcel->addExternalSheet($objPHPExcelMain->getSheetByName($inputSheet));
+        $objPHPExcel->removeSheetByIndex(0);
+        $objPHPExcel->setActiveSheetIndexByName($inputSheet);
+        $table1 = [
+            'no_ch1031_o373',
+            'no_ch1031_o374',
+            'no_ch1032_o375_ch490_o100',
+            'no_ch1032_o375_ch490_o101',
+            'no_ch1032_o375_ch490_o102',
+            'no_ch1032_o375_ch490_o103'
+        ];
+
+        $table2=[
+            'no_ch1031_o373_nu479',
+'no_ch1031_o374_nu485',
+'no_ch1032_o375_ch490_o100_nu491',
+'no_ch1032_o375_ch490_o101_nu491',
+'no_ch1032_o375_ch490_o102_nu491',
+'no_ch1032_o375_ch490_o103_nu491'
+        ];
+
+        $table3_1 = [
+            ['no_ch1031_o373_nu479','no_ch1031_o373_nu480','no_ch1031_o373_nu481',0.01],
+            ['no_ch1031_o374_nu485','no_ch1031_o374_nu486','no_ch1031_o374_nu487',0.1]
+        ];
+        $table3_2 = [
+            ['no_ch1032_o375_ch490_o100_nu491','no_ch1032_o375_ch490_o100_nu492','no_ch1032_o375_ch490_o100_nu493',0.37848],
+            ['no_ch1032_o375_ch490_o101_nu491','no_ch1032_o375_ch490_o101_nu492','no_ch1032_o375_ch490_o101_nu493',0.68364],
+            ['no_ch1032_o375_ch490_o102_nu491','no_ch1032_o375_ch490_o102_nu492','no_ch1032_o375_ch490_o102_nu493',0.34083],
+            ['no_ch1032_o375_ch490_o103_nu491','no_ch1032_o375_ch490_o103_nu492','no_ch1032_o375_ch490_o103_nu493',0.30021]
+        ];
+
+        $table4 = [
+            'no_ch1031_o373_nu482',
+            'no_ch1031_o374_nu488',
+            'no_ch1032_o375_ch490_o100_nu494',
+            'no_ch1032_o375_ch490_o101_nu494',
+            'no_ch1032_o375_ch490_o102_nu494',
+            'no_ch1032_o375_ch490_o103_nu494',
+        ];
+
+        $startColumn = ['E','U','AL','BB'];
+        $startRow = 13;
+
+        $objPHPExcel = Summary::sum($table1, $startColumn, $startRow, $objPHPExcel, $mainObj);
+        $objPHPExcel = Summary::average($table2, $startColumn, $startRow, $objPHPExcel, $mainObj);
+        $week = Parameter::WEEK_PER_YEAR;
+        $elecKTOE = Parameter::ELECTRIC_KTOE;
+        $sumAmountSQL_1 = " (sum(IF(unique_key='param1',answer_numeric,0)) * (sum(IF(unique_key='param2',answer_numeric,0)) 
+        (sum(IF(unique_key='param3',answer_numeric,0)) * {$week} * (param4) as sumAmount ";
+        $params = [
+            'param1'=>0,
+            'param2'=>1,
+            'param3'=>2,
+            'param4'=>3
+        ];
+        $objPHPExcel = Summary::usageElectric($table3_1, $startColumn, $startRow,$objPHPExcel, $mainObj,$sumAmountSQL_1,$params,$elecKTOE);
+        $sumAmountSQL_2 = " (sum(IF(unique_key='param1',answer_numeric,0)) * (sum(IF(unique_key='param2',answer_numeric,0)) 
+        (sum(IF(unique_key='param3',answer_numeric,0)) * 12 as sumAmount ";
+        $params = [
+            'param1'=>0,
+            'param2'=>1,
+            'param3'=>2
+        ];
+        $objPHPExcel = Summary::usageElectric($table3_2, $startColumn, $startRow,$objPHPExcel, $mainObj,$sumAmountSQL_2,$params,0,false,3);
+
+        $objPHPExcel = Summary::average($table4, $startColumn, $startRow, $objPHPExcel, $mainObj);
+        $objWriter = new \PHPExcel_Writer_Excel2007($objPHPExcel);
+        $objWriter->save(storage_path(iconv('UTF-8', 'windows-874', 'excel/'.$outputFile)));
+    }
+
+    public function report917()
+    {
+        
+    }
+
+    public function report918()
+    {
+        
     }
 }

@@ -96,7 +96,7 @@ class Main extends Model
                 WHERE unique_key in ('no_ra11','no_ra14_o6_ra2002','no_ra14_o7_ra2003', 'no_ra14')
                 GROUP BY main_id";
         $result = \DB::select($sql);
-        echo 'Init complete' . "\n";
+        //echo 'Init complete' . "\n";
         $this->mainList = collect($result);
     }
 
@@ -190,7 +190,7 @@ class Main extends Model
                 GROUP BY main_id";
         $result = \DB::select($sql);
 
-        echo 'getMainListQuery complete' . "\n";
+//        echo 'getMainListQuery complete' . "\n";
 
         $result = collect($result);
 
