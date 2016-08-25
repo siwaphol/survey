@@ -19,13 +19,13 @@ Route::group(['middleware' => 'auth'], function () {
     Route::post('test-post-3','AnswerController@saveAnswersWithEasiestWay2');
 
     Route::get('report', 'SummaryController@index');
-    Route::get('get-report911', 'SummaryController@report911');
-    Route::get('get-report912', 'SummaryController@report912');
+    Route::get('get-report911', 'SummaryController@downloadSum911');
+    Route::get('get-report912', 'SummaryController@downloadSum912');
     // หมวดความสะดวกสบาย
-    Route::get('get-report913', 'SummaryController@report913');
-    Route::get('get-report914', 'SummaryController@report914');
-    Route::get('get-report915', 'SummaryController@report915');
-    Route::get('get-report916', 'SummaryController@report916');
+    Route::get('get-report913', 'SummaryController@downloadSum913');
+    Route::get('get-report914', 'SummaryController@downloadSum914');
+    Route::get('get-report915', 'SummaryController@downloadSum915');
+    Route::get('get-report916', 'SummaryController@downloadSum916');
 
     Route::get('download911', function (){
         return response()->download(storage_path('excel/sum911.xlsx'), 'ตารางสรุปหมวดแสงสว่าง.xlsx');
@@ -38,3 +38,10 @@ Route::group(['prefix'=>'api'], function (){
 
 //Route::get('import-excel','QuestionController@importExcelQuestion');
 Route::auth();
+Route::get('test-sum',function(){
+   \App\Http\Controllers\Summary9\Summary91::report917();
+});
+
+Route::get('test-sum2',function(){
+    app('App\Http\Controllers\SummaryController')->report912();
+});

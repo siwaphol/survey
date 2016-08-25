@@ -6,7 +6,7 @@ use Illuminate\Database\Eloquent\Model;
 
 class Summary extends Model
 {
-    public static function sum($uniqueKeyArr, $startCol, $startRow, $objPHPExcel, $mainObj)
+    public static function sum($uniqueKeyArr, $startCol, $startRow, $objPHPExcel, $mainObj, $isRadio=false)
     {
         $w = [];
         $w[1] = Main::$weight[Main::INNER_GROUP_1];
@@ -35,8 +35,10 @@ class Summary extends Model
             $rows[$startCol.$rowNumber] = $uniqueKey;
             $rowNumber++;
         }
-
+//        $start = microtime(true);
         $answerObj = Answer::whereIn('unique_key', $uniqueKeyArr)->get();
+//        $time_elapsed_secs = microtime(true) - $start;
+//        echo " Answer query : " . $time_elapsed_secs . " seconds</br>";
 
         $whereIn = [];
         $answers = [];
@@ -46,19 +48,63 @@ class Summary extends Model
 
             $p = [];
             $count = [];
-            for ($i=1; $i<=4; $i++){
-                $mainList = $mainObj->filterMain($i);
-                $dupMainId = [];
-                $count[$i] = $answerObj->filter(function($item, $key)use($mainList, $value, &$dupMainId){
-                    $condition = (!in_array($item->main_id, $dupMainId)) && $item->unique_key===$value
-                        && in_array($item->main_id, $mainList);
-                    if ($item->unique_key===$value)
-                        $dupMainId[] = $item->unique_key;
 
-                    return $condition;
-                })->count();
+            if ($isRadio){
+                for ($i=1; $i<=4; $i++){
+                    $mainList = $mainObj->filterMain($i);
+                    $whereCondition = "";
 
-                $p[$i] = $w[$i] * ((float)$count[$i]/ $s[$i]) * $S[$i];
+                    $idx = 0;
+                    foreach ($value as $radioKey=>$radioValue){
+                        if ($idx===0)
+                            $whereCondition .= " AND ( ";
+                        else
+                            $whereCondition .= " OR ";
+                        $whereCondition .= " (unique_key='$radioKey' AND option_id=$radioValue) ";
+
+                        $idx++;
+                    }
+                    $whereCondition .= " )";
+
+                    $whereInMainId = implode(",", $mainList);
+                    $sql = "SELECT COUNT(*) as count FROM (SELECT main_id FROM answers WHERE main_id IN ($whereInMainId) " . $whereCondition . " GROUP BY main_id) t1";
+//                    $start = microtime(true);
+                    $count[$i] = \DB::select($sql)[0]->count;
+                    $p[$i] = $w[$i] * ((float)$count[$i]/ $s[$i]) * $S[$i];
+//                    $time_elapsed_secs = microtime(true) - $start;
+//                    echo " Query " . $i . " : " . $time_elapsed_secs . " seconds</br>";
+                }
+            }
+            else {
+//                for ($i=1; $i<=4; $i++){
+//                    $mainList = $mainObj->filterMain($i);
+//
+//                    $whereCondition = " AND (unique_key='$value') ";
+//                    $whereInMainId = implode(",", $mainList);
+//                    $sql = "SELECT COUNT(*) as count FROM (SELECT main_id FROM answers WHERE main_id IN ($whereInMainId) " . $whereCondition . " GROUP BY main_id) t1";
+////                    $start = microtime(true);
+//                    $count[$i] = \DB::select($sql)[0]->count;
+////                    $time_elapsed_secs = microtime(true) - $start;
+////                    echo " Query " . $i . " : " . $time_elapsed_secs . " seconds</br>";
+//                }
+//                var_dump($count);
+                for ($i=1; $i<=4; $i++){
+                    $mainList = $mainObj->filterMain($i);
+                    $dupMainId = [];
+//                    $start = microtime(true);
+                    $count[$i] = $answerObj->filter(function($item, $key)use($mainList, $value, &$dupMainId){
+                        $condition = (!in_array($item->main_id, $dupMainId)) && $item->unique_key===$value
+                            && in_array($item->main_id, $mainList);
+                        if ($item->unique_key===$value)
+                            $dupMainId[] = $item->unique_key;
+
+                        return $condition;
+                    })->count();
+//                    $time_elapsed_secs = microtime(true) - $start;
+//                    echo " Collection " . $i . " : " . $time_elapsed_secs . " seconds</br>";
+
+                    $p[$i] = $w[$i] * ((float)$count[$i]/ $s[$i]) * $S[$i];
+                }
             }
             $answers[$key] = (int)($p[1] + $p[2]);
             $col=$startCol;
@@ -115,7 +161,8 @@ class Summary extends Model
                     $allUniqueArr[] = $subItem;
             }
         }
-        $answerObj = Answer::whereIn('unique_key', $allUniqueArr)->get();
+//        $starttime = microtime(true);
+//        $answerObj = Answer::whereIn('unique_key', $allUniqueArr)->get(['main_id','unique_key','answer_numeric']);
 
         $whereIn = [];
         $answers = [];
@@ -123,91 +170,166 @@ class Summary extends Model
         $A = [];
 
         foreach ($rows as $key=>$value){
+//            $rowTime = microtime(true);
             $whereIn[] = $value;
 
             $p = [];
             $avg = [];
 
+//            $testtime = microtime(true);
             foreach (Main::$provinceWeight as $p_key=>$p_weight){
+//                $rmTime = microtime(true);
                 $mainList = $mainObj->filterMain($p_key);
+//                echo "Retrive main time: " . ((microtime(true)-$rmTime)) . " seconds </br>";
 
-                $dupMainId = [];
-                if (is_array($value)){
-                    $count[$p_key] = $answerObj->filter(function($item, $key) use ($value, $mainList, &$dupMainId){
-                        $condition = (!in_array($item->main_id, $dupMainId)) && in_array($item->unique_key, $value)
-                            && in_array($item->main_id, $mainList);
-                        if (in_array($item->unique_key, $value))
-                            $dupMainId[] = $item->main_id;
-                        return $condition;
-                    })->count();
+//                $dupMainId = [];
+//                if (is_array($value)){
+//                    $count[$p_key] = $answerObj->filter(function($item, $key) use ($value, $mainList, &$dupMainId){
+//                        $condition = (!in_array($item->main_id, $dupMainId)) && in_array($item->unique_key, $value)
+//                            && in_array($item->main_id, $mainList);
+//                        if (in_array($item->unique_key, $value))
+//                            $dupMainId[] = $item->main_id;
+//                        return $condition;
+//                    })->count();
 
+                    //average loop method
+//                    $avg[$p_key]=0;
+//                    $totalSum = 0;
+//                    foreach ($mainList as $mainId){
+//                        $totalSum += $answerObj->reduce(function ($l_carry, $l_item) use ($mainId, $value){
+//                            if ((int)$l_item->main_id===(int)$mainId && in_array($l_item->unique_key, $value)){
+//                                return $l_carry+$l_item->answer_numeric;
+//                            }
+//                            return $l_carry;
+//                        },0);
+//                    }
+//                    $avg[$p_key] = $totalSum/(float)$count[$p_key];
+
+                    //old2
                     $avg[$p_key]=0;
-                    foreach ($value as $eachValue){
-                        $avg[$p_key] += Answer::where('unique_key', $eachValue)
-                            ->whereIn('main_id', $mainList)
-                            ->select(\DB::raw(" AVG(answer_numeric) as average "))
-                            ->first()->average;
-                    }
-                    $avg[$p_key] = $avg[$p_key]/count($value);
-                }else{
-                    $count[$p_key] = $answerObj->filter(function($item, $key) use ($value, $mainList, &$dupMainId){
-                        $condition = (!in_array($item->main_id, $dupMainId)) && $item->unique_key===$value
-                            && in_array($item->main_id, $mainList);
-                        if ($item->unique_key===$value)
-                            $dupMainId[] = $item->unique_key;
+                    $whereMainId = implode(",", $mainList);
+                    if (is_array($value)){
+                        $whereUniqueKey = implode("','", $value);
+                        $whereUniqueKey = " AND unique_key IN ('" .$whereUniqueKey."') ";
+                    }else
+                        $whereUniqueKey = " AND unique_key='$value'";
 
-                        return $condition;
-                    })->count();
+                    $avgSql = "SELECT AVG(sum1) as average, COUNT(*) as countAll FROM
+                        (SELECT sum(answer_numeric) AS sum1 FROM answers
+                        WHERE main_id IN ($whereMainId) " . $whereUniqueKey
+                        ." GROUP BY main_id) T1";
+                    $avgResult = \DB::select($avgSql);
+                    $avg[$p_key] = $avgResult[0]->average;
+                    $count[$p_key] = $avgResult[0]->countAll;
+//                    echo " collect count : " . $count[$p_key] . " == " . $avgResult[0]->countAll."</br>";
+                    // old1
+//                    foreach ($value as $eachValue){
+//                        $avg[$p_key] += Answer::where('unique_key', $eachValue)
+//                            ->whereIn('main_id', $mainList)
+//                            ->select(\DB::raw(" AVG(answer_numeric) as average "))
+//                            ->first()->average;
+//                    }
 
-                    $avg[$p_key] = Answer::where('unique_key', $value)
-                        ->whereIn('main_id', $mainList)
-                        ->select(\DB::raw(" AVG(answer_numeric) as average "))
-                        ->first()->average;
-                }
+//                    $avg[$p_key] = $avg[$p_key]/count($value);
+//                }else{
+//                    $count[$p_key] = $answerObj->filter(function($item, $key) use ($value, $mainList, &$dupMainId){
+//                        $condition = (!in_array($item->main_id, $dupMainId)) && $item->unique_key===$value
+//                            && in_array($item->main_id, $mainList);
+//                        if ($item->unique_key===$value)
+//                            $dupMainId[] = $item->unique_key;
+//
+//                        return $condition;
+//                    })->count();
+//
+//                    $avg[$p_key] = Answer::where('unique_key', $value)
+//                        ->whereIn('main_id', $mainList)
+//                        ->select(\DB::raw(" AVG(answer_numeric) as average "))
+//                        ->first()->average;
+//                }
 
             }
+//            $finaltime = microtime(true)-$testtime;
+//            echo "Here is one loop give you in minutes" . ($finaltime/60) ."</br>";
 
+//            $testtime = microtime(true);
             foreach (Main::$borderWeight as $b_key=>$b_weight){
+//                $rmTime = microtime(true);
                 $mainList = $mainObj->filterMain($b_key);
+//                echo "Retrive main time: " . ((microtime(true)-$rmTime)) . " seconds ";
 
-                $dupMainId = [];
-                if (is_array($value)){
-                    $count[$b_key] = $answerObj->filter(function($item, $key) use ($value, $mainList, &$dupMainId){
-                        $condition = (!in_array($item->main_id, $dupMainId)) && in_array($item->unique_key, $value)
-                            && in_array($item->main_id, $mainList);
-                        if (in_array($item->unique_key, $value))
-                            $dupMainId[] = $item->main_id;
-                        return $condition;
-                    })->count();
+//                $dupMainId = [];
+//                if (is_array($value)){
+//                                        $countTime = microtime(true);
+//                    $count[$b_key] = $answerObj->filter(function($item, $key) use ($value, $mainList, &$dupMainId){
+//                        $condition = (!in_array($item->main_id, $dupMainId)) && in_array($item->unique_key, $value)
+//                            && in_array($item->main_id, $mainList);
+//                        if (in_array($item->unique_key, $value))
+//                            $dupMainId[] = $item->main_id;
+//                        return $condition;
+//                    })->count();
+
+//                    $avg[$b_key]=0;
+//                    $totalSum = 0;
+//                    foreach ($mainList as $mainId){
+//                        $totalSum += $answerObj->reduce(function ($l_carry, $l_item) use ($mainId, $value){
+//                            if ((int)$l_item->main_id===(int)$mainId && in_array($l_item->unique_key, $value)){
+//                                return $l_carry+$l_item->answer_numeric;
+//                            }
+//                            return $l_carry;
+//                        },0);
+//                    }
+//                    $avg[$b_key] = $totalSum/(float)$count[$b_key];
+                    //old2
                     $avg[$b_key]=0;
-                    foreach ($value as $eachValue){
-                        $avg[$b_key] += Answer::where('unique_key', $eachValue)
-                            ->whereIn('main_id', $mainList)
-                            ->select(\DB::raw(" AVG(answer_numeric) as average "))
-                            ->first()->average;
-                    }
-                    $avg[$b_key] = $avg[$b_key]/count($value);
-                }else{
-                    $count[$b_key] = $answerObj->filter(function($item, $key) use ($value, $mainList, &$dupMainId){
-                        $condition = (!in_array($item->main_id, $dupMainId)) && $item->unique_key===$value
-                            && in_array($item->main_id, $mainList);
-                        if ($item->unique_key===$value)
-                            $dupMainId[] = $item->unique_key;
-
-                        return $condition;
-                    })->count();
-
-                    $avg[$b_key] = Answer::where('unique_key', $value)
-                        ->whereIn('main_id', $mainList)
-                        ->select(\DB::raw(" AVG(answer_numeric) as average "))
-                        ->first()->average;
-
-//                    echo $value . " count: $count[$b_key], average: $avg[$b_key] \n";
-                }
+                    $whereMainId = implode(",", $mainList);
+                    if (is_array($value)){
+                        $whereUniqueKey = implode("','", $value);
+                        $whereUniqueKey = " AND unique_key IN ('" .$whereUniqueKey."') ";
+                    }else
+                        $whereUniqueKey = " AND unique_key='$value'";
+                    $avgSql = "SELECT AVG(sum1) as average, COUNT(*) as countAll FROM
+                        (SELECT sum(answer_numeric) AS sum1 FROM answers
+                        WHERE main_id IN ($whereMainId) " . $whereUniqueKey
+                        . " GROUP BY main_id) T1";
+                    $avgResult = \DB::select($avgSql);
+                    $avg[$b_key] = $avgResult[0]->average;
+                    $count[$b_key] = $avgResult[0]->countAll;
+//                    echo " collect count : " . $count[$b_key] . " == " . $avgResult[0]->countAll."</br>";
+                    //old1
+//                    $avg[$b_key]=0;
+//                    foreach ($value as $eachValue){
+//                        $avg[$b_key] += Answer::where('unique_key', $eachValue)
+//                            ->whereIn('main_id', $mainList)
+//                            ->select(\DB::raw(" AVG(answer_numeric) as average "))
+//                            ->first()->average;
+//                    }
+////                                        echo "average : " . (microtime(true)-$averageTime) . " seconds</br>";
+//                    $avg[$b_key] = $avg[$b_key]/count($value);
+//                }else{
+//                    $count[$b_key] = $answerObj->filter(function($item, $key) use ($value, $mainList, &$dupMainId){
+//                        $condition = (!in_array($item->main_id, $dupMainId)) && $item->unique_key===$value
+//                            && in_array($item->main_id, $mainList);
+//                        if ($item->unique_key===$value)
+//                            $dupMainId[] = $item->unique_key;
+//
+//                        return $condition;
+//                    })->count();
+//
+//                    $avg[$b_key] = Answer::where('unique_key', $value)
+//                        ->whereIn('main_id', $mainList)
+//                        ->select(\DB::raw(" AVG(answer_numeric) as average "))
+//                        ->first()->average;
+//
+////                    echo $value . " count: $count[$b_key], average: $avg[$b_key] \n";
+//                }
 
                 $p[$b_key] = $avg[$b_key]*$b_weight;
             }
 
+//            $finaltime = microtime(true)-$testtime;
+//            echo "After border loop" . ($finaltime/60) ."</br>";
+
+//            $insertTime = microtime(true);
             $col = $startCol;
             $col++;
             $key2 = preg_replace('/[A-Z]+/', $col, $key);
@@ -297,6 +419,9 @@ class Summary extends Model
             $objPHPExcel->getActiveSheet()->getStyle($key4)->getNumberFormat()->setFormatCode(Main::NUMBER_FORMAT);
             $objPHPExcel->getActiveSheet()->getStyle($key5)->getNumberFormat()->setFormatCode(Main::NUMBER_FORMAT);
             $objPHPExcel->getActiveSheet()->getStyle($key6)->getNumberFormat()->setFormatCode(Main::NUMBER_FORMAT);
+//            echo "INSERT TIME : " . (microtime(true)-$insertTime) . " seconds</br>";
+
+//            echo " ==== unique_key time: " . ((microtime(true)-$rowTime)/60) . " minutes=== </br></br>";
         }
 
         return $objPHPExcel;
