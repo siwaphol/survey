@@ -614,6 +614,12 @@ class Summary91 extends Controller
             ['no_ch1033_o378_ch513_o300_nu519', 'no_ch1033_o378_ch513_o301_nu519', 'no_ch1033_o378_ch513_o302_nu519', 'no_ch1033_o378_ch513_o303_nu519', 'no_ch1033_o378_ch513_o304_nu519'],
             ['no_ch1033_o378_ch513_o300_nu519', 'no_ch1033_o378_ch513_o301_nu519', 'no_ch1033_o378_ch513_o302_nu519', 'no_ch1033_o378_ch513_o303_nu519', 'no_ch1033_o378_ch513_o304_nu519']
         ];
+        $table3 = [];
+        $countTable1 = count($table1);
+        $gasPrice = 1;
+        for($i=0;$i<$countTable1;$i++){
+
+        }
         $sql = " (SUM(IF(unique_key='param1' AND option_id=param2, 1,0)) * param3 * param4 * param5 * 12) ";
 
         $table4 = [

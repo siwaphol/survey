@@ -443,11 +443,7 @@ class Summary extends Model
                     $allUniqueKey[] = $subItem;
             }
         }
-        $answerObj = Answer::whereIn('unique_key', $allUniqueKey)->get();
-
-//        $sumAll = [];
-//        $sumRow = 26;
-//        $sumKey = [];
+//        $answerObj = Answer::whereIn('unique_key', $allUniqueKey)->get();
 
         $rows = [];
         $count = [];
@@ -469,15 +465,28 @@ class Summary extends Model
                     $finalSql = str_replace($pKey, $value[$pValue], $finalSql);
                 }
 
-                $dupMainId = [];
-                $count[$b_key] = $answerObj->filter(function($item, $key) use ($value, $mainList, &$dupMainId){
-                    $condition = (!in_array($item->main_id, $dupMainId)) && in_array($item->unique_key, $value)
-                        && in_array($item->main_id, $mainList);
-                    if (in_array($item->unique_key, $value))
-                        $dupMainId[] = $item->main_id;
+//                $dupMainId = [];
+//                $count[$b_key] = $answerObj->filter(function($item, $key) use ($value, $mainList, &$dupMainId){
+//                    $condition = (!in_array($item->main_id, $dupMainId)) && in_array($item->unique_key, $value)
+//                        && in_array($item->main_id, $mainList);
+//                    if (in_array($item->unique_key, $value))
+//                        $dupMainId[] = $item->main_id;
+//
+//                    return $condition;
+//                })->count();
 
-                    return $condition;
-                })->count();
+                $whereMainId = implode(",", $mainList);
+                if (is_array($value)){
+                    $whereUniqueKey = implode("','", $value);
+                    $whereUniqueKey = " AND unique_key IN ('" .$whereUniqueKey."') ";
+                }else
+                    $whereUniqueKey = " AND unique_key='$value'";
+                $avgSql = "SELECT COUNT(*) as countAll FROM
+                        (SELECT sum(answer_numeric) AS sum1 FROM answers
+                        WHERE main_id IN ($whereMainId) " . $whereUniqueKey
+                    . " GROUP BY main_id) T1";
+                $avgResult = \DB::select($avgSql);
+                $count[$b_key] = $avgResult[0]->countAll;
 
                 $resultQuery2 = Answer::whereIn('unique_key', $value)
                     ->whereIn('main_id', $mainList)
@@ -489,8 +498,6 @@ class Summary extends Model
                 foreach ($resultQuery2 as $row){
                     $sum[$b_key] += $row->sumAmount;
                 }
-
-//                echo $finalSql ." count: $count[$b_key] , sum: $sum[$b_key] </br>";
             }
 
             $col = $startCol;
