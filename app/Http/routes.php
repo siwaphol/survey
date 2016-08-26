@@ -26,6 +26,8 @@ Route::group(['middleware' => 'auth'], function () {
     Route::get('get-report914', 'SummaryController@downloadSum914');
     Route::get('get-report915', 'SummaryController@downloadSum915');
     Route::get('get-report916', 'SummaryController@downloadSum916');
+    Route::get('get-report917', 'SummaryController@downloadSum917');
+    Route::get('get-report918', 'SummaryController@downloadSum918');
 
     Route::get('download911', function (){
         return response()->download(storage_path('excel/sum911.xlsx'), 'ตารางสรุปหมวดแสงสว่าง.xlsx');

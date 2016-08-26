@@ -664,13 +664,9 @@ class Summary91 extends Controller
         ];
         $isRadio = true;
         $startColumn = 'E';
-//        Summary::sum($table1,$startColumn,13,$objPHPExcel,$mainObj,$isRadio);
+        Summary::sum($table1,$startColumn,13,$objPHPExcel,$mainObj,$isRadio);
         $startColumn = 'U';
-        $starttime = microtime(true);
         Summary::average($table2, $startColumn, 13, $objPHPExcel, $mainObj, $isRadio, $table1);
-        $lapse = microtime(true) - $starttime;
-        echo "</br>" . ($lapse/60) . " minutes</br>";
-        dd('success');
         $startColumn = 'AL';
         $sumAmountSQL = " param1 as sumAmount ";
         $params = [
@@ -816,7 +812,7 @@ class Summary91 extends Controller
         $startColumn = 'U';
         Summary::average($table2, $startColumn, 13, $objPHPExcel, $mainObj);
         $startColumn = 'AL';
-        Summary::usageElectric();
+//        Summary::usageElectric();
         $startColumn = 'BB';
         Summary::average($table4, $startColumn, 13, $objPHPExcel, $mainObj, $isRadio);
 
