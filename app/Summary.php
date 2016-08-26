@@ -239,7 +239,7 @@ class Summary extends Model
                     $avgSql = "SELECT AVG(sum1) as average, COUNT(*) as countAll FROM
                         (SELECT $finalSql AS sum1 FROM answers
                         WHERE main_id IN ($whereMainId) " . $whereUniqueKey
-                        ." GROUP BY main_id) T1";
+                        ." GROUP BY main_id) T1 WHERE sum1>0";
 
                 }else{
                     //old2
@@ -257,9 +257,6 @@ class Summary extends Model
                 $avgResult = \DB::select($avgSql);
                 $avg[$p_key] = $avgResult[0]->average;
                 $count[$p_key] = $avgResult[0]->countAll;
-
-                echo " average: " . $avg[$p_key] . "</br>";
-                echo " count: " . $count[$p_key] . "</br>";
             }
 //            $finaltime = microtime(true)-$testtime;
 //            echo "Here is one loop give you in minutes" . ($finaltime/60) ."</br>";
@@ -292,21 +289,64 @@ class Summary extends Model
 //                        },0);
 //                    }
 //                    $avg[$b_key] = $totalSum/(float)$count[$b_key];
+                $avg[$b_key]=0;
+                $whereMainId = implode(",", $mainList);
+                if ($isRadio){
+                    $newSql = " (IF(SUM(IF(unique_key='radioKey' AND option_id=radioValue,1,0))>1,1,SUM(IF(unique_key='radioKey' AND option_id=radioValue,1,0))) * SUM(IF(unique_key='amountKey',answer_numeric,0))) ";
+                    $finalSql = "";
+                    $idx = 0;
+                    $whereUniqueKey = implode("','", $value);
+                    $whereUniqueKey = "'" .$whereUniqueKey."'";
+                    foreach ($radioArr[$level1Counter] as $radioKey=>$radioValue){
+                        $temp = $newSql;
+                        $temp = str_replace('radioKey', $radioKey, $temp);
+                        $temp = str_replace('radioValue', $radioValue, $temp);
+                        $temp = str_replace('amountKey', $value[$idx], $temp);
+
+                        $finalSql .= $temp . " + ";
+
+                        $whereUniqueKey.= ",'" . $radioKey . "'";
+                        $idx++;
+                    }
+                    $finalSql .= " 0 ";
+                    $whereUniqueKey = " AND unique_key IN (" . $whereUniqueKey . ")";
+                    $avgSql = "SELECT AVG(sum1) as average, COUNT(*) as countAll FROM
+                        (SELECT $finalSql AS sum1 FROM answers
+                        WHERE main_id IN ($whereMainId) " . $whereUniqueKey
+                        ." GROUP BY main_id) T1 WHERE sum1>0";
+
+                }else{
                     //old2
-                    $avg[$b_key]=0;
-                    $whereMainId = implode(",", $mainList);
                     if (is_array($value)){
                         $whereUniqueKey = implode("','", $value);
                         $whereUniqueKey = " AND unique_key IN ('" .$whereUniqueKey."') ";
                     }else
                         $whereUniqueKey = " AND unique_key='$value'";
+
                     $avgSql = "SELECT AVG(sum1) as average, COUNT(*) as countAll FROM
                         (SELECT sum(answer_numeric) AS sum1 FROM answers
                         WHERE main_id IN ($whereMainId) " . $whereUniqueKey
-                        . " GROUP BY main_id) T1";
-                    $avgResult = \DB::select($avgSql);
-                    $avg[$b_key] = $avgResult[0]->average;
-                    $count[$b_key] = $avgResult[0]->countAll;
+                        ." GROUP BY main_id) T1";
+                }
+                $avgResult = \DB::select($avgSql);
+                $avg[$b_key] = $avgResult[0]->average;
+                $count[$b_key] = $avgResult[0]->countAll;
+                echo " average $key : " . $avg[$b_key] . " , count: " . $count[$b_key] . "</br>";
+                    //old2
+//                    $avg[$b_key]=0;
+//                    $whereMainId = implode(",", $mainList);
+//                    if (is_array($value)){
+//                        $whereUniqueKey = implode("','", $value);
+//                        $whereUniqueKey = " AND unique_key IN ('" .$whereUniqueKey."') ";
+//                    }else
+//                        $whereUniqueKey = " AND unique_key='$value'";
+//                    $avgSql = "SELECT AVG(sum1) as average, COUNT(*) as countAll FROM
+//                        (SELECT sum(answer_numeric) AS sum1 FROM answers
+//                        WHERE main_id IN ($whereMainId) " . $whereUniqueKey
+//                        . " GROUP BY main_id) T1";
+//                    $avgResult = \DB::select($avgSql);
+//                    $avg[$b_key] = $avgResult[0]->average;
+//                    $count[$b_key] = $avgResult[0]->countAll;
 //                    echo " collect count : " . $count[$b_key] . " == " . $avgResult[0]->countAll."</br>";
                     //old1
 //                    $avg[$b_key]=0;

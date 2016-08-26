@@ -81,9 +81,11 @@
         <md-content layout-padding>
             <a id="top" style="padding: 0;"></a>
             <div>
+                @if($main_id>2500)
                 <div>
                     <md-button class="md-raised md-button md-ink-ripple" ng-click="submit()" >Submit</md-button>
                 </div>
+                @endif
 
                 <form ng-submit="submit()" name="myForm">
                     <input type="hidden" name="_token" value="<?php echo csrf_token(); ?>">
@@ -93,10 +95,13 @@
                     <input type="hidden" name="main_id" value="{{$main_id}}">
 
                     @include('partials.children5',['questions'=>$new,'margin'=>0])
-                    
+
+                    @if($main_id>2500)
                     <div>
                         <md-button class="md-raised md-ink-ripple" ng-click="submit()">Submit</md-button>
                     </div>
+                    @endif
+
                 </form>
             </div>
             <a id="bottom" style="padding: 0;"></a>
@@ -104,6 +109,7 @@
     </md-content>
 </div>
 
+@if($main_id>2500)
 <nav mfb-menu position="br" effect="zoomin"
      active-icon="ion-close-round" resting-icon="ion-plus-round"
      ng-mouseenter="hovered()" ng-mouseleave="hovered()"
@@ -111,6 +117,7 @@
     <button mfb-button icon="@{{button.icon}}" ng-click="loc(button.href)"
             label="@{{button.label}}" ng-repeat="button in buttons"></button>
 </nav>
+@endif
 
 <script type="text/javascript" src="{{asset('assets/js/core/libraries/jquery.min.js')}}"></script>
 <!-- Angular Material requires Angular.js Libraries -->
