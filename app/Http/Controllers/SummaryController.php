@@ -53,13 +53,13 @@ class SummaryController extends Controller
     }
     public function downloadSum917()
     {
-        Summary91::report916();
-        return response()->download(storage_path('excel/sum916.xlsx'), 'หมวดไล่และล่อแมลง.xlsx');
+        Summary91::report917();
+        return response()->download(storage_path('excel/sum917.xlsx'), 'หมวดการเดินทางและคมนาคม.xlsx');
     }
     public function downloadSum918()
     {
-        Summary91::report916();
-        return response()->download(storage_path('excel/sum916.xlsx'), 'หมวดไล่และล่อแมลง.xlsx');
+        Summary91::report918();
+        return response()->download(storage_path('excel/sum918.xlsx'), 'หมวดเกษตรกรรม.xlsx');
     }
 
     public function report911()

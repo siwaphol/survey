@@ -400,17 +400,16 @@ class Summary91 extends Controller
         $startColumn = ['E','U','AL','BB'];
         $startRow = 13;
 
-        $objPHPExcel = Summary::sum($table1, $startColumn, $startRow, $objPHPExcel, $mainObj);
-        $objPHPExcel = Summary::average($table2, $startColumn, $startRow, $objPHPExcel, $mainObj);
-        $sumAmountSQL = " (sum(IF(unique_key='param1',answer_numeric,0)) * (sum(IF(unique_key='param2',answer_numeric,0)) 
-        (sum(IF(unique_key='param3',answer_numeric,0)) * 12 as sumAmount ";
+        $objPHPExcel = Summary::sum($table1, $startColumn[0], $startRow, $objPHPExcel, $mainObj);
+        $objPHPExcel = Summary::average($table2, $startColumn[1], $startRow, $objPHPExcel, $mainObj);
+        $sumAmountSQL = " (sum(IF(unique_key='param1',answer_numeric,0)) * (sum(IF(unique_key='param2',answer_numeric,0)) * (sum(IF(unique_key='param3',answer_numeric,0)) * 12 as sumAmount ";
         $params = [
             'param1'=>0,
             'param2'=>1,
             'param3'=>2
         ];
-        $objPHPExcel = Summary::usageElectric($table3, $startColumn, $startRow,$objPHPExcel, $mainObj,$sumAmountSQL,$params,0,false,3);
-        $objPHPExcel = Summary::average($table4, $startColumn, $startRow, $objPHPExcel, $mainObj);
+        $objPHPExcel = Summary::usageElectric($table3, $startColumn[2], $startRow,$objPHPExcel, $mainObj,$sumAmountSQL,$params,0,false,3);
+        $objPHPExcel = Summary::average($table4, $startColumn[3], $startRow, $objPHPExcel, $mainObj);
         $objWriter = new \PHPExcel_Writer_Excel2007($objPHPExcel);
         $objWriter->save(storage_path(iconv('UTF-8', 'windows-874', 'excel/'.$outputFile)));
     }
@@ -443,11 +442,11 @@ class Summary91 extends Controller
 
         $table2=[
             'no_ch1031_o373_nu479',
-'no_ch1031_o374_nu485',
-'no_ch1032_o375_ch490_o100_nu491',
-'no_ch1032_o375_ch490_o101_nu491',
-'no_ch1032_o375_ch490_o102_nu491',
-'no_ch1032_o375_ch490_o103_nu491'
+            'no_ch1031_o374_nu485',
+            'no_ch1032_o375_ch490_o100_nu491',
+            'no_ch1032_o375_ch490_o101_nu491',
+            'no_ch1032_o375_ch490_o102_nu491',
+            'no_ch1032_o375_ch490_o103_nu491'
         ];
 
         $table3_1 = [
@@ -470,24 +469,24 @@ class Summary91 extends Controller
             'no_ch1032_o375_ch490_o103_nu494',
         ];
 
-        $startColumn = ['E','U','AL','BB'];
+        $startColumn = 'E';
         $startRow = 13;
 
         $objPHPExcel = Summary::sum($table1, $startColumn, $startRow, $objPHPExcel, $mainObj);
+        $startColumn = 'U';
         $objPHPExcel = Summary::average($table2, $startColumn, $startRow, $objPHPExcel, $mainObj);
         $week = Parameter::WEEK_PER_YEAR;
         $elecKTOE = Parameter::ELECTRIC_KTOE;
-        $sumAmountSQL_1 = " (sum(IF(unique_key='param1',answer_numeric,0)) * (sum(IF(unique_key='param2',answer_numeric,0)) 
-        (sum(IF(unique_key='param3',answer_numeric,0)) * {$week} * (param4) as sumAmount ";
+        $sumAmountSQL_1 = " (sum(IF(unique_key='param1',answer_numeric,0)) * (sum(IF(unique_key='param2',answer_numeric,0)) * (sum(IF(unique_key='param3',answer_numeric,0)) * {$week} * (param4) as sumAmount ";
         $params = [
             'param1'=>0,
             'param2'=>1,
             'param3'=>2,
             'param4'=>3
         ];
+        $startColumn = 'AL';
         $objPHPExcel = Summary::usageElectric($table3_1, $startColumn, $startRow,$objPHPExcel, $mainObj,$sumAmountSQL_1,$params,$elecKTOE);
-        $sumAmountSQL_2 = " (sum(IF(unique_key='param1',answer_numeric,0)) * (sum(IF(unique_key='param2',answer_numeric,0)) 
-        (sum(IF(unique_key='param3',answer_numeric,0)) * 12 as sumAmount ";
+        $sumAmountSQL_2 = " (sum(IF(unique_key='param1',answer_numeric,0)) * (sum(IF(unique_key='param2',answer_numeric,0)) * (sum(IF(unique_key='param3',answer_numeric,0)) * 12 as sumAmount ";
         $params = [
             'param1'=>0,
             'param2'=>1,
@@ -495,6 +494,7 @@ class Summary91 extends Controller
         ];
         $objPHPExcel = Summary::usageElectric($table3_2, $startColumn, $startRow,$objPHPExcel, $mainObj,$sumAmountSQL_2,$params,0,false,3);
 
+        $startColumn = 'BB';
         $objPHPExcel = Summary::average($table4, $startColumn, $startRow, $objPHPExcel, $mainObj);
         $objWriter = new \PHPExcel_Writer_Excel2007($objPHPExcel);
         $objWriter->save(storage_path(iconv('UTF-8', 'windows-874', 'excel/'.$outputFile)));
@@ -672,7 +672,7 @@ class Summary91 extends Controller
         $params = [
             'param1'=>0
         ];
-        $objPHPExcel = Summary::usageElectric($table3, $startColumn, 13, $objPHPExcel,$mainObj,$sumAmountSQL,$params,$ktoe);
+//        $objPHPExcel = Summary::usageElectric($table3, $startColumn, 13, $objPHPExcel,$mainObj,$sumAmountSQL,$params,$ktoe);
         $startColumn = 'BB';
         Summary::average($table4, $startColumn, 13, $objPHPExcel, $mainObj, $isRadio);
 
@@ -680,7 +680,7 @@ class Summary91 extends Controller
         $objWriter->save(storage_path(iconv('UTF-8', 'windows-874', 'excel/'.$outputFile)));
     }
 
-    public function report918()
+    public static function report918()
     {
         set_time_limit(1200);
 
@@ -806,16 +806,14 @@ class Summary91 extends Controller
         $objPHPExcel->removeSheetByIndex(0);
         $objPHPExcel->setActiveSheetIndexByName($inputSheet);
 
-        $isRadio = true;
         $startColumn = 'E';
-        Summary::sum($table1,$startColumn,13,$objPHPExcel,$mainObj,$isRadio);
+        Summary::sum($table1,$startColumn,13,$objPHPExcel,$mainObj);
         $startColumn = 'U';
         Summary::average($table2, $startColumn, 13, $objPHPExcel, $mainObj);
         $startColumn = 'AL';
 //        Summary::usageElectric();
         $startColumn = 'BB';
-        Summary::average($table4, $startColumn, 13, $objPHPExcel, $mainObj, $isRadio);
-
+        Summary::average($table4, $startColumn, 13, $objPHPExcel, $mainObj);
 
         $objWriter = new \PHPExcel_Writer_Excel2007($objPHPExcel);
         $objWriter->save(storage_path(iconv('UTF-8', 'windows-874', 'excel/'.$outputFile)));
