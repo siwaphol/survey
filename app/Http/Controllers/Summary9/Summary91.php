@@ -616,12 +616,27 @@ class Summary91 extends Controller
         ];
         $table3 = [];
         $countTable1 = count($table1);
-        $gasPrice = 1;
-        $sql = " (SUM(IF(unique_key='param1' AND option_id=param2, 1,0)) * param3 * param4 * param5 * 12) ";
+        $gasPrice = 20;
+        $ktoe = 0.745;
+        $sql = " (SUM(IF(unique_key='param1' AND option_id=param2, param6,0)) * (param3/param4) * param5 * 12) ";
+        $whereSql = "";
         for($i=0;$i<$countTable1;$i++){
-            foreach ($table1[0] as $key=>$value){
+            $sumAmountSql = "";
+            $j=0;
+            foreach ($table1[$i] as $key=>$value){
+                $tempSql = $sql;
+                $tempSql = str_replace('param1',$key, $tempSql);
+                $tempSql = str_replace('param2',$value, $tempSql);
+                $tempSql = str_replace('param3',$moneyFill[$i][$j], $tempSql);
+                $tempSql = str_replace('param4',$gasPrice, $tempSql);
+                $tempSql = str_replace('param5',$frequencyFill[$i][$j], $tempSql);
+                $tempSql = str_replace('param5',$table2[$i][$j], $tempSql);
 
+                $sumAmountSql .= $tempSql . " + ";
+                $j++;
             }
+            $sumAmountSql .= $sumAmountSql . " 0 ";
+            $table3[] = [$sumAmountSql];
         }
 
         $table4 = [
@@ -649,14 +664,21 @@ class Summary91 extends Controller
         ];
         $isRadio = true;
         $startColumn = 'E';
-        Summary::sum($table1,$startColumn,13,$objPHPExcel,$mainObj,$isRadio);
+//        Summary::sum($table1,$startColumn,13,$objPHPExcel,$mainObj,$isRadio);
         $startColumn = 'U';
-        Summary::average($table2, $startColumn, 13, $objPHPExcel, $mainObj);
+        $starttime = microtime(true);
+        Summary::average($table2, $startColumn, 13, $objPHPExcel, $mainObj, $isRadio, $table1);
+        $lapse = microtime(true) - $starttime;
+        echo "</br>" . ($lapse/60) . " minutes</br>";
+        dd('success');
         $startColumn = 'AL';
-        Summary::usageElectric();
+        $sumAmountSQL = " param1 as sumAmount ";
+        $params = [
+            'param1'=>0
+        ];
+        $objPHPExcel = Summary::usageElectric($table3, $startColumn, 13, $objPHPExcel,$mainObj,$sumAmountSQL,$params,$ktoe);
         $startColumn = 'BB';
         Summary::average($table4, $startColumn, 13, $objPHPExcel, $mainObj, $isRadio);
-
 
         $objWriter = new \PHPExcel_Writer_Excel2007($objPHPExcel);
         $objWriter->save(storage_path(iconv('UTF-8', 'windows-874', 'excel/'.$outputFile)));

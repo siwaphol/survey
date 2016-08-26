@@ -68,11 +68,8 @@ class Summary extends Model
 
                     $whereInMainId = implode(",", $mainList);
                     $sql = "SELECT COUNT(*) as count FROM (SELECT main_id FROM answers WHERE main_id IN ($whereInMainId) " . $whereCondition . " GROUP BY main_id) t1";
-//                    $start = microtime(true);
                     $count[$i] = \DB::select($sql)[0]->count;
                     $p[$i] = $w[$i] * ((float)$count[$i]/ $s[$i]) * $S[$i];
-//                    $time_elapsed_secs = microtime(true) - $start;
-//                    echo " Query " . $i . " : " . $time_elapsed_secs . " seconds</br>";
                 }
             }
             else {
@@ -143,7 +140,7 @@ class Summary extends Model
         return $objPHPExcel;
     }
 
-    public static function average($uniqueKeyArr, $startCol, $startRow, $objPHPExcel, $mainObj)
+    public static function average($uniqueKeyArr, $startCol, $startRow, $objPHPExcel, $mainObj, $isRadio=false,$radioArr)
     {
         $rows = [];
         $rowNumber = $startRow;
@@ -161,14 +158,26 @@ class Summary extends Model
                     $allUniqueArr[] = $subItem;
             }
         }
+//        if ($isRadio){
+//            $dupRad = [];
+//            foreach ($radioArr as $row){
+//                foreach ($row as $key=>$item){
+//                    if (!in_array($key, $dupRad)){
+//                        $allUniqueArr[]=$key;
+//                        $dupRad[]=$key;
+//                    }
+//                }
+//            }
+//            $answerObj = Answer::whereIn('unique_key', $allUniqueArr)->get(['main_id','unique_key','answer_numeric','option_id']);
+//        }
 //        $starttime = microtime(true);
-//        $answerObj = Answer::whereIn('unique_key', $allUniqueArr)->get(['main_id','unique_key','answer_numeric']);
 
         $whereIn = [];
         $answers = [];
         $count = [];
         $A = [];
 
+        $level1Counter = 0;
         foreach ($rows as $key=>$value){
 //            $rowTime = microtime(true);
             $whereIn[] = $value;
@@ -204,10 +213,36 @@ class Summary extends Model
 //                        },0);
 //                    }
 //                    $avg[$p_key] = $totalSum/(float)$count[$p_key];
+                $avg[$p_key]=0;
+                $whereMainId = implode(",", $mainList);
 
+                if ($isRadio){
+
+                    $newSql = " (IF(SUM(IF(unique_key='radioKey' AND option_id=radioValue,1,0))>1,1,SUM(IF(unique_key='radioKey' AND option_id=radioValue,1,0))) * SUM(IF(unique_key='amountKey',answer_numeric,0))) ";
+                    $finalSql = "";
+                    $idx = 0;
+                    $whereUniqueKey = implode("','", $value);
+                    $whereUniqueKey = "'" .$whereUniqueKey."'";
+                    foreach ($radioArr[$level1Counter] as $radioKey=>$radioValue){
+                        $temp = $newSql;
+                        $temp = str_replace('radioKey', $radioKey, $temp);
+                        $temp = str_replace('radioValue', $radioValue, $temp);
+                        $temp = str_replace('amountKey', $value[$idx], $temp);
+
+                        $finalSql .= $temp . " + ";
+
+                        $whereUniqueKey.= ",'" . $radioKey . "'";
+                        $idx++;
+                    }
+                    $finalSql .= " 0 ";
+                    $whereUniqueKey = " AND unique_key IN (" . $whereUniqueKey . ")";
+                    $avgSql = "SELECT AVG(sum1) as average, COUNT(*) as countAll FROM
+                        (SELECT $finalSql AS sum1 FROM answers
+                        WHERE main_id IN ($whereMainId) " . $whereUniqueKey
+                        ." GROUP BY main_id) T1";
+
+                }else{
                     //old2
-                    $avg[$p_key]=0;
-                    $whereMainId = implode(",", $mainList);
                     if (is_array($value)){
                         $whereUniqueKey = implode("','", $value);
                         $whereUniqueKey = " AND unique_key IN ('" .$whereUniqueKey."') ";
@@ -218,35 +253,13 @@ class Summary extends Model
                         (SELECT sum(answer_numeric) AS sum1 FROM answers
                         WHERE main_id IN ($whereMainId) " . $whereUniqueKey
                         ." GROUP BY main_id) T1";
-                    $avgResult = \DB::select($avgSql);
-                    $avg[$p_key] = $avgResult[0]->average;
-                    $count[$p_key] = $avgResult[0]->countAll;
-//                    echo " collect count : " . $count[$p_key] . " == " . $avgResult[0]->countAll."</br>";
-                    // old1
-//                    foreach ($value as $eachValue){
-//                        $avg[$p_key] += Answer::where('unique_key', $eachValue)
-//                            ->whereIn('main_id', $mainList)
-//                            ->select(\DB::raw(" AVG(answer_numeric) as average "))
-//                            ->first()->average;
-//                    }
+                }
+                $avgResult = \DB::select($avgSql);
+                $avg[$p_key] = $avgResult[0]->average;
+                $count[$p_key] = $avgResult[0]->countAll;
 
-//                    $avg[$p_key] = $avg[$p_key]/count($value);
-//                }else{
-//                    $count[$p_key] = $answerObj->filter(function($item, $key) use ($value, $mainList, &$dupMainId){
-//                        $condition = (!in_array($item->main_id, $dupMainId)) && $item->unique_key===$value
-//                            && in_array($item->main_id, $mainList);
-//                        if ($item->unique_key===$value)
-//                            $dupMainId[] = $item->unique_key;
-//
-//                        return $condition;
-//                    })->count();
-//
-//                    $avg[$p_key] = Answer::where('unique_key', $value)
-//                        ->whereIn('main_id', $mainList)
-//                        ->select(\DB::raw(" AVG(answer_numeric) as average "))
-//                        ->first()->average;
-//                }
-
+                echo " average: " . $avg[$p_key] . "</br>";
+                echo " count: " . $count[$p_key] . "</br>";
             }
 //            $finaltime = microtime(true)-$testtime;
 //            echo "Here is one loop give you in minutes" . ($finaltime/60) ."</br>";
@@ -419,6 +432,8 @@ class Summary extends Model
             $objPHPExcel->getActiveSheet()->getStyle($key4)->getNumberFormat()->setFormatCode(Main::NUMBER_FORMAT);
             $objPHPExcel->getActiveSheet()->getStyle($key5)->getNumberFormat()->setFormatCode(Main::NUMBER_FORMAT);
             $objPHPExcel->getActiveSheet()->getStyle($key6)->getNumberFormat()->setFormatCode(Main::NUMBER_FORMAT);
+
+            $level1Counter++;
 //            echo "INSERT TIME : " . (microtime(true)-$insertTime) . " seconds</br>";
 
 //            echo " ==== unique_key time: " . ((microtime(true)-$rowTime)/60) . " minutes=== </br></br>";
@@ -427,7 +442,7 @@ class Summary extends Model
         return $objPHPExcel;
     }
 
-    public static function usageElectric($uniqueKeyArr, $startCol, $startRow, $objPHPExcel,$mainObj, $sqlSum, $param,$ktoe,$gas=false, $ktoeIdx=false)
+    public static function usageElectric($uniqueKeyArr, $startCol, $startRow, $objPHPExcel,$mainObj, $sqlSum, $param,$ktoe,$gas=false, $ktoeIdx=false, $isRadio = false)
     {
         $parameterExcel = \PHPExcel_IOFactory::load(storage_path('excel/parameters.xlsx'));
         $parameterExcel->setActiveSheetIndex(2);
