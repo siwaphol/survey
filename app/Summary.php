@@ -488,4 +488,129 @@ class Summary extends Model
         return $objPHPExcel;
     }
 
+    public static function specialUsage($uniqueKeyArr, $startCol, $startRow, $objPHPExcel,$mainObj, $sqlSum, $param,$ktoe,$gas=false, $ktoeIdx=false, $isRadio = false)
+    {
+        $parameterExcel = \PHPExcel_IOFactory::load(storage_path('excel/parameters.xlsx'));
+        $parameterExcel->setActiveSheetIndex(2);
+        $paramSheet = $parameterExcel->getActiveSheet();
+        $population = [];
+        $population[Main::NORTHERN_INNER] = (float)$paramSheet->getCell(Parameter::$populationColumn[Main::NORTHERN_INNER])->getValue();
+        $population[Main::NORTHERN_OUTER] = (float)$paramSheet->getCell(Parameter::$populationColumn[Main::NORTHERN_OUTER])->getValue();
+
+        $allUniqueKey = [];
+        foreach ($uniqueKeyArr as $item){
+            foreach ($item as $subItem){
+                if (is_string($subItem))
+                    $allUniqueKey[] = $subItem;
+            }
+        }
+
+        $rows = [];
+        $count = [];
+        $rowNumber = $startRow;
+        foreach ($uniqueKeyArr as $uniqueKey){
+            $rows[$startCol.$rowNumber] = $uniqueKey;
+            $rowNumber++;
+        }
+
+        $answers = [];
+        foreach ($rows as $key=>$value){
+            $sum = [];
+
+            foreach (Main::$borderWeight as $b_key=>$b_weight){
+                $mainList = $mainObj->filterMain($b_key);
+
+                $finalSql = $sqlSum;
+                foreach ($param as $pKey=>$pValue){
+                    $finalSql = str_replace($pKey, $value[$pValue], $finalSql);
+                }
+
+                $whereMainId = implode(",", $mainList);
+                if (is_array($value)){
+                    $whereUniqueKey = implode("','", $value);
+                    $whereUniqueKey = " AND unique_key IN ('" .$whereUniqueKey."') ";
+                }else
+                    $whereUniqueKey = " AND unique_key='$value'";
+                $avgSql = "SELECT COUNT(*) as countAll FROM
+                        (SELECT sum(answer_numeric) AS sum1 FROM answers
+                        WHERE main_id IN ($whereMainId) " . $whereUniqueKey
+                    . " GROUP BY main_id) T1";
+                $avgResult = \DB::select($avgSql);
+                $count[$b_key] = $avgResult[0]->countAll;
+
+                $resultQuery2 = Answer::whereIn('unique_key', $value)
+                    ->whereIn('main_id', $mainList)
+                    ->groupBy('main_id')
+                    ->select(\DB::raw($finalSql))
+                    ->get();
+
+                $sum[$b_key] = 0.0;
+                foreach ($resultQuery2 as $row){
+                    $sum[$b_key] += $row->sumAmount;
+                }
+            }
+
+            $col = $startCol;
+            $col++;
+            $key2 = preg_replace('/[A-Z]+/', $col, $key);
+            $col++;
+            $key3 = preg_replace('/[A-Z]+/', $col, $key);
+            $col++;
+            $key4 = preg_replace('/[A-Z]+/', $col, $key);
+            $col++;
+            $key5 = preg_replace('/[A-Z]+/', $col, $key);
+            $col++;
+            $key6 = preg_replace('/[A-Z]+/', $col, $key);
+
+            $average = [];
+            $average[Main::INNER_GROUP_1] = $count[Main::INNER_GROUP_1]===0?0:($sum[Main::INNER_GROUP_1]/$count[Main::INNER_GROUP_1]);
+            $average[Main::INNER_GROUP_2] = $count[Main::INNER_GROUP_2]===0?0:($sum[Main::INNER_GROUP_2]/$count[Main::INNER_GROUP_2]);
+            $average[Main::OUTER_GROUP_1] = $count[Main::OUTER_GROUP_1]===0?0:($sum[Main::OUTER_GROUP_1]/$count[Main::OUTER_GROUP_1]);
+            $average[Main::OUTER_GROUP_2] = $count[Main::OUTER_GROUP_2]===0?0:($sum[Main::OUTER_GROUP_2]/$count[Main::OUTER_GROUP_2]);
+
+            $answers[$key] = ($average[Main::INNER_GROUP_1]*Main::$weight[Main::INNER_GROUP_1]
+                    + $average[Main::INNER_GROUP_2]* Main::$weight[Main::INNER_GROUP_2]) * $population[Main::NORTHERN_INNER];
+            $answers[$key] = $answers[$key]/1000000.0;
+            $answers[$key3] = ($average[Main::OUTER_GROUP_1]*Main::$weight[Main::OUTER_GROUP_1]
+                    + $average[Main::OUTER_GROUP_2]* Main::$weight[Main::OUTER_GROUP_2]) * $population[Main::NORTHERN_OUTER];
+            $answers[$key3] = $answers[$key3]/1000000.0;
+
+            //ktoe
+            if ($gas){
+                $answers[$key2] = $answers[$key]* 0.00042 * $ktoe;
+                $answers[$key4] = $answers[$key3]* 0.00042 * $ktoe;
+                $answers[$key5] = $answers[$key]* 0.00042 + $answers[$key3];
+                $answers[$key6] = $answers[$key5]* 0.00042 * $ktoe;
+            }elseif ($ktoeIdx!==false){
+                $answers[$key2] = $answers[$key] * $value[$ktoeIdx];
+                $answers[$key4] = $answers[$key3] * $value[$ktoeIdx];
+                $answers[$key5] = $answers[$key] + $answers[$key3];
+                $answers[$key6] = $answers[$key5] * $value[$ktoeIdx];
+            }
+            else{
+                $answers[$key2] = $answers[$key] * $ktoe;
+                $answers[$key4] = $answers[$key3] * $ktoe;
+                $answers[$key5] = $answers[$key] + $answers[$key3];
+                $answers[$key6] = $answers[$key5] * $ktoe;
+            }
+
+            $objPHPExcel->getActiveSheet()->setCellValue($key,  $answers[$key]);
+            $objPHPExcel->getActiveSheet()->setCellValue($key2, $answers[$key2]);
+            $objPHPExcel->getActiveSheet()->setCellValue($key3, $answers[$key3]);
+            $objPHPExcel->getActiveSheet()->setCellValue($key4, $answers[$key4]);
+            $objPHPExcel->getActiveSheet()->setCellValue($key5, $answers[$key5]);
+            $objPHPExcel->getActiveSheet()->setCellValue($key6, $answers[$key6]);
+
+            $objPHPExcel->getActiveSheet()->getStyle($key)->getNumberFormat()->setFormatCode(Main::NUMBER_FORMAT);
+            $objPHPExcel->getActiveSheet()->getStyle($key2)->getNumberFormat()->setFormatCode(Main::NUMBER_FORMAT);
+            $objPHPExcel->getActiveSheet()->getStyle($key3)->getNumberFormat()->setFormatCode(Main::NUMBER_FORMAT);
+            $objPHPExcel->getActiveSheet()->getStyle($key4)->getNumberFormat()->setFormatCode(Main::NUMBER_FORMAT);
+            $objPHPExcel->getActiveSheet()->getStyle($key5)->getNumberFormat()->setFormatCode(Main::NUMBER_FORMAT);
+            $objPHPExcel->getActiveSheet()->getStyle($key6)->getNumberFormat()->setFormatCode(Main::NUMBER_FORMAT);
+
+        }
+
+        return $objPHPExcel;
+    }
+
 }
