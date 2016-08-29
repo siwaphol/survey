@@ -15,7 +15,7 @@ class Summary91 extends Controller
 
     public static function report914()
     {
-        set_time_limit(1200);
+        set_time_limit(3600);
         // หมวดความสะดวกสบาย
         $mainObj = new Main();
         $mainObj->initList();
@@ -234,6 +234,7 @@ class Summary91 extends Controller
             ['no_ch1028_o368_nu447', 'no_ch1028_o368_nu448','no_ch1028_o368_nu449',1.4],
             ['no_ch1028_o369_nu453', 'no_ch1028_o369_nu454','no_ch1028_o369_nu455',0.2],
         ];
+        $startColumn = "AL";
         $ktoe = Parameter::ELECTRIC_KTOE;
         $week = Parameter::WEEK_PER_YEAR;
         $sumAmountSQL = " (sum(IF(unique_key='param1',answer_numeric,0)) * sum(if(unique_key='param2', answer_numeric,0)) * sum(if(unique_key='param3', answer_numeric,0))) * {$week}  * (param4) as sumAmount ";
@@ -338,7 +339,7 @@ class Summary91 extends Controller
 
     public static function report915()
     {
-        set_time_limit(1200);
+        set_time_limit(3600);
 
         // หมวดเพื่อความอบอุ่น
         $mainObj = new Main();
@@ -402,7 +403,7 @@ class Summary91 extends Controller
 
         $objPHPExcel = Summary::sum($table1, $startColumn[0], $startRow, $objPHPExcel, $mainObj);
         $objPHPExcel = Summary::average($table2, $startColumn[1], $startRow, $objPHPExcel, $mainObj);
-        $sumAmountSQL = " (sum(IF(unique_key='param1',answer_numeric,0)) * (sum(IF(unique_key='param2',answer_numeric,0)) * (sum(IF(unique_key='param3',answer_numeric,0)) * 12 as sumAmount ";
+        $sumAmountSQL = " sum(IF(unique_key='param1',answer_numeric,0)) * sum(IF(unique_key='param2',answer_numeric,0)) * sum(IF(unique_key='param3',answer_numeric,0)) * 12 as sumAmount ";
         $params = [
             'param1'=>0,
             'param2'=>1,
@@ -416,7 +417,7 @@ class Summary91 extends Controller
 
     public static function report916()
     {
-        set_time_limit(1200);
+        set_time_limit(3600);
 
         // หมวดไล่และล่อแมลง
         $mainObj = new Main();
@@ -477,7 +478,7 @@ class Summary91 extends Controller
         $objPHPExcel = Summary::average($table2, $startColumn, $startRow, $objPHPExcel, $mainObj);
         $week = Parameter::WEEK_PER_YEAR;
         $elecKTOE = Parameter::ELECTRIC_KTOE;
-        $sumAmountSQL_1 = " (sum(IF(unique_key='param1',answer_numeric,0)) * (sum(IF(unique_key='param2',answer_numeric,0)) * (sum(IF(unique_key='param3',answer_numeric,0)) * {$week} * (param4) as sumAmount ";
+        $sumAmountSQL_1 = " sum(IF(unique_key='param1',answer_numeric,0)) * sum(IF(unique_key='param2',answer_numeric,0)) * sum(IF(unique_key='param3',answer_numeric,0)) * {$week} * (param4) as sumAmount ";
         $params = [
             'param1'=>0,
             'param2'=>1,
@@ -486,14 +487,15 @@ class Summary91 extends Controller
         ];
         $startColumn = 'AL';
         $objPHPExcel = Summary::usageElectric($table3_1, $startColumn, $startRow,$objPHPExcel, $mainObj,$sumAmountSQL_1,$params,$elecKTOE);
-        $sumAmountSQL_2 = " (sum(IF(unique_key='param1',answer_numeric,0)) * (sum(IF(unique_key='param2',answer_numeric,0)) * (sum(IF(unique_key='param3',answer_numeric,0)) * 12 as sumAmount ";
+        $sumAmountSQL_2 = " sum(IF(unique_key='param1',answer_numeric,0)) * sum(IF(unique_key='param2',answer_numeric,0)) * sum(IF(unique_key='param3',answer_numeric,0)) * 12 as sumAmount ";
         $params = [
             'param1'=>0,
             'param2'=>1,
             'param3'=>2
         ];
+        $startRow = 15;
         $objPHPExcel = Summary::usageElectric($table3_2, $startColumn, $startRow,$objPHPExcel, $mainObj,$sumAmountSQL_2,$params,0,false,3);
-
+        $startRow = 13;
         $startColumn = 'BB';
         $objPHPExcel = Summary::average($table4, $startColumn, $startRow, $objPHPExcel, $mainObj);
         $objWriter = new \PHPExcel_Writer_Excel2007($objPHPExcel);
@@ -502,7 +504,7 @@ class Summary91 extends Controller
 
     public static function report917()
     {
-        set_time_limit(1200);
+        set_time_limit(3600);
 
         $mainObj = new Main();
         $mainObj->initList();
@@ -614,29 +616,62 @@ class Summary91 extends Controller
             ['no_ch1033_o378_ch513_o300_nu519', 'no_ch1033_o378_ch513_o301_nu519', 'no_ch1033_o378_ch513_o302_nu519', 'no_ch1033_o378_ch513_o303_nu519', 'no_ch1033_o378_ch513_o304_nu519'],
             ['no_ch1033_o378_ch513_o300_nu519', 'no_ch1033_o378_ch513_o301_nu519', 'no_ch1033_o378_ch513_o302_nu519', 'no_ch1033_o378_ch513_o303_nu519', 'no_ch1033_o378_ch513_o304_nu519']
         ];
+
+        $priceFields = [
+            'no_ra808_o81_ti809_ch810_o228_nu820',
+            'no_ra808_o81_ti809_ch810_o229_nu820',
+            'no_ra808_o81_ti809_ch810_o230_nu820',
+            'no_ra808_o81_ti809_ch810_o231_nu820',
+            'no_ra808_o81_ti809_ch810_o232_nu820',
+
+            'no_ra808_o81_ti809_ch810_o228_nu820',
+            'no_ra808_o81_ti809_ch810_o229_nu820',
+            'no_ra808_o81_ti809_ch810_o230_nu820',
+            'no_ra808_o81_ti809_ch810_o231_nu820',
+            'no_ra808_o81_ti809_ch810_o232_nu820',
+            'no_ra808_o81_ti809_ch810_o233_nu820',
+            'no_ra808_o81_ti809_ch810_o234_nu820',
+            'no_ra808_o81_ti809_ch810_o235_nu820',
+
+            'no_ra808_o81_ti809_ch810_o228_nu820',
+            'no_ra808_o81_ti809_ch810_o229_nu820',
+            'no_ra808_o81_ti809_ch810_o230_nu820',
+            'no_ra808_o81_ti809_ch810_o231_nu820',
+            'no_ra808_o81_ti809_ch810_o232_nu820',
+            'no_ra808_o81_ti809_ch810_o233_nu820',
+            'no_ra808_o81_ti809_ch810_o234_nu820',
+            'no_ra808_o81_ti809_ch810_o235_nu820'
+        ];
         $table3 = [];
         $countTable1 = count($table1);
         $gasPrice = 20;
         $ktoe = 0.745;
-        $sql = " (SUM(IF(unique_key='param1' AND option_id=param2, param6,0)) * (param3/param4) * param5 * 12) ";
+        $radioCondition = " IF(SUM(IF(unique_key='param1' AND option_id=param2,1,0))>1,1,SUM(IF(unique_key='param1' AND option_id=param2,1,0))) ";
+        $sql = " (param1 * (SUM(IF(unique_key='param2', answer_numeric,0))) * 
+         (SUM(IF(unique_key='param3', answer_numeric,0))/ SUM(IF(unique_key='param4', answer_numeric,0))) *
+         (SUM(IF(unique_key='param5', answer_numeric,0))) * 12) ";
         $whereSql = "";
         for($i=0;$i<$countTable1;$i++){
             $sumAmountSql = "";
             $j=0;
             foreach ($table1[$i] as $key=>$value){
+                $tempRadioCon = $radioCondition;
+                $tempRadioCon = str_replace('param1', $key, $tempRadioCon);
+                $tempRadioCon = str_replace('param2', $value, $tempRadioCon);
+
                 $tempSql = $sql;
-                $tempSql = str_replace('param1',$key, $tempSql);
-                $tempSql = str_replace('param2',$value, $tempSql);
+                $tempSql = str_replace('param1',$tempRadioCon, $tempSql);
+                $tempSql = str_replace('param2',$table2[$i][$j], $tempSql);
                 $tempSql = str_replace('param3',$moneyFill[$i][$j], $tempSql);
-                $tempSql = str_replace('param4',$gasPrice, $tempSql);
+                $tempSql = str_replace('param4',$priceFields[$i], $tempSql);
                 $tempSql = str_replace('param5',$frequencyFill[$i][$j], $tempSql);
-                $tempSql = str_replace('param5',$table2[$i][$j], $tempSql);
+//                $tempSql = str_replace('param5',$table2[$i][$j], $tempSql);
 
                 $sumAmountSql .= $tempSql . " + ";
                 $j++;
             }
             $sumAmountSql .= $sumAmountSql . " 0 ";
-            $table3[] = [$sumAmountSql];
+            $table3[] = $sumAmountSql;
         }
 
         $table4 = [
@@ -662,19 +697,16 @@ class Summary91 extends Controller
             ['no_ch1033_o378_ch513_o300_nu521', 'no_ch1033_o378_ch513_o301_nu521', 'no_ch1033_o378_ch513_o302_nu521', 'no_ch1033_o378_ch513_o303_nu521', 'no_ch1033_o378_ch513_o304_nu521'],
             ['no_ch1033_o378_ch513_o300_nu521', 'no_ch1033_o378_ch513_o301_nu521', 'no_ch1033_o378_ch513_o302_nu521', 'no_ch1033_o378_ch513_o303_nu521', 'no_ch1033_o378_ch513_o304_nu521']
         ];
+
         $isRadio = true;
         $startColumn = 'E';
-        Summary::sum($table1,$startColumn,13,$objPHPExcel,$mainObj,$isRadio);
+//        Summary::sum($table1,$startColumn,13,$objPHPExcel,$mainObj,$isRadio);
         $startColumn = 'U';
-        Summary::average($table2, $startColumn, 13, $objPHPExcel, $mainObj, $isRadio, $table1);
+//        Summary::average($table2, $startColumn, 13, $objPHPExcel, $mainObj, $isRadio, $table1);
         $startColumn = 'AL';
-        $sumAmountSQL = " param1 as sumAmount ";
-        $params = [
-            'param1'=>0
-        ];
-//        $objPHPExcel = Summary::usageElectric($table3, $startColumn, 13, $objPHPExcel,$mainObj,$sumAmountSQL,$params,$ktoe);
+        $objPHPExcel = Summary::specialUsage($table3, $startColumn, 13, $objPHPExcel,$mainObj,$ktoe);
         $startColumn = 'BB';
-        Summary::average($table4, $startColumn, 13, $objPHPExcel, $mainObj, $isRadio);
+//        Summary::average($table4, $startColumn, 13, $objPHPExcel, $mainObj, $isRadio);
 
         $objWriter = new \PHPExcel_Writer_Excel2007($objPHPExcel);
         $objWriter->save(storage_path(iconv('UTF-8', 'windows-874', 'excel/'.$outputFile)));
@@ -682,7 +714,7 @@ class Summary91 extends Controller
 
     public static function report918()
     {
-        set_time_limit(1200);
+        set_time_limit(3600);
 
         $table1 = [
             'no_ch1034_o379_ch523_o213',
