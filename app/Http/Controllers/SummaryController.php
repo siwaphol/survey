@@ -789,4 +789,16 @@ class SummaryController extends Controller
         Summary131::report131();
         return response()->download(storage_path('excel/sum131.xlsx'), '13.1 แนวโน้มการเปลี่ยนการใช้พลังงานในการประกอบอาหาร.xlsx');
     }
+
+    public function downloadSum132()
+    {
+        Summary132::report132();
+        return response()->download(storage_path('excel/sum132.xlsx'), '13.2 แนวโน้มการเปลี่ยนการใช้พลังงานในการเดินทางและคมนาคม.xlsx');
+    }
+
+    public function downloadSum133()
+    {
+        Summary133::report133();
+        return response()->download(storage_path('excel/sum133.xlsx'), '13.3 แนวโน้มการเปลี่ยนการใช้ยานพาหนะในการเดินทาง.xlsx');
+    }
 }
