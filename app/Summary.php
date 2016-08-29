@@ -123,11 +123,11 @@ class Summary extends Model
             $answers[$key5] = ($answers[$key6]/100.0) * (float)$paramSheet->getCell(Parameter::$populationColumn[Main::NORTHERN])->getValue();
 
             $objPHPExcel->getActiveSheet()->setCellValue($key, $answers[$key]);
-            $objPHPExcel->getActiveSheet()->setCellValue($key2, round($answers[$key2], 2));
+            $objPHPExcel->getActiveSheet()->setCellValue($key2, $answers[$key2]);
             $objPHPExcel->getActiveSheet()->setCellValue($key3, $answers[$key3]);
-            $objPHPExcel->getActiveSheet()->setCellValue($key4, round($answers[$key4], 2));
+            $objPHPExcel->getActiveSheet()->setCellValue($key4, $answers[$key4]);
             $objPHPExcel->getActiveSheet()->setCellValue($key5, $answers[$key5]);
-            $objPHPExcel->getActiveSheet()->setCellValue($key6, round($answers[$key6], 2));
+            $objPHPExcel->getActiveSheet()->setCellValue($key6, $answers[$key6]);
 
             $objPHPExcel->getActiveSheet()->getStyle($key)->getNumberFormat()->setFormatCode(Main::NUMBER_FORMAT);
             $objPHPExcel->getActiveSheet()->getStyle($key2)->getNumberFormat()->setFormatCode(Main::NUMBER_FORMAT);

@@ -46,16 +46,16 @@ class Main extends Model
     ];
 
     public static $sample = [
-      Main::INNER_GROUP_1=>526.00,
+      Main::INNER_GROUP_1=>565.00,
         Main::INNER_GROUP_2=>274.00,
-        Main::OUTER_GROUP_1=>850.00,
+        Main::OUTER_GROUP_1=>811.00,
         Main::OUTER_GROUP_2=>850.00
     ];
 
     public static $population = [
         Main::NORTHERN=>4467077,
-        Main::NORTHERN_INNER=>1432284,
-        Main::NORTHERN_OUTER=>3034793
+        Main::NORTHERN_INNER=> 1413774,
+        Main::NORTHERN_OUTER=> 3053303
     ];
 
     public static $provinceWeight = [

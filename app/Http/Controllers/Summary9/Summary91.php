@@ -700,13 +700,13 @@ class Summary91 extends Controller
 
         $isRadio = true;
         $startColumn = 'E';
-//        Summary::sum($table1,$startColumn,13,$objPHPExcel,$mainObj,$isRadio);
+        $objPHPExcel = Summary::sum($table1,$startColumn,13,$objPHPExcel,$mainObj,$isRadio);
         $startColumn = 'U';
-//        Summary::average($table2, $startColumn, 13, $objPHPExcel, $mainObj, $isRadio, $table1);
+        $objPHPExcel =Summary::average($table2, $startColumn, 13, $objPHPExcel, $mainObj, $isRadio, $table1);
         $startColumn = 'AL';
         $objPHPExcel = Summary::specialUsage($table3, $startColumn, 13, $objPHPExcel,$mainObj,$ktoe);
         $startColumn = 'BB';
-//        Summary::average($table4, $startColumn, 13, $objPHPExcel, $mainObj, $isRadio);
+        $objPHPExcel = Summary::average($table4, $startColumn, 13, $objPHPExcel, $mainObj, $isRadio, $table1);
 
         $objWriter = new \PHPExcel_Writer_Excel2007($objPHPExcel);
         $objWriter->save(storage_path(iconv('UTF-8', 'windows-874', 'excel/'.$outputFile)));
@@ -879,14 +879,14 @@ class Summary91 extends Controller
         $objPHPExcel->setActiveSheetIndexByName($inputSheet);
 
         $startColumn = 'E';
-        Summary::sum($table1,$startColumn,13,$objPHPExcel,$mainObj);
+        $objPHPExcel = Summary::sum($table1,$startColumn,13,$objPHPExcel,$mainObj);
         $startColumn = 'U';
-        Summary::average($table2, $startColumn, 13, $objPHPExcel, $mainObj);
+        $objPHPExcel = Summary::average($table2, $startColumn, 13, $objPHPExcel, $mainObj);
         $startColumn = 'AL';
 //        Summary::usageElectric();
         $objPHPExcel = Summary::usageElectric($table3, $startColumn, 13,$objPHPExcel, $mainObj,$sumAmountSQL,$params,$ktoe);
         $startColumn = 'BB';
-        Summary::average($table4, $startColumn, 13, $objPHPExcel, $mainObj);
+        $objPHPExcel = Summary::average($table4, $startColumn, 13, $objPHPExcel, $mainObj);
 
         $objWriter = new \PHPExcel_Writer_Excel2007($objPHPExcel);
         $objWriter->save(storage_path(iconv('UTF-8', 'windows-874', 'excel/'.$outputFile)));
