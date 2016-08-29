@@ -57,11 +57,11 @@ class Summary84 extends Controller
         $isRadio = true;
         $startColumn = 'C';
         $startRow = 11;
-        Summary::sum($table1,$startColumn,$startRow,$objPHPExcel,$mainObj,$isRadio);
+        $objPHPExcel = Summary::sum($table1,$startColumn,$startRow,$objPHPExcel,$mainObj,$isRadio);
 
         $startColumn = 'Q';
         $startRow = 11;
-        Summary::sum($table2,$startColumn,$startRow,$objPHPExcel,$mainObj,$isRadio);
+        $objPHPExcel = Summary::sum($table2,$startColumn,$startRow,$objPHPExcel,$mainObj,$isRadio);
 
 
         $objWriter = new \PHPExcel_Writer_Excel2007($objPHPExcel);

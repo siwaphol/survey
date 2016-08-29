@@ -33,10 +33,11 @@ Route::group(['middleware' => 'auth'], function () {
     Route::get('get-report916', 'SummaryController@downloadSum916');
     Route::get('get-report917', 'SummaryController@downloadSum917');
     Route::get('get-report918', 'SummaryController@downloadSum918');
-
     Route::get('download911', function (){
         return response()->download(storage_path('excel/sum911.xlsx'), 'ตารางสรุปหมวดแสงสว่าง.xlsx');
     });
+
+    Route::get('get-report131', 'SummaryController@downloadSum131');
 });
 
 Route::group(['prefix'=>'api'], function (){

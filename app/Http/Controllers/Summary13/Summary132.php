@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Http\Controllers\Summary8;
+namespace App\Http\Controllers\Summary13;
 
 use App\Main;
 use App\Parameter;
@@ -10,19 +10,19 @@ use Illuminate\Http\Request;
 use App\Http\Requests;
 use App\Http\Controllers\Controller;
 
-class Summary85 extends Controller
+class Summary132 extends Controller
 {
 
-    public static function report85()
+    public static function report132()
     {
         set_time_limit(1200);
 
         $mainObj = new Main();
         $mainObj->initList();
 
-        $inputFile = 'summary8.xlsx';
-        $inputSheet = '8.5';
-        $outputFile = 'sum85.xlsx';
+        $inputFile = 'summary13.xlsx';
+        $inputSheet = '13.1';
+        $outputFile = 'sum131.xlsx';
 
         $objPHPExcel = new \PHPExcel();
         $objPHPExcelMain = \PHPExcel_IOFactory::load(storage_path('excel/'. $inputFile));
@@ -77,24 +77,24 @@ class Summary85 extends Controller
 
         $startColumn = 'C';
         $startRow = 11;
-        $objPHPExcel = Summary::average($table1, $startColumn, $startRow, $objPHPExcel, $mainObj);
+        Summary::average($table1, $startColumn, $startRow, $objPHPExcel, $mainObj);
 
         $startColumn = 'Q';
         $startRow = 11;
-        $objPHPExcel = Summary::average($table2, $startColumn, $startRow, $objPHPExcel, $mainObj);
+        Summary::average($table2, $startColumn, $startRow, $objPHPExcel, $mainObj);
 
         $startColumn = 'AE';
         $startRow = 11;
-        $objPHPExcel = Summary::average($table3, $startColumn, $startRow, $objPHPExcel, $mainObj);
+        Summary::average($table3, $startColumn, $startRow, $objPHPExcel, $mainObj);
 
         $isRadio = true;
         $startColumn = 'AR';
         $startRow = 11;
-        $objPHPExcel = Summary::sum($table4,$startColumn,$startRow,$objPHPExcel,$mainObj,$isRadio);
+        Summary::sum($table4,$startColumn,$startRow,$objPHPExcel,$mainObj,$isRadio);
 
         $startColumn = 'BG';
         $startRow = 11;
-        $objPHPExcel = Summary::average($table5, $startColumn, $startRow, $objPHPExcel, $mainObj);
+        Summary::average($table5, $startColumn, $startRow, $objPHPExcel, $mainObj);
 
 
         $objWriter = new \PHPExcel_Writer_Excel2007($objPHPExcel);
