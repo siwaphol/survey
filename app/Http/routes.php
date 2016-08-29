@@ -37,6 +37,9 @@ Route::group(['middleware' => 'auth'], function () {
         return response()->download(storage_path('excel/sum911.xlsx'), 'ตารางสรุปหมวดแสงสว่าง.xlsx');
     });
 
+    Route::get('get-report11-1', 'Summary11Controller@downloadSum11_1');
+    Route::get('get-report11-2', 'Summary11Controller@downloadSum11_2');
+
     Route::get('get-report131', 'SummaryController@downloadSum131');
 });
 

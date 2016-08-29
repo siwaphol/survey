@@ -35,17 +35,12 @@ class Summary extends Model
             $rows[$startCol . $rowNumber] = $uniqueKey;
             $rowNumber++;
         }
-//        $start = microtime(true);
-        $answerObj = Answer::whereIn('unique_key', $uniqueKeyArr)->get();
-//        $time_elapsed_secs = microtime(true) - $start;
-//        echo " Answer query : " . $time_elapsed_secs . " seconds</br>";
 
+        $answerObj = Answer::whereIn('unique_key', $uniqueKeyArr)->get();
         $whereIn = [];
         $answers = [];
         foreach ($rows as $key => $value) {
             $whereIn[] = $value;
-//            echo $value . "\n";
-
             $p = [];
             $count = [];
 
@@ -75,22 +70,9 @@ class Summary extends Model
 
                 }
             } else {
-//                for ($i=1; $i<=4; $i++){
-//                    $mainList = $mainObj->filterMain($i);
-//
-//                    $whereCondition = " AND (unique_key='$value') ";
-//                    $whereInMainId = implode(",", $mainList);
-//                    $sql = "SELECT COUNT(*) as count FROM (SELECT main_id FROM answers WHERE main_id IN ($whereInMainId) " . $whereCondition . " GROUP BY main_id) t1";
-////                    $start = microtime(true);
-//                    $count[$i] = \DB::select($sql)[0]->count;
-////                    $time_elapsed_secs = microtime(true) - $start;
-////                    echo " Query " . $i . " : " . $time_elapsed_secs . " seconds</br>";
-//                }
-//                var_dump($count);
                 for ($i = 1; $i <= 4; $i++) {
                     $mainList = $mainObj->filterMain($i);
                     $dupMainId = [];
-//                    $start = microtime(true);
                     $count[$i] = $answerObj->filter(function ($item, $key) use ($mainList, $value, &$dupMainId) {
                         $condition = (!in_array($item->main_id, $dupMainId)) && $item->unique_key === $value
                             && in_array($item->main_id, $mainList);
@@ -99,8 +81,6 @@ class Summary extends Model
 
                         return $condition;
                     })->count();
-//                    $time_elapsed_secs = microtime(true) - $start;
-//                    echo " Collection " . $i . " : " . $time_elapsed_secs . " seconds</br>";
 
                     $p[$i] = $w[$i] * ((float)$count[$i] / $s[$i]);
 

@@ -13,6 +13,16 @@ use App\Http\Controllers\Controller;
 
 class Summary11Controller extends Controller
 {
+    public function downloadSum11_1()
+    {
+        Summary11Controller::report11_1();
+        return response()->download(storage_path('excel/sum11_1.xlsx'), '11.1 แหล่งพลังงานที่หาเองได้.xlsx');
+    }
+    public function downloadSum11_2()
+    {
+        Summary11Controller::report11_2();
+        return response()->download(storage_path('excel/sum11_2.xlsx'), '11.2 แหล่งพลังงานที่ซื้อ.xlsx');
+    }
     public static function report11_1()
     {
         set_time_limit(3600);
@@ -22,7 +32,7 @@ class Summary11Controller extends Controller
 
         $inputFile = 'summary11.xlsx';
         $inputSheet = '11.1';
-        $outputFile = 'sum111.xlsx';
+        $outputFile = 'sum11_1.xlsx';
 
         $objPHPExcel = new \PHPExcel();
         $objPHPExcelMain = \PHPExcel_IOFactory::load(storage_path('excel/'. $inputFile));
@@ -42,7 +52,7 @@ class Summary11Controller extends Controller
             Main::NORTHERN_INNER=> 'M',
             Main::NORTHERN_OUTER=>'W'];
         $startRow = 10;
-
+        $objPHPExcel = Summary11Controller::sum($table1, $startColumn,$startRow,$objPHPExcel,$mainObj);
 
         $table7 = [
             'no_ra800_o81_ti801_ch802_o266_nu806',
@@ -114,7 +124,50 @@ class Summary11Controller extends Controller
 
     public static function report11_2()
     {
+        set_time_limit(3600);
 
+        $mainObj = new Main();
+        $mainObj->initList();
+
+        $inputFile = 'summary11.xlsx';
+        $inputSheet = '11.2';
+        $outputFile = 'sum11_2.xlsx';
+
+        $objPHPExcel = new \PHPExcel();
+        $objPHPExcelMain = \PHPExcel_IOFactory::load(storage_path('excel/'. $inputFile));
+        $objPHPExcel->addExternalSheet($objPHPExcelMain->getSheetByName($inputSheet));
+        $objPHPExcel->removeSheetByIndex(0);
+        $objPHPExcel->setActiveSheetIndexByName($inputSheet);
+
+        $table1 = [
+            'no_ra808_o81_ti829_ch830_o266_ra831'=>[326,327,328],
+            'no_ra808_o81_ti829_ch830_o267_ra831'=>[326,327,328],
+            'no_ra808_o81_ti829_ch830_o268_ra831'=>[326,327,328],
+            'no_ra808_o81_ti829_ch830_o269_ra831'=>[326,327,328],
+            'no_ra808_o81_ti809_ch810_o228_ra811'=>[326,327,328],
+            'no_ra808_o81_ti809_ch810_o229_ra811'=>[326,327,328],
+            'no_ra808_o81_ti809_ch810_o230_ra811'=>[326,327,328],
+            'no_ra808_o81_ti809_ch810_o231_ra811'=>[326,327,328],
+            'no_ra808_o81_ti809_ch810_o232_ra811'=>[326,327,328],
+            'no_ra808_o81_ti809_ch810_o233_ra811'=>[326,327,328],
+            'no_ra808_o81_ti809_ch810_o234_ra811'=>[326,327,328],
+            'no_ra808_o81_ti809_ch810_o235_ra811'=>[326,327,328],
+            'no_ra808_o81_ti821_ch822_o236_ra823'=>[326,327,328],
+            'no_ra808_o81_ti829_ch830_o1_ra831'=>[326,327,328]
+        ];
+        
+        $startColumn = [
+            Main::NORTHERN=>'C',
+            Main::NORTHERN_INNER=> 'K',
+            Main::NORTHERN_OUTER=>'S'];
+        $startRow = 10;
+        $objPHPExcel = Summary11Controller::sum($table1, $startColumn,$startRow,$objPHPExcel,$mainObj);
+
+        $objWriter = new \PHPExcel_Writer_Excel2007($objPHPExcel);
+        $objWriter->save(storage_path(iconv('UTF-8', 'windows-874', 'excel/'.$outputFile)));
+        dd();
+
+        return true;
     }
 
     public static function sum($uniqueKeyArr, $startCol, $startRow, $objPHPExcel, $mainObj)
@@ -151,6 +204,18 @@ class Summary11Controller extends Controller
 //        $whereIn = [];
         $answers = [];
         $percents = [];
+        if (!isset($answers[Main::NORTHERN_INNER])){
+            $answers[Main::NORTHERN_INNER] = array();
+            $percents[Main::NORTHERN_INNER] = array();
+        }
+        if (!isset($answers[Main::NORTHERN_OUTER])){
+            $answers[Main::NORTHERN_OUTER] = array();
+            $percents[Main::NORTHERN_OUTER] = array();
+        }
+        if (!isset($answers[Main::NORTHERN])){
+            $answers[Main::NORTHERN] = array();
+            $percents[Main::NORTHERN] = array();
+        }
         foreach ($uniqueKeyArr as $unique_key=>$options){
 //            $whereIn[] = $value;
 
@@ -184,74 +249,42 @@ class Summary11Controller extends Controller
                 $whereCondition .= " )";
 
                 $whereInMainId = implode(",", $mainList);
-                $sql = "SELECT {$selectCountSql} FROM (SELECT main_id,unique_key FROM answers WHERE main_id IN ($whereInMainId) " . $whereCondition . " GROUP BY main_id,unique_key) t1";
+                $sql = "SELECT {$selectCountSql} FROM (SELECT main_id,unique_key,option_id FROM answers WHERE main_id IN ($whereInMainId) " . $whereCondition . " GROUP BY main_id,unique_key,option_id) t1";
 
                 $result = \DB::select($sql)[0];
 
                 foreach ($allCountAttr as $attr){
                     $count[$i][$attr] = $result->{$attr};
-                    $p[$i][$attr] = $w[$i] * ((float)$count[$i][$attr] / $s[$i]) * $S[$i];
+                    $percents[$i][$attr] = $w[$i] * ((float)$count[$i][$attr] / $s[$i]);
+//                    $p[$i][$attr] = $w[$i] * ((float)$count[$i][$attr] / $s[$i]);
                 }
 //                $count[$i] = \DB::select($sql)[0]->count;
 //                $p[$i] = $w[$i] * ((float)$count[$i]/ $s[$i]) * $S[$i];
             }
 
-            if (!isset($answers[Main::NORTHERN_INNER])){
-                $answers[Main::NORTHERN_INNER] = array();
-                $percents[Main::NORTHERN_INNER] = array();
-            }
-            if (!isset($answers[Main::NORTHERN_OUTER])){
-                $answers[Main::NORTHERN_OUTER] = array();
-                $percents[Main::NORTHERN_OUTER] = array();
-            }
-            if (!isset($answers[Main::NORTHERN])){
-                $answers[Main::NORTHERN] = array();
-                $percents[Main::NORTHERN] = array();
-            }
-
+            $tempCol = $startCol;
             foreach ($allCountAttr as $attr){
-                $answers[Main::NORTHERN_INNER][$attr] = (int)($p[Main::INNER_GROUP_1][$attr]+$p[Main::INNER_GROUP_2][$attr]);
-                $answers[Main::NORTHERN_OUTER][$attr] = (int)($p[Main::OUTER_GROUP_1][$attr]+$p[Main::OUTER_GROUP_2][$attr]);
+                $percents[Main::NORTHERN_INNER][$attr] = $percents[Main::INNER_GROUP_1][$attr]+$percents[Main::INNER_GROUP_2][$attr];
+                $percents[Main::NORTHERN_OUTER][$attr] = $percents[Main::OUTER_GROUP_1][$attr]+$percents[Main::OUTER_GROUP_2][$attr];
 
-                $percents[Main::NORTHERN_INNER][$attr] = ($answers[Main::NORTHERN_INNER][$attr]*100)/(float)$paramSheet->getCell(Parameter::$populationColumn[Main::NORTHERN_INNER])->getValue();
-                $percents[Main::NORTHERN_OUTER][$attr] = ($answers[Main::NORTHERN_OUTER][$attr]*100)/(float)$paramSheet->getCell(Parameter::$populationColumn[Main::NORTHERN_OUTER])->getValue();
+                $answers[Main::NORTHERN_INNER][$attr] = $percents[Main::NORTHERN_INNER][$attr]*Main::$population[Main::NORTHERN_INNER];
+                $answers[Main::NORTHERN_OUTER][$attr] = $percents[Main::NORTHERN_OUTER][$attr]*Main::$population[Main::NORTHERN_OUTER];
 
-                $answers[Main::NORTHERN][$attr] = ($answers[Main::NORTHERN_INNER][$attr]+$answers[Main::NORTHERN_OUTER][$attr])/2.0;
+                $percents[Main::NORTHERN][$attr] = $percents[Main::NORTHERN_INNER][$attr]*Main::$weight[Main::NORTHERN_INNER] + $percents[Main::NORTHERN_OUTER][$attr]*Main::$weight[Main::NORTHERN_OUTER];
+                $answers[Main::NORTHERN][$attr] = $percents[Main::NORTHERN][$attr]*Main::$population[Main::NORTHERN];
+
+                $l_loop = [Main::NORTHERN,Main::NORTHERN_OUTER, Main::NORTHERN_INNER];
+                foreach ($l_loop as $l_key){
+                    $objPHPExcel->getActiveSheet()->setCellValue($tempCol[$l_key].$startRow, $answers[$l_key][$attr]);
+                    $objPHPExcel->getActiveSheet()->getStyle($tempCol[$l_key].$startRow)->getNumberFormat()->setFormatCode(Main::NUMBER_FORMAT);
+                    $tempCol[$l_key]++;
+                    $objPHPExcel->getActiveSheet()->setCellValue($tempCol[$l_key].$startRow, $percents[$l_key][$attr]*100);
+                    $objPHPExcel->getActiveSheet()->getStyle($tempCol[$l_key].$startRow)->getNumberFormat()->setFormatCode(Main::NUMBER_FORMAT);
+                    $tempCol[$l_key]++;
+                }
             }
+            $startRow++;
 //            $answers[Main::NORTHERN_INNER] = (int)($p[Main::INNER_GROUP_1] + $p[Main::INNER_GROUP_2]);
-
-            $answers[$key] = (int)($p[1] + $p[2]);
-            $col=$startCol;
-            $col++;
-            $key2 = preg_replace('/[A-Z]+/', $col, $key);
-            $answers[$key2] = ($answers[$key]*100.0)/(float)$paramSheet->getCell(Parameter::$populationColumn[Main::NORTHERN_INNER])->getValue();
-            $col++;
-            $key3 = preg_replace('/[A-Z]+/', $col, $key);
-            $answers[$key3] = (int)($p[3] + $p[4]);
-            $col++;
-            $key4 = preg_replace('/[A-Z]+/', $col, $key);
-            $answers[$key4] = ($answers[$key3]*100.0)/(float)$paramSheet->getCell(Parameter::$populationColumn[Main::NORTHERN_OUTER])->getValue();
-            //รวม
-            $col++;
-            $key5 = preg_replace('/[A-Z]+/', $col, $key);
-            $col++;
-            $key6 = preg_replace('/[A-Z]+/', $col, $key);
-            $answers[$key6] = ($answers[$key2]+$answers[$key4])/2.0;
-            $answers[$key5] = ($answers[$key6]/100.0) * (float)$paramSheet->getCell(Parameter::$populationColumn[Main::NORTHERN])->getValue();
-
-            $objPHPExcel->getActiveSheet()->setCellValue($key, $answers[$key]);
-            $objPHPExcel->getActiveSheet()->setCellValue($key2, $answers[$key2]);
-            $objPHPExcel->getActiveSheet()->setCellValue($key3, $answers[$key3]);
-            $objPHPExcel->getActiveSheet()->setCellValue($key4, $answers[$key4]);
-            $objPHPExcel->getActiveSheet()->setCellValue($key5, $answers[$key5]);
-            $objPHPExcel->getActiveSheet()->setCellValue($key6, $answers[$key6]);
-
-            $objPHPExcel->getActiveSheet()->getStyle($key)->getNumberFormat()->setFormatCode(Main::NUMBER_FORMAT);
-            $objPHPExcel->getActiveSheet()->getStyle($key2)->getNumberFormat()->setFormatCode(Main::NUMBER_FORMAT);
-            $objPHPExcel->getActiveSheet()->getStyle($key3)->getNumberFormat()->setFormatCode(Main::NUMBER_FORMAT);
-            $objPHPExcel->getActiveSheet()->getStyle($key4)->getNumberFormat()->setFormatCode(Main::NUMBER_FORMAT);
-            $objPHPExcel->getActiveSheet()->getStyle($key5)->getNumberFormat()->setFormatCode(Main::NUMBER_FORMAT);
-            $objPHPExcel->getActiveSheet()->getStyle($key6)->getNumberFormat()->setFormatCode(Main::NUMBER_FORMAT);
         }
 
         return $objPHPExcel;
