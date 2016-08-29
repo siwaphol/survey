@@ -69,7 +69,10 @@ class Summary extends Model
                     $whereInMainId = implode(",", $mainList);
                     $sql = "SELECT COUNT(*) as count FROM (SELECT main_id FROM answers WHERE main_id IN ($whereInMainId) " . $whereCondition . " GROUP BY main_id) t1";
                     $count[$i] = \DB::select($sql)[0]->count;
-                    $p[$i] = $w[$i] * ((float)$count[$i] / $s[$i]) * $S[$i];
+                    $p[$i] = $w[$i] * ((float)$count[$i] / $s[$i]);
+
+                    //echo $w[$i]." / ".$count[$i]." / ". $s[$i]." / ".$p[$i]."<br><br>";
+
                 }
             } else {
 //                for ($i=1; $i<=4; $i++){
@@ -99,34 +102,40 @@ class Summary extends Model
 //                    $time_elapsed_secs = microtime(true) - $start;
 //                    echo " Collection " . $i . " : " . $time_elapsed_secs . " seconds</br>";
 
-                    $p[$i] = $w[$i] * ((float)$count[$i] / $s[$i]) * $S[$i];
+                    $p[$i] = $w[$i] * ((float)$count[$i] / $s[$i]);
+
                 }
             }
-            $answers[$key] = (int)($p[1] + $p[2]);
+            $percentage = $p[1] + $p[2];
+            $answers[$key] = $percentage*$S[1];
             $col = $startCol;
             $col++;
             $key2 = preg_replace('/[A-Z]+/', $col, $key);
-            $answers[$key2] = ($answers[$key] * 100.0) / (float)$paramSheet->getCell(Parameter::$populationColumn[Main::NORTHERN_INNER])->getValue();
+            $answers[$key2] = $percentage;
             $col++;
             $key3 = preg_replace('/[A-Z]+/', $col, $key);
-            $answers[$key3] = (int)($p[3] + $p[4]);
+
+            $percentage = $p[3] + $p[4];
+
+
+            $answers[$key3] = $percentage*$S[3];
             $col++;
             $key4 = preg_replace('/[A-Z]+/', $col, $key);
-            $answers[$key4] = ($answers[$key3] * 100.0) / (float)$paramSheet->getCell(Parameter::$populationColumn[Main::NORTHERN_OUTER])->getValue();
+            $answers[$key4] = $percentage;
             //รวม
             $col++;
             $key5 = preg_replace('/[A-Z]+/', $col, $key);
             $col++;
             $key6 = preg_replace('/[A-Z]+/', $col, $key);
-            $answers[$key6] = ($answers[$key2] + $answers[$key4]) / 2.0;
-            $answers[$key5] = ($answers[$key6] / 100.0) * (float)$paramSheet->getCell(Parameter::$populationColumn[Main::NORTHERN])->getValue();
+            $answers[$key6] = ($answers[$key2]*Main::$weight[Main::NORTHERN_INNER] + $answers[$key4]*Main::$weight[Main::NORTHERN_OUTER]);
+            $answers[$key5] = ($answers[$key6] ) * (float)$paramSheet->getCell(Parameter::$populationColumn[Main::NORTHERN])->getValue();
 
             $objPHPExcel->getActiveSheet()->setCellValue($key, $answers[$key]);
-            $objPHPExcel->getActiveSheet()->setCellValue($key2, round($answers[$key2], 2));
+            $objPHPExcel->getActiveSheet()->setCellValue($key2, ($answers[$key2]));
             $objPHPExcel->getActiveSheet()->setCellValue($key3, $answers[$key3]);
-            $objPHPExcel->getActiveSheet()->setCellValue($key4, round($answers[$key4], 2));
+            $objPHPExcel->getActiveSheet()->setCellValue($key4, ($answers[$key4]));
             $objPHPExcel->getActiveSheet()->setCellValue($key5, $answers[$key5]);
-            $objPHPExcel->getActiveSheet()->setCellValue($key6, round($answers[$key6], 2));
+            $objPHPExcel->getActiveSheet()->setCellValue($key6, ($answers[$key6]));
 
             $objPHPExcel->getActiveSheet()->getStyle($key)->getNumberFormat()->setFormatCode(Main::NUMBER_FORMAT);
             $objPHPExcel->getActiveSheet()->getStyle($key2)->getNumberFormat()->setFormatCode(Main::NUMBER_FORMAT);
@@ -685,47 +694,64 @@ class Summary extends Model
             $count = [];
             for ($i = 1; $i <= 4; $i++) { //กลุ่มจังหวัด
                 $mainList = $mainObj->filterMain($i);
-                $whereCondition = "";
-
+                $whereCondition1 = "";
+                $whereCondition3 = "";
                 $idx = 0;
                 foreach ($value as $radioKey => $radioValue) {
                     if ($idx === 0) {
-                        $whereCondition .= " AND ( ";
+                        $whereCondition1 .= " AND ( ";
+                        $whereCondition3 .= " AND ( ";
                     } else {
-                        $whereCondition .= " OR ";
+                        $whereCondition1 .= " OR ";
+                        $whereCondition3 .= " OR ";
                     }
-                    $whereCondition .= " ((unique_key='{$mainUnique}' AND option_id = {$uniqueVal}) and (unique_key='$changeUnique' AND option_id = $radioValue))  ";
-                    $whereCondition .= " OR ((unique_key='$notSure' AND option_id = {$uniqueVal}) and (unique_key='$notInNotSure' AND option_id = $radioValue)) ";
+                    //$whereCondition .= " (unique_key='{$mainUnique}' AND option_id = {$uniqueVal}) and (unique_key='$changeUnique' AND option_id = $radioValue)  ";
+                    //$whereCondition2 = " AND (unique_key='$notSure' AND option_id = {$uniqueVal}) and (unique_key='$notInNotSure' AND option_id = $radioValue) ";
+                    $whereCondition1 .= " (unique_key='{$mainUnique}' AND option_id = {$uniqueVal})  ";
+                    $whereCondition2 = " AND (unique_key='$changeUnique' AND option_id = $radioValue)  ";
+                    $whereCondition3 .= " (unique_key='{'$notSure'}' AND option_id = {$uniqueVal})  ";
+                    $whereCondition4 = " AND (unique_key='{$notInNotSure}' AND option_id = $radioValue)  ";
                     $idx++;
                 }
-                $whereCondition .= " )";
+                $whereCondition1 .= " )";
+                $whereCondition3 .= " )";
 
-                $whereInMainId = implode(",", $mainList);
-                $sql = "SELECT COUNT(*) as count FROM (SELECT main_id FROM answers WHERE main_id IN ($whereInMainId) " . $whereCondition . " GROUP BY main_id) t1";
-                //echo $sql."<br><br>";
-                $count[$i] = \DB::select($sql)[0]->count;
-                $p[$i] = $w[$i] * ((float)$count[$i] / $s[$i]) * $S[$i];
+                $whereInMainId = implode(", ", $mainList);
+                $sql = "SELECT COUNT(*) as count FROM (SELECT main_id FROM answers WHERE main_id IN ($whereInMainId) " . $whereCondition1 . " )  t1 ";
+                $sql .= " inner join (SELECT main_id FROM answers WHERE main_id IN ($whereInMainId) " . $whereCondition2 . " ) t2 on t1.main_id = t2.main_id GROUP BY t2.main_id";
+                $sql2 = "SELECT COUNT(*) as count FROM (SELECT main_id FROM answers WHERE main_id IN ($whereInMainId) " . $whereCondition3 . " )  t1 ";
+                $sql2 .= " inner join (SELECT main_id FROM answers WHERE main_id IN ($whereInMainId) " . $whereCondition4 . " ) t2 on t1.main_id = t2.main_id GROUP BY t2.main_id";
+                //echo $sql." ".count($mainList)."<br><br>";
+                $result1 = \DB::select($sql);
+                $result2 = \DB::select($sql);
+                $count[$i] = count($result1)==0?0:$result1[0]->count;
+                $count[$i] += count($result2)==0?0:$result2[0]->count;
+                $p[$i] = $w[$i] * ((float)$count[$i] / $s[$i]);
             }
 
-
-            $answers[$key] = (int)($p[1] + $p[2]);
+            $percentage = $p[1] + $p[2];
+            $answers[$key] = $percentage*$S[1];
             $col = $startCol;
             $col++;
             $key2 = preg_replace('/[A-Z]+/', $col, $key);
-            $answers[$key2] = ($answers[$key] * 100.0) / (float)$paramSheet->getCell(Parameter::$populationColumn[Main::NORTHERN_INNER])->getValue();
+            $answers[$key2] = $percentage;
             $col++;
             $key3 = preg_replace('/[A-Z]+/', $col, $key);
-            $answers[$key3] = (int)($p[3] + $p[4]);
+
+            $percentage = $p[3] + $p[4];
+
+
+            $answers[$key3] = $percentage*$S[3];
             $col++;
             $key4 = preg_replace('/[A-Z]+/', $col, $key);
-            $answers[$key4] = ($answers[$key3] * 100.0) / (float)$paramSheet->getCell(Parameter::$populationColumn[Main::NORTHERN_OUTER])->getValue();
+            $answers[$key4] = $percentage;
             //รวม
             $col++;
             $key5 = preg_replace('/[A-Z]+/', $col, $key);
             $col++;
             $key6 = preg_replace('/[A-Z]+/', $col, $key);
-            $answers[$key6] = ($answers[$key2] + $answers[$key4]) / 2.0;
-            $answers[$key5] = ($answers[$key6] / 100.0) * (float)$paramSheet->getCell(Parameter::$populationColumn[Main::NORTHERN])->getValue();
+            $answers[$key6] = ($answers[$key2]*Main::$weight[Main::NORTHERN_INNER] + $answers[$key4]*Main::$weight[Main::NORTHERN_OUTER]);
+            $answers[$key5] = ($answers[$key6]/100 ) * (float)$paramSheet->getCell(Parameter::$populationColumn[Main::NORTHERN])->getValue();
 
             $objPHPExcel->getActiveSheet()->setCellValue($key, $answers[$key]);
             $objPHPExcel->getActiveSheet()->setCellValue($key2, round($answers[$key2], 2));

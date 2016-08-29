@@ -29,53 +29,57 @@ class Main extends Model
     const NUMBER_FORMAT = '#,##0.00';
 
     public static $weight = [
-        Main::INNER_GROUP_1=>0.66,
-        Main::INNER_GROUP_2=>0.34,
-        Main::OUTER_GROUP_1=>0.50,
-        Main::OUTER_GROUP_2=>0.50,
-        Main::CHIANGMAI_INNER=>0.853,
-        Main::CHIANGMAI_OUTER=>0.799,
-        Main::UTARADIT_INNER=>0.147,
-        Main::UTARADIT_OUTER=>0.201,
+        Main::NORTHERN_INNER=>0.336,
+        Main::NORTHERN_OUTER=>0.664,
+        Main::INNER_GROUP_1=>0.673,
+        Main::INNER_GROUP_2=>0.327,
+        Main::OUTER_GROUP_1=>0.488,
+        Main::OUTER_GROUP_2=>0.512,
+        Main::CHIANGMAI_INNER=>0.862,
+        Main::CHIANGMAI_OUTER=>0.782,
+        Main::UTARADIT_INNER=>0.138,
+        Main::UTARADIT_OUTER=>0.218,
         Main::NAN_INNER=>0.150,
-        Main::NAN_OUTER=>0.27,
-        Main::PITSANULOK_INNER=>0.436,
-        Main::PITSANULOK_OUTER=>0.36,
-        Main::PETCHABUL_INNER=>0.413,
-        Main::PETCHABUL_OUTER=>0.38
+        Main::NAN_OUTER=>0.206,
+        Main::PITSANULOK_INNER=>0.438,
+        Main::PITSANULOK_OUTER=>0.386,
+        Main::PETCHABUL_INNER=>0.412,
+        Main::PETCHABUL_OUTER=>0.408
     ];
 
     public static $sample = [
-      Main::INNER_GROUP_1=>526.00,
+      Main::INNER_GROUP_1=>565.00,
         Main::INNER_GROUP_2=>274.00,
-        Main::OUTER_GROUP_1=>850.00,
+        Main::OUTER_GROUP_1=>811.00,
         Main::OUTER_GROUP_2=>850.00
     ];
 
     public static $population = [
         Main::NORTHERN=>4467077,
-        Main::NORTHERN_INNER=>1432284,
-        Main::NORTHERN_OUTER=>3034793
+        Main::NORTHERN_INNER=>1413774,
+        Main::NORTHERN_OUTER=>3053303
     ];
 
+
+
     public static $provinceWeight = [
-        Main::CHIANGMAI_INNER=>0.853,
-        Main::CHIANGMAI_OUTER=>0.799,
-        Main::UTARADIT_INNER=>0.147,
-        Main::UTARADIT_OUTER=>0.201,
+        Main::CHIANGMAI_INNER=>0.862,
+        Main::CHIANGMAI_OUTER=>0.782,
+        Main::UTARADIT_INNER=>0.138,
+        Main::UTARADIT_OUTER=>0.218,
         Main::NAN_INNER=>0.150,
-        Main::NAN_OUTER=>0.27,
-        Main::PITSANULOK_INNER=>0.436,
-        Main::PITSANULOK_OUTER=>0.36,
-        Main::PETCHABUL_INNER=>0.413,
-        Main::PETCHABUL_OUTER=>0.38
+        Main::NAN_OUTER=>0.206,
+        Main::PITSANULOK_INNER=>0.438,
+        Main::PITSANULOK_OUTER=>0.386,
+        Main::PETCHABUL_INNER=>0.412,
+        Main::PETCHABUL_OUTER=>0.408
     ];
 
     public static $borderWeight = [
-        Main::INNER_GROUP_1=>0.66,
-        Main::INNER_GROUP_2=>0.34,
-        Main::OUTER_GROUP_1=>0.50,
-        Main::OUTER_GROUP_2=>0.50,
+        Main::INNER_GROUP_1=>0.673,
+        Main::INNER_GROUP_2=>0.327,
+        Main::OUTER_GROUP_1=>0.488,
+        Main::OUTER_GROUP_2=>0.512,
     ];
 
     protected $mainList;

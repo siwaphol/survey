@@ -106,7 +106,7 @@ class Summary131 extends Controller
         $startColumn = 'C';
         $startRow = 11;
         $objPHPExcel = Summary::sum($table1,$startColumn,$startRow,$objPHPExcel,$mainObj,$isRadio);
-
+/*
         $startColumn = 'Q';
         $startRow = 11;
         $objPHPExcel = Summary::sum13($table2,$startColumn,$startRow,$objPHPExcel,$mainObj, 'no_ra900_o264_ra902', 'no_ra900_o265_ra901', 'no_ra900_o265_ra902', 'no_ra900_o264_ra901', 266);
@@ -134,7 +134,7 @@ class Summary131 extends Controller
         $startColumn = 'CW';
         $startRow = 11;
         $objPHPExcel = Summary::sum13($table2,$startColumn,$startRow,$objPHPExcel,$mainObj, 'no_ra900_o264_ra902', 'no_ra900_o265_ra901', 'no_ra900_o265_ra902', 'no_ra900_o264_ra901', 272);
-
+*/
 
 
 

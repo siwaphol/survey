@@ -77,24 +77,24 @@ class Summary85 extends Controller
 
         $startColumn = 'C';
         $startRow = 11;
-        Summary::average($table1, $startColumn, $startRow, $objPHPExcel, $mainObj);
+        $objPHPExcel = Summary::average($table1, $startColumn, $startRow, $objPHPExcel, $mainObj);
 
         $startColumn = 'Q';
         $startRow = 11;
-        Summary::average($table2, $startColumn, $startRow, $objPHPExcel, $mainObj);
+        $objPHPExcel = Summary::average($table2, $startColumn, $startRow, $objPHPExcel, $mainObj);
 
         $startColumn = 'AE';
         $startRow = 11;
-        Summary::average($table3, $startColumn, $startRow, $objPHPExcel, $mainObj);
+        $objPHPExcel = Summary::average($table3, $startColumn, $startRow, $objPHPExcel, $mainObj);
 
         $isRadio = true;
         $startColumn = 'AR';
         $startRow = 11;
-        Summary::sum($table4,$startColumn,$startRow,$objPHPExcel,$mainObj,$isRadio);
+        $objPHPExcel = Summary::sum($table4,$startColumn,$startRow,$objPHPExcel,$mainObj,$isRadio);
 
         $startColumn = 'BG';
         $startRow = 11;
-        Summary::average($table5, $startColumn, $startRow, $objPHPExcel, $mainObj);
+        $objPHPExcel = Summary::average($table5, $startColumn, $startRow, $objPHPExcel, $mainObj);
 
 
         $objWriter = new \PHPExcel_Writer_Excel2007($objPHPExcel);

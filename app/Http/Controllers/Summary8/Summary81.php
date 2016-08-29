@@ -84,14 +84,14 @@ class Summary81 extends Controller
 
         $isRadio = true;
         $startColumn = 'C';
-        Summary::sum($table1,$startColumn,11,$objPHPExcel,$mainObj,$isRadio);
+        $objPHPExcel = Summary::sum($table1,$startColumn,11,$objPHPExcel,$mainObj,$isRadio);
         $startColumn = 'Q';
-        Summary::sum($table2,$startColumn,11,$objPHPExcel,$mainObj,$isRadio);
+        $objPHPExcel = Summary::sum($table2,$startColumn,11,$objPHPExcel,$mainObj,$isRadio);
         $startColumn = 'AE';
-        Summary::sum($table3,$startColumn,11,$objPHPExcel,$mainObj,$isRadio);
+        $objPHPExcel = Summary::sum($table3,$startColumn,11,$objPHPExcel,$mainObj,$isRadio);
         $startColumn = 'AS';
         $isRadio = false;
-        Summary::sum($table4,$startColumn,11,$objPHPExcel,$mainObj,$isRadio);
+        $objPHPExcel = Summary::sum($table4,$startColumn,11,$objPHPExcel,$mainObj,$isRadio);
 
         $objWriter = new \PHPExcel_Writer_Excel2007($objPHPExcel);
         $objWriter->save(storage_path(iconv('UTF-8', 'windows-874', 'excel/'.$outputFile)));
