@@ -19,6 +19,11 @@ Route::group(['middleware' => 'auth'], function () {
     Route::post('test-post-3','AnswerController@saveAnswersWithEasiestWay2');
 
     Route::get('report', 'SummaryController@index');
+    Route::get('get-report81', 'SummaryController@downloadSum81');
+    Route::get('get-report82', 'SummaryController@downloadSum82');
+    Route::get('get-report83', 'SummaryController@downloadSum83');
+    Route::get('get-report84', 'SummaryController@downloadSum84');
+    Route::get('get-report85', 'SummaryController@downloadSum85');
     Route::get('get-report911', 'SummaryController@downloadSum911');
     Route::get('get-report912', 'SummaryController@downloadSum912');
     // หมวดความสะดวกสบาย
