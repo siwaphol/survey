@@ -204,12 +204,16 @@ class Summary extends Model
                 }else{
                     if (is_array($value)){
                         $whereUniqueKey = implode("','", $value);
+                        $tempUniqueKey = $whereUniqueKey;
                         $whereUniqueKey = " AND unique_key IN ('" .$whereUniqueKey."') ";
-                    }else
+                        $sumSQL = " SUM(IF(unique_key IN ('$tempUniqueKey'),answer_numeric,0)) ";
+                    }else{
                         $whereUniqueKey = " AND unique_key='$value'";
+                        $sumSQL = " SUM(IF(unique_key='$value', answer_numeric,0)) ";
+                    }
 
                     $avgSql = "SELECT AVG(sum1) as average, COUNT(*) as countAll FROM
-                        (SELECT sum(answer_numeric) AS sum1 FROM answers
+                        (SELECT $sumSQL AS sum1 FROM answers
                         WHERE main_id IN ($whereMainId) " . $whereUniqueKey
                         ." GROUP BY main_id) T1";
                 }
@@ -251,12 +255,16 @@ class Summary extends Model
                     //old2
                     if (is_array($value)){
                         $whereUniqueKey = implode("','", $value);
+                        $tempUniqueKey = $whereUniqueKey;
                         $whereUniqueKey = " AND unique_key IN ('" .$whereUniqueKey."') ";
-                    }else
+                        $sumSQL = " SUM(IF(unique_key IN ('$tempUniqueKey'),answer_numeric,0)) ";
+                    }else{
                         $whereUniqueKey = " AND unique_key='$value'";
+                        $sumSQL = " SUM(IF(unique_key='$value', answer_numeric,0)) ";
+                    }
 
                     $avgSql = "SELECT AVG(sum1) as average, COUNT(*) as countAll FROM
-                        (SELECT sum(answer_numeric) AS sum1 FROM answers
+                        (SELECT $sumSQL AS sum1 FROM answers
                         WHERE main_id IN ($whereMainId) " . $whereUniqueKey
                         ." GROUP BY main_id) T1";
                 }
@@ -488,7 +496,7 @@ class Summary extends Model
         return $objPHPExcel;
     }
 
-    public static function specialUsage($uniqueKeyArr, $startCol, $startRow, $objPHPExcel,$mainObj, $sqlSum, $param,$ktoe,$gas=false, $ktoeIdx=false, $isRadio = false)
+    public static function specialUsage($uniqueKeyArr, $startCol, $startRow, $objPHPExcel,$mainObj,$ktoe)
     {
         $parameterExcel = \PHPExcel_IOFactory::load(storage_path('excel/parameters.xlsx'));
         $parameterExcel->setActiveSheetIndex(2);
@@ -497,13 +505,13 @@ class Summary extends Model
         $population[Main::NORTHERN_INNER] = (float)$paramSheet->getCell(Parameter::$populationColumn[Main::NORTHERN_INNER])->getValue();
         $population[Main::NORTHERN_OUTER] = (float)$paramSheet->getCell(Parameter::$populationColumn[Main::NORTHERN_OUTER])->getValue();
 
-        $allUniqueKey = [];
-        foreach ($uniqueKeyArr as $item){
-            foreach ($item as $subItem){
-                if (is_string($subItem))
-                    $allUniqueKey[] = $subItem;
-            }
-        }
+//        $allUniqueKey = [];
+//        foreach ($uniqueKeyArr as $item){
+//            foreach ($item as $subItem){
+//                if (is_string($subItem))
+//                    $allUniqueKey[] = $subItem;
+//            }
+//        }
 
         $rows = [];
         $count = [];
@@ -514,41 +522,76 @@ class Summary extends Model
         }
 
         $answers = [];
+        $level1Counter = 0;
         foreach ($rows as $key=>$value){
             $sum = [];
 
+//            $starttime = microtime(true);
             foreach (Main::$borderWeight as $b_key=>$b_weight){
                 $mainList = $mainObj->filterMain($b_key);
-
-                $finalSql = $sqlSum;
-                foreach ($param as $pKey=>$pValue){
-                    $finalSql = str_replace($pKey, $value[$pValue], $finalSql);
-                }
-
                 $whereMainId = implode(",", $mainList);
-                if (is_array($value)){
-                    $whereUniqueKey = implode("','", $value);
-                    $whereUniqueKey = " AND unique_key IN ('" .$whereUniqueKey."') ";
-                }else
-                    $whereUniqueKey = " AND unique_key='$value'";
-                $avgSql = "SELECT COUNT(*) as countAll FROM
-                        (SELECT sum(answer_numeric) AS sum1 FROM answers
-                        WHERE main_id IN ($whereMainId) " . $whereUniqueKey
-                    . " GROUP BY main_id) T1";
-                $avgResult = \DB::select($avgSql);
-                $count[$b_key] = $avgResult[0]->countAll;
+                // สำหรับหมวดคมนาคมอย่างเดียว
+//                if ($isRadio){
+//                    $newSql = " (IF(SUM(IF(unique_key='radioKey' AND option_id=radioValue,1,0))>1,1,SUM(IF(unique_key='radioKey' AND option_id=radioValue,1,0))) * SUM(IF(unique_key='amountKey',answer_numeric,0))) ";
+//                    $finalSql = "";
+//                    $idx = 0;
+//                    $whereUniqueKey = implode("','", $value);
+//                    $whereUniqueKey = "'" .$whereUniqueKey."'";
+//                    foreach ($radioArr[$level1Counter] as $radioKey=>$radioValue){
+//                        $temp = $newSql;
+//                        $temp = str_replace('radioKey', $radioKey, $temp);
+//                        $temp = str_replace('radioValue', $radioValue, $temp);
+//                        $temp = str_replace('amountKey', $value[$idx], $temp);
+//
+//                        $finalSql .= $temp . " + ";
+//
+//                        $whereUniqueKey.= ",'" . $radioKey . "'";
+//                        $idx++;
+//                    }
+                    $finalSql = $value;
+//                    $whereUniqueKey = " AND unique_key IN (" . $whereUniqueKey . ")";
+                    $avgSql = "SELECT AVG(sum1) as average, COUNT(*) as countAll FROM
+                        (SELECT $finalSql AS sum1 FROM answers
+                        WHERE main_id IN ($whereMainId) "
+                        ." GROUP BY main_id) T1 WHERE sum1>0";
+                    $result = \DB::select($avgSql);
 
-                $resultQuery2 = Answer::whereIn('unique_key', $value)
-                    ->whereIn('main_id', $mainList)
-                    ->groupBy('main_id')
-                    ->select(\DB::raw($finalSql))
-                    ->get();
+//                }
+                $average[$b_key] = $result[0]->average;
 
-                $sum[$b_key] = 0.0;
-                foreach ($resultQuery2 as $row){
-                    $sum[$b_key] += $row->sumAmount;
-                }
+//                $finalSql = $sqlSum;
+//                foreach ($param as $pKey=>$pValue){
+//                    $finalSql = str_replace($pKey, $value[$pValue], $finalSql);
+//                }
+
+//                $whereMainId = implode(",", $mainList);
+//                if (is_array($value)){
+//                    $whereUniqueKey = implode("','", $value);
+//                    $whereUniqueKey = " AND unique_key IN ('" .$whereUniqueKey."') ";
+//                }else
+//                    $whereUniqueKey = " AND unique_key='$value'";
+//                $avgSql = "SELECT COUNT(*) as countAll FROM
+//                        (SELECT sum(answer_numeric) AS sum1 FROM answers
+//                        WHERE main_id IN ($whereMainId) " . $whereUniqueKey
+//                    . " GROUP BY main_id) T1";
+//                $avgResult = \DB::select($avgSql);
+//                $count[$b_key] = $avgResult[0]->countAll;
+//
+//                $resultQuery2 = Answer::whereIn('unique_key', $value)
+//                    ->whereIn('main_id', $mainList)
+//                    ->groupBy('main_id')
+//                    ->select(\DB::raw($finalSql))
+//                    ->get();
+//
+//                $sum[$b_key] = 0.0;
+//                foreach ($resultQuery2 as $row){
+//                    $sum[$b_key] += $row->sumAmount;
+//                }
             }
+
+//            dd(" one query: ", $average);
+//            echo " full loop : " . ((microtime(true)-$starttime)/60) . " seconds</br>";
+//            dd("stop");
 
             $col = $startCol;
             $col++;
@@ -562,11 +605,11 @@ class Summary extends Model
             $col++;
             $key6 = preg_replace('/[A-Z]+/', $col, $key);
 
-            $average = [];
-            $average[Main::INNER_GROUP_1] = $count[Main::INNER_GROUP_1]===0?0:($sum[Main::INNER_GROUP_1]/$count[Main::INNER_GROUP_1]);
-            $average[Main::INNER_GROUP_2] = $count[Main::INNER_GROUP_2]===0?0:($sum[Main::INNER_GROUP_2]/$count[Main::INNER_GROUP_2]);
-            $average[Main::OUTER_GROUP_1] = $count[Main::OUTER_GROUP_1]===0?0:($sum[Main::OUTER_GROUP_1]/$count[Main::OUTER_GROUP_1]);
-            $average[Main::OUTER_GROUP_2] = $count[Main::OUTER_GROUP_2]===0?0:($sum[Main::OUTER_GROUP_2]/$count[Main::OUTER_GROUP_2]);
+//            $average = [];
+//            $average[Main::INNER_GROUP_1] = $count[Main::INNER_GROUP_1]===0?0:($sum[Main::INNER_GROUP_1]/$count[Main::INNER_GROUP_1]);
+//            $average[Main::INNER_GROUP_2] = $count[Main::INNER_GROUP_2]===0?0:($sum[Main::INNER_GROUP_2]/$count[Main::INNER_GROUP_2]);
+//            $average[Main::OUTER_GROUP_1] = $count[Main::OUTER_GROUP_1]===0?0:($sum[Main::OUTER_GROUP_1]/$count[Main::OUTER_GROUP_1]);
+//            $average[Main::OUTER_GROUP_2] = $count[Main::OUTER_GROUP_2]===0?0:($sum[Main::OUTER_GROUP_2]/$count[Main::OUTER_GROUP_2]);
 
             $answers[$key] = ($average[Main::INNER_GROUP_1]*Main::$weight[Main::INNER_GROUP_1]
                     + $average[Main::INNER_GROUP_2]* Main::$weight[Main::INNER_GROUP_2]) * $population[Main::NORTHERN_INNER];
@@ -576,23 +619,10 @@ class Summary extends Model
             $answers[$key3] = $answers[$key3]/1000000.0;
 
             //ktoe
-            if ($gas){
-                $answers[$key2] = $answers[$key]* 0.00042 * $ktoe;
-                $answers[$key4] = $answers[$key3]* 0.00042 * $ktoe;
-                $answers[$key5] = $answers[$key]* 0.00042 + $answers[$key3];
-                $answers[$key6] = $answers[$key5]* 0.00042 * $ktoe;
-            }elseif ($ktoeIdx!==false){
-                $answers[$key2] = $answers[$key] * $value[$ktoeIdx];
-                $answers[$key4] = $answers[$key3] * $value[$ktoeIdx];
-                $answers[$key5] = $answers[$key] + $answers[$key3];
-                $answers[$key6] = $answers[$key5] * $value[$ktoeIdx];
-            }
-            else{
-                $answers[$key2] = $answers[$key] * $ktoe;
-                $answers[$key4] = $answers[$key3] * $ktoe;
-                $answers[$key5] = $answers[$key] + $answers[$key3];
-                $answers[$key6] = $answers[$key5] * $ktoe;
-            }
+            $answers[$key2] = $answers[$key] * $ktoe;
+            $answers[$key4] = $answers[$key3] * $ktoe;
+            $answers[$key5] = $answers[$key] + $answers[$key3];
+            $answers[$key6] = $answers[$key5] * $ktoe;
 
             $objPHPExcel->getActiveSheet()->setCellValue($key,  $answers[$key]);
             $objPHPExcel->getActiveSheet()->setCellValue($key2, $answers[$key2]);
@@ -608,6 +638,7 @@ class Summary extends Model
             $objPHPExcel->getActiveSheet()->getStyle($key5)->getNumberFormat()->setFormatCode(Main::NUMBER_FORMAT);
             $objPHPExcel->getActiveSheet()->getStyle($key6)->getNumberFormat()->setFormatCode(Main::NUMBER_FORMAT);
 
+            $level1Counter++;
         }
 
         return $objPHPExcel;

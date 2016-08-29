@@ -64,7 +64,7 @@ class SummaryController extends Controller
 
     public function report911()
     {
-        set_time_limit(1200);
+        set_time_limit(3600);
 
         $mainObj = new Main();
         $mainObj->initList();
@@ -210,7 +210,7 @@ class SummaryController extends Controller
 
     public function report912()
     {
-        set_time_limit(1200);
+        set_time_limit(3600);
 
         $mainObj = new Main();
         $mainObj->initList();
@@ -458,7 +458,7 @@ class SummaryController extends Controller
     //หมวดความสะดวกสบาย
     public function report913()
     {
-        set_time_limit(1200);
+        set_time_limit(3600);
 
         $mainObj = new Main();
         $mainObj->initList();
