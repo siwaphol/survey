@@ -9,6 +9,9 @@ use App\Http\Controllers\Summary8\Summary82;
 use App\Http\Controllers\Summary8\Summary83;
 use App\Http\Controllers\Summary8\Summary84;
 use App\Http\Controllers\Summary8\Summary85;
+use App\Http\Controllers\Summary13\Summary131;
+use App\Http\Controllers\Summary13\Summary132;
+use App\Http\Controllers\Summary13\Summary133;
 use App\Main;
 use App\Menu;
 use App\Parameter;
@@ -779,5 +782,11 @@ class SummaryController extends Controller
         $objWriter->save(storage_path(iconv('UTF-8', 'windows-874', 'excel/'.$outputFile)));
 
         return response()->download(storage_path('excel/'.$outputFile), 'ตารางสรุปหมวดข่าวสารบันเทิง.xlsx');
+    }
+
+    public function downloadSum131()
+    {
+        Summary131::report131();
+        return response()->download(storage_path('excel/sum131.xlsx'), '13.1 แนวโน้มการเปลี่ยนการใช้พลังงานในการประกอบอาหาร.xlsx');
     }
 }
