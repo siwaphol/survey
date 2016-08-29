@@ -38,6 +38,8 @@ Route::group(['middleware' => 'auth'], function () {
     });
 
     Route::get('get-report131', 'SummaryController@downloadSum131');
+    Route::get('get-report132', 'SummaryController@downloadSum132');
+    Route::get('get-report133', 'SummaryController@downloadSum133');
 });
 
 Route::group(['prefix'=>'api'], function (){

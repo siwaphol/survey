@@ -21,8 +21,8 @@ class Summary133 extends Controller
         $mainObj->initList();
 
         $inputFile = 'summary13.xlsx';
-        $inputSheet = '13.1';
-        $outputFile = 'sum131.xlsx';
+        $inputSheet = '13.3';
+        $outputFile = 'sum133.xlsx';
 
         $objPHPExcel = new \PHPExcel();
         $objPHPExcelMain = \PHPExcel_IOFactory::load(storage_path('excel/'. $inputFile));
@@ -31,70 +31,96 @@ class Summary133 extends Controller
         $objPHPExcel->setActiveSheetIndexByName($inputSheet);
 
 
-        //ตารางที่ 8.10 จำนวนและร้อยละจำแนกตามอาชีพหลักของหัวหน้าครัวเรือนและเขตปกครอง
+        //ตารางที่ 13.18
         $table1 = [
-            ['no_ti59_ch60_o46_nu61','no_ti59_ch60_o47_nu61','no_ti59_ch60_o48_nu61','no_ti59_ch60_o49_nu61'],
-            ['no_ti62_ch63_o53_nu64','no_ti62_ch63_o54_nu64','no_ti62_ch63_o55_nu64','no_ti62_ch63_o56_nu64'],
+            ['no_ra908' => 264],
+            ['no_ra908' => 263],
+            ['no_ra908' => 265]
         ];
-        //ตารางที่ 8.13 ค่าเฉลี่ยและค่าความคลาดเคลื่อนมาตรฐานของแหล่งที่มาของรายได้และเขตปกครอง
+        //ตารางที่ 13.19
         $table2 = [
-            'no_ti59_ch60_o46_nu61',
-            'no_ti59_ch60_o47_nu61',
-            'no_ti59_ch60_o48_nu61',
-            'no_ti59_ch60_o49_nu61',
-            'no_ti59_ch60_o50_nu61',
-            'no_ti59_ch60_o51_nu61',
-            'no_ti59_ch60_o52_nu61',
-            'no_ti59_ch60_o1_nu61',
+            ['no_ra908_o264_ra909' => 281],
+            ['no_ra908_o264_ra909' => 282],
+            ['no_ra908_o264_ra909' => 283],
+            ['no_ra908_o264_ra909' => 284],
+            ['no_ra908_o264_ra909' => 285],
         ];
-        //ตารางที่ 8.14 ค่าเฉลี่ยและค่าความคลาดเคลื่อนมาตรฐานของประเภทรายจ่ายและเขตปกครอง
+
+        //ตารางที่ 13.20
         $table3 = [
-            'no_ti62_ch63_o53_nu64',
-            'no_ti62_ch63_o54_nu64',
-            'no_ti62_ch63_o55_nu64',
-            'no_ti62_ch63_o56_nu64',
-            'no_ti62_ch63_o57_nu64',
-            'no_ti62_ch63_o58_nu64',
-            'no_ti62_ch63_o59_nu64',
-            'no_ti62_ch63_o60_nu64',
-            'no_ti62_ch63_o61_nu64',
-            'no_ti62_ch63_o62_nu64',
-            'no_ti62_ch63_o63_nu64',
-            'no_ti62_ch63_o64_nu64',
-            'no_ti62_ch63_o65_nu64',
-            'no_ti62_ch63_o1_nu64',
+            ['no_ra908_o264_ra909' => 280],
+            ['no_ra908_o264_ra909' => 282],
+            ['no_ra908_o264_ra909' => 283],
+            ['no_ra908_o264_ra909' => 284],
+            ['no_ra908_o264_ra909' => 285],
         ];
-        //ตารางที่ 8.15 จำนวนและร้อยของครัวเรือนจำแนกตามการมีหนี้สินและเขตปกครอง
+
+        //ตารางที่ 13.21
         $table4 = [
-            ['no_ra65'=>66],
-            ['no_ra65'=>67],
+            ['no_ra908_o264_ra909' => 280],
+            ['no_ra908_o264_ra909' => 281],
+            ['no_ra908_o264_ra909' => 283],
+            ['no_ra908_o264_ra909' => 284],
+            ['no_ra908_o264_ra909' => 285],
         ];
 
-        //ตารางที่ 8.16 ค่าเฉลี่ยและค่าความคลาดเคลื่อนมาตรฐานของจำนวนหนี้สินเฉลี่ยและเขตปกครอง
+
+        //ตารางที่ 13.22
         $table5 = [
-            'no_ra65_o66_nu66',
+            ['no_ra908_o264_ra909' => 280],
+            ['no_ra908_o264_ra909' => 281],
+            ['no_ra908_o264_ra909' => 282],
+            ['no_ra908_o264_ra909' => 284],
+            ['no_ra908_o264_ra909' => 285],
         ];
 
+        //ตารางที่ 13.23
+        $table6 = [
+            ['no_ra908_o264_ra909' => 280],
+            ['no_ra908_o264_ra909' => 281],
+            ['no_ra908_o264_ra909' => 282],
+            ['no_ra908_o264_ra909' => 283],
+            ['no_ra908_o264_ra909' => 285],
+        ];
+
+        //ตารางที่ 13.24
+        $table7 = [
+            ['no_ra908_o264_ra909' => 280],
+            ['no_ra908_o264_ra909' => 281],
+            ['no_ra908_o264_ra909' => 282],
+            ['no_ra908_o264_ra909' => 283],
+            ['no_ra908_o264_ra909' => 284],
+        ];
+
+        $isRadio = true;
         $startColumn = 'C';
         $startRow = 11;
-        Summary::average($table1, $startColumn, $startRow, $objPHPExcel, $mainObj);
+        $objPHPExcel = Summary::sum($table1,$startColumn,$startRow,$objPHPExcel,$mainObj,$isRadio);
 
         $startColumn = 'Q';
         $startRow = 11;
-        Summary::average($table2, $startColumn, $startRow, $objPHPExcel, $mainObj);
+        $objPHPExcel = Summary::sum13($table2,$startColumn,$startRow,$objPHPExcel,$mainObj, 'no_ra908_o264_ra910', 'no_ra908_o265_ra909', 'no_ra908_o265_ra910', 'no_ra908_o264_ra909', 280);
 
         $startColumn = 'AE';
         $startRow = 11;
-        Summary::average($table3, $startColumn, $startRow, $objPHPExcel, $mainObj);
+        $objPHPExcel = Summary::sum13($table3,$startColumn,$startRow,$objPHPExcel,$mainObj, 'no_ra908_o264_ra910', 'no_ra908_o265_ra909', 'no_ra908_o265_ra910', 'no_ra908_o264_ra909', 281);
 
-        $isRadio = true;
-        $startColumn = 'AR';
+        $startColumn = 'AS';
         $startRow = 11;
-        Summary::sum($table4,$startColumn,$startRow,$objPHPExcel,$mainObj,$isRadio);
+        $objPHPExcel = Summary::sum13($table4,$startColumn,$startRow,$objPHPExcel,$mainObj, 'no_ra908_o264_ra910', 'no_ra908_o265_ra909', 'no_ra908_o265_ra910', 'no_ra908_o264_ra909', 282);
 
         $startColumn = 'BG';
         $startRow = 11;
-        Summary::average($table5, $startColumn, $startRow, $objPHPExcel, $mainObj);
+        $objPHPExcel = Summary::sum13($table5,$startColumn,$startRow,$objPHPExcel,$mainObj, 'no_ra908_o264_ra910', 'no_ra908_o265_ra909', 'no_ra908_o265_ra910', 'no_ra908_o264_ra909', 283);
+
+        $startColumn = 'BU';
+        $startRow = 11;
+        $objPHPExcel = Summary::sum13($table6,$startColumn,$startRow,$objPHPExcel,$mainObj, 'no_ra908_o264_ra910', 'no_ra908_o265_ra909', 'no_ra908_o265_ra910', 'no_ra908_o264_ra909', 284);
+
+        $startColumn = 'CI';
+        $startRow = 11;
+        $objPHPExcel = Summary::sum13($table7,$startColumn,$startRow,$objPHPExcel,$mainObj, 'no_ra908_o264_ra910', 'no_ra908_o265_ra909', 'no_ra908_o265_ra910', 'no_ra908_o264_ra909', 285);
+
 
 
         $objWriter = new \PHPExcel_Writer_Excel2007($objPHPExcel);
