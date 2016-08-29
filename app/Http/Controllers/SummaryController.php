@@ -4,6 +4,11 @@ namespace App\Http\Controllers;
 
 use App\Answer;
 use App\Http\Controllers\Summary9\Summary91;
+use App\Http\Controllers\Summary8\Summary81;
+use App\Http\Controllers\Summary8\Summary82;
+use App\Http\Controllers\Summary8\Summary83;
+use App\Http\Controllers\Summary8\Summary84;
+use App\Http\Controllers\Summary8\Summary85;
 use App\Main;
 use App\Menu;
 use App\Parameter;
@@ -15,6 +20,35 @@ use App\Http\Controllers\Controller;
 
 class SummaryController extends Controller
 {
+    public function downloadSum81()
+    {
+        Summary81::report81();
+        return response()->download(storage_path('excel/sum81.xlsx'), '8.1 สภาพภูมิศาสตร์ของครัวเรือน.xlsx');
+    }
+
+    public function downloadSum82()
+    {
+        Summary82::report82();
+        return response()->download(storage_path('excel/sum82.xlsx'), '8.2 ข้อมูลพื้นฐานของครัวเรือน.xlsx');
+    }
+
+    public function downloadSum83()
+    {
+        Summary83::report83();
+        return response()->download(storage_path('excel/sum83.xlsx'), '8.3 ระดับการศึกษาของครัวเรือน.xlsx');
+    }
+
+    public function downloadSum84()
+    {
+        Summary84::report84();
+        return response()->download(storage_path('excel/sum84.xlsx'), '8.4 อาชีพหลักและอาชีพรองของครัวเรือน.xlsx');
+    }
+
+    public function downloadSum85()
+    {
+        Summary85::report85();
+        return response()->download(storage_path('excel/sum85.xlsx'), '8.5 รายได้และรายจ่ายของครัวเรือน.xlsx');
+    }
 
     public function downloadSum911()
     {
