@@ -105,7 +105,7 @@ class Summary extends Model
             $key5 = preg_replace('/[A-Z]+/', $col, $key);
             $col++;
             $key6 = preg_replace('/[A-Z]+/', $col, $key);
-            $answers[$key6] = ($percentage1*Main::$weight[Main::NORTHERN_INNER] + $percentage2*Main::$weight[Main::NORTHERN_OUTER]);
+            $answers[$key6] = ($answers[$key2]*Main::$weight[Main::NORTHERN_INNER] + $answers[$key4]*Main::$weight[Main::NORTHERN_OUTER])/100;
             $answers[$key5] = ($answers[$key6] ) * (float)$paramSheet->getCell(Parameter::$populationColumn[Main::NORTHERN])->getValue();
             $answers[$key6] *= 100;
 
@@ -737,8 +737,9 @@ class Summary extends Model
             $key5 = preg_replace('/[A-Z]+/', $col, $key);
             $col++;
             $key6 = preg_replace('/[A-Z]+/', $col, $key);
-            $answers[$key6] = ($answers[$key2]*Main::$weight[Main::NORTHERN_INNER] + $answers[$key4]*Main::$weight[Main::NORTHERN_OUTER]);
-            $answers[$key5] = ($answers[$key6] ) * (float)$paramSheet->getCell(Parameter::$populationColumn[Main::NORTHERN])->getValue();
+            $answers[$key6] = ($answers[$key2]*Main::$weight[Main::NORTHERN_INNER] + $answers[$key4]*Main::$weight[Main::NORTHERN_OUTER])/100;
+            $answers[$key5] = ($answers[$key6]) * (float)$paramSheet->getCell(Parameter::$populationColumn[Main::NORTHERN])->getValue();
+			$answers[$key6] *= 100;
 
             $objPHPExcel->getActiveSheet()->setCellValue($key, $answers[$key]);
             $objPHPExcel->getActiveSheet()->setCellValue($key2, ($answers[$key2]));
