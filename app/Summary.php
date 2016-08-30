@@ -133,7 +133,7 @@ class Summary extends Model
         return $objPHPExcel;
     }
 
-    public static function average($uniqueKeyArr, $startCol, $startRow, $objPHPExcel, $mainObj, $isRadio = false, $radioArr = [], $year=false)
+    public static function average($uniqueKeyArr, $startCol, $startRow, $objPHPExcel, $mainObj, $isRadio = false, $radioArr = [], $year=false, $multiply=null)
     {
         $rows = [];
         $rowNumber = $startRow;
@@ -162,6 +162,9 @@ class Summary extends Model
             $whereIn[] = $value;
             $p = [];
             $avg = [];
+
+            if (empty($value))
+                continue;
 
             foreach (Main::$provinceWeight as $p_key => $p_weight) {
                 $mainList = $mainObj->filterMain($p_key);
@@ -199,12 +202,16 @@ class Summary extends Model
                         $tempUniqueKey = $whereUniqueKey;
                         $whereUniqueKey = " AND unique_key IN ('" .$whereUniqueKey."') ";
                         $sumSQL = " SUM(IF(unique_key IN ('$tempUniqueKey'),answer_numeric,0)) ";
-                        if ($year)
+                        if (!is_null($multiply))
+                            $sumSQL .= " * $multiply ";
+                        else if ($year)
                             $sumSQL .= " * 12 ";
                     }else{
                         $whereUniqueKey = " AND unique_key='$value'";
                         $sumSQL = " SUM(IF(unique_key='$value', answer_numeric,0)) ";
-                        if ($year)
+                        if (!is_null($multiply))
+                            $sumSQL .= " * $multiply ";
+                        elseif ($year)
                             $sumSQL .= " * 12 ";
                     }
 
@@ -254,12 +261,16 @@ class Summary extends Model
                         $tempUniqueKey = $whereUniqueKey;
                         $whereUniqueKey = " AND unique_key IN ('" .$whereUniqueKey."') ";
                         $sumSQL = " SUM(IF(unique_key IN ('$tempUniqueKey'),answer_numeric,0)) ";
-                        if ($year)
+                        if (!is_null($multiply))
+                            $sumSQL .= " * $multiply ";
+                        else if ($year)
                             $sumSQL .= " * 12 ";
                     }else{
                         $whereUniqueKey = " AND unique_key='$value'";
                         $sumSQL = " SUM(IF(unique_key='$value', answer_numeric,0)) ";
-                        if ($year)
+                        if (!is_null($multiply))
+                            $sumSQL .= " * $multiply ";
+                        else if ($year)
                             $sumSQL .= " * 12 ";
                     }
 

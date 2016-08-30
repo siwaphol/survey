@@ -59,10 +59,15 @@ class Summary85 extends Controller
             'no_ti62_ch63_o60_nu64',
             'no_ti62_ch63_o61_nu64',
             'no_ti62_ch63_o62_nu64',
+
+        ];
+        $table3_2 = [
             'no_ti62_ch63_o63_nu64',
-            'no_ti62_ch63_o64_nu64',
+            'no_ti62_ch63_o64_nu64'
+        ];
+        $table3_3 = [
             'no_ti62_ch63_o65_nu64',
-            'no_ti62_ch63_o1_nu64',
+            'no_ti62_ch63_o1_nu64'
         ];
         //ตารางที่ 8.15 จำนวนและร้อยของครัวเรือนจำแนกตามการมีหนี้สินและเขตปกครอง
         $table4 = [
@@ -81,11 +86,15 @@ class Summary85 extends Controller
 
         $startColumn = 'Q';
         $startRow = 11;
-        $objPHPExcel = Summary::average($table2, $startColumn, $startRow, $objPHPExcel, $mainObj, false,[],true);
+        $objPHPExcel = Summary::average($table2, $startColumn, $startRow, $objPHPExcel, $mainObj, false,[], true);
 
         $startColumn = 'AE';
         $startRow = 11;
         $objPHPExcel = Summary::average($table3, $startColumn, $startRow, $objPHPExcel, $mainObj, false,[],true);
+        $startRow = 21;
+        $objPHPExcel = Summary::average($table3_2, $startColumn, $startRow, $objPHPExcel, $mainObj, false,[],true,2);
+        $startRow = 23;
+        $objPHPExcel = Summary::average($table3_3, $startColumn, $startRow, $objPHPExcel, $mainObj, false,[],true);
 
         $isRadio = true;
         $startColumn = 'AR';
