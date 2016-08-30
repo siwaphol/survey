@@ -61,6 +61,8 @@
                                         <a class="btn btn-success" href="{{url('get-report11-1')}}">Download</a>
                                     @elseif($row->id===26)
                                         <a class="btn btn-success" href="{{url('get-report11-2')}}">Download</a>
+                                    @elseif($row->id===27)
+                                        <a class="btn btn-success" href="{{url('get-report121')}}">Download</a>
                                     @elseif($row->id===28)
                                         <a class="btn btn-success" href="{{url('get-report122')}}">Download</a>
                                     @elseif($row->id===29)
@@ -78,7 +80,7 @@
                                     @endif
                                 </td>
                                 <td>
-                                    @if(in_array($row->id, array(2,3,4,34,35,5,7,11,13,16,18,21,23,25,26,31,32,33)))
+                                    @if(in_array($row->id, array(2,3,4,34,35,5,7,11,13,16,18,21,23,25,26,27,28,29,30,31,32,33)))
                                         <a class="btn btn-success" href="{{url('download')}}/{{$row->id}}">Download</a>
                                     @else
                                         -

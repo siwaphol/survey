@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers\Summary12;
 
+use App\Answer;
 use App\Main;
 use App\Parameter;
 use App\Summary;
