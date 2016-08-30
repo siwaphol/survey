@@ -282,52 +282,119 @@ class Summary11Controller extends Controller
 //        $objPHPExcel = Summary11Controller::average($table11_10_4,$startColumn,$startRow,$objPHPExcel,$mainObj,$multiplier11_10_4,true);
 
         //ตารางที่ 11.11 จำนวนและร้อยละของครัวเรือนที่ใช้วิธีการไปซื้อพลังงานจำแนกตามเขตปกครอง
-        $table11_11 = [
-            ['no_ra808_o81_ti829_ch830_o266_ra832'=>225],
-            ['no_ra808_o81_ti829_ch830_o266_ra832'=>226],
+//        $table11_11 = [
+//            ['no_ra808_o81_ti829_ch830_o266_ra832'=>225],
+//            ['no_ra808_o81_ti829_ch830_o266_ra832'=>226],
+//            [],
+//            ['no_ra808_o81_ti829_ch830_o267_ra832'=>225],
+//            ['no_ra808_o81_ti829_ch830_o267_ra832'=>226],
+//            [],
+//            ['no_ra808_o81_ti829_ch830_o268_ra832'=>225],
+//            ['no_ra808_o81_ti829_ch830_o268_ra832'=>226],
+//            [],
+//            ['no_ra808_o81_ti829_ch830_o286_ra832'=>225],
+//            ['no_ra808_o81_ti829_ch830_o286_ra832'=>226],
+//            [],
+//            ['no_ra808_o81_ti809_ch810_o228_ra812'=>225],
+//            ['no_ra808_o81_ti809_ch810_o228_ra812'=>226],
+//            [],
+//            ['no_ra808_o81_ti809_ch810_o229_ra812'=>225],
+//            ['no_ra808_o81_ti809_ch810_o229_ra812'=>226],
+//            [],
+//            ['no_ra808_o81_ti809_ch810_o230_ra812'=>225],
+//            ['no_ra808_o81_ti809_ch810_o230_ra812'=>226],
+//            [],
+//            ['no_ra808_o81_ti809_ch810_o231_ra812'=>225],
+//            ['no_ra808_o81_ti809_ch810_o231_ra812'=>226],
+//            [],
+//            ['no_ra808_o81_ti809_ch810_o232_ra812'=>225],
+//            ['no_ra808_o81_ti809_ch810_o232_ra812'=>226],
+//            [],
+//            ['no_ra808_o81_ti809_ch810_o233_ra812'=>225],
+//            ['no_ra808_o81_ti809_ch810_o233_ra812'=>226],
+//            [],
+//            ['no_ra808_o81_ti809_ch810_o234_ra812'=>225],
+//            ['no_ra808_o81_ti809_ch810_o234_ra812'=>226],
+//            [],
+//            ['no_ra808_o81_ti809_ch810_o235_ra812'=>225],
+//            ['no_ra808_o81_ti809_ch810_o235_ra812'=>226],
+//            [],
+//            ['no_ra808_o81_ti821_ch822_o236_ra824'=>226],
+//            ['no_ra808_o81_ti821_ch822_o236_ra824'=>225],
+//            [],
+//            ['no_ra808_o81_ti829_ch830_o1_ra832'=>225],
+//            ['no_ra808_o81_ti829_ch830_o1_ra832'=>226],
+//        ];
+//        $startColumn = 'CB';
+//        $startRow = 12;
+//        $objPHPExcel = Summary::sum($table11_11, $startColumn, $startRow, $objPHPExcel, $mainObj, true);
+
+        $table11_12 = [
+            'no_ra808_o81_ti829_ch830_o266_nu835',
+            'no_ra808_o81_ti829_ch830_o267_nu835',
+            'no_ra808_o81_ti829_ch830_o268_nu835',
+            'no_ra808_o81_ti829_ch830_o269_nu835',
+            'no_ra808_o81_ti809_ch810_o228_nu819',
+            'no_ra808_o81_ti809_ch810_o229_nu819',
+            'no_ra808_o81_ti809_ch810_o230_nu819',
+            'no_ra808_o81_ti809_ch810_o231_nu819',
+            'no_ra808_o81_ti809_ch810_o232_nu819',
+            'no_ra808_o81_ti809_ch810_o233_nu819',
+            'no_ra808_o81_ti809_ch810_o234_nu819',
+            'no_ra808_o81_ti809_ch810_o235_nu819',
             [],
-            ['no_ra808_o81_ti829_ch830_o267_ra832'=>225],
-            ['no_ra808_o81_ti829_ch830_o267_ra832'=>226],
-            [],
-            ['no_ra808_o81_ti829_ch830_o268_ra832'=>225],
-            ['no_ra808_o81_ti829_ch830_o268_ra832'=>226],
-            [],
-            ['no_ra808_o81_ti829_ch830_o286_ra832'=>225],
-            ['no_ra808_o81_ti829_ch830_o286_ra832'=>226],
-            [],
-            ['no_ra808_o81_ti809_ch810_o228_ra812'=>225],
-            ['no_ra808_o81_ti809_ch810_o228_ra812'=>226],
-            [],
-            ['no_ra808_o81_ti809_ch810_o229_ra812'=>225],
-            ['no_ra808_o81_ti809_ch810_o229_ra812'=>226],
-            [],
-            ['no_ra808_o81_ti809_ch810_o230_ra812'=>225],
-            ['no_ra808_o81_ti809_ch810_o230_ra812'=>226],
-            [],
-            ['no_ra808_o81_ti809_ch810_o231_ra812'=>225],
-            ['no_ra808_o81_ti809_ch810_o231_ra812'=>226],
-            [],
-            ['no_ra808_o81_ti809_ch810_o232_ra812'=>225],
-            ['no_ra808_o81_ti809_ch810_o232_ra812'=>226],
-            [],
-            ['no_ra808_o81_ti809_ch810_o233_ra812'=>225],
-            ['no_ra808_o81_ti809_ch810_o233_ra812'=>226],
-            [],
-            ['no_ra808_o81_ti809_ch810_o234_ra812'=>225],
-            ['no_ra808_o81_ti809_ch810_o234_ra812'=>226],
-            [],
-            ['no_ra808_o81_ti809_ch810_o235_ra812'=>225],
-            ['no_ra808_o81_ti809_ch810_o235_ra812'=>226],
-            [],
-            ['no_ra808_o81_ti821_ch822_o236_ra824'=>226],
-            ['no_ra808_o81_ti821_ch822_o236_ra824'=>225],
-            [],
-            ['no_ra808_o81_ti829_ch830_o1_ra832'=>225],
-            ['no_ra808_o81_ti829_ch830_o1_ra832'=>226],
+            'no_ra808_o81_ti829_ch830_o1_nu835'
         ];
-        $startColumn = 'CB';
-        $startRow = 12;
-        $objPHPExcel = Summary::sum($table11_11, $startColumn, $startRow, $objPHPExcel, $mainObj, true);
+        $startColumn = 'CP';
+        $startRow = 11;
+        $objPHPExcel = Summary::average($table11_12, $startColumn,$startRow, $objPHPExcel, $mainObj);
+        $table11_12_2 = [];
+        $gasLength = ['no_ra808_o81_ti821_ch822_o236_ch825_o208_nu827', 'no_ra808_o81_ti821_ch822_o236_ch825_o209_nu827', 'no_ra808_o81_ti821_ch822_o236_ch825_o210_nu827'];
+        $gasAmount = ['no_ra808_o81_ti821_ch822_o236_ch825_o208_nu826', 'no_ra808_o81_ti821_ch822_o236_ch825_o209_nu826', 'no_ra808_o81_ti821_ch822_o236_ch825_o210_nu826'];
+        $gasSql = " 0 ";
+        for($i=0; $i< count($gasLength); $i++){
+            $sql = " SUM(IF(unique_key='param1', answer_numeric,0))/SUM(IF(unique_key='param2', answer_numeric,0)) ";
+            $temp = str_replace("param1", $gasLength[$i], $sql);
+            $temp = str_replace("param2", $gasAmount[$i], $temp);
+
+            $gasSql .= " + " . $temp;
+        }
+        $table11_12_2[] = $gasSql;
+        $startRow = 23;
+        $objPHPExcel = Summary11Controller::average($table11_12_2, $startColumn, $startRow, $objPHPExcel, $mainObj, null,false,true);
+
+        $table11_13 = [
+            'no_ra808_o81_ti829_ch830_o266_nu836',
+            'no_ra808_o81_ti829_ch830_o267_nu836',
+            'no_ra808_o81_ti829_ch830_o268_nu836',
+            'no_ra808_o81_ti829_ch830_o269_nu836',
+            'no_ra808_o81_ti809_ch810_o228_nu820',
+            'no_ra808_o81_ti809_ch810_o229_nu820',
+            'no_ra808_o81_ti809_ch810_o230_nu820',
+            'no_ra808_o81_ti809_ch810_o231_nu820',
+            'no_ra808_o81_ti809_ch810_o232_nu820',
+            'no_ra808_o81_ti809_ch810_o233_nu820',
+            'no_ra808_o81_ti809_ch810_o234_nu820',
+            'no_ra808_o81_ti809_ch810_o235_nu820',
+            [],
+            'no_ra808_o81_ti829_ch830_o1_nu836'
+        ];
+        $startColumn = 'DE';
+        $startRow = 11;
+        $objPHPExcel = Summary::average($table11_13, $startColumn,$startRow, $objPHPExcel, $mainObj);
+        $gasPrice = ['no_ra808_o81_ti821_ch822_o236_ch825_o208_nu828', 'no_ra808_o81_ti821_ch822_o236_ch825_o209_nu828', 'no_ra808_o81_ti821_ch822_o236_ch825_o210_nu828'];
+        $gasSql = " 0 ";
+        $table11_13_2 = [];
+        for($i=0; $i< count($gasLength); $i++){
+            $sql = " SUM(IF(unique_key='param1', answer_numeric,0))/SUM(IF(unique_key='param2', answer_numeric,0)) ";
+            $temp = str_replace("param1", $gasPrice[$i], $sql);
+            $temp = str_replace("param2", $gasAmount[$i], $temp);
+
+            $gasSql .= " + " . $temp;
+        }
+        $table11_13_2[] = $gasSql;
+        $startRow = 23;
+        $objPHPExcel = Summary11Controller::average($table11_13_2, $startColumn, $startRow, $objPHPExcel, $mainObj, null,false,true);
 
         $objWriter = new \PHPExcel_Writer_Excel2007($objPHPExcel);
         $objWriter->save(storage_path(iconv('UTF-8', 'windows-874', 'excel/'.$outputFile)));
