@@ -19,6 +19,11 @@ Route::group(['middleware' => 'auth'], function () {
     Route::post('test-post-3','AnswerController@saveAnswersWithEasiestWay2');
 
     Route::get('report', 'SummaryController@index');
+    Route::get('get-report81', 'SummaryController@downloadSum81');
+    Route::get('get-report82', 'SummaryController@downloadSum82');
+    Route::get('get-report83', 'SummaryController@downloadSum83');
+    Route::get('get-report84', 'SummaryController@downloadSum84');
+    Route::get('get-report85', 'SummaryController@downloadSum85');
     Route::get('get-report911', 'SummaryController@downloadSum911');
     Route::get('get-report912', 'SummaryController@downloadSum912');
     // หมวดความสะดวกสบาย
@@ -28,10 +33,16 @@ Route::group(['middleware' => 'auth'], function () {
     Route::get('get-report916', 'SummaryController@downloadSum916');
     Route::get('get-report917', 'SummaryController@downloadSum917');
     Route::get('get-report918', 'SummaryController@downloadSum918');
-
     Route::get('download911', function (){
         return response()->download(storage_path('excel/sum911.xlsx'), 'ตารางสรุปหมวดแสงสว่าง.xlsx');
     });
+
+    Route::get('get-report11-1', 'Summary11Controller@downloadSum11_1');
+    Route::get('get-report11-2', 'Summary11Controller@downloadSum11_2');
+
+    Route::get('get-report131', 'SummaryController@downloadSum131');
+    Route::get('get-report132', 'SummaryController@downloadSum132');
+    Route::get('get-report133', 'SummaryController@downloadSum133');
 });
 
 Route::group(['prefix'=>'api'], function (){
