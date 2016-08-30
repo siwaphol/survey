@@ -31,7 +31,7 @@ class Summary85 extends Controller
         $objPHPExcel->setActiveSheetIndexByName($inputSheet);
 
 
-        //ตารางที่ 8.10 จำนวนและร้อยละจำแนกตามอาชีพหลักของหัวหน้าครัวเรือนและเขตปกครอง
+        //ตารางที่ 8.12 จำนวนและร้อยละจำแนกตามอาชีพหลักของหัวหน้าครัวเรือนและเขตปกครอง
         $table1 = [
             ['no_ti59_ch60_o46_nu61','no_ti59_ch60_o47_nu61','no_ti59_ch60_o48_nu61','no_ti59_ch60_o49_nu61'],
             ['no_ti62_ch63_o53_nu64','no_ti62_ch63_o54_nu64','no_ti62_ch63_o55_nu64','no_ti62_ch63_o56_nu64'],
@@ -77,15 +77,15 @@ class Summary85 extends Controller
 
         $startColumn = 'C';
         $startRow = 11;
-        $objPHPExcel = Summary::average($table1, $startColumn, $startRow, $objPHPExcel, $mainObj);
+        $objPHPExcel = Summary::average($table1, $startColumn, $startRow, $objPHPExcel, $mainObj, false,[],true);
 
         $startColumn = 'Q';
         $startRow = 11;
-        $objPHPExcel = Summary::average($table2, $startColumn, $startRow, $objPHPExcel, $mainObj);
+        $objPHPExcel = Summary::average($table2, $startColumn, $startRow, $objPHPExcel, $mainObj, false,[],true);
 
         $startColumn = 'AE';
         $startRow = 11;
-        $objPHPExcel = Summary::average($table3, $startColumn, $startRow, $objPHPExcel, $mainObj);
+        $objPHPExcel = Summary::average($table3, $startColumn, $startRow, $objPHPExcel, $mainObj, false,[],true);
 
         $isRadio = true;
         $startColumn = 'AR';
