@@ -6,7 +6,7 @@ use Illuminate\Database\Eloquent\Model;
 
 class Summary extends Model
 {
-    public static function sum($uniqueKeyArr, $startCol, $startRow, $objPHPExcel, $mainObj, $isRadio = false)
+    public static function sum($uniqueKeyArr, $startCol, $startRow, $objPHPExcel, $mainObj, $isRadio = false, $isCustomHaving = false, $havingUniqueKey=null)
     {
         $w = [];
         $w[1] = Main::$weight[Main::INNER_GROUP_1];
@@ -71,11 +71,20 @@ class Summary extends Model
                     $sql = "SELECT COUNT(*) as count FROM (SELECT main_id FROM answers WHERE main_id IN ($whereInMainId) " . $whereCondition . " GROUP BY main_id) t1";
                     $count[$i] = \DB::select($sql)[0]->count;
                     $p[$i] = $w[$i] * ((float)$count[$i] / $s[$i]);
-
-                    //echo $w[$i]." / ".$count[$i]." / ". $s[$i]." / ".$p[$i]."<br><br>";
-
                 }
-            } else {
+            }
+            elseif ($isCustomHaving){
+                for ($i = 1; $i <= 4; $i++) {
+                    $mainList = $mainObj->filterMain($i);
+                    $whereCondition = $value;
+
+                    $whereInMainId = implode(",", $mainList);
+                    $sql = "SELECT COUNT(*) as count FROM (SELECT main_id FROM answers WHERE main_id IN ($whereInMainId) GROUP BY main_id $whereCondition ) t1";
+                    $count[$i] = \DB::select($sql)[0]->count;
+                    $p[$i] = $w[$i] * ((float)$count[$i] / $s[$i]);
+                }
+            }
+            else {
                 for ($i = 1; $i <= 4; $i++) {
                     $mainList = $mainObj->filterMain($i);
                     $dupMainId = [];
