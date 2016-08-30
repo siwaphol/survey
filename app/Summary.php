@@ -86,29 +86,28 @@ class Summary extends Model
 
                 }
             }
-            $percentage = $p[1] + $p[2];
-            $answers[$key] = $percentage*$S[1];
+            $percentage1 = $p[1] + $p[2];
+            $answers[$key] = $percentage1*$S[1];
             $col = $startCol;
             $col++;
             $key2 = preg_replace('/[A-Z]+/', $col, $key);
-            $answers[$key2] = $percentage*100;
+            $answers[$key2] = $percentage1*100;
             $col++;
             $key3 = preg_replace('/[A-Z]+/', $col, $key);
+            $percentage2 = $p[3] + $p[4];
 
-            $percentage = $p[3] + $p[4];
-
-
-            $answers[$key3] = $percentage*$S[3];
+            $answers[$key3] = $percentage2*$S[3];
             $col++;
             $key4 = preg_replace('/[A-Z]+/', $col, $key);
-            $answers[$key4] = $percentage*100;
+            $answers[$key4] = $percentage2*100;
             //รวม
             $col++;
             $key5 = preg_replace('/[A-Z]+/', $col, $key);
             $col++;
             $key6 = preg_replace('/[A-Z]+/', $col, $key);
             $answers[$key6] = ($answers[$key2]*Main::$weight[Main::NORTHERN_INNER] + $answers[$key4]*Main::$weight[Main::NORTHERN_OUTER])*100;
-            $answers[$key5] = ($answers[$key6] ) * (float)$paramSheet->getCell(Parameter::$populationColumn[Main::NORTHERN])->getValue();
+            $answers[$key5] = ($answers[$key6]/100 ) * (float)$paramSheet->getCell(Parameter::$populationColumn[Main::NORTHERN])->getValue();
+            $answers[$key6] *= 100;
 
             $objPHPExcel->getActiveSheet()->setCellValue($key, $answers[$key]);
             $objPHPExcel->getActiveSheet()->setCellValue($key2, ($answers[$key2]));
@@ -128,7 +127,7 @@ class Summary extends Model
         return $objPHPExcel;
     }
 
-    public static function average($uniqueKeyArr, $startCol, $startRow, $objPHPExcel, $mainObj, $isRadio = false, $radioArr = [])
+    public static function average($uniqueKeyArr, $startCol, $startRow, $objPHPExcel, $mainObj, $isRadio = false, $radioArr = [], $year=false)
     {
         $rows = [];
         $rowNumber = $startRow;
@@ -188,16 +187,19 @@ class Summary extends Model
                         (SELECT $finalSql AS sum1 FROM answers
                         WHERE main_id IN ($whereMainId) " . $whereUniqueKey
                         . " GROUP BY main_id) T1 WHERE sum1>0";
-
                 } else {
                     if (is_array($value)) {
                         $whereUniqueKey = implode("','", $value);
                         $tempUniqueKey = $whereUniqueKey;
                         $whereUniqueKey = " AND unique_key IN ('" .$whereUniqueKey."') ";
                         $sumSQL = " SUM(IF(unique_key IN ('$tempUniqueKey'),answer_numeric,0)) ";
+                        if ($year)
+                            $sumSQL .= " * 12 ";
                     }else{
                         $whereUniqueKey = " AND unique_key='$value'";
                         $sumSQL = " SUM(IF(unique_key='$value', answer_numeric,0)) ";
+                        if ($year)
+                            $sumSQL .= " * 12 ";
                     }
 
                     $avgSql = "SELECT AVG(sum1) as average, COUNT(*) as countAll FROM
@@ -246,9 +248,13 @@ class Summary extends Model
                         $tempUniqueKey = $whereUniqueKey;
                         $whereUniqueKey = " AND unique_key IN ('" .$whereUniqueKey."') ";
                         $sumSQL = " SUM(IF(unique_key IN ('$tempUniqueKey'),answer_numeric,0)) ";
+                        if ($year)
+                            $sumSQL .= " * 12 ";
                     }else{
                         $whereUniqueKey = " AND unique_key='$value'";
                         $sumSQL = " SUM(IF(unique_key='$value', answer_numeric,0)) ";
+                        if ($year)
+                            $sumSQL .= " * 12 ";
                     }
 
                     $avgSql = "SELECT AVG(sum1) as average, COUNT(*) as countAll FROM
@@ -732,7 +738,7 @@ class Summary extends Model
             $col++;
             $key6 = preg_replace('/[A-Z]+/', $col, $key);
             $answers[$key6] = ($answers[$key2]*Main::$weight[Main::NORTHERN_INNER] + $answers[$key4]*Main::$weight[Main::NORTHERN_OUTER])*100;
-            $answers[$key5] = ($answers[$key6] ) * (float)$paramSheet->getCell(Parameter::$populationColumn[Main::NORTHERN])->getValue();
+            $answers[$key5] = ($answers[$key6]/100 ) * (float)$paramSheet->getCell(Parameter::$populationColumn[Main::NORTHERN])->getValue();
 
             $objPHPExcel->getActiveSheet()->setCellValue($key, $answers[$key]);
             $objPHPExcel->getActiveSheet()->setCellValue($key2, ($answers[$key2]));

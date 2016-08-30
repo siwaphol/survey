@@ -21,7 +21,8 @@
                         <tr>
                             <th>ชื่อหมวด</th>
                             <th>ชื่อหมวดย่อย</th>
-                            <th>ตาวน์โหลด</th>
+                            <th>คำนวณใหม่</th>
+                            <th>ดาวน์โหลดไฟล์ที่มีอยู่</th>
                         </tr>
                     </thead>
                     <tbody>
@@ -66,6 +67,13 @@
                                         <a class="btn btn-success" href="{{url('get-report132')}}">Download</a>
                                     @elseif($row->id===33)
                                         <a class="btn btn-success" href="{{url('get-report133')}}">Download</a>
+                                    @else
+                                        -
+                                    @endif
+                                </td>
+                                <td>
+                                    @if(in_array($row->id, array(2,3,4,34,35,5,7,11,13,16,18,21,23,25,26,31,32,33)))
+                                        <a class="btn btn-success" href="{{url('download')}}/{{$row->id}}">Download</a>
                                     @else
                                         -
                                     @endif
