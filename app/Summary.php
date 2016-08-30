@@ -36,10 +36,16 @@ class Summary extends Model
             $rowNumber++;
         }
 
-        $answerObj = Answer::whereIn('unique_key', $uniqueKeyArr)->get();
+        if (!$isRadio)
+            $answerObj = Answer::whereIn('unique_key', $uniqueKeyArr)->get();
+
         $whereIn = [];
         $answers = [];
         foreach ($rows as $key => $value) {
+
+            if (empty($value))
+                continue;
+
             $whereIn[] = $value;
             $p = [];
             $count = [];

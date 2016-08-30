@@ -139,147 +139,195 @@ class Summary11Controller extends Controller
         $objPHPExcel->removeSheetByIndex(0);
         $objPHPExcel->setActiveSheetIndexByName($inputSheet);
 
-        $table1 = [
-            'no_ra808_o81_ti829_ch830_o266_ra831'=>[326,327,328],
-            'no_ra808_o81_ti829_ch830_o267_ra831'=>[326,327,328],
-            'no_ra808_o81_ti829_ch830_o268_ra831'=>[326,327,328],
-            'no_ra808_o81_ti829_ch830_o269_ra831'=>[326,327,328],
-            'no_ra808_o81_ti809_ch810_o228_ra811'=>[326,327,328],
-            'no_ra808_o81_ti809_ch810_o229_ra811'=>[326,327,328],
-            'no_ra808_o81_ti809_ch810_o230_ra811'=>[326,327,328],
-            'no_ra808_o81_ti809_ch810_o231_ra811'=>[326,327,328],
-            'no_ra808_o81_ti809_ch810_o232_ra811'=>[326,327,328],
-            'no_ra808_o81_ti809_ch810_o233_ra811'=>[326,327,328],
-            'no_ra808_o81_ti809_ch810_o234_ra811'=>[326,327,328],
-            'no_ra808_o81_ti809_ch810_o235_ra811'=>[326,327,328],
-            'no_ra808_o81_ti821_ch822_o236_ra823'=>[326,327,328],
-            'no_ra808_o81_ti829_ch830_o1_ra831'=>[326,327,328]
-        ];
-        
-        $startColumn = [
-            Main::NORTHERN=>'C',
-            Main::NORTHERN_INNER=> 'K',
-            Main::NORTHERN_OUTER=>'S'];
-        $startRow = 10;
-        $objPHPExcel = Summary11Controller::sum($table1, $startColumn,$startRow,$objPHPExcel,$mainObj);
+//        $table1 = [
+//            'no_ra808_o81_ti829_ch830_o266_ra831'=>[326,327,328],
+//            'no_ra808_o81_ti829_ch830_o267_ra831'=>[326,327,328],
+//            'no_ra808_o81_ti829_ch830_o268_ra831'=>[326,327,328],
+//            'no_ra808_o81_ti829_ch830_o269_ra831'=>[326,327,328],
+//            'no_ra808_o81_ti809_ch810_o228_ra811'=>[326,327,328],
+//            'no_ra808_o81_ti809_ch810_o229_ra811'=>[326,327,328],
+//            'no_ra808_o81_ti809_ch810_o230_ra811'=>[326,327,328],
+//            'no_ra808_o81_ti809_ch810_o231_ra811'=>[326,327,328],
+//            'no_ra808_o81_ti809_ch810_o232_ra811'=>[326,327,328],
+//            'no_ra808_o81_ti809_ch810_o233_ra811'=>[326,327,328],
+//            'no_ra808_o81_ti809_ch810_o234_ra811'=>[326,327,328],
+//            'no_ra808_o81_ti809_ch810_o235_ra811'=>[326,327,328],
+//            'no_ra808_o81_ti821_ch822_o236_ra823'=>[326,327,328],
+//            'no_ra808_o81_ti829_ch830_o1_ra831'=>[326,327,328]
+//        ];
+//
+//        $startColumn = [
+//            Main::NORTHERN=>'C',
+//            Main::NORTHERN_INNER=> 'K',
+//            Main::NORTHERN_OUTER=>'S'];
+//        $startRow = 10;
+//        $objPHPExcel = Summary11Controller::sum($table1, $startColumn,$startRow,$objPHPExcel,$mainObj);
+//
+//        // ครั้งต่อเดือน
+//        $table11_9_1 = [
+//            'no_ra808_o81_ti829_ch830_o266_nu834',
+//            'no_ra808_o81_ti829_ch830_o267_nu834',
+//            'no_ra808_o81_ti829_ch830_o268_nu834',
+//            'no_ra808_o81_ti829_ch830_o269_nu834',
+//            ['no_ra808_o81_ti809_ch810_o228_ch3000_o281_nu3002', 'no_ra808_o81_ti809_ch810_o228_ch3000_o282_nu3002','no_ra808_o81_ti809_ch810_o228_ch3000_o283_nu3002'],
+//            ['no_ra808_o81_ti809_ch810_o229_ch3000_o281_nu3002','no_ra808_o81_ti809_ch810_o229_ch3000_o282_nu3002','no_ra808_o81_ti809_ch810_o229_ch3000_o283_nu3002'],
+//            ['no_ra808_o81_ti809_ch810_o230_ch3000_o281_nu3002','no_ra808_o81_ti809_ch810_o230_ch3000_o282_nu3002','no_ra808_o81_ti809_ch810_o230_ch3000_o283_nu3002'],
+//            ['no_ra808_o81_ti809_ch810_o231_ch3000_o281_nu3002','no_ra808_o81_ti809_ch810_o231_ch3000_o282_nu3002','no_ra808_o81_ti809_ch810_o231_ch3000_o283_nu3002'],
+//            ['no_ra808_o81_ti809_ch810_o232_ch3000_o281_nu3002','no_ra808_o81_ti809_ch810_o232_ch3000_o282_nu3002','no_ra808_o81_ti809_ch810_o232_ch3000_o283_nu3002'],
+//            ['no_ra808_o81_ti809_ch810_o233_ch3000_o281_nu3002','no_ra808_o81_ti809_ch810_o233_ch3000_o282_nu3002','no_ra808_o81_ti809_ch810_o233_ch3000_o283_nu3002'],
+//            ['no_ra808_o81_ti809_ch810_o234_ch3000_o281_nu3002','no_ra808_o81_ti809_ch810_o234_ch3000_o282_nu3002','no_ra808_o81_ti809_ch810_o234_ch3000_o283_nu3002'],
+//            ['no_ra808_o81_ti809_ch810_o235_ch3000_o281_nu3002','no_ra808_o81_ti809_ch810_o235_ch3000_o282_nu3002','no_ra808_o81_ti809_ch810_o235_ch3000_o283_nu3002'],
+//            'no_ra808_o81_ti829_ch830_o1_nu834'
+//        ];
+//        $startColumn = "AY";
+//        $startRow = 11;
+//        $objPHPExcel = Summary::average($table11_9_1,$startColumn,$startRow,$objPHPExcel,$mainObj,false,[],true);
+//        // ถังต่อปี
+//        $table11_9_2 =[
+//            ['no_ra808_o81_ti821_ch822_o236_ch825_o208_nu826','no_ra808_o81_ti821_ch822_o236_ch825_o209_nu826','no_ra808_o81_ti821_ch822_o236_ch825_o210_nu826']
+//        ];
+//        $startRow = 23;
+//        $objPHPExcel = Summary::average($table11_9_2,$startColumn,$startRow,$objPHPExcel,$mainObj);
+//        $table11_9_3 = [
+//            'no_ra808_o81_ti829_ch830_o1_nu834'
+//        ];
+//        $startRow = 24;
+//        $objPHPExcel = Summary::average($table11_9_3,$startColumn,$startRow,$objPHPExcel,$mainObj, false,[], true);
+//
+//        // ตารางที่ 11.10
+//        // แบบคูณตรงๆ
+//        $table11_10_1 = [
+//            'no_ra808_o81_ti829_ch830_o266_nu833', 'no_ra808_o81_ti829_ch830_o267_nu833', 'no_ra808_o81_ti829_ch830_o268_nu833', 'no_ra808_o81_ti829_ch830_o269_nu833'
+//        ];
+//        $multiplier11_10_1 = ['no_ra808_o81_ti829_ch830_o266_nu834',            'no_ra808_o81_ti829_ch830_o267_nu834',            'no_ra808_o81_ti829_ch830_o268_nu834', 'no_ra808_o81_ti829_ch830_o269_nu834',
+//        ];
+//        $startColumn = 'BN';
+//        $startRow = 11;
+//        $objPHPExcel = Summary11Controller::average($table11_10_1,$startColumn,$startRow,$objPHPExcel,$mainObj,$multiplier11_10_1,true);
+//        // บาทต่อครั้ง
+//        $table11_10_2 = [
+//            ['no_ra808_o81_ti809_ch810_o228_ch3000_o281_nu3001', 'no_ra808_o81_ti809_ch810_o228_ch3000_o282_nu3001', 'no_ra808_o81_ti809_ch810_o228_ch3000_o283_nu3001'],
+//            ['no_ra808_o81_ti809_ch810_o229_ch3000_o281_nu3001', 'no_ra808_o81_ti809_ch810_o229_ch3000_o282_nu3001', 'no_ra808_o81_ti809_ch810_o229_ch3000_o283_nu3001'],
+//            ['no_ra808_o81_ti809_ch810_o230_ch3000_o281_nu3001', 'no_ra808_o81_ti809_ch810_o230_ch3000_o282_nu3001', 'no_ra808_o81_ti809_ch810_o230_ch3000_o283_nu3001'],
+//            ['no_ra808_o81_ti809_ch810_o231_ch3000_o281_nu3001', 'no_ra808_o81_ti809_ch810_o231_ch3000_o282_nu3001', 'no_ra808_o81_ti809_ch810_o231_ch3000_o283_nu3001'],
+//            ['no_ra808_o81_ti809_ch810_o232_ch3000_o281_nu3001', 'no_ra808_o81_ti809_ch810_o232_ch3000_o282_nu3001', 'no_ra808_o81_ti809_ch810_o232_ch3000_o283_nu3001'],
+//            ['no_ra808_o81_ti809_ch810_o233_ch3000_o281_nu3001', 'no_ra808_o81_ti809_ch810_o233_ch3000_o282_nu3001', 'no_ra808_o81_ti809_ch810_o233_ch3000_o283_nu3001'],
+//            ['no_ra808_o81_ti809_ch810_o234_ch3000_o281_nu3001', 'no_ra808_o81_ti809_ch810_o234_ch3000_o282_nu3001', 'no_ra808_o81_ti809_ch810_o234_ch3000_o283_nu3001'],
+//            ['no_ra808_o81_ti809_ch810_o235_ch3000_o281_nu3001', 'no_ra808_o81_ti809_ch810_o235_ch3000_o282_nu3001', 'no_ra808_o81_ti809_ch810_o235_ch3000_o283_nu3001']
+//        ];
+//        //ครั้งต่อเดือน
+//        $multiplier11_10_2 = [
+//            ['no_ra808_o81_ti809_ch810_o228_ch3000_o281_nu3002', 'no_ra808_o81_ti809_ch810_o228_ch3000_o282_nu3002','no_ra808_o81_ti809_ch810_o228_ch3000_o283_nu3002'],
+//            ['no_ra808_o81_ti809_ch810_o229_ch3000_o281_nu3002','no_ra808_o81_ti809_ch810_o229_ch3000_o282_nu3002','no_ra808_o81_ti809_ch810_o229_ch3000_o283_nu3002'],
+//            ['no_ra808_o81_ti809_ch810_o230_ch3000_o281_nu3002','no_ra808_o81_ti809_ch810_o230_ch3000_o282_nu3002','no_ra808_o81_ti809_ch810_o230_ch3000_o283_nu3002'],
+//            ['no_ra808_o81_ti809_ch810_o231_ch3000_o281_nu3002','no_ra808_o81_ti809_ch810_o231_ch3000_o282_nu3002','no_ra808_o81_ti809_ch810_o231_ch3000_o283_nu3002'],
+//            ['no_ra808_o81_ti809_ch810_o232_ch3000_o281_nu3002','no_ra808_o81_ti809_ch810_o232_ch3000_o282_nu3002','no_ra808_o81_ti809_ch810_o232_ch3000_o283_nu3002'],
+//            ['no_ra808_o81_ti809_ch810_o233_ch3000_o281_nu3002','no_ra808_o81_ti809_ch810_o233_ch3000_o282_nu3002','no_ra808_o81_ti809_ch810_o233_ch3000_o283_nu3002'],
+//            ['no_ra808_o81_ti809_ch810_o234_ch3000_o281_nu3002','no_ra808_o81_ti809_ch810_o234_ch3000_o282_nu3002','no_ra808_o81_ti809_ch810_o234_ch3000_o283_nu3002'],
+//            ['no_ra808_o81_ti809_ch810_o235_ch3000_o281_nu3002','no_ra808_o81_ti809_ch810_o235_ch3000_o282_nu3002','no_ra808_o81_ti809_ch810_o235_ch3000_o283_nu3002'],
+//        ];
+//        // บาทต่อลิตร
+//        $divide11_10_2 = [
+//            'no_ra808_o81_ti809_ch810_o228_nu820',
+//            'no_ra808_o81_ti809_ch810_o229_nu820',
+//            'no_ra808_o81_ti809_ch810_o230_nu820',
+//            'no_ra808_o81_ti809_ch810_o231_nu820',
+//            'no_ra808_o81_ti809_ch810_o232_nu820',
+//            'no_ra808_o81_ti809_ch810_o233_nu820',
+//            'no_ra808_o81_ti809_ch810_o234_nu820',
+//            'no_ra808_o81_ti809_ch810_o235_nu820'
+//        ];
+//        $table11_10_2_final = [];
+//        $level1 = 0;
+//        foreach ($table11_10_2 as $row){
+//            $finalSql = " ( 0 ";
+//            $level2 = 0;
+//            foreach ($row as $row2){
+//                $sql = " SUM(IF(unique_key='param1',answer_numeric,0)) * SUM(IF(unique_key='param2',answer_numeric,0)) * 12 ";
+//                $temp = str_replace("param1", $row2, $sql);
+//                $temp = str_replace("param2", $multiplier11_10_2[$level1][$level2], $temp);
+//                $finalSql .= " + " . $temp;
+//
+//                $level2++;
+//            }
+//            $finalSql .= " ) / SUM(IF(unique_key='$divide11_10_2[$level1]', answer_numeric,0)) ";
+//            $table11_10_2_final[] = $finalSql;
+//            $level1++;
+//        }
+//        $startColumn = 'BN';
+//        $startRow = 15;
+//        $objPHPExcel = Summary11Controller::average($table11_10_2_final, $startColumn,$startRow, $objPHPExcel, $mainObj,null,false,true);
+//        // ก๊าซปิโตรเลียมเหลว สำหรับหุงต้ม
+//        $size = [4,15,48];
+//        $amount = ['no_ra808_o81_ti821_ch822_o236_ch825_o208_nu826', 'no_ra808_o81_ti821_ch822_o236_ch825_o209_nu826', 'no_ra808_o81_ti821_ch822_o236_ch825_o210_nu826'];
+//        $level1 = 0;
+//        $sum = 0;
+//        $finalSql = " ( 0 ";
+//        foreach ($amount as $item){
+//            $sql = " SUM(IF(unique_key='$amount[$level1]',answer_numeric,0)) * $size[$level1] ";
+//            $finalSql .= " + " . $sql;
+//            $sum+=$size[$level1];
+//
+//            $level1++;
+//        }
+//        $finalSql .= " )/ $sum ";
+//        $table11_10_3 = [$finalSql];
+//        $startColumn = 'BN';
+//        $startRow = 23;
+//        $objPHPExcel = Summary11Controller::average($table11_10_3, $startColumn,$startRow, $objPHPExcel, $mainObj,null,false,true);
+//
+//        $table11_10_4 = ['no_ra808_o81_ti829_ch830_o1_nu833'];
+//        $multiplier11_10_4 = ['no_ra808_o81_ti829_ch830_o1_nu834'];
+//        $startRow = 24;
+//        $objPHPExcel = Summary11Controller::average($table11_10_4,$startColumn,$startRow,$objPHPExcel,$mainObj,$multiplier11_10_4,true);
 
-        // ครั้งต่อเดือน
-        $table11_9_1 = [
-            'no_ra808_o81_ti829_ch830_o266_nu834',
-            'no_ra808_o81_ti829_ch830_o267_nu834',
-            'no_ra808_o81_ti829_ch830_o268_nu834',
-            'no_ra808_o81_ti829_ch830_o269_nu834',
-            ['no_ra808_o81_ti809_ch810_o228_ch3000_o281_nu3002', 'no_ra808_o81_ti809_ch810_o228_ch3000_o282_nu3002','no_ra808_o81_ti809_ch810_o228_ch3000_o283_nu3002'],
-            ['no_ra808_o81_ti809_ch810_o229_ch3000_o281_nu3002','no_ra808_o81_ti809_ch810_o229_ch3000_o282_nu3002','no_ra808_o81_ti809_ch810_o229_ch3000_o283_nu3002'],
-            ['no_ra808_o81_ti809_ch810_o230_ch3000_o281_nu3002','no_ra808_o81_ti809_ch810_o230_ch3000_o282_nu3002','no_ra808_o81_ti809_ch810_o230_ch3000_o283_nu3002'],
-            ['no_ra808_o81_ti809_ch810_o231_ch3000_o281_nu3002','no_ra808_o81_ti809_ch810_o231_ch3000_o282_nu3002','no_ra808_o81_ti809_ch810_o231_ch3000_o283_nu3002'],
-            ['no_ra808_o81_ti809_ch810_o232_ch3000_o281_nu3002','no_ra808_o81_ti809_ch810_o232_ch3000_o282_nu3002','no_ra808_o81_ti809_ch810_o232_ch3000_o283_nu3002'],
-            ['no_ra808_o81_ti809_ch810_o233_ch3000_o281_nu3002','no_ra808_o81_ti809_ch810_o233_ch3000_o282_nu3002','no_ra808_o81_ti809_ch810_o233_ch3000_o283_nu3002'],
-            ['no_ra808_o81_ti809_ch810_o234_ch3000_o281_nu3002','no_ra808_o81_ti809_ch810_o234_ch3000_o282_nu3002','no_ra808_o81_ti809_ch810_o234_ch3000_o283_nu3002'],
-            ['no_ra808_o81_ti809_ch810_o235_ch3000_o281_nu3002','no_ra808_o81_ti809_ch810_o235_ch3000_o282_nu3002','no_ra808_o81_ti809_ch810_o235_ch3000_o283_nu3002'],
-            'no_ra808_o81_ti829_ch830_o1_nu834'
+        //ตารางที่ 11.11 จำนวนและร้อยละของครัวเรือนที่ใช้วิธีการไปซื้อพลังงานจำแนกตามเขตปกครอง
+        $table11_11 = [
+            ['no_ra808_o81_ti829_ch830_o266_ra832'=>225],
+            ['no_ra808_o81_ti829_ch830_o266_ra832'=>226],
+            [],
+            ['no_ra808_o81_ti829_ch830_o267_ra832'=>225],
+            ['no_ra808_o81_ti829_ch830_o267_ra832'=>226],
+            [],
+            ['no_ra808_o81_ti829_ch830_o268_ra832'=>225],
+            ['no_ra808_o81_ti829_ch830_o268_ra832'=>226],
+            [],
+            ['no_ra808_o81_ti829_ch830_o286_ra832'=>225],
+            ['no_ra808_o81_ti829_ch830_o286_ra832'=>226],
+            [],
+            ['no_ra808_o81_ti809_ch810_o228_ra812'=>225],
+            ['no_ra808_o81_ti809_ch810_o228_ra812'=>226],
+            [],
+            ['no_ra808_o81_ti809_ch810_o229_ra812'=>225],
+            ['no_ra808_o81_ti809_ch810_o229_ra812'=>226],
+            [],
+            ['no_ra808_o81_ti809_ch810_o230_ra812'=>225],
+            ['no_ra808_o81_ti809_ch810_o230_ra812'=>226],
+            [],
+            ['no_ra808_o81_ti809_ch810_o231_ra812'=>225],
+            ['no_ra808_o81_ti809_ch810_o231_ra812'=>226],
+            [],
+            ['no_ra808_o81_ti809_ch810_o232_ra812'=>225],
+            ['no_ra808_o81_ti809_ch810_o232_ra812'=>226],
+            [],
+            ['no_ra808_o81_ti809_ch810_o233_ra812'=>225],
+            ['no_ra808_o81_ti809_ch810_o233_ra812'=>226],
+            [],
+            ['no_ra808_o81_ti809_ch810_o234_ra812'=>225],
+            ['no_ra808_o81_ti809_ch810_o234_ra812'=>226],
+            [],
+            ['no_ra808_o81_ti809_ch810_o235_ra812'=>225],
+            ['no_ra808_o81_ti809_ch810_o235_ra812'=>226],
+            [],
+            ['no_ra808_o81_ti821_ch822_o236_ra824'=>226],
+            ['no_ra808_o81_ti821_ch822_o236_ra824'=>225],
+            [],
+            ['no_ra808_o81_ti829_ch830_o1_ra832'=>225],
+            ['no_ra808_o81_ti829_ch830_o1_ra832'=>226],
         ];
-        $startColumn = "AY";
-        $startRow = 11;
-        $objPHPExcel = Summary::average($table11_9_1,$startColumn,$startRow,$objPHPExcel,$mainObj,false,[],true);
-        // ถังต่อปี
-        $table11_9_2 =[
-            ['no_ra808_o81_ti821_ch822_o236_ch825_o208_nu826','no_ra808_o81_ti821_ch822_o236_ch825_o209_nu826','no_ra808_o81_ti821_ch822_o236_ch825_o210_nu826']
-        ];
-        $startRow = 23;
-        $objPHPExcel = Summary::average($table11_9_2,$startColumn,$startRow,$objPHPExcel,$mainObj);
-        $table11_9_3 = [
-            'no_ra808_o81_ti829_ch830_o1_nu834'
-        ];
-        $startRow = 24;
-        $objPHPExcel = Summary::average($table11_9_3,$startColumn,$startRow,$objPHPExcel,$mainObj, false,[], true);
-
-        // ตารางที่ 11.10
-        // แบบคูณตรงๆ
-        $table11_10_1 = [
-            'no_ra808_o81_ti829_ch830_o266_nu833', 'no_ra808_o81_ti829_ch830_o267_nu833', 'no_ra808_o81_ti829_ch830_o268_nu833', 'no_ra808_o81_ti829_ch830_o269_nu833'
-        ];
-        $multiplier11_10_1 = ['no_ra808_o81_ti829_ch830_o266_nu834',            'no_ra808_o81_ti829_ch830_o267_nu834',            'no_ra808_o81_ti829_ch830_o268_nu834', 'no_ra808_o81_ti829_ch830_o269_nu834',
-        ];
-        $startColumn = 'BN';
-        $startRow = 11;
-        $objPHPExcel = Summary11Controller::average($table11_10_1,$startColumn,$startRow,$objPHPExcel,$mainObj,$multiplier11_10_1,true);
-        // บาทต่อครั้ง
-        $table11_10_2 = [
-            ['no_ra808_o81_ti809_ch810_o228_ch3000_o281_nu3001', 'no_ra808_o81_ti809_ch810_o228_ch3000_o282_nu3001', 'no_ra808_o81_ti809_ch810_o228_ch3000_o283_nu3001'],
-            ['no_ra808_o81_ti809_ch810_o229_ch3000_o281_nu3001', 'no_ra808_o81_ti809_ch810_o229_ch3000_o282_nu3001', 'no_ra808_o81_ti809_ch810_o229_ch3000_o283_nu3001'],
-            ['no_ra808_o81_ti809_ch810_o230_ch3000_o281_nu3001', 'no_ra808_o81_ti809_ch810_o230_ch3000_o282_nu3001', 'no_ra808_o81_ti809_ch810_o230_ch3000_o283_nu3001'],
-            ['no_ra808_o81_ti809_ch810_o231_ch3000_o281_nu3001', 'no_ra808_o81_ti809_ch810_o231_ch3000_o282_nu3001', 'no_ra808_o81_ti809_ch810_o231_ch3000_o283_nu3001'],
-            ['no_ra808_o81_ti809_ch810_o232_ch3000_o281_nu3001', 'no_ra808_o81_ti809_ch810_o232_ch3000_o282_nu3001', 'no_ra808_o81_ti809_ch810_o232_ch3000_o283_nu3001'],
-            ['no_ra808_o81_ti809_ch810_o233_ch3000_o281_nu3001', 'no_ra808_o81_ti809_ch810_o233_ch3000_o282_nu3001', 'no_ra808_o81_ti809_ch810_o233_ch3000_o283_nu3001'],
-            ['no_ra808_o81_ti809_ch810_o234_ch3000_o281_nu3001', 'no_ra808_o81_ti809_ch810_o234_ch3000_o282_nu3001', 'no_ra808_o81_ti809_ch810_o234_ch3000_o283_nu3001'],
-            ['no_ra808_o81_ti809_ch810_o235_ch3000_o281_nu3001', 'no_ra808_o81_ti809_ch810_o235_ch3000_o282_nu3001', 'no_ra808_o81_ti809_ch810_o235_ch3000_o283_nu3001']
-        ];
-        //ครั้งต่อเดือน
-        $multiplier11_10_2 = [
-            ['no_ra808_o81_ti809_ch810_o228_ch3000_o281_nu3002', 'no_ra808_o81_ti809_ch810_o228_ch3000_o282_nu3002','no_ra808_o81_ti809_ch810_o228_ch3000_o283_nu3002'],
-            ['no_ra808_o81_ti809_ch810_o229_ch3000_o281_nu3002','no_ra808_o81_ti809_ch810_o229_ch3000_o282_nu3002','no_ra808_o81_ti809_ch810_o229_ch3000_o283_nu3002'],
-            ['no_ra808_o81_ti809_ch810_o230_ch3000_o281_nu3002','no_ra808_o81_ti809_ch810_o230_ch3000_o282_nu3002','no_ra808_o81_ti809_ch810_o230_ch3000_o283_nu3002'],
-            ['no_ra808_o81_ti809_ch810_o231_ch3000_o281_nu3002','no_ra808_o81_ti809_ch810_o231_ch3000_o282_nu3002','no_ra808_o81_ti809_ch810_o231_ch3000_o283_nu3002'],
-            ['no_ra808_o81_ti809_ch810_o232_ch3000_o281_nu3002','no_ra808_o81_ti809_ch810_o232_ch3000_o282_nu3002','no_ra808_o81_ti809_ch810_o232_ch3000_o283_nu3002'],
-            ['no_ra808_o81_ti809_ch810_o233_ch3000_o281_nu3002','no_ra808_o81_ti809_ch810_o233_ch3000_o282_nu3002','no_ra808_o81_ti809_ch810_o233_ch3000_o283_nu3002'],
-            ['no_ra808_o81_ti809_ch810_o234_ch3000_o281_nu3002','no_ra808_o81_ti809_ch810_o234_ch3000_o282_nu3002','no_ra808_o81_ti809_ch810_o234_ch3000_o283_nu3002'],
-            ['no_ra808_o81_ti809_ch810_o235_ch3000_o281_nu3002','no_ra808_o81_ti809_ch810_o235_ch3000_o282_nu3002','no_ra808_o81_ti809_ch810_o235_ch3000_o283_nu3002'],
-        ];
-        // บาทต่อลิตร
-        $divide11_10_2 = [
-            'no_ra808_o81_ti809_ch810_o228_nu820',
-            'no_ra808_o81_ti809_ch810_o229_nu820',
-            'no_ra808_o81_ti809_ch810_o230_nu820',
-            'no_ra808_o81_ti809_ch810_o231_nu820',
-            'no_ra808_o81_ti809_ch810_o232_nu820',
-            'no_ra808_o81_ti809_ch810_o233_nu820',
-            'no_ra808_o81_ti809_ch810_o234_nu820',
-            'no_ra808_o81_ti809_ch810_o235_nu820'
-        ];
-        $table11_10_2_final = [];
-        $level1 = 0;
-        foreach ($table11_10_2 as $row){
-            $finalSql = " ( 0 ";
-            $level2 = 0;
-            foreach ($row as $row2){
-                $sql = " SUM(IF(unique_key='param1',answer_numeric,0)) * SUM(IF(unique_key='param2',answer_numeric,0)) * 12 ";
-                $temp = str_replace("param1", $row2, $sql);
-                $temp = str_replace("param2", $multiplier11_10_2[$level1][$level2], $temp);
-                $finalSql .= " + " . $temp;
-
-                $level2++;
-            }
-            $finalSql .= " ) / SUM(IF(unique_key='$divide11_10_2[$level1]', answer_numeric,0)) ";
-            $table11_10_2_final[] = $finalSql;
-            $level1++;
-        }
-        $startColumn = 'BN';
-        $startRow = 15;
-        $objPHPExcel = Summary11Controller::average($table11_10_2_final, $startColumn,$startRow, $objPHPExcel, $mainObj,null,false,true);
-        // ก๊าซปิโตรเลียมเหลว สำหรับหุงต้ม
-        $size = [4,15,48];
-        $amount = ['no_ra808_o81_ti821_ch822_o236_ch825_o208_nu826', 'no_ra808_o81_ti821_ch822_o236_ch825_o209_nu826', 'no_ra808_o81_ti821_ch822_o236_ch825_o210_nu826'];
-        $level1 = 0;
-        $sum = 0;
-        $finalSql = " ( 0 ";
-        foreach ($amount as $item){
-            $sql = " SUM(IF(unique_key='$amount[$level1]',answer_numeric,0)) * $size[$level1] ";
-            $finalSql .= " + " . $sql;
-            $sum+=$size[$level1];
-
-            $level1++;
-        }
-        $finalSql .= " )/ $sum ";
-        $table11_10_3 = [$finalSql];
-        $startColumn = 'BN';
-        $startRow = 23;
-        $objPHPExcel = Summary11Controller::average($table11_10_3, $startColumn,$startRow, $objPHPExcel, $mainObj,null,false,true);
-
-        $table11_10_4 = ['no_ra808_o81_ti829_ch830_o1_nu833'];
-        $multiplier11_10_4 = ['no_ra808_o81_ti829_ch830_o1_nu834'];
-        $startRow = 24;
-        $objPHPExcel = Summary11Controller::average($table11_10_4,$startColumn,$startRow,$objPHPExcel,$mainObj,$multiplier11_10_4,true);
+        $startColumn = 'CB';
+        $startRow = 12;
+        $objPHPExcel = Summary::sum($table11_11, $startColumn, $startRow, $objPHPExcel, $mainObj, true);
 
         $objWriter = new \PHPExcel_Writer_Excel2007($objPHPExcel);
         $objWriter->save(storage_path(iconv('UTF-8', 'windows-874', 'excel/'.$outputFile)));
@@ -335,7 +383,10 @@ class Summary11Controller extends Controller
         }
         foreach ($uniqueKeyArr as $unique_key=>$options){
 //            $whereIn[] = $value;
-
+            if (empty($options)){
+                $startRow++;
+                continue;
+            }
             $p = [];
             $count = [];
 
