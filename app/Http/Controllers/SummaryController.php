@@ -9,6 +9,9 @@ use App\Http\Controllers\Summary8\Summary82;
 use App\Http\Controllers\Summary8\Summary83;
 use App\Http\Controllers\Summary8\Summary84;
 use App\Http\Controllers\Summary8\Summary85;
+use App\Http\Controllers\Summary12\Summary122;
+use App\Http\Controllers\Summary12\Summary123;
+use App\Http\Controllers\Summary12\Summary124;
 use App\Http\Controllers\Summary13\Summary131;
 use App\Http\Controllers\Summary13\Summary132;
 use App\Http\Controllers\Summary13\Summary133;
@@ -782,6 +785,24 @@ class SummaryController extends Controller
         $objWriter->save(storage_path(iconv('UTF-8', 'windows-874', 'excel/'.$outputFile)));
 
         return response()->download(storage_path('excel/'.$outputFile), 'ตารางสรุปหมวดข่าวสารบันเทิง.xlsx');
+    }
+
+    public function downloadSum122()
+    {
+        Summary122::report122();
+        return response()->download(storage_path('excel/sum122.xlsx'), '12.2 การผลิตก๊าซชีวภาพ.xlsx');
+    }
+
+    public function downloadSum123()
+    {
+        Summary123::report123();
+        return response()->download(storage_path('excel/sum123.xlsx'), '12.3 การผลิตไฟฟ้าด้วยเครื่องปั่นไฟ.xlsx');
+    }
+
+    public function downloadSum124()
+    {
+        Summary124::report124();
+        return response()->download(storage_path('excel/sum124.xlsx'), '12.4 การผลิตไฟฟ้าด้วยเซลล์แสงอาทิตย๋.xlsx');
     }
 
     public function downloadSum131()

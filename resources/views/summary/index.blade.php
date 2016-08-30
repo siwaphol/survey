@@ -61,6 +61,12 @@
                                         <a class="btn btn-success" href="{{url('get-report11-1')}}">Download</a>
                                     @elseif($row->id===26)
                                         <a class="btn btn-success" href="{{url('get-report11-2')}}">Download</a>
+                                    @elseif($row->id===28)
+                                        <a class="btn btn-success" href="{{url('get-report122')}}">Download</a>
+                                    @elseif($row->id===29)
+                                        <a class="btn btn-success" href="{{url('get-report123')}}">Download</a>
+                                    @elseif($row->id===30)
+                                        <a class="btn btn-success" href="{{url('get-report124')}}">Download</a>
                                     @elseif($row->id===31)
                                         <a class="btn btn-success" href="{{url('get-report131')}}">Download</a>
                                     @elseif($row->id===32)

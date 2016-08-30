@@ -41,6 +41,10 @@ Route::group(['middleware' => 'auth'], function () {
     Route::get('get-report11-1', 'Summary11Controller@downloadSum11_1');
     Route::get('get-report11-2', 'Summary11Controller@downloadSum11_2');
 
+    Route::get('get-report122', 'SummaryController@downloadSum122');
+    Route::get('get-report123', 'SummaryController@downloadSum123');
+    Route::get('get-report124', 'SummaryController@downloadSum124');
+
     Route::get('get-report131', 'SummaryController@downloadSum131');
     Route::get('get-report132', 'SummaryController@downloadSum132');
     Route::get('get-report133', 'SummaryController@downloadSum133');
