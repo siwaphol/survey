@@ -60,7 +60,18 @@ class Main extends Model
         Main::NORTHERN_OUTER=>3053303
     ];
 
-
+    public static $provinceWeightText = [
+        Main::CHIANGMAI_INNER=>'เชียงใหม่ในเขต',
+        Main::CHIANGMAI_OUTER=>'เชียงใหม่นอกเขต',
+        Main::UTARADIT_INNER=>'อุตรดิตในเขต',
+        Main::UTARADIT_OUTER=>'อุตรดิตนอกเขต',
+        Main::NAN_INNER=>'น่านในเขต',
+        Main::NAN_OUTER=>'น่านนอกเขต',
+        Main::PITSANULOK_INNER=>'พิษณุโลกในเขต',
+        Main::PITSANULOK_OUTER=>'พิษณุโลกนอกเขต',
+        Main::PETCHABUL_INNER=>'เพชรบูรณ์ในเขต',
+        Main::PETCHABUL_OUTER=>'เพชรบูรณ์นอกเขต'
+    ];
 
     public static $provinceWeight = [
         Main::CHIANGMAI_INNER=>0.862,
@@ -80,6 +91,12 @@ class Main extends Model
         Main::INNER_GROUP_2=>0.327,
         Main::OUTER_GROUP_1=>0.488,
         Main::OUTER_GROUP_2=>0.512,
+    ];
+    public static $borderWeightText = [
+        Main::INNER_GROUP_1=>'ในเขตกลุ่ม 1',
+        Main::INNER_GROUP_2=>'ในเขตกลุ่ม 2',
+        Main::OUTER_GROUP_1=>'นอกเขตกลุ่ม 1',
+        Main::OUTER_GROUP_2=>'นอกเขตกลุ่ม 2',
     ];
 
     protected $mainList;
