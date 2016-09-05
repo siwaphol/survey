@@ -6,7 +6,7 @@ use Illuminate\Database\Eloquent\Model;
 
 class Summary extends Model
 {
-    public static function sum($uniqueKeyArr, $startCol, $startRow, $objPHPExcel, $mainObj, $isRadio = false)
+    public static function sum($uniqueKeyArr, $startCol, $startRow, $objPHPExcel, $mainObj, $isRadio = false, $isCustomHaving = false, $havingUniqueKey=null)
     {
         $w = [];
         $w[1] = Main::$weight[Main::INNER_GROUP_1];
@@ -36,10 +36,16 @@ class Summary extends Model
             $rowNumber++;
         }
 
-        $answerObj = Answer::whereIn('unique_key', $uniqueKeyArr)->get();
+        if (!$isRadio)
+            $answerObj = Answer::whereIn('unique_key', $uniqueKeyArr)->get();
+
         $whereIn = [];
         $answers = [];
         foreach ($rows as $key => $value) {
+
+            if (empty($value))
+                continue;
+
             $whereIn[] = $value;
             $p = [];
             $count = [];
@@ -65,11 +71,20 @@ class Summary extends Model
                     $sql = "SELECT COUNT(*) as count FROM (SELECT main_id FROM answers WHERE main_id IN ($whereInMainId) " . $whereCondition . " GROUP BY main_id) t1";
                     $count[$i] = \DB::select($sql)[0]->count;
                     $p[$i] = $w[$i] * ((float)$count[$i] / $s[$i]);
-
-                    //echo $w[$i]." / ".$count[$i]." / ". $s[$i]." / ".$p[$i]."<br><br>";
-
                 }
-            } else {
+            }
+            elseif ($isCustomHaving){
+                for ($i = 1; $i <= 4; $i++) {
+                    $mainList = $mainObj->filterMain($i);
+                    $whereCondition = $value;
+
+                    $whereInMainId = implode(",", $mainList);
+                    $sql = "SELECT COUNT(*) as count FROM (SELECT main_id FROM answers WHERE main_id IN ($whereInMainId) GROUP BY main_id $whereCondition ) t1";
+                    $count[$i] = \DB::select($sql)[0]->count;
+                    $p[$i] = $w[$i] * ((float)$count[$i] / $s[$i]);
+                }
+            }
+            else {
                 for ($i = 1; $i <= 4; $i++) {
                     $mainList = $mainObj->filterMain($i);
                     $dupMainId = [];
@@ -86,29 +101,28 @@ class Summary extends Model
 
                 }
             }
-            $percentage = $p[1] + $p[2];
-            $answers[$key] = $percentage*$S[1];
+            $percentage1 = $p[1] + $p[2];
+            $answers[$key] = $percentage1*$S[1];
             $col = $startCol;
             $col++;
             $key2 = preg_replace('/[A-Z]+/', $col, $key);
-            $answers[$key2] = $percentage*100;
+            $answers[$key2] = $percentage1*100;
             $col++;
             $key3 = preg_replace('/[A-Z]+/', $col, $key);
+            $percentage2 = $p[3] + $p[4];
 
-            $percentage = $p[3] + $p[4];
-
-
-            $answers[$key3] = $percentage*$S[3];
+            $answers[$key3] = $percentage2*$S[3];
             $col++;
             $key4 = preg_replace('/[A-Z]+/', $col, $key);
-            $answers[$key4] = $percentage*100;
+            $answers[$key4] = $percentage2*100;
             //รวม
             $col++;
             $key5 = preg_replace('/[A-Z]+/', $col, $key);
             $col++;
             $key6 = preg_replace('/[A-Z]+/', $col, $key);
-            $answers[$key6] = ($answers[$key2]*Main::$weight[Main::NORTHERN_INNER] + $answers[$key4]*Main::$weight[Main::NORTHERN_OUTER]);
+            $answers[$key6] = ($answers[$key2]*Main::$weight[Main::NORTHERN_INNER] + $answers[$key4]*Main::$weight[Main::NORTHERN_OUTER])/100;
             $answers[$key5] = ($answers[$key6] ) * (float)$paramSheet->getCell(Parameter::$populationColumn[Main::NORTHERN])->getValue();
+            $answers[$key6] *= 100;
 
             $objPHPExcel->getActiveSheet()->setCellValue($key, $answers[$key]);
             $objPHPExcel->getActiveSheet()->setCellValue($key2, ($answers[$key2]));
@@ -128,7 +142,7 @@ class Summary extends Model
         return $objPHPExcel;
     }
 
-    public static function average($uniqueKeyArr, $startCol, $startRow, $objPHPExcel, $mainObj, $isRadio = false, $radioArr = [])
+    public static function average($uniqueKeyArr, $startCol, $startRow, $objPHPExcel, $mainObj, $isRadio = false, $radioArr = [], $year=false, $multiply=null)
     {
         $rows = [];
         $rowNumber = $startRow;
@@ -157,6 +171,9 @@ class Summary extends Model
             $whereIn[] = $value;
             $p = [];
             $avg = [];
+
+            if (empty($value))
+                continue;
 
             foreach (Main::$provinceWeight as $p_key => $p_weight) {
                 $mainList = $mainObj->filterMain($p_key);
@@ -195,9 +212,17 @@ class Summary extends Model
                         $tempUniqueKey = $whereUniqueKey;
                         $whereUniqueKey = " AND unique_key IN ('" .$whereUniqueKey."') ";
                         $sumSQL = " SUM(IF(unique_key IN ('$tempUniqueKey'),answer_numeric,0)) ";
+                        if (!is_null($multiply))
+                            $sumSQL .= " * $multiply ";
+                        else if ($year)
+                            $sumSQL .= " * 12 ";
                     }else{
                         $whereUniqueKey = " AND unique_key='$value'";
                         $sumSQL = " SUM(IF(unique_key='$value', answer_numeric,0)) ";
+                        if (!is_null($multiply))
+                            $sumSQL .= " * $multiply ";
+                        elseif ($year)
+                            $sumSQL .= " * 12 ";
                     }
 
                     $avgSql = "SELECT AVG(sum1) as average, COUNT(*) as countAll FROM
@@ -246,9 +271,17 @@ class Summary extends Model
                         $tempUniqueKey = $whereUniqueKey;
                         $whereUniqueKey = " AND unique_key IN ('" .$whereUniqueKey."') ";
                         $sumSQL = " SUM(IF(unique_key IN ('$tempUniqueKey'),answer_numeric,0)) ";
+                        if (!is_null($multiply))
+                            $sumSQL .= " * $multiply ";
+                        else if ($year)
+                            $sumSQL .= " * 12 ";
                     }else{
                         $whereUniqueKey = " AND unique_key='$value'";
                         $sumSQL = " SUM(IF(unique_key='$value', answer_numeric,0)) ";
+                        if (!is_null($multiply))
+                            $sumSQL .= " * $multiply ";
+                        else if ($year)
+                            $sumSQL .= " * 12 ";
                     }
 
                     $avgSql = "SELECT AVG(sum1) as average, COUNT(*) as countAll FROM
@@ -731,8 +764,9 @@ class Summary extends Model
             $key5 = preg_replace('/[A-Z]+/', $col, $key);
             $col++;
             $key6 = preg_replace('/[A-Z]+/', $col, $key);
-            $answers[$key6] = ($answers[$key2]*Main::$weight[Main::NORTHERN_INNER] + $answers[$key4]*Main::$weight[Main::NORTHERN_OUTER]);
-            $answers[$key5] = ($answers[$key6] ) * (float)$paramSheet->getCell(Parameter::$populationColumn[Main::NORTHERN])->getValue();
+            $answers[$key6] = ($answers[$key2]*Main::$weight[Main::NORTHERN_INNER] + $answers[$key4]*Main::$weight[Main::NORTHERN_OUTER])/100;
+            $answers[$key5] = ($answers[$key6]) * (float)$paramSheet->getCell(Parameter::$populationColumn[Main::NORTHERN])->getValue();
+			$answers[$key6] *= 100;
 
             $objPHPExcel->getActiveSheet()->setCellValue($key, $answers[$key]);
             $objPHPExcel->getActiveSheet()->setCellValue($key2, ($answers[$key2]));
@@ -976,7 +1010,7 @@ class Summary extends Model
             echo "หาค่า A ของนอกเขตกลุ่ม 1 = ( 1 / จำนวนครัวเรือนที่เลือก - 1) x ((จำนวนเฉลี่ยเชียงใหม่นอกเขต - ค่าเฉลี่ยนอกเขตกลุ่มจังหวัด 1)^2 + (จำนวนเฉลี่ยอุตรดิตนอกเขต - ค่าเฉลี่ยนอกเขตกลุ่มจังหวัด 1)^2) </br>";
             $aTemp = $A[Main::OUTER_GROUP_1];
             echo " {$aTemp} = ( 1 / {$count[Main::OUTER_GROUP_1]} -1 ) x (({$avg[Main::CHIANGMAI_OUTER]}-{$avg[Main::OUTER_GROUP_1]})^2 + ({$avg[Main::UTARADIT_OUTER]}-{$avg[Main::OUTER_GROUP_1]})^2) </br>";
-            
+
             if ($count[Main::OUTER_GROUP_2] - 1 === 0)
                 $A[Main::OUTER_GROUP_2] = 0;
             else

@@ -19,6 +19,7 @@ Route::group(['middleware' => 'auth'], function () {
     Route::post('test-post-3','AnswerController@saveAnswersWithEasiestWay2');
 
     Route::get('report', 'SummaryController@index');
+    Route::get('download/{menu_id}', 'SummaryController@download');
     Route::get('get-report81', 'SummaryController@downloadSum81');
     Route::get('get-report82', 'SummaryController@downloadSum82');
     Route::get('get-report83', 'SummaryController@downloadSum83');
@@ -39,6 +40,11 @@ Route::group(['middleware' => 'auth'], function () {
 
     Route::get('get-report11-1', 'Summary11Controller@downloadSum11_1');
     Route::get('get-report11-2', 'Summary11Controller@downloadSum11_2');
+
+    Route::get('get-report121', 'SummaryController@downloadSum121');
+    Route::get('get-report122', 'SummaryController@downloadSum122');
+    Route::get('get-report123', 'SummaryController@downloadSum123');
+    Route::get('get-report124', 'SummaryController@downloadSum124');
 
     Route::get('get-report131', 'SummaryController@downloadSum131');
     Route::get('get-report132', 'SummaryController@downloadSum132');
