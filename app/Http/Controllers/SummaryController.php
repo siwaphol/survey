@@ -190,6 +190,10 @@ class SummaryController extends Controller
         $ktoe = 0.08521;
         $week = Parameter::WEEK_PER_YEAR;
         $sumAmountSQL = " (sum(IF(unique_key='param1',answer_numeric,0))* sum(if(unique_key='param2', answer_numeric,0))* {$week})* (param4) * sum(if(unique_key='param3',1,0)) as sumAmount ";
+
+        $sumAmountSQL2 = " (sum(IF(unique_key='param1',answer_numeric,0))* sum(if(unique_key='param2', answer_numeric,0))* {$week})* (param4) * sum(if(unique_key='param3',1,0)) as sumAmount,main_id ";
+        $sumAmountSQLDesc = " อัตราการใช้ชั่วโมงต่อวัน x อัตราการใช้วันต่อสัปดาห์ x {$week}) x กำลังไฟฟ้าหน่วน kWh x จำนวนหลอด </br>";
+
         $params = [
             'param1'=>0,
             'param2'=>1,
@@ -204,7 +208,7 @@ class SummaryController extends Controller
             'no_ch1023_o329_ch101_o69_ch102_o73_nu110',
             'no_ch1023_o329_ch101_o69_ch102_o74_nu110',
             'no_ch1023_o329_ch101_o70_nu106',
-            'no_ch1023_o329_ch101_o70_nu106',
+            'no_ch1023_o329_ch101_o71_nu106',
             'no_ch1023_o330_ch112_o68_nu117',
             'no_ch1023_o330_ch112_o69_ch113_o72_nu121',
             'no_ch1023_o330_ch112_o69_ch113_o73_nu121',

@@ -49,6 +49,10 @@ Route::group(['middleware' => 'auth'], function () {
     Route::get('get-report131', 'SummaryController@downloadSum131');
     Route::get('get-report132', 'SummaryController@downloadSum132');
     Route::get('get-report133', 'SummaryController@downloadSum133');
+
+    Route::get('echo-report', function(){
+        \App\EchoSummary::report911Test();
+    });
 });
 
 Route::group(['prefix'=>'api'], function (){
