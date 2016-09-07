@@ -287,7 +287,7 @@ class Summary122 extends Controller
                     $avgSql = "SELECT SUM(sum1)/".Main::$provinceSample[$p_key]." as average, COUNT(*) as countAll FROM
                     (SELECT $value AS sum1 FROM answers
                     WHERE main_id IN ($whereMainId) "
-                        . " GROUP BY main_id) T1";
+                        . " GROUP BY main_id) T1 WHERE sum1>0";
                 } else {
                     if (is_array($value)) {
                         $whereUniqueKey = implode("','", $value);
@@ -321,7 +321,7 @@ class Summary122 extends Controller
                     $avgSql = "SELECT SUM(sum1)/".Main::$sample[$b_key]." as average, COUNT(*) as countAll FROM
                     (SELECT $value AS sum1 FROM answers
                     WHERE main_id IN ($whereMainId) "
-                        . " GROUP BY main_id) T1";
+                        . " GROUP BY main_id) T1 WHERE sum1>0";
                 } else {
                     if (is_array($value)) {
                         $whereUniqueKey = implode("','", $value);
