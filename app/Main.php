@@ -54,6 +54,20 @@ class Main extends Model
         Main::OUTER_GROUP_2=>850.00
     ];
 
+    public static $provinceSample =
+    [
+        Main::CHIANGMAI_INNER=>487,
+        Main::CHIANGMAI_OUTER=>634,
+        Main::NAN_INNER=>41,
+        Main::NAN_OUTER=>175,
+        Main::UTARADIT_INNER=>78,
+        Main::UTARADIT_OUTER=>177,
+        Main::PITSANULOK_INNER=>120,
+        Main::PITSANULOK_OUTER=>328,
+        Main::PETCHABUL_INNER=>113,
+        Main::PETCHABUL_OUTER=>347
+    ];
+
     public static $population = [
         Main::NORTHERN=>4467077,
         Main::NORTHERN_INNER=>1413774,
