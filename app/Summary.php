@@ -204,7 +204,7 @@ class Summary extends Model
                     $avgSql = "SELECT SUM(sum1)/".Main::$provinceSample[$p_key]." as average, COUNT(*) as countAll FROM
                         (SELECT $finalSql AS sum1 FROM answers
                         WHERE main_id IN ($whereMainId) " . $whereUniqueKey
-                        . " GROUP BY main_id) T1";
+                        . " GROUP BY main_id) T1 WHERE sum1>0 ";
 
                 } else {
                     if (is_array($value)) {
@@ -227,7 +227,7 @@ class Summary extends Model
 
                     $avgSql = "SELECT SUM(sum1)/".Main::$provinceSample[$p_key]." as average, COUNT(*) as countAll FROM
                         (SELECT $sumSQL AS sum1 FROM answers
-                        WHERE main_id IN ($whereMainId) "
+                        WHERE main_id IN ($whereMainId) " . $whereUniqueKey
                         . " GROUP BY main_id) T1";
                 }
                 $avgResult = \DB::select($avgSql);
@@ -262,7 +262,7 @@ class Summary extends Model
                     $avgSql = "SELECT SUM(sum1)/".Main::$sample[$b_key]." as average, COUNT(*) as countAll FROM
                         (SELECT $finalSql AS sum1 FROM answers
                         WHERE main_id IN ($whereMainId) " . $whereUniqueKey
-                        . " GROUP BY main_id) T1";
+                        . " GROUP BY main_id) T1 WHERE sum1>0";
 
                 } else {
                     //old2
@@ -286,7 +286,7 @@ class Summary extends Model
 
                     $avgSql = "SELECT SUM(sum1)/".Main::$sample[$b_key]." as average, COUNT(*) as countAll FROM
                         (SELECT $sumSQL AS sum1 FROM answers
-                        WHERE main_id IN ($whereMainId) "
+                        WHERE main_id IN ($whereMainId) " . $whereUniqueKey
                         . " GROUP BY main_id) T1";
                 }
                 $avgResult = \DB::select($avgSql);

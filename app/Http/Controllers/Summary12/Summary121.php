@@ -136,7 +136,7 @@ class Summary121 extends Controller
                 $avg[$p_key] = 0;
                 $whereMainId = implode(",", $mainList);
 
-                $avgSql = "SELECT AVG(sum1) as average, COUNT(*) as countAll FROM
+                $avgSql = "SELECT SUM(sum1)/".Main::$provinceSample[$p_key]." as average, COUNT(*) as countAll FROM
                     (SELECT $value AS sum1 FROM answers
                     WHERE main_id IN ($whereMainId) "
                     . " GROUP BY main_id) T1 WHERE sum1 > 0";
@@ -152,7 +152,7 @@ class Summary121 extends Controller
                 $avg[$b_key] = 0;
                 $whereMainId = implode(",", $mainList);
 
-                $avgSql = "SELECT AVG(sum1) as average, COUNT(*) as countAll FROM
+                $avgSql = "SELECT SUM(sum1)/".Main::$sample[$b_key]." as average, COUNT(*) as countAll FROM
                     (SELECT $value AS sum1 FROM answers
                     WHERE main_id IN ($whereMainId) "
                     . " GROUP BY main_id) T1 WHERE sum1 > 0";

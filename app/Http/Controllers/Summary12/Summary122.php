@@ -284,7 +284,7 @@ class Summary122 extends Controller
                 $whereMainId = implode(", ", $mainList);
 
                 if ($customSql) {
-                    $avgSql = "SELECT AVG(sum1) as average, COUNT(*) as countAll FROM
+                    $avgSql = "SELECT SUM(sum1)/".Main::$provinceSample[$p_key]." as average, COUNT(*) as countAll FROM
                     (SELECT $value AS sum1 FROM answers
                     WHERE main_id IN ($whereMainId) "
                         . " GROUP BY main_id) T1";
@@ -301,7 +301,7 @@ class Summary122 extends Controller
                     SUM(IF(unique_key='$multiplier[$level1Counter]',answer_numeric,0)) ";
                     }
 
-                    $avgSql = "SELECT AVG(sum1) as average, COUNT(*) as countAll FROM
+                    $avgSql = "SELECT SUM(sum1)/".Main::$provinceSample[$p_key]." as average, COUNT(*) as countAll FROM
                     (SELECT $sumSQL AS sum1 FROM answers
                     WHERE main_id IN ($whereMainId) " . $whereUniqueKey
                         . " GROUP BY main_id) T1";
@@ -318,7 +318,7 @@ class Summary122 extends Controller
                 $whereMainId = implode(",", $mainList);
                 //old2
                 if ($customSql) {
-                    $avgSql = "SELECT AVG(sum1) as average, COUNT(*) as countAll FROM
+                    $avgSql = "SELECT SUM(sum1)/".Main::$sample[$b_key]." as average, COUNT(*) as countAll FROM
                     (SELECT $value AS sum1 FROM answers
                     WHERE main_id IN ($whereMainId) "
                         . " GROUP BY main_id) T1";
@@ -335,7 +335,7 @@ class Summary122 extends Controller
                     SUM(IF(unique_key='$multiplier[$level1Counter]',answer_numeric,0)) ";
                     }
 
-                    $avgSql = "SELECT AVG(sum1) as average, COUNT(*) as countAll FROM
+                    $avgSql = "SELECT SUM(sum1)/".Main::$sample[$b_key]." as average, COUNT(*) as countAll FROM
                     (SELECT $sumSQL AS sum1 FROM answers
                     WHERE main_id IN ($whereMainId) " . $whereUniqueKey
                         . " GROUP BY main_id) T1";
