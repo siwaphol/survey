@@ -421,6 +421,9 @@ class Summary extends Model
         foreach ($rows as $key => $value) {
             $sum = [];
 
+            if (empty($value))
+                continue;
+
             foreach (Main::$borderWeight as $b_key => $b_weight) {
                 $mainList = $mainObj->filterMain($b_key);
 

@@ -228,14 +228,16 @@ class Summary91 extends Controller
             ['no_ch1028_o364_ch420_o197_ch421_o199_nu422', 'no_ch1028_o364_ch420_o197_ch421_o199_nu423','no_ch1028_o364_ch420_o197_ch421_o199_nu424',0.35],
             ['no_ch1028_o364_ch420_o197_ch421_o200_nu422', 'no_ch1028_o364_ch420_o197_ch421_o200_nu423','no_ch1028_o364_ch420_o197_ch421_o200_nu424',0.4],
             ['no_ch1028_o364_ch420_o197_ch421_o201_nu422', 'no_ch1028_o364_ch420_o197_ch421_o201_nu423','no_ch1028_o364_ch420_o197_ch421_o201_nu424',0.45],
-            ['no_ch1028_o365_nu429', 'no_ch1028_o365_nu430','no_ch1028_o365_nu431',1.1],
-            ['no_ch1028_o366_nu435', 'no_ch1028_o366_nu436','no_ch1028_o366_nu437',0.05],
+
+            [],
+            [],
+
             ['no_ch1028_o367_nu441', 'no_ch1028_o367_nu442','no_ch1028_o367_nu443',0.01],
             ['no_ch1028_o368_nu447', 'no_ch1028_o368_nu448','no_ch1028_o368_nu449',1.4],
             ['no_ch1028_o369_nu453', 'no_ch1028_o369_nu454','no_ch1028_o369_nu455',0.2],
         ];
         $startColumn = "AL";
-        $ktoe = Parameter::ELECTRIC_KTOE;
+        $ktoe = Parameter::$ktoe[Parameter::ELECTRIC];
         $week = Parameter::WEEK_PER_YEAR;
         $sumAmountSQL = " (sum(IF(unique_key='param1',answer_numeric,0)) * sum(if(unique_key='param2', answer_numeric,0)) * sum(if(unique_key='param3', answer_numeric,0))) * {$week}  * (param4) as sumAmount ";
         $params = [
@@ -245,6 +247,22 @@ class Summary91 extends Controller
             'param4'=>3
         ];
         $objPHPExcel = Summary::usageElectric($table3Eletric, $startColumn, $startRow,$objPHPExcel, $mainObj,$sumAmountSQL,$params,$ktoe);
+
+        // ไดร์เป่าผม และเครื่องหนีบผม
+        $tabl3MinuteEachTime = [
+            ['no_ch1028_o365_nu429', 'no_ch1028_o365_nu430','no_ch1028_o365_nu431',1.1],
+            ['no_ch1028_o366_nu435', 'no_ch1028_o366_nu436','no_ch1028_o366_nu437',0.05]
+        ];
+        $startRow = 71;
+        $sumAmountSQL = " (sum(IF(unique_key='param1',answer_numeric,0)) * sum(if(unique_key='param2', answer_numeric,0)) * sum(if(unique_key='param3', answer_numeric,0))) * {$week}/60  * (param4) as sumAmount ";
+        $params = [
+            'param1'=>0,
+            'param2'=>1,
+            'param3'=>2,
+            'param4'=>3
+        ];
+        $objPHPExcel = Summary::usageElectric($tabl3MinuteEachTime, $startColumn, $startRow,$objPHPExcel, $mainObj,$sumAmountSQL,$params,$ktoe);
+
         $table3Petro = [
             ['no_ch1029_o370_ch461_o208_nu462','no_ch1029_o370_ch461_o208_nu463',4
                 ,'no_ch1029_o370_ch461_o209_nu462','no_ch1029_o370_ch461_o209_nu463',15

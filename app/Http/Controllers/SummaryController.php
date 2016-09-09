@@ -404,8 +404,8 @@ class SummaryController extends Controller
             ['no_ch1024_o339_nu190', 'no_ch1024_o339_nu191','no_ch1024_o339_nu192',0.7,'no_ch1024_o339_nu189'],
             ['no_ch1024_o340_nu197', 'no_ch1024_o340_nu198','no_ch1024_o340_nu199',2,'no_ch1024_o340_nu196']
         ];
-        $week = 52.14;
-        $ktoe = 0.08521;
+        $week = Parameter::WEEK_PER_YEAR;
+        $ktoe = Parameter::$ktoe[Parameter::ELECTRIC];
         $sumAmountSQL = " (sum(IF(unique_key='param1',answer_numeric,0)) * sum(if(unique_key='param2', answer_numeric,0)) * sum(if(unique_key='param3', answer_numeric,0))) * {$week} / 60 * (param4) * sum(if(unique_key='param5',answer_numeric,0)) as sumAmount ";
         $params = [
             'param1'=>0,
