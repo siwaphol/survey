@@ -428,7 +428,7 @@ class Summary122 extends Controller
             $objPHPExcel->getActiveSheet()->setCellValue($key2, $answers[$key2]);
             $objPHPExcel->getActiveSheet()->setCellValue($key3, $answers[$key3]);
             $objPHPExcel->getActiveSheet()->setCellValue($key4, $answers[$key4]);
-            $objPHPExcel->getActiveSheet()->setCellValue($key5, (($answers[$key] + $answers[$key3]) / 2.0));
+            $objPHPExcel->getActiveSheet()->setCellValue($key5, (($answers[$key]*Main::$weight[Main::NORTHERN_INNER] + $answers[$key3] * Main::$weight[Main::NORTHERN_OUTER])));
             $objPHPExcel->getActiveSheet()->setCellValue($key6, (($answers[$key2] + $answers[$key4]) / 2.0));
 
             $objPHPExcel->getActiveSheet()->getStyle($key)->getNumberFormat()->setFormatCode(Main::NUMBER_FORMAT);

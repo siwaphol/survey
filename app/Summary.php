@@ -376,7 +376,7 @@ class Summary extends Model
             $objPHPExcel->getActiveSheet()->setCellValue($key2, $answers[$key2]);
             $objPHPExcel->getActiveSheet()->setCellValue($key3, $answers[$key3]);
             $objPHPExcel->getActiveSheet()->setCellValue($key4, $answers[$key4]);
-            $objPHPExcel->getActiveSheet()->setCellValue($key5, (($answers[$key] + $answers[$key3]) / 2.0));
+            $objPHPExcel->getActiveSheet()->setCellValue($key5, (($answers[$key]*Main::$weight[Main::NORTHERN_INNER] + $answers[$key3] * Main::$weight[Main::NORTHERN_OUTER])));
             $objPHPExcel->getActiveSheet()->setCellValue($key6, (($answers[$key2] + $answers[$key4]) / 2.0));
 
             $objPHPExcel->getActiveSheet()->getStyle($key)->getNumberFormat()->setFormatCode(Main::NUMBER_FORMAT);
@@ -467,33 +467,40 @@ class Summary extends Model
             $key6 = preg_replace('/[A-Z]+/', $col, $key);
 
             $average = [];
-            $average[Main::INNER_GROUP_1] = $count[Main::INNER_GROUP_1] === 0 ? 0 : ($sum[Main::INNER_GROUP_1] / $count[Main::INNER_GROUP_1]);
-            $average[Main::INNER_GROUP_2] = $count[Main::INNER_GROUP_2] === 0 ? 0 : ($sum[Main::INNER_GROUP_2] / $count[Main::INNER_GROUP_2]);
-            $average[Main::OUTER_GROUP_1] = $count[Main::OUTER_GROUP_1] === 0 ? 0 : ($sum[Main::OUTER_GROUP_1] / $count[Main::OUTER_GROUP_1]);
-            $average[Main::OUTER_GROUP_2] = $count[Main::OUTER_GROUP_2] === 0 ? 0 : ($sum[Main::OUTER_GROUP_2] / $count[Main::OUTER_GROUP_2]);
+            $average[Main::INNER_GROUP_1] = ($sum[Main::INNER_GROUP_1] / Main::$sample[Main::INNER_GROUP_1]);
+            $average[Main::INNER_GROUP_2] = ($sum[Main::INNER_GROUP_2] / Main::$sample[Main::INNER_GROUP_2]);
+            $average[Main::OUTER_GROUP_1] = ($sum[Main::OUTER_GROUP_1] / Main::$sample[Main::OUTER_GROUP_1]);
+            $average[Main::OUTER_GROUP_2] = ($sum[Main::OUTER_GROUP_2] / Main::$sample[Main::OUTER_GROUP_2]);
 
-            $answers[$key] = ($average[Main::INNER_GROUP_1] * Main::$weight[Main::INNER_GROUP_1]
-                    + $average[Main::INNER_GROUP_2] * Main::$weight[Main::INNER_GROUP_2]) * $population[Main::NORTHERN_INNER];
+            $y = array();
+            $y[Main::NORTHERN_INNER] = ($average[Main::INNER_GROUP_1] * Main::$weight[Main::INNER_GROUP_1]
+                + $average[Main::INNER_GROUP_2] * Main::$weight[Main::INNER_GROUP_2]);
+            $y[Main::NORTHERN_OUTER] = ($average[Main::OUTER_GROUP_1] * Main::$weight[Main::OUTER_GROUP_1]
+                + $average[Main::OUTER_GROUP_2] * Main::$weight[Main::OUTER_GROUP_2]);
+
+            $answers[$key] = $y[Main::NORTHERN_INNER] * $population[Main::NORTHERN_INNER];
             $answers[$key] = $answers[$key] / 1000000.0;
-            $answers[$key3] = ($average[Main::OUTER_GROUP_1] * Main::$weight[Main::OUTER_GROUP_1]
-                    + $average[Main::OUTER_GROUP_2] * Main::$weight[Main::OUTER_GROUP_2]) * $population[Main::NORTHERN_OUTER];
+            $answers[$key3] = $y[Main::NORTHERN_OUTER] * $population[Main::NORTHERN_OUTER];
             $answers[$key3] = $answers[$key3] / 1000000.0;
+
+            $answers[$key5] = ($y[Main::NORTHERN_INNER]*Main::$weight[Main::NORTHERN_INNER] +
+                $y[Main::NORTHERN_OUTER]*Main::$weight[Main::NORTHERN_OUTER])
+                * Main::$population[Main::NORTHERN] / 1000000.0;
 
             //ktoe
             if ($gas) {
                 $answers[$key2] = $answers[$key] * 0.00042 * $ktoe;
                 $answers[$key4] = $answers[$key3] * 0.00042 * $ktoe;
-                $answers[$key5] = $answers[$key] * 0.00042 + $answers[$key3];
+                //TODO-nong I don't know why below
+//                $answers[$key5] = $answers[$key] * 0.00042 + $answers[$key3];
                 $answers[$key6] = $answers[$key5] * 0.00042 * $ktoe;
             } elseif ($ktoeIdx !== false) {
                 $answers[$key2] = $answers[$key] * $value[$ktoeIdx];
                 $answers[$key4] = $answers[$key3] * $value[$ktoeIdx];
-                $answers[$key5] = $answers[$key] + $answers[$key3];
                 $answers[$key6] = $answers[$key5] * $value[$ktoeIdx];
             } else {
                 $answers[$key2] = $answers[$key] * $ktoe;
                 $answers[$key4] = $answers[$key3] * $ktoe;
-                $answers[$key5] = $answers[$key] + $answers[$key3];
                 $answers[$key6] = $answers[$key5] * $ktoe;
             }
 
@@ -524,14 +531,6 @@ class Summary extends Model
         $population = [];
         $population[Main::NORTHERN_INNER] = (float)$paramSheet->getCell(Parameter::$populationColumn[Main::NORTHERN_INNER])->getValue();
         $population[Main::NORTHERN_OUTER] = (float)$paramSheet->getCell(Parameter::$populationColumn[Main::NORTHERN_OUTER])->getValue();
-
-//        $allUniqueKey = [];
-//        foreach ($uniqueKeyArr as $item){
-//            foreach ($item as $subItem){
-//                if (is_string($subItem))
-//                    $allUniqueKey[] = $subItem;
-//            }
-//        }
 
         $rows = [];
         $count = [];
@@ -570,7 +569,7 @@ class Summary extends Model
 //                    }
                     $finalSql = $value;
 //                    $whereUniqueKey = " AND unique_key IN (" . $whereUniqueKey . ")";
-                    $avgSql = "SELECT AVG(sum1) as average, COUNT(*) as countAll FROM
+                    $avgSql = "SELECT SUM(sum1)/".Main::$sample[$b_key]." as average, COUNT(*) as countAll FROM
                         (SELECT $finalSql AS sum1 FROM answers
                         WHERE main_id IN ($whereMainId) "
                         ." GROUP BY main_id) T1 WHERE sum1>0";
@@ -631,17 +630,23 @@ class Summary extends Model
 //            $average[Main::OUTER_GROUP_1] = $count[Main::OUTER_GROUP_1]===0?0:($sum[Main::OUTER_GROUP_1]/$count[Main::OUTER_GROUP_1]);
 //            $average[Main::OUTER_GROUP_2] = $count[Main::OUTER_GROUP_2]===0?0:($sum[Main::OUTER_GROUP_2]/$count[Main::OUTER_GROUP_2]);
 
-            $answers[$key] = ($average[Main::INNER_GROUP_1]*Main::$weight[Main::INNER_GROUP_1]
-                    + $average[Main::INNER_GROUP_2]* Main::$weight[Main::INNER_GROUP_2]) * $population[Main::NORTHERN_INNER];
+            $y = array();
+            $y[Main::NORTHERN_INNER] = ($average[Main::INNER_GROUP_1] * Main::$weight[Main::INNER_GROUP_1]
+                + $average[Main::INNER_GROUP_2] * Main::$weight[Main::INNER_GROUP_2]);
+            $y[Main::NORTHERN_OUTER] = ($average[Main::OUTER_GROUP_1] * Main::$weight[Main::OUTER_GROUP_1]
+                + $average[Main::OUTER_GROUP_2] * Main::$weight[Main::OUTER_GROUP_2]);
+
+            $answers[$key] = $y[Main::NORTHERN_INNER] * $population[Main::NORTHERN_INNER];
             $answers[$key] = $answers[$key]/1000000.0;
-            $answers[$key3] = ($average[Main::OUTER_GROUP_1]*Main::$weight[Main::OUTER_GROUP_1]
-                    + $average[Main::OUTER_GROUP_2]* Main::$weight[Main::OUTER_GROUP_2]) * $population[Main::NORTHERN_OUTER];
+            $answers[$key3] = $y[Main::NORTHERN_OUTER] * $population[Main::NORTHERN_OUTER];
             $answers[$key3] = $answers[$key3]/1000000.0;
 
             //ktoe
             $answers[$key2] = $answers[$key] * $ktoe;
             $answers[$key4] = $answers[$key3] * $ktoe;
-            $answers[$key5] = $answers[$key] + $answers[$key3];
+            $answers[$key5] = ($y[Main::NORTHERN_INNER]*Main::$weight[Main::NORTHERN_INNER] +
+                    $y[Main::NORTHERN_OUTER]*Main::$weight[Main::NORTHERN_OUTER])
+                * Main::$population[Main::NORTHERN] / 1000000.0;
             $answers[$key6] = $answers[$key5] * $ktoe;
 
             $objPHPExcel->getActiveSheet()->setCellValue($key, $answers[$key]);
@@ -786,286 +791,5 @@ class Summary extends Model
 
         return $objPHPExcel;
     }
-
-    public static function averageWithDetails($uniqueKeyArr, $startCol, $startRow, $objPHPExcel, $mainObj, $isRadio = false, $radioArr = [], $detailsColumn = [])
-    {
-        $rows = [];
-        $rowNumber = $startRow;
-        foreach ($uniqueKeyArr as $uniqueKey) {
-            $rows[$startCol . $rowNumber] = $uniqueKey;
-            $rowNumber++;
-        }
-
-        $allUniqueArr = [];
-        foreach ($uniqueKeyArr as $item) {
-            if (!is_array($item))
-                $allUniqueArr[] = $item;
-            else {
-                foreach ($item as $subItem)
-                    $allUniqueArr[] = $subItem;
-            }
-        }
-
-        $whereIn = [];
-        $answers = [];
-        $count = [];
-        $A = [];
-
-        $level1Counter = 0;
-        foreach ($rows as $key => $value) {
-            $whereIn[] = $value;
-            $p = [];
-            $avg = [];
-
-            echo $detailsColumn[$level1Counter] . "</br>";
-            echo "หา average ของแต่ละจังหวัด </br>";
-
-            foreach (Main::$provinceWeight as $p_key => $p_weight) {
-                $mainList = $mainObj->filterMain($p_key);
-
-                $avg[$p_key] = 0;
-                $whereMainId = implode(",", $mainList);
-
-                if ($isRadio) {
-
-                    $newSql = " (IF(SUM(IF(unique_key='radioKey' AND option_id=radioValue,1,0))>1,1,SUM(IF(unique_key='radioKey' AND option_id=radioValue,1,0))) * SUM(IF(unique_key='amountKey',answer_numeric,0))) ";
-                    $finalSql = "";
-                    $idx = 0;
-                    $whereUniqueKey = implode("','", $value);
-                    $whereUniqueKey = "'" . $whereUniqueKey . "'";
-                    foreach ($radioArr[$level1Counter] as $radioKey => $radioValue) {
-                        $temp = $newSql;
-                        $temp = str_replace('radioKey', $radioKey, $temp);
-                        $temp = str_replace('radioValue', $radioValue, $temp);
-                        $temp = str_replace('amountKey', $value[$idx], $temp);
-
-                        $finalSql .= $temp . " + ";
-
-                        $whereUniqueKey .= ",'" . $radioKey . "'";
-                        $idx++;
-                    }
-                    $finalSql .= " 0 ";
-                    $whereUniqueKey = " AND unique_key IN (" . $whereUniqueKey . ")";
-                    $avgSql = "SELECT AVG(sum1) as average, COUNT(*) as countAll FROM
-                        (SELECT $finalSql AS sum1 FROM answers
-                        WHERE main_id IN ($whereMainId) " . $whereUniqueKey
-                        . " GROUP BY main_id) T1 WHERE sum1>0";
-
-                } else {
-                    if (is_array($value)) {
-                        $whereUniqueKey = implode("','", $value);
-                        $tempUniqueKey = $whereUniqueKey;
-                        $whereUniqueKey = " AND unique_key IN ('" .$whereUniqueKey."') ";
-                        $sumSQL = " SUM(IF(unique_key IN ('$tempUniqueKey'),answer_numeric,0)) ";
-                    }else{
-                        $whereUniqueKey = " AND unique_key='$value'";
-                        $sumSQL = " SUM(IF(unique_key='$value', answer_numeric,0)) ";
-                    }
-
-                    $avgSql = "SELECT AVG(sum1) as average, COUNT(*) as countAll FROM
-                        (SELECT $sumSQL AS sum1 FROM answers
-                        WHERE main_id IN ($whereMainId) "
-                        . " GROUP BY main_id) T1";
-                }
-                $avgResult = \DB::select($avgSql);
-                $avg[$p_key] = $avgResult[0]->average;
-                $count[$p_key] = $avgResult[0]->countAll;
-
-                echo Main::$provinceWeightText[$p_key] . " เลือก " . $count[$p_key] . " ชุด " . " เฉลี่ย " . $avg[$p_key] . " </br>";
-            }
-
-            foreach (Main::$borderWeight as $b_key => $b_weight) {
-                $mainList = $mainObj->filterMain($b_key);
-
-                $avg[$b_key] = 0;
-                $whereMainId = implode(",", $mainList);
-                if ($isRadio) {
-                    $newSql = " (IF(SUM(IF(unique_key='radioKey' AND option_id=radioValue,1,0))>1,1,SUM(IF(unique_key='radioKey' AND option_id=radioValue,1,0))) * SUM(IF(unique_key='amountKey',answer_numeric,0))) ";
-                    $finalSql = "";
-                    $idx = 0;
-                    $whereUniqueKey = implode("','", $value);
-                    $whereUniqueKey = "'" . $whereUniqueKey . "'";
-                    foreach ($radioArr[$level1Counter] as $radioKey => $radioValue) {
-                        $temp = $newSql;
-                        $temp = str_replace('radioKey', $radioKey, $temp);
-                        $temp = str_replace('radioValue', $radioValue, $temp);
-                        $temp = str_replace('amountKey', $value[$idx], $temp);
-
-                        $finalSql .= $temp . " + ";
-
-                        $whereUniqueKey .= ",'" . $radioKey . "'";
-                        $idx++;
-                    }
-                    $finalSql .= " 0 ";
-                    $whereUniqueKey = " AND unique_key IN (" . $whereUniqueKey . ")";
-                    $avgSql = "SELECT AVG(sum1) as average, COUNT(*) as countAll FROM
-                        (SELECT $finalSql AS sum1 FROM answers
-                        WHERE main_id IN ($whereMainId) " . $whereUniqueKey
-                        . " GROUP BY main_id) T1 WHERE sum1>0";
-
-                } else {
-                    //old2
-                    if (is_array($value)) {
-                        $whereUniqueKey = implode("','", $value);
-                        $tempUniqueKey = $whereUniqueKey;
-                        $whereUniqueKey = " AND unique_key IN ('" .$whereUniqueKey."') ";
-                        $sumSQL = " SUM(IF(unique_key IN ('$tempUniqueKey'),answer_numeric,0)) ";
-                    }else{
-                        $whereUniqueKey = " AND unique_key='$value'";
-                        $sumSQL = " SUM(IF(unique_key='$value', answer_numeric,0)) ";
-                    }
-
-                    $avgSql = "SELECT AVG(sum1) as average, COUNT(*) as countAll FROM
-                        (SELECT $sumSQL AS sum1 FROM answers
-                        WHERE main_id IN ($whereMainId) "
-                        . " GROUP BY main_id) T1";
-                }
-                $avgResult = \DB::select($avgSql);
-                $avg[$b_key] = $avgResult[0]->average;
-                $count[$b_key] = $avgResult[0]->countAll;
-
-                echo Main::$borderWeightText[$b_key] . " เลือก " . $count[$b_key] . " ชุด " . " เฉลี่ย " . $avg[$b_key] . " </br>";
-                $p[$b_key] = $avg[$b_key] * $b_weight;
-            }
-
-            $col = $startCol;
-            $col++;
-            $key2 = preg_replace('/[A-Z]+/', $col, $key);
-            $col++;
-            $key3 = preg_replace('/[A-Z]+/', $col, $key);
-            $col++;
-            $key4 = preg_replace('/[A-Z]+/', $col, $key);
-            $col++;
-            $key5 = preg_replace('/[A-Z]+/', $col, $key);
-            $col++;
-            $key6 = preg_replace('/[A-Z]+/', $col, $key);
-
-            $answers[$key] = $p[Main::INNER_GROUP_1] + $p[Main::INNER_GROUP_2];
-            $weight1 = Main::$borderWeight[Main::INNER_GROUP_1];
-            $weight2 = Main::$borderWeight[Main::INNER_GROUP_2];
-            echo " ค่าเฉลี่ยในเขต $answers[$key] = {$avg[Main::INNER_GROUP_1]} x {$weight1} + {$avg[Main::INNER_GROUP_2]} x {$weight2} </br>";
-
-            if ($count[Main::INNER_GROUP_1] - 1 === 0)
-                $A[Main::INNER_GROUP_1] = 0;
-            else
-                $A[Main::INNER_GROUP_1] = (1.0 / ($count[Main::INNER_GROUP_1] - 1))
-                    * (
-                        pow(($avg[Main::CHIANGMAI_INNER] - $avg[Main::INNER_GROUP_1]), 2)
-                        + pow(($avg[Main::UTARADIT_INNER] - $avg[Main::INNER_GROUP_1]), 2)
-                    );
-            echo "เริ่มหาค่า S.E. ในเขต</br>";
-            echo "หาค่า A ของในเขตกลุ่ม 1 = ( 1 / จำนวนครัวเรือนที่เลือก - 1) x ((จำนวนเฉลี่ยเชียงใหม่ในเขต - ค่าเฉลี่ยในเขตกลุ่มจังหวัด 1)^2 + (จำนวนเฉลี่ยอุตรดิตในเขต - ค่าเฉลี่ยในเขตกลุ่มจังหวัด 1)^2) </br>";
-            $aTemp = $A[Main::INNER_GROUP_1];
-            echo " {$aTemp} = ( 1 / {$count[Main::INNER_GROUP_1]} -1 ) x (({$avg[Main::CHIANGMAI_INNER]}-{$avg[Main::INNER_GROUP_1]})^2 + ({$avg[Main::UTARADIT_INNER]}-{$avg[Main::INNER_GROUP_1]})^2) </br>";
-
-            if ($count[Main::INNER_GROUP_2] - 1 === 0)
-                $A[Main::INNER_GROUP_2] = 0;
-            else
-                $A[Main::INNER_GROUP_2] = (1.0 / ($count[Main::INNER_GROUP_2] - 1))
-                    * (
-                        pow(($avg[Main::NAN_INNER] - $avg[Main::INNER_GROUP_2]), 2)
-                        + pow(($avg[Main::PITSANULOK_INNER] - $avg[Main::INNER_GROUP_2]), 2)
-                        + pow(($avg[Main::PETCHABUL_INNER] - $avg[Main::INNER_GROUP_2]), 2)
-                    );
-            echo "หาค่า A ของในเขตกลุ่ม 2 = ( 1 / จำนวนครัวเรือนที่เลือก - 1) x ((จำนวนเฉลี่ยน่านในเขต - ค่าเฉลี่ยในเขตกลุ่มจังหวัด 2)^2 + (จำนวนเฉลี่ยพิษณุโลกในเขต - ค่าเฉลี่ยในเขตกลุ่มจังหวัด 2)^2 + (จำนวนเฉลี่ยเพชรบูรณ์ในเขต - ค่าเฉลี่ยในเขตกลุ่มจังหวัด 2)^2) </br>";
-            $aTemp = $A[Main::INNER_GROUP_2];
-            echo " {$aTemp} = ( 1 / {$count[Main::INNER_GROUP_2]} -1 ) x (({$avg[Main::NAN_INNER]}-{$avg[Main::INNER_GROUP_2]})^2 + ({$avg[Main::PITSANULOK_INNER]}-{$avg[Main::INNER_GROUP_2]})^2 + ({$avg[Main::PETCHABUL_INNER]}-{$avg[Main::INNER_GROUP_2]})^2)";
-
-            if (($count[Main::INNER_GROUP_1] + $count[Main::INNER_GROUP_2]) === 0)
-                $part1 = 0;
-            else
-                $part1 = $count[Main::INNER_GROUP_1] / ($count[Main::INNER_GROUP_1] + $count[Main::INNER_GROUP_2]);
-            $part2 = ($count[Main::INNER_GROUP_1] === 0) ? 0 : ($A[Main::INNER_GROUP_1] / $count[Main::INNER_GROUP_1]);
-            $part3 = ($count[Main::INNER_GROUP_1] + $count[Main::INNER_GROUP_2]) === 0 ?
-                0 : ($count[Main::INNER_GROUP_2] / ($count[Main::INNER_GROUP_1] + $count[Main::INNER_GROUP_2]));
-            $part4 = $count[Main::INNER_GROUP_2] === 0 ? 0 : ($A[Main::INNER_GROUP_2] / $count[Main::INNER_GROUP_2]);
-
-            $answers[$key2] = sqrt(
-                (Main::$weight[Main::INNER_GROUP_1] * (1.0 - $part1) * $part2) +
-                (Main::$weight[Main::INNER_GROUP_2] * (1.0 - $part3) * $part4)
-            );
-            echo "S.E ในเขต</br>";
-            echo " S.E. ในเขต  =  sqr( (weight ในเขตกลุ่ม 1 x (1 - จำนวนที่เลือกในเขตกลุ่ม 1 / จำนวนที่เลือกในเขต) x (ค่า A ในเขตกลุ่มจังหวัด 1 / จำนวนที่เลือกของกลุ่มจังหวัด 1))  + (weight ในเขตกลุ่ม 2 x (1 - จำนวนที่เลือกในเขตกลุ่ม 2 / จำนวนที่เลือกในเขต) x (ค่า A ในเขตกลุ่มจังหวัด 2 / จำนวนที่เลือกของกลุ่มจังหวัด 2)) ) </br>";
-            $temp2 = Main::$weight[Main::INNER_GROUP_1];
-            echo " ".$answers[$key2]."  =  sqr( ($temp2 x (1 - {$count[Main::INNER_GROUP_1]} / ".($count[Main::INNER_GROUP_1] + $count[Main::INNER_GROUP_2])
-                .") x (".$A[Main::INNER_GROUP_1]." / ".$count[Main::INNER_GROUP_1]."))  + (".Main::$weight[Main::INNER_GROUP_2]
-                ." x (1 - ".$count[Main::INNER_GROUP_2]." / ".($count[Main::INNER_GROUP_1] + $count[Main::INNER_GROUP_2])
-                .") x (".$A[Main::INNER_GROUP_2]." / ".$count[Main::INNER_GROUP_2].")) ) </br>";
-
-            // นอกเขต
-            $answers[$key3] = $p[Main::OUTER_GROUP_1] + $p[Main::OUTER_GROUP_2];
-            $weight1 = Main::$borderWeight[Main::OUTER_GROUP_1];
-            $weight2 = Main::$borderWeight[Main::OUTER_GROUP_2];
-            echo " ค่าเฉลี่ยนอกเขต $answers[$key3] = {$avg[Main::OUTER_GROUP_1]} x {$weight1} + {$avg[Main::OUTER_GROUP_2]} x {$weight2} </br>";
-
-            if ($count[Main::OUTER_GROUP_1] - 1 === 0)
-                $A[Main::OUTER_GROUP_1] = 0;
-            else
-                $A[Main::OUTER_GROUP_1] = (1.0 / ($count[Main::OUTER_GROUP_1] - 1))
-                    * (
-                        pow(($avg[Main::CHIANGMAI_OUTER] - $avg[Main::OUTER_GROUP_1]), 2)
-                        + pow(($avg[Main::UTARADIT_OUTER] - $avg[Main::OUTER_GROUP_1]), 2)
-                    );
-            echo "หาค่า S.E. นอกเขต</br>";
-            echo "หาค่า A ของนอกเขตกลุ่ม 1 = ( 1 / จำนวนครัวเรือนที่เลือก - 1) x ((จำนวนเฉลี่ยเชียงใหม่นอกเขต - ค่าเฉลี่ยนอกเขตกลุ่มจังหวัด 1)^2 + (จำนวนเฉลี่ยอุตรดิตนอกเขต - ค่าเฉลี่ยนอกเขตกลุ่มจังหวัด 1)^2) </br>";
-            $aTemp = $A[Main::OUTER_GROUP_1];
-            echo " {$aTemp} = ( 1 / {$count[Main::OUTER_GROUP_1]} -1 ) x (({$avg[Main::CHIANGMAI_OUTER]}-{$avg[Main::OUTER_GROUP_1]})^2 + ({$avg[Main::UTARADIT_OUTER]}-{$avg[Main::OUTER_GROUP_1]})^2) </br>";
-
-            if ($count[Main::OUTER_GROUP_2] - 1 === 0)
-                $A[Main::OUTER_GROUP_2] = 0;
-            else
-                $A[Main::OUTER_GROUP_2] = (1.0 / ($count[Main::OUTER_GROUP_2] - 1))
-                    * (
-                        pow(($avg[Main::NAN_OUTER] - $avg[Main::OUTER_GROUP_2]), 2)
-                        + pow(($avg[Main::PITSANULOK_OUTER] - $avg[Main::OUTER_GROUP_2]), 2)
-                        + pow(($avg[Main::PETCHABUL_OUTER] - $avg[Main::OUTER_GROUP_2]), 2)
-                    );
-            echo "หาค่า A ของนอกเขตกลุ่ม 2 = ( 1 / จำนวนครัวเรือนที่เลือก - 1) x ((จำนวนเฉลี่ยน่านนอกเขต - ค่าเฉลี่ยนอกเขตกลุ่มจังหวัด 2)^2 + (จำนวนเฉลี่ยพิษณุโลกนอกเขต - ค่าเฉลี่ยนอกเขตกลุ่มจังหวัด 2)^2 + (จำนวนเฉลี่ยเพชรบูรณ์นอกเขต - ค่าเฉลี่ยนอกเขตกลุ่มจังหวัด 2)^2) </br>";
-            $aTemp = $A[Main::OUTER_GROUP_2];
-            echo " {$aTemp} = ( 1 / {$count[Main::OUTER_GROUP_2]} -1 ) x (({$avg[Main::NAN_OUTER]}-{$avg[Main::OUTER_GROUP_2]})^2 + ({$avg[Main::PITSANULOK_OUTER]}-{$avg[Main::OUTER_GROUP_2]})^2 + ({$avg[Main::PETCHABUL_OUTER]}-{$avg[Main::OUTER_GROUP_2]})^2)";
-
-
-            if (($count[Main::OUTER_GROUP_1] + $count[Main::OUTER_GROUP_2]) === 0)
-                $part1 = 0;
-            else
-                $part1 = $count[Main::OUTER_GROUP_1] / ($count[Main::OUTER_GROUP_1] + $count[Main::OUTER_GROUP_2]);
-            $part2 = ($count[Main::OUTER_GROUP_1] === 0) ? 0 : ($A[Main::OUTER_GROUP_1] / $count[Main::OUTER_GROUP_1]);
-            $part3 = ($count[Main::OUTER_GROUP_1] + $count[Main::OUTER_GROUP_2]) === 0 ?
-                0 : ($count[Main::OUTER_GROUP_2] / ($count[Main::OUTER_GROUP_1] + $count[Main::OUTER_GROUP_2]));
-            $part4 = $count[Main::OUTER_GROUP_2] === 0 ? 0 : ($A[Main::OUTER_GROUP_2] / $count[Main::OUTER_GROUP_2]);
-
-            $answers[$key4] = sqrt(
-                (Main::$weight[Main::OUTER_GROUP_1] * (1.0 - $part1) * $part2) +
-                (Main::$weight[Main::OUTER_GROUP_2] * (1.0 - $part3) * $part4)
-            );
-            echo "S.E นอกเขต</br>";
-            echo " S.E. นอกเขต  =  sqr( (weight นอกเขตกลุ่ม 1 x (1 - จำนวนที่เลือกนอกเขตกลุ่ม 1 / จำนวนที่เลือกนอกเขต) x (ค่า A นอกเขตกลุ่มจังหวัด 1 / จำนวนที่เลือกของกลุ่มจังหวัด 1))  + (weight นอกเขตกลุ่ม 2 x (1 - จำนวนที่เลือกนอกเขตกลุ่ม 2 / จำนวนที่เลือกนอกเขต) x (ค่า A นอกเขตกลุ่มจังหวัด 2 / จำนวนที่เลือกของกลุ่มจังหวัด 2)) ) </br>";
-            $temp2 = Main::$weight[Main::OUTER_GROUP_1];
-            echo " ".$answers[$key4]."  =  sqr( ($temp2 x (1 - {$count[Main::OUTER_GROUP_1]} / ".($count[Main::OUTER_GROUP_1] + $count[Main::OUTER_GROUP_2])
-                .") x (".$A[Main::OUTER_GROUP_1]." / ".$count[Main::OUTER_GROUP_1]."))  + (".Main::$weight[Main::OUTER_GROUP_2]
-                ." x (1 - ".$count[Main::OUTER_GROUP_2]." / ".($count[Main::OUTER_GROUP_1] + $count[Main::OUTER_GROUP_2])
-                .") x (".$A[Main::OUTER_GROUP_2]." / ".$count[Main::OUTER_GROUP_2].")) ) </br>";
-
-            $objPHPExcel->getActiveSheet()->setCellValue($key, $answers[$key]);
-            $objPHPExcel->getActiveSheet()->setCellValue($key2, $answers[$key2]);
-            $objPHPExcel->getActiveSheet()->setCellValue($key3, $answers[$key3]);
-            $objPHPExcel->getActiveSheet()->setCellValue($key4, $answers[$key4]);
-            $objPHPExcel->getActiveSheet()->setCellValue($key5, (($answers[$key] + $answers[$key3]) / 2.0));
-            $objPHPExcel->getActiveSheet()->setCellValue($key6, (($answers[$key2] + $answers[$key4]) / 2.0));
-
-            $objPHPExcel->getActiveSheet()->getStyle($key)->getNumberFormat()->setFormatCode(Main::NUMBER_FORMAT);
-            $objPHPExcel->getActiveSheet()->getStyle($key2)->getNumberFormat()->setFormatCode(Main::NUMBER_FORMAT);
-            $objPHPExcel->getActiveSheet()->getStyle($key3)->getNumberFormat()->setFormatCode(Main::NUMBER_FORMAT);
-            $objPHPExcel->getActiveSheet()->getStyle($key4)->getNumberFormat()->setFormatCode(Main::NUMBER_FORMAT);
-            $objPHPExcel->getActiveSheet()->getStyle($key5)->getNumberFormat()->setFormatCode(Main::NUMBER_FORMAT);
-            $objPHPExcel->getActiveSheet()->getStyle($key6)->getNumberFormat()->setFormatCode(Main::NUMBER_FORMAT);
-
-            $level1Counter++;
-            echo "======= </br></br>";
-        }
-
-        return $objPHPExcel;
-    }
-
 
 }
