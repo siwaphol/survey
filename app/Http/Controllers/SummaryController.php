@@ -187,7 +187,7 @@ class SummaryController extends Controller
             ['no_ch1023_o330_ch112_o71_nu115','no_ch1023_o330_ch112_o71_nu116','no_ch1023_o330_ch112_o71_nu114',0.010]
         ];
         $startColumn = 'AL';
-        $ktoe = 0.08521;
+        $ktoe = Parameter::$ktoe[Parameter::ELECTRIC];
         $week = Parameter::WEEK_PER_YEAR;
         $sumAmountSQL = " (sum(IF(unique_key='param1',answer_numeric,0))* sum(if(unique_key='param2', answer_numeric,0))* {$week})* (param4) * sum(if(unique_key='param3',1,0)) as sumAmount ";
 
@@ -355,9 +355,9 @@ class SummaryController extends Controller
             'no_ch1024_o338_nu182',
             'no_ch1024_o339_nu189',
             'no_ch1024_o340_nu196',
-            'no_ch1025_o341_ch202_o94_nu203',
-            'no_ch1025_o341_ch202_o95_nu203',
-            'no_ch1025_o341_ch202_o96_nu203',
+            ['no_ch1025_o341_ch202_o94_ch204_o97_nu205','no_ch1025_o341_ch202_o94_ch204_o98_nu205','no_ch1025_o341_ch202_o94_ch204_o99_nu205'],
+            ['no_ch1025_o341_ch202_o95_ch204_o97_nu205','no_ch1025_o341_ch202_o95_ch204_o98_nu205','no_ch1025_o341_ch202_o95_ch204_o99_nu205'],
+            ['no_ch1025_o341_ch202_o96_ch1018_o97_nu1019'],
             'no_ch1026_o342_ch210_o100_nu211',
             'no_ch1026_o342_ch210_o101_nu211',
             'no_ch1026_o342_ch210_o102_nu211',
@@ -416,24 +416,45 @@ class SummaryController extends Controller
         ];
         $startColumn = 'AL';
         $objPHPExcel = Summary::usageElectric($usage, $startColumn, $startRow, $objPHPExcel,$mainObj,$sumAmountSQL,$params,$ktoe);
+        // 13.เตาหุงต้มแก๊ส
         $usage2 = [
-            [4,'no_ch1025_o341_ch202_o94_ch204_o97_nu205','no_ch1025_o341_ch202_o94_ch204_o97_nu206'],
-            [15,'no_ch1025_o341_ch202_o94_ch204_o98_nu205','no_ch1025_o341_ch202_o94_ch204_o98_nu206'],
-            [48,'no_ch1025_o341_ch202_o94_ch204_o99_nu205','no_ch1025_o341_ch202_o94_ch204_o99_nu206'],
-            [4,'no_ch1025_o341_ch202_o95_ch204_o97_nu205','no_ch1025_o341_ch202_o95_ch204_o97_nu206'],
-            [15,'no_ch1025_o341_ch202_o95_ch204_o98_nu205','no_ch1025_o341_ch202_o95_ch204_o98_nu206'],
-            [48,'no_ch1025_o341_ch202_o95_ch204_o99_nu205','no_ch1025_o341_ch202_o95_ch204_o99_nu206'],
+            [
+                4,'no_ch1025_o341_ch202_o94_ch204_o97_nu205','no_ch1025_o341_ch202_o94_ch204_o97_nu206'
+                ,15,'no_ch1025_o341_ch202_o94_ch204_o98_nu205','no_ch1025_o341_ch202_o94_ch204_o98_nu206'
+                ,48,'no_ch1025_o341_ch202_o94_ch204_o99_nu205','no_ch1025_o341_ch202_o94_ch204_o99_nu206'
+            ],
+            [
+                4,'no_ch1025_o341_ch202_o95_ch204_o97_nu205','no_ch1025_o341_ch202_o95_ch204_o97_nu206',
+                15,'no_ch1025_o341_ch202_o95_ch204_o98_nu205','no_ch1025_o341_ch202_o95_ch204_o98_nu206',
+                48,'no_ch1025_o341_ch202_o95_ch204_o99_nu205','no_ch1025_o341_ch202_o95_ch204_o99_nu206'
+            ],
             [4,'no_ch1025_o341_ch202_o96_ch1018_o97_nu1019','no_ch1025_o341_ch202_o96_ch1018_o97_nu1020']
         ];
         $params = [
-          'param1'=>0,
+            'param1'=>0,
             'param2'=>1,
             'param3'=>2
         ];
-        $ktoe =0.024;
+        $ktoe = Parameter::$ktoe[Parameter::NATURAL_GAS] * 0.00042;
         $startRow = 32;
-        $sumAmountSQL = " param1 * sum(IF(unique_key='param2',answer_numeric,0)) * sum(if(unique_key='param3', answer_numeric,0)) as sumAmount ";
-        $objPHPExcel = Summary::usageElectric($usage2, $startColumn, $startRow, $objPHPExcel,$mainObj, $sumAmountSQL, $params,$ktoe,true);
+        $sumAmountSQL = " ( param1 * sum(IF(unique_key='param2',answer_numeric,0)) * sum(if(unique_key='param3', answer_numeric,0)) ) ";
+        $table97 = [];
+        foreach ($usage2 as $eachGasTank){
+            $temp = $sumAmountSQL;
+            $finalSql = "";
+            for ($i=0; $i<count($eachGasTank); $i+=3){
+                $temp = str_replace("param1", $eachGasTank[$i], $temp);
+                $temp = str_replace("param2", $eachGasTank[$i+1], $temp);
+                $temp = str_replace("param3", $eachGasTank[$i+2], $temp);
+
+                $finalSql .= $temp ." + ";
+            }
+            $finalSql .= " 0 ";
+            $table97[] = $finalSql;
+        }
+        $objPHPExcel = Summary::specialUsage($table97,$startColumn,$startRow,$objPHPExcel,$mainObj,$ktoe);
+//        $objPHPExcel = Summary::usageElectric($usage2, $startColumn, $startRow, $objPHPExcel,$mainObj, $sumAmountSQL, $params,$ktoe,true);
+
         $usage3 = [
           ['no_ch1026_o342_ch210_o100_nu211','no_ch1026_o342_ch210_o100_nu212','no_ch1026_o342_ch210_o100_nu213',0.378 ],
           ['no_ch1026_o342_ch210_o101_nu211','no_ch1026_o342_ch210_o101_nu212','no_ch1026_o342_ch210_o101_nu213',0.684 ],
