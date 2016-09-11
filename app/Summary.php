@@ -410,7 +410,7 @@ class Summary extends Model
         }
 
         $rows = [];
-        $count = [];
+//        $count = [];
         $rowNumber = $startRow;
         foreach ($uniqueKeyArr as $uniqueKey) {
             $rows[$startCol . $rowNumber] = $uniqueKey;
@@ -418,6 +418,8 @@ class Summary extends Model
         }
 
         $answers = [];
+        $level1Index = 0;
+        $defects = [];
         foreach ($rows as $key => $value) {
             $sum = [];
 
@@ -432,18 +434,18 @@ class Summary extends Model
                     $finalSql = str_replace($pKey, $value[$pValue], $finalSql);
                 }
 
-                $whereMainId = implode(",", $mainList);
-                if (is_array($value)) {
-                    $whereUniqueKey = implode("','", $value);
-                    $whereUniqueKey = " AND unique_key IN ('" . $whereUniqueKey . "') ";
-                } else
-                    $whereUniqueKey = " AND unique_key='$value'";
-                $avgSql = "SELECT COUNT(*) as countAll FROM
-                        (SELECT sum(answer_numeric) AS sum1 FROM answers
-                        WHERE main_id IN ($whereMainId) " . $whereUniqueKey
-                    . " GROUP BY main_id) T1";
-                $avgResult = \DB::select($avgSql);
-                $count[$b_key] = $avgResult[0]->countAll;
+//                $whereMainId = implode(",", $mainList);
+//                if (is_array($value)) {
+//                    $whereUniqueKey = implode("','", $value);
+//                    $whereUniqueKey = " AND unique_key IN ('" . $whereUniqueKey . "') ";
+//                } else
+//                    $whereUniqueKey = " AND unique_key='$value'";
+//                $avgSql = "SELECT COUNT(*) as countAll FROM
+//                        (SELECT sum(answer_numeric) AS sum1 FROM answers
+//                        WHERE main_id IN ($whereMainId) " . $whereUniqueKey
+//                    . " GROUP BY main_id) T1";
+//                $avgResult = \DB::select($avgSql);
+//                $count[$b_key] = $avgResult[0]->countAll;
 
                 $resultQuery2 = Answer::whereIn('unique_key', $value)
                     ->whereIn('main_id', $mainList)
@@ -452,9 +454,29 @@ class Summary extends Model
                     ->get();
 
                 $sum[$b_key] = 0.0;
+//                $echoParam = 'asdfasfddf';
+//                if (str_contains($finalSql, $echoParam))
+//                    echo Main::$borderWeightText[$b_key]."</br>";
                 foreach ($resultQuery2 as $row) {
+                    //test
+//                    if (str_contains($finalSql, $echoParam))
+//                        echo " main: " . $row->main_id . " , amount: " . $row->amount . " , hourPerDay: " . $row->hourPerDay . " ,dayPerWeek: " . $row->dayPerWeek . ", result: " . $row->sumAmount ." </br>";
+                    if ($row->hourPerDay>24 || $row->dayPerWeek>7){
+//                        echo Description::$table3Eletric[$level1Index] . "</br>";
+//                        echo " ชุดที่: " . $row->main_id . " , จำนวน: " . $row->amount . " , ชั่วโมงต่อวัน: " . $row->hourPerDay . " ,วันต่ออาทิตย์: " . $row->dayPerWeek . ", ผลลัพธ์: " . $row->sumAmount ." </br>";
+
+//                        if (!isset($defects[$row->main_id])){
+//                            $defects[$row->main_id] = "";
+//                        }
+//                        $defects[$row->main_id] .= Description::$table3Eletric[$level1Index]." จำนวน: " . $row->amount . " , ชั่วโมงต่อวัน: " . $row->hourPerDay . " ,วันต่ออาทิตย์: " . $row->dayPerWeek . ", ผลลัพธ์: " . $row->sumAmount ." </br>";
+                    }
+                    //end test
                     $sum[$b_key] += $row->sumAmount;
                 }
+
+//                if (str_contains($finalSql, $echoParam)){
+//                    echo " average: " . $sum[$b_key] . "/" . Main::$sample[$b_key] . " = " . ($sum[$b_key] / Main::$sample[$b_key]). "</br>";
+//                }
             }
 
             $col = $startCol;
@@ -485,10 +507,14 @@ class Summary extends Model
             $answers[$key] = $answers[$key] / 1000000.0;
             $answers[$key3] = $y[Main::NORTHERN_OUTER] * $population[Main::NORTHERN_OUTER];
             $answers[$key3] = $answers[$key3] / 1000000.0;
+//            if (str_contains($finalSql, $echoParam)){
+//                echo " ในเขต : ({$average[Main::INNER_GROUP_1]}x".Main::$weight[Main::INNER_GROUP_1]." + {$average[Main::INNER_GROUP_2]}x".Main::$weight[Main::INNER_GROUP_2].")*{$population[Main::NORTHERN_INNER]}/1000000 = ".$answers[$key]."</br>";
+//                echo " นอกเขต : ({$average[Main::OUTER_GROUP_1]}x".Main::$weight[Main::OUTER_GROUP_1]." + {$average[Main::OUTER_GROUP_2]}x".Main::$weight[Main::OUTER_GROUP_2].")*{$population[Main::NORTHERN_OUTER]}/1000000 = ".$answers[$key3]."</br>";
+//            }
 
             $answers[$key5] = ($y[Main::NORTHERN_INNER]*Main::$weight[Main::NORTHERN_INNER] +
-                $y[Main::NORTHERN_OUTER]*Main::$weight[Main::NORTHERN_OUTER])
-                * Main::$population[Main::NORTHERN] / 1000000.0;
+            $y[Main::NORTHERN_OUTER]*Main::$weight[Main::NORTHERN_OUTER])
+            * Main::$population[Main::NORTHERN] / 1000000.0;
 
             //ktoe
             if ($gas) {
@@ -521,7 +547,14 @@ class Summary extends Model
             $objPHPExcel->getActiveSheet()->getStyle($key5)->getNumberFormat()->setFormatCode(Main::NUMBER_FORMAT);
             $objPHPExcel->getActiveSheet()->getStyle($key6)->getNumberFormat()->setFormatCode(Main::NUMBER_FORMAT);
 
+            $level1Index++;
         }
+
+        //TODO-nong test for defect echo
+//        foreach ($defects as $d_key=>$d_value){
+//            echo " ชุดที่ " . $d_key."</br>";
+//            echo $d_value . "</br>";
+//        }
 
         return $objPHPExcel;
     }
