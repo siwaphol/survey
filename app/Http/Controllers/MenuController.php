@@ -17,7 +17,7 @@ class MenuController extends Controller
 //            ->orderBy('order', 'ASC')
 //            ->get();
         $mainId = (int)\Session::get('main_id');
-        //TODO-nong database need to be change
+
         $sqlStr = "SELECT menus.*
                       ,m2.name as parent_name
                       ,a.answer_count as section_count
@@ -71,8 +71,16 @@ class MenuController extends Controller
         return $result->toJson();
     }
 
-    protected function createTree($data, &$result)
+    public static function getMenuTree()
     {
+        $sqlStr = "SELECT menus.*
+                      ,m2.name as parent_name
+                    FROM menus
+                    LEFT JOIN menus m2 ON m2.id=menus.parent_id
+                    ON menus.id=a2.sub_section_id
+                    ORDER BY menus.parent_id,menus.order";
+        $menus = \DB::select($sqlStr);
 
+        return $menus;
     }
 }

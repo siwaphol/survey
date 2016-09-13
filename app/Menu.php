@@ -41,4 +41,9 @@ class Menu extends Model
         1=>'น้ำมันสำเร็จรูป',
         2=>'พลังงานหมุนเวียนดั้งเดิม'
     );
+
+    public function submenu()
+    {
+        return $this->hasMany('App\Menu','parent_id','id');
+    }
 }
