@@ -6,6 +6,9 @@ use Illuminate\Database\Eloquent\Model;
 
 class Description extends Model
 {
+    protected $fillable = ['title', 'unique_key'];
+    public $timestamps = false;
+
     public static $table3Eletric = [
         //พัดลม
         'พัดลม ตั้งโต๊ะ 14 นิ้ว',

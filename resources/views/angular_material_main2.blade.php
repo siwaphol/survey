@@ -328,7 +328,7 @@
                 },function () {
                     return false;
                 });
-            };
+            }
 
             function showConfirmBeforeSubmit(ev) {
                 var confirm = $mdDialog.confirm()
@@ -338,7 +338,7 @@
                         .ok('ตกลง')
                         .cancel('ยกเลิก');
                 return $mdDialog.show(confirm)
-            };
+            }
 
             $scope.showAlert = function (ev) {
                 $mdDialog.show(

@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Answer;
+use App\Description;
 use App\Menu;
 use App\Option;
 use App\OptionQuestion;
@@ -290,6 +291,9 @@ class QuestionController extends Controller
             $edited = true;
         $new = $this->generateUniqueKey($grouped, $scope, $answers);
 
+        //TODO-nong descriptions table test
+//        dd();
+
         $sectionName = Menu::find($section)->name;
         $hasSub = Menu::find($sub_section);
         $subSectionName = null;
@@ -299,7 +303,7 @@ class QuestionController extends Controller
             compact('grouped','section','sub_section', 'main_id','scope','new', 'sectionName', 'subSectionName','edited'));
     }
 
-    function generateUniqueKey(&$questionArr, &$scope, $answers,$key='question.no', $hideable=false, $condition=null){
+    function generateUniqueKey(&$questionArr, &$scope, $answers,$key='question.no', $hideable=false, $condition=null, $parentText = null){
         $list = [];
         foreach ($questionArr as $aQuestion){
             $myObj = clone $aQuestion;
@@ -310,8 +314,25 @@ class QuestionController extends Controller
                 $qKey = $key .'_'. 'nu'.$aQuestion->id;
                 $myObj->{"unique_key"} = $qKey;
 
+                // TODO-nong test descriptions table
+//                $desc = Description::where('unique_key', str_replace('question.',"",$qKey))
+//                    ->first();
+//                if (is_null($desc))
+//                    Description::create([
+//                        'title'=>$aQuestion->name,
+//                        'parent_title'=>$parentText,
+//                        'unique_key'=>str_replace('question.',"",$qKey)
+//                    ]);
+//                else{
+//                    $desc->title = $aQuestion->name;
+//                    $desc->parent_title = $parentText;
+//                    $desc->save();
+//                }
+                // end test descriptions table
+
                 $answer = $answers->where('unique_key', str_replace("question.", "", $qKey))
                     ->first();
+
                 $scope[] = '$scope.' . $qKey . ' = '.(is_null($answer)?'0':$answer->answer_numeric).';';
             }elseif ($aQuestion->input_type===Question::TYPE_TEXT){
                 $qKey = $key .'_'. 'te'.$aQuestion->id;
@@ -340,7 +361,11 @@ class QuestionController extends Controller
                     $scope[] = '$scope.' . $optionKey . ' = '.$scopeAnswer.';';
 
                     if (isset($option->children)){
-                        $myObj[$i]->children = $this->generateUniqueKey($option->children, $scope, $answers,$optionKey, true,$optionKey);
+                        //TODO-nong test descriptions table
+//                        $echoName = ($parentText?$parentText . "/":"") . $option->option_name;
+//                        echo $echoName . " - $optionKey - " . " </br>";
+                        //End test descriptions table
+                        $myObj[$i]->children = $this->generateUniqueKey($option->children, $scope, $answers,$optionKey, true,$optionKey, $echoName);
                     }
                     $i++;
                 }
