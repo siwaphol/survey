@@ -362,7 +362,7 @@ class QuestionController extends Controller
 
                     if (isset($option->children)){
                         //TODO-nong test descriptions table
-//                        $echoName = ($parentText?$parentText . "/":"") . $option->option_name;
+                        $echoName = ($parentText?$parentText . "/":"") . $option->option_name;
 //                        echo $echoName . " - $optionKey - " . " </br>";
                         //End test descriptions table
                         $myObj[$i]->children = $this->generateUniqueKey($option->children, $scope, $answers,$optionKey, true,$optionKey, $echoName);
