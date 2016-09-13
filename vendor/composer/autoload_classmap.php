@@ -14,6 +14,7 @@ return array(
     'AddUniqueKeyToAnswers' => $baseDir . '/database/migrations/2016_07_28_122904_add_unique_key_to_answers.php',
     'CreateAnswersTable' => $baseDir . '/database/migrations/2016_05_10_061441_create_answers_table.php',
     'CreateDescriptionsTable' => $baseDir . '/database/migrations/2016_09_13_141620_create_descriptions_table.php',
+    'CreateElectricsTable' => $baseDir . '/database/migrations/2016_09_14_000426_create_electrics_table.php',
     'CreateMainsTable' => $baseDir . '/database/migrations/2016_05_10_060113_create_mains_table.php',
     'CreateMenusTable' => $baseDir . '/database/migrations/2016_07_19_083228_create_menus_table.php',
     'CreateOptionQuestionsTable' => $baseDir . '/database/migrations/2016_05_10_061440_create_option_questions_table.php',
