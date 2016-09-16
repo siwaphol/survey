@@ -25,7 +25,7 @@ class FilterExportController extends Controller
         $mainObj = new Main();
         $mainObj->initList();
 
-        $inputFile = "12.xlsx";
+        $inputFile = "27.xlsx";
         $objPHPExcel = \PHPExcel_IOFactory::load(storage_path('excel/raw_excel/'. $inputFile));
         $outputFile = "";
         $outputFileCell = "A2";
