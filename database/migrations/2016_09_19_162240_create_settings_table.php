@@ -19,6 +19,7 @@ class CreateSettingsTable extends Migration
             $table->string('name_th');
             $table->string('code')->nullable();
             $table->float('value')->default(0);
+            $table->string('unit_of_measure')->nullable();
 
             $table->integer('group_id')->unsigned()->nullable();
             $table->foreign('group_id')->references('id')->on('setting_groups');

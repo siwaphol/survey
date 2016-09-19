@@ -887,6 +887,7 @@ class ComposerStaticInit972b56837168c16a3339717f041e3e16
         'SebastianBergmann\\RecursionContext\\InvalidArgumentException' => __DIR__ . '/..' . '/sebastian/recursion-context/src/InvalidArgumentException.php',
         'SebastianBergmann\\Version' => __DIR__ . '/..' . '/sebastian/version/src/Version.php',
         'SettingGroupSeeder' => __DIR__ . '/../..' . '/database/seeds/SettingGroupSeeder.php',
+        'SettingSeeder' => __DIR__ . '/../..' . '/database/seeds/SettingSeeder.php',
         'TestCase' => __DIR__ . '/../..' . '/tests/TestCase.php',
         'Text_Template' => __DIR__ . '/..' . '/phpunit/php-text-template/src/Template.php',
     );
