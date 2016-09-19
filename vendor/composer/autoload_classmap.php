@@ -21,7 +21,7 @@ return array(
     'CreateOptionsTable' => $baseDir . '/database/migrations/2016_05_10_060114_create_options_table.php',
     'CreatePasswordResetsTable' => $baseDir . '/database/migrations/2014_10_12_100000_create_password_resets_table.php',
     'CreateQuestionsTable' => $baseDir . '/database/migrations/2016_05_10_060933_create_questions_table.php',
-    'CreateSettingGroupsTable' => $baseDir . '/database/migrations/2016_09_19_162739_create_setting_groups_table.php',
+    'CreateSettingGroupsTable' => $baseDir . '/database/migrations/2016_09_19_161739_create_setting_groups_table.php',
     'CreateSettingsTable' => $baseDir . '/database/migrations/2016_09_19_162240_create_settings_table.php',
     'CreateUsersTable' => $baseDir . '/database/migrations/2014_10_12_000000_create_users_table.php',
     'DatabaseSeeder' => $baseDir . '/database/seeds/DatabaseSeeder.php',
@@ -561,6 +561,7 @@ return array(
     'SebastianBergmann\\RecursionContext\\Exception' => $vendorDir . '/sebastian/recursion-context/src/Exception.php',
     'SebastianBergmann\\RecursionContext\\InvalidArgumentException' => $vendorDir . '/sebastian/recursion-context/src/InvalidArgumentException.php',
     'SebastianBergmann\\Version' => $vendorDir . '/sebastian/version/src/Version.php',
+    'SettingGroupSeeder' => $baseDir . '/database/seeds/SettingGroupSeeder.php',
     'TestCase' => $baseDir . '/tests/TestCase.php',
     'Text_Template' => $vendorDir . '/phpunit/php-text-template/src/Template.php',
 );

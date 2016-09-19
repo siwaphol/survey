@@ -346,7 +346,7 @@ class ComposerStaticInit972b56837168c16a3339717f041e3e16
         'CreateOptionsTable' => __DIR__ . '/../..' . '/database/migrations/2016_05_10_060114_create_options_table.php',
         'CreatePasswordResetsTable' => __DIR__ . '/../..' . '/database/migrations/2014_10_12_100000_create_password_resets_table.php',
         'CreateQuestionsTable' => __DIR__ . '/../..' . '/database/migrations/2016_05_10_060933_create_questions_table.php',
-        'CreateSettingGroupsTable' => __DIR__ . '/../..' . '/database/migrations/2016_09_19_162739_create_setting_groups_table.php',
+        'CreateSettingGroupsTable' => __DIR__ . '/../..' . '/database/migrations/2016_09_19_161739_create_setting_groups_table.php',
         'CreateSettingsTable' => __DIR__ . '/../..' . '/database/migrations/2016_09_19_162240_create_settings_table.php',
         'CreateUsersTable' => __DIR__ . '/../..' . '/database/migrations/2014_10_12_000000_create_users_table.php',
         'DatabaseSeeder' => __DIR__ . '/../..' . '/database/seeds/DatabaseSeeder.php',
@@ -886,6 +886,7 @@ class ComposerStaticInit972b56837168c16a3339717f041e3e16
         'SebastianBergmann\\RecursionContext\\Exception' => __DIR__ . '/..' . '/sebastian/recursion-context/src/Exception.php',
         'SebastianBergmann\\RecursionContext\\InvalidArgumentException' => __DIR__ . '/..' . '/sebastian/recursion-context/src/InvalidArgumentException.php',
         'SebastianBergmann\\Version' => __DIR__ . '/..' . '/sebastian/version/src/Version.php',
+        'SettingGroupSeeder' => __DIR__ . '/../..' . '/database/seeds/SettingGroupSeeder.php',
         'TestCase' => __DIR__ . '/../..' . '/tests/TestCase.php',
         'Text_Template' => __DIR__ . '/..' . '/phpunit/php-text-template/src/Template.php',
     );

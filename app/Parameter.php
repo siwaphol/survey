@@ -7,6 +7,12 @@ use Symfony\Component\HttpFoundation\ParameterBag;
 
 class Parameter extends Model
 {
+    const ELECTRIC_POWER = 'electric_power';
+    const TIME_UNIT = 'time_unit';
+    const POPULATION = 'population';
+    const OIL_PRICE = 'oil_price';
+    const KTOE_UNIT = 'ktoe_unit';
+
     public static $populationColumn = [
         Main::NORTHERN=>'D10',
         Main::NORTHERN_INNER=>'D11',
