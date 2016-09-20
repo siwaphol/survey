@@ -66,4 +66,55 @@ class Parameter extends Model
         Parameter::AGRICULTURAL_REMAIN=>0.30021,
     ];
 
+    public static function importParameterFromExcel(){
+        $objPHPExcel = \PHPExcel_IOFactory::load(storage_path('excel/parameters.xlsx'));
+        \DB::transaction(function()use($objPHPExcel){
+            $objWorksheet = $objPHPExcel->getSheet(4);
+            $startRow= 9;
+            $maxRow = 21;
+
+            $category = null;
+            $level1Text = "";
+            $level2Text = "";
+            $groupId = \DB::table('setting_groups')->where('name_en', Parameter::KTOE_UNIT)->first()->id;
+            for ($i=$startRow; $i<=$maxRow; $i++){
+                if (!empty($objWorksheet->getCell("A".$i)->getValue())){
+                    $category = $objWorksheet->getCell("A".$i)->getValue();
+                    $level1Text = "";
+                    $level2Text = "";
+                    $level3Text = "";
+                }
+
+                if (!empty($objWorksheet->getCell("B".$i)->getValue())){
+                    $level1Text = $objWorksheet->getCell("B".$i)->getValue();
+                }
+
+//                if (!empty($objWorksheet->getCell("D".$i)->getValue())){
+//                    $level2Text = $objWorksheet->getCell("D".$i)->getValue();
+//                }
+//                $level3Text = "";
+//                if (!empty($objWorksheet->getCell("E".$i)->getValue()) || $objWorksheet->getCell("E".$i)->getValue()!=='-'){
+//                    $level3Text = $objWorksheet->getCell("E".$i)->getValue();
+//                }
+
+//                $name_th = $level1Text . "/" . $level2Text . "/" . $level3Text;
+                $name_th = $level1Text;
+                $value = (float)$objWorksheet->getCell("D".$i)->getValue();
+                $unit_of_measure = $objWorksheet->getCell("E".$i)->getValue();
+
+                $setting = new Setting();
+                $setting->name_en = " ";
+                $setting->name_th = $name_th;
+                $setting->value = $value;
+                $setting->unit_of_measure = $unit_of_measure;
+                $setting->category = $category;
+                $setting->code = $objWorksheet->getCell("C".$i)->getValue();
+                $setting->group_id = $groupId;
+                $setting->save();
+            }
+        });
+
+        dd('success');
+    }
+
 }

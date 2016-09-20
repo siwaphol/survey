@@ -6,6 +6,7 @@ $vendorDir = dirname(dirname(__FILE__));
 $baseDir = dirname($vendorDir);
 
 return array(
+    'AddCategoryColumnToSettingsTable' => $baseDir . '/database/migrations/2016_09_20_150712_add_category_column_to_settings_table.php',
     'AddOptionIdToAnswers' => $baseDir . '/database/migrations/2016_07_29_083822_add_option_id_to_answers.php',
     'AddParentTitleColumnDescriptionsTable' => $baseDir . '/database/migrations/2016_09_13_143555_add_parent_title_column_descriptions_table.php',
     'AddSectionIdAndSubSectionIdToAnswers' => $baseDir . '/database/migrations/2016_07_29_093943_add_section_id_and_sub_section_id_to_answers.php',

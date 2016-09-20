@@ -10,6 +10,8 @@ Route::group(['middleware' => 'auth'], function () {
     Route::get('main', 'MainController@index');
     Route::post('main', 'MainController@postHandle');
 
+    Route::get('setting', 'SettingController@index');
+
     Route::post('filter-main', 'MainController@filter');
     Route::get('export', 'FilterExportController@index');
     Route::get('test-export', 'FilterExportController@export');
@@ -37,6 +39,7 @@ Route::group(['middleware' => 'auth'], function () {
     Route::get('get-report916', 'SummaryController@downloadSum916');
     Route::get('get-report917', 'SummaryController@downloadSum917');
     Route::get('get-report918', 'SummaryController@downloadSum918');
+
     Route::get('download911', function (){
         return response()->download(storage_path('excel/sum911.xlsx'), 'ตารางสรุปหมวดแสงสว่าง.xlsx');
     });

@@ -83,7 +83,7 @@
             <div>
                 @if($main_id>2500)
                 <div>
-                    <md-button class="md-raised md-button md-ink-ripple" ng-click="submit()" >Submit</md-button>
+                    <md-button class="md-raised md-button md-ink-ripple" ng-click="submit()" ng-disabled="isDisabled">Submit</md-button>
                 </div>
                 @endif
 
@@ -98,7 +98,7 @@
 
                     @if($main_id>2500)
                     <div>
-                        <md-button class="md-raised md-ink-ripple" ng-click="submit()">Submit</md-button>
+                        <md-button class="md-raised md-ink-ripple" ng-click="submit()" ng-disabled="isDisabled">Submit</md-button>
                     </div>
                     @endif
 
@@ -110,7 +110,7 @@
 </div>
 
 @if($main_id>2500)
-<nav mfb-menu position="br" effect="zoomin"
+<nav mfb-menu position="br" effect="zoomin" menu-state="floatMenuState"
      active-icon="ion-close-round" resting-icon="ion-plus-round"
      ng-mouseenter="hovered()" ng-mouseleave="hovered()"
      toggling-method="click" menu-state="ctrl.menuState" main-action="ctrl.mainAction()">
@@ -198,6 +198,8 @@
 
             $scope.question = {};
             $scope.openMenu = openMenu;
+            $scope.isDisabled = false;
+            $scope.floatMenuState = 'closed';
 
             var isEdited = {!! $edited?:0 !!};
 
@@ -252,6 +254,9 @@
             };
 
             $scope.submit = function () {
+                $scope.isDisabled = true;
+                $scope.floatMenuState = false;
+
                 submitItems = {};
                 angular.forEach($scope.question, function (value, key) {
                     if (value && value != '' && value != 0) {
@@ -262,6 +267,7 @@
 //                console.log(submitItems);
                 if (angular.equals({}, submitItems)){
                     $scope.showError(null, 'คำเตือน', 'โปรดกรอกข้อมูลก่อนกดยืนยัน');
+                    $scope.isDisabled = false;
                     return;
                 }
 
@@ -275,6 +281,7 @@
                 if (!this.myForm.$valid){
                     angular.element("[name='" + this.myForm.$name + "']").find('.ng-invalid:visible:first').focus();
                     $scope.showError(null, 'กรอกข้อมูลไม่ถูกต้อง','แก้ไขข้อมูลก่อนกดยืนยัน');
+                    $scope.isDisabled = false;
                     return;
                 }
 
@@ -291,12 +298,15 @@
                             menu.get().then(function(response){
                                 menu.sections = response.data;
                             });
+                            $scope.isDisabled = false;
                         }).error(function (data) {
                             console.log(data);
                             $scope.showError(null,'เกิดข้อผิดพลาด','ไม่สามารถบันทึกข้อมูลได้');
+                            $scope.isDisabled = false;
                         });
                     },function () {
                         console.log('cancel button');
+                        $scope.isDisabled = false;
                     });
                     return;
                 }
@@ -310,9 +320,11 @@
                     menu.get().then(function(response){
                         menu.sections = response.data;
                     });
+                    $scope.isDisabled = false;
                 }).error(function (data) {
                     console.log(data);
                     $scope.showError(null,'เกิดข้อผิดพลาด','ไม่สามารถบันทึกข้อมูลได้ห');
+                    $scope.isDisabled = false;
                 });
             };
 
