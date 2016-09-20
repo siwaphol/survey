@@ -11,6 +11,8 @@ Route::group(['middleware' => 'auth'], function () {
     Route::post('main', 'MainController@postHandle');
 
     Route::get('setting', 'SettingController@index');
+    Route::get('setting/{id}', 'SettingController@edit');
+    Route::put('setting/{id}', 'SettingController@update');
 
     Route::post('filter-main', 'MainController@filter');
     Route::get('export', 'FilterExportController@index');

@@ -17,7 +17,7 @@ class CreateSettingsTable extends Migration
 
             $table->string('name_en')->nullable();
             $table->string('name_th');
-            $table->string('code')->nullable();
+            $table->string('code')->nullable()->unique();
             $table->double('value')->default(0);
             $table->string('unit_of_measure')->nullable();
 

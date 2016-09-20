@@ -23,8 +23,8 @@
                     </div>
                     @if ($errors->has('main_id'))
                         <span class="help-block">
-                                        <strong>{{ $errors->first('main_id') }}</strong>
-                                    </span>
+                            <strong>{{ $errors->first('main_id') }}</strong>
+                        </span>
                     @endif
                 </div>
 
