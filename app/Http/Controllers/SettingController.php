@@ -29,8 +29,27 @@ class SettingController extends Controller
     public function update(Request $request, $id)
     {
         $setting= Setting::find($id);
+        if (is_null($setting))
+            return redirect('/setting');
+
+        $validator = \Validator::make($request->all(), [
+            'name_th'=>'required',
+            'code'=>'required',
+            'value'=>'required',
+            'unit_of_measure'=>'required',
+            'group_id'=>'required|integer',
+            'category'=>'required'
+        ]);
+
+        if ($validator->fails()){
+            return redirect('setting/'. $id)
+                ->withErrors($validator)
+                ->withInput();
+        }
 
         $setting->fill($request->input());
         $setting->save();
+
+        return redirect('/setting');
     }
 }

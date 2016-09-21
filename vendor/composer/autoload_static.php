@@ -16,6 +16,7 @@ class ComposerStaticInit972b56837168c16a3339717f041e3e16
         '5255c38a0faeba867671b61dfda6d864' => __DIR__ . '/..' . '/paragonie/random_compat/lib/random.php',
         'f0906e6318348a765ffb6eb24e0d0938' => __DIR__ . '/..' . '/laravel/framework/src/Illuminate/Foundation/helpers.php',
         '58571171fd5812e6e447dce228f52f4d' => __DIR__ . '/..' . '/laravel/framework/src/Illuminate/Support/helpers.php',
+        'f18cc91337d49233e5754e93f3ed9ec3' => __DIR__ . '/..' . '/laravelcollective/html/src/helpers.php',
     );
 
     public static $prefixLengthsPsr4 = array (
@@ -86,6 +87,7 @@ class ComposerStaticInit972b56837168c16a3339717f041e3e16
         ),
         'C' => 
         array (
+            'Collective\\Html\\' => 16,
             'Collective\\Bus\\' => 15,
             'ClassPreloader\\' => 15,
             'Carbon\\' => 7,
@@ -230,6 +232,10 @@ class ComposerStaticInit972b56837168c16a3339717f041e3e16
         'Doctrine\\Common\\' => 
         array (
             0 => __DIR__ . '/..' . '/doctrine/common/lib/Doctrine/Common',
+        ),
+        'Collective\\Html\\' => 
+        array (
+            0 => __DIR__ . '/..' . '/laravelcollective/html/src',
         ),
         'Collective\\Bus\\' => 
         array (
