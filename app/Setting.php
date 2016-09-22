@@ -10,4 +10,6 @@ class Setting extends Model
         'name_en','name_th','code','value','unit_of_measure','group_id',
         'category'
     ];
+
+
 }

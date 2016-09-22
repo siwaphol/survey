@@ -2,10 +2,6 @@ $(function () {
 
     $.extend( $.fn.dataTable.defaults, {
         autoWidth: false,
-        columnDefs: [{
-            orderable: false,
-            targets: [ 3 ]
-        }],
         order: [[1, "desc"]],
         dom: '<"datatable-header"fl><"datatable-scroll"t><"datatable-footer"ip>',
         language: {

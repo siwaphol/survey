@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Setting;
+use App\SettingGroup;
 use Illuminate\Http\Request;
 
 use App\Http\Requests;
@@ -12,7 +13,9 @@ class SettingController extends Controller
 {
     public function index()
     {
-        $settings = Setting::get();
+        $settings = Setting::leftJoin('setting_groups','settings.group_id','=','setting_groups.id')
+            ->select('settings.*','setting_groups.name_th as group_name_th')
+        ->get();
 
         return view('setting.index', compact('settings'));
     }
@@ -23,7 +26,9 @@ class SettingController extends Controller
         if (is_null($setting))
             abort(404);
 
-        return view('setting.edit', compact('setting'));
+        $settingGroups = SettingGroup::get();
+
+        return view('setting.edit', compact('setting', 'settingGroups'));
     }
 
     public function update(Request $request, $id)
@@ -49,6 +54,8 @@ class SettingController extends Controller
 
         $setting->fill($request->input());
         $setting->save();
+
+        flash('บันทึกค่าสำเร็จ', 'success');
 
         return redirect('/setting');
     }

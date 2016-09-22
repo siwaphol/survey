@@ -30,7 +30,6 @@ class Summary122 extends Controller
         $objPHPExcel->removeSheetByIndex(0);
         $objPHPExcel->setActiveSheetIndexByName($inputSheet);
 
-
         //ตารางที่ 12.7 จำนวนและร้อยละของครัวเรือนที่มีการผลิตก๊าซชีวภาพจำแนกตามเขตปกครอง
         $table1 = [
             ['no_ra716' => 244],
