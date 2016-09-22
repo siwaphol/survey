@@ -7,7 +7,7 @@ use Illuminate\Database\Eloquent\Model;
 
 class Summary extends Model
 {
-    public static function sum($uniqueKeyArr, $startCol, $startRow, $objPHPExcel, $mainObj, $isRadio = false, $isCustomHaving = false, $havingUniqueKey=null)
+    public static function sum($uniqueKeyArr, $startCol, $startRow, $objPHPExcel, $mainObj, $isRadio = false, $isCustomHaving = false, $havingUniqueKey=null, $arraySum = false)
     {
         $w = [];
         $w[Main::INNER_GROUP_1] = Main::$weight[Main::INNER_GROUP_1];
@@ -37,8 +37,12 @@ class Summary extends Model
             $rowNumber++;
         }
 
-        if (!$isRadio)
+        if (!$isRadio && !$arraySum)
             $answerObj = Answer::whereIn('unique_key', $uniqueKeyArr)->get();
+        else if($arraySum){
+            $allUniqueKeys = array_reduce($uniqueKeyArr, 'array_merge', array());
+            $answerObj = Answer::whereIn('unique_key', $allUniqueKeys)->get();
+        }
 
         $whereIn = [];
         $answers = [];
@@ -88,11 +92,22 @@ class Summary extends Model
                 foreach (Main::$borderWeight as $b_key=>$b_weight){
                     $mainList = $mainObj->filterMain($b_key);
                     $dupMainId = [];
+
                     $count[$b_key] = $answerObj->filter(function ($b_keytem, $key) use ($mainList, $value, &$dupMainId) {
-                        $condition = (!in_array($b_keytem->main_id, $dupMainId)) && $b_keytem->unique_key === $value
-                            && in_array($b_keytem->main_id, $mainList);
-                        if ($b_keytem->unique_key === $value)
-                            $dupMainId[] = $b_keytem->unique_key;
+                        if (is_array($value)){
+                            $condition = (!in_array($b_keytem->main_id, $dupMainId)) && in_array($b_keytem->unique_key, $value)
+                                && in_array($b_keytem->main_id, $mainList);
+
+                            if (in_array($b_keytem->unique_key, $value))
+                                $dupMainId[] = $b_keytem->main_id;
+                        }
+                        else{
+                            $condition = (!in_array($b_keytem->main_id, $dupMainId)) && $b_keytem->unique_key === $value
+                                && in_array($b_keytem->main_id, $mainList);
+
+                            if ($b_keytem->unique_key === $value)
+                                $dupMainId[] = $b_keytem->main_id;
+                        }
 
                         return $condition;
                     })->count();

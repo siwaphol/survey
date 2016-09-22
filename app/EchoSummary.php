@@ -95,7 +95,7 @@ class EchoSummary extends Model
                         $condition = (!in_array($item->main_id, $dupMainId)) && $item->unique_key === $value
                             && in_array($item->main_id, $mainList);
                         if ($item->unique_key === $value)
-                            $dupMainId[] = $item->unique_key;
+                            $dupMainId[] = $item->main_id;
 
                         return $condition;
                     })->count();

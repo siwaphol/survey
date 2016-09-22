@@ -128,6 +128,7 @@ class SummaryController extends Controller
             'no_ch1023_o329_ch101_o69_ch102_o74',
             'no_ch1023_o329_ch101_o70',
             'no_ch1023_o329_ch101_o71',
+            // หลอดไฟ (นอกบ้าน)
             'no_ch1023_o330_ch112_o68',
             'no_ch1023_o330_ch112_o69_ch113_o72',
             'no_ch1023_o330_ch112_o69_ch113_o73',
@@ -179,6 +180,7 @@ class SummaryController extends Controller
             ['no_ch1023_o329_ch101_o69_ch102_o74_nu108','no_ch1023_o329_ch101_o69_ch102_o74_nu109','no_ch1023_o329_ch101_o69_ch102_o74_nu107',0.018],
             ['no_ch1023_o329_ch101_o70_nu104','no_ch1023_o329_ch101_o70_nu105','no_ch1023_o329_ch101_o70_nu103',0.018],
             ['no_ch1023_o329_ch101_o71_nu104','no_ch1023_o329_ch101_o71_nu105','no_ch1023_o329_ch101_o71_nu103',0.010],
+
             ['no_ch1023_o330_ch112_o68_nu115','no_ch1023_o330_ch112_o68_nu116','no_ch1023_o330_ch112_o68_nu114',0.060],
             ['no_ch1023_o330_ch112_o69_ch113_o72_nu119','no_ch1023_o330_ch112_o69_ch113_o72_nu120','no_ch1023_o330_ch112_o69_ch113_o72_nu118',0.024],
             ['no_ch1023_o330_ch112_o69_ch113_o73_nu119','no_ch1023_o330_ch112_o69_ch113_o73_nu120','no_ch1023_o330_ch112_o69_ch113_o73_nu118',0.036],
