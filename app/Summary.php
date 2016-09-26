@@ -9,26 +9,36 @@ class Summary extends Model
 {
     public static function sum($uniqueKeyArr, $startCol, $startRow, $objPHPExcel, $mainObj, $isRadio = false, $isCustomHaving = false, $havingUniqueKey=null, $arraySum = false)
     {
+        $settings = Setting::all();
+
         $w = [];
-        $w[Main::INNER_GROUP_1] = Main::$weight[Main::INNER_GROUP_1];
-        $w[2] = Main::$weight[Main::INNER_GROUP_2];
-        $w[3] = Main::$weight[Main::OUTER_GROUP_1];
-        $w[4] = Main::$weight[Main::OUTER_GROUP_2];
+        $w[1] = $settings->where('code', Setting::NORTHERN_INNER_GROUP_1_WEIGHT_CODE)->first()->value;
+        $w[2] = $settings->where('code', Setting::NORTHERN_INNER_GROUP_2_WEIGHT_CODE)->first()->value;
+        $w[3] = $settings->where('code', Setting::NORTHERN_OUTER_GROUP_1_WEIGHT_CODE)->first()->value;
+        $w[4] = $settings->where('code', Setting::NORTHERN_OUTER_GROUP_2_WEIGHT_CODE)->first()->value;
+//        $w[Main::INNER_GROUP_1] = Main::$weight[Main::INNER_GROUP_1];
+//        $w[2] = Main::$weight[Main::INNER_GROUP_2];
+//        $w[3] = Main::$weight[Main::OUTER_GROUP_1];
+//        $w[4] = Main::$weight[Main::OUTER_GROUP_2];
 
         $s = [];
-        $s[1] = Main::$sample[Main::INNER_GROUP_1];
-        $s[2] = Main::$sample[Main::INNER_GROUP_2];
-        $s[3] = Main::$sample[Main::OUTER_GROUP_1];
-        $s[4] = Main::$sample[Main::OUTER_GROUP_2];
+        $s[1] = $settings->where('code', Setting::NORTHERN_INNER_GROUP_1_SAMPLE_CODE)->first()->value;
+        $s[2] = $settings->where('code', Setting::NORTHERN_INNER_GROUP_2_SAMPLE_CODE)->first()->value;
+        $s[3] = $settings->where('code', Setting::NORTHERN_OUTER_GROUP_1_SAMPLE_CODE)->first()->value;
+        $s[4] = $settings->where('code', Setting::NORTHERN_OUTER_GROUP_2_SAMPLE_CODE)->first()->value;
+//        $s[1] = Main::$sample[Main::INNER_GROUP_1];
+//        $s[2] = Main::$sample[Main::INNER_GROUP_2];
+//        $s[3] = Main::$sample[Main::OUTER_GROUP_1];
+//        $s[4] = Main::$sample[Main::OUTER_GROUP_2];
 
-        $parameterExcel = \PHPExcel_IOFactory::load(storage_path('excel/parameters.xlsx'));
-        $parameterExcel->setActiveSheetIndex(2);
-        $paramSheet = $parameterExcel->getActiveSheet();
+//        $parameterExcel = \PHPExcel_IOFactory::load(storage_path('excel/parameters.xlsx'));
+//        $parameterExcel->setActiveSheetIndex(2);
+//        $paramSheet = $parameterExcel->getActiveSheet();
         $S = [];
-        $S[1] = (float)$paramSheet->getCell(Parameter::$populationColumn[Main::NORTHERN_INNER])->getValue();
-        $S[2] = (float)$paramSheet->getCell(Parameter::$populationColumn[Main::NORTHERN_INNER])->getValue();
-        $S[3] = (float)$paramSheet->getCell(Parameter::$populationColumn[Main::NORTHERN_OUTER])->getValue();
-        $S[4] = (float)$paramSheet->getCell(Parameter::$populationColumn[Main::NORTHERN_OUTER])->getValue();
+        $S[1] = (float)$settings->where('code', Setting::NORTHERN_INNER_POPULATION_CODE)->first()->value;
+        $S[2] = (float)$settings->where('code', Setting::NORTHERN_INNER_POPULATION_CODE)->first()->value;
+        $S[3] = (float)$settings->where('code', Setting::NORTHERN_OUTER_POPULATION_CODE)->first()->value;
+        $S[4] = (float)$settings->where('code', Setting::NORTHERN_OUTER_POPULATION_CODE)->first()->value;
 
         $rows = [];
         $rowNumber = $startRow;
@@ -136,7 +146,7 @@ class Summary extends Model
             $col++;
             $key6 = preg_replace('/[A-Z]+/', $col, $key);
             $answers[$key6] = ($answers[$key2]*Main::$weight[Main::NORTHERN_INNER] + $answers[$key4]*Main::$weight[Main::NORTHERN_OUTER])/100;
-            $answers[$key5] = ($answers[$key6] ) * (float)$paramSheet->getCell(Parameter::$populationColumn[Main::NORTHERN])->getValue();
+            $answers[$key5] = ($answers[$key6] ) * (float)$settings->where('code', Setting::NORTHERN_POPULATION_CODE)->first()->value;
             $answers[$key6] *= 100;
 
             $objPHPExcel->getActiveSheet()->setCellValue($key, $answers[$key]);

@@ -28,7 +28,6 @@ class Summary121 extends Controller
         $objPHPExcel->removeSheetByIndex(0);
         $objPHPExcel->setActiveSheetIndexByName($inputSheet);
 
-
         //ตารางที่ 12.1 จำนวนและร้อยละของครัวเรือนที่มีการเผาถ่านจำแนกตามเขตปกครอง
         $table12_1 = [
             ['no_ra700' => 82],
