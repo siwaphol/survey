@@ -16,24 +16,13 @@ class Summary extends Model
         $w[2] = $settings->where('code', Setting::NORTHERN_INNER_GROUP_2_WEIGHT_CODE)->first()->value;
         $w[3] = $settings->where('code', Setting::NORTHERN_OUTER_GROUP_1_WEIGHT_CODE)->first()->value;
         $w[4] = $settings->where('code', Setting::NORTHERN_OUTER_GROUP_2_WEIGHT_CODE)->first()->value;
-//        $w[Main::INNER_GROUP_1] = Main::$weight[Main::INNER_GROUP_1];
-//        $w[2] = Main::$weight[Main::INNER_GROUP_2];
-//        $w[3] = Main::$weight[Main::OUTER_GROUP_1];
-//        $w[4] = Main::$weight[Main::OUTER_GROUP_2];
 
         $s = [];
         $s[1] = $settings->where('code', Setting::NORTHERN_INNER_GROUP_1_SAMPLE_CODE)->first()->value;
         $s[2] = $settings->where('code', Setting::NORTHERN_INNER_GROUP_2_SAMPLE_CODE)->first()->value;
         $s[3] = $settings->where('code', Setting::NORTHERN_OUTER_GROUP_1_SAMPLE_CODE)->first()->value;
         $s[4] = $settings->where('code', Setting::NORTHERN_OUTER_GROUP_2_SAMPLE_CODE)->first()->value;
-//        $s[1] = Main::$sample[Main::INNER_GROUP_1];
-//        $s[2] = Main::$sample[Main::INNER_GROUP_2];
-//        $s[3] = Main::$sample[Main::OUTER_GROUP_1];
-//        $s[4] = Main::$sample[Main::OUTER_GROUP_2];
 
-//        $parameterExcel = \PHPExcel_IOFactory::load(storage_path('excel/parameters.xlsx'));
-//        $parameterExcel->setActiveSheetIndex(2);
-//        $paramSheet = $parameterExcel->getActiveSheet();
         $S = [];
         $S[1] = (float)$settings->where('code', Setting::NORTHERN_INNER_POPULATION_CODE)->first()->value;
         $S[2] = (float)$settings->where('code', Setting::NORTHERN_INNER_POPULATION_CODE)->first()->value;
@@ -58,6 +47,7 @@ class Summary extends Model
         $answers = [];
         foreach ($rows as $key => $value) {
 
+            // เอาไว้เวลาเว้นแถวที่จะไม่แสดงค่า
             if (empty($value))
                 continue;
 
