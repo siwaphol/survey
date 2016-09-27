@@ -155,6 +155,7 @@ class SummaryController extends Controller
             'no_ch1023_o330_ch112_o70_nu114',
             'no_ch1023_o330_ch112_o71_nu114'
         ];
+
         $detailsColumns = [
             'หลอดไฟ (ในบ้าน) หลอดไส้',
             'หลอดไฟ (ในบ้าน) หลอดฟลูออเรสเซนต์ ชนิดกลม',

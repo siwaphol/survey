@@ -25,40 +25,49 @@ class FilterExportController extends Controller
         $mainObj = new Main();
         $mainObj->initList();
 
-        $inputFile = "light_special.xlsx";
-        $objPHPExcel = \PHPExcel_IOFactory::load(storage_path('excel/raw_excel/'. $inputFile));
-        $outputFile = "";
-        $outputFileCell = "A2";
-        $uniqueKeyRowStart = 3;
+        $excelNumbers = ['a1'];
 
-        $i=0;
-//        dd($objPHPExcel->getAllSheets());
-        foreach ($objPHPExcel->getAllSheets() as $objWorksheet){
-            echo "Sheet " . $i . "</br>";
+        foreach ($excelNumbers as $c_number){
+            $inputFile = $c_number.".xlsx";
 
-            $uniqueKeyColumnStart = "A";
-            $uniqueKeyArr = [];
+            echo $inputFile . "</br>\n";
 
-//            $objWorksheet = $objPHPExcel->getActiveSheet();
+            $objPHPExcel = \PHPExcel_IOFactory::load(storage_path('excel/raw_excel/'. $inputFile));
+            $outputFile = "";
+            $outputFileCell = "A2";
+            $uniqueKeyRowStart = 3;
 
-            if ($i===0){
-                $outputFile = $objWorksheet->getCell($outputFileCell)->getValue();
+            $i=0;
+            foreach ($objPHPExcel->getAllSheets() as $objWorksheet){
+                echo "Sheet " . $i . "</br>";
+
+                $uniqueKeyColumnStart = "A";
+                $uniqueKeyArr = [];
+
+                if ($i===0){
+                    $outputFile = $objWorksheet->getCell($outputFileCell)->getValue();
+                }
+
+                while (!empty(trim($objWorksheet->getCell($uniqueKeyColumnStart.$uniqueKeyRowStart)->getValue()))){
+                    $uniqueKeyArr[] = trim($objWorksheet->getCell($uniqueKeyColumnStart.$uniqueKeyRowStart)->getValue());
+
+                    $uniqueKeyColumnStart++;
+                }
+
+                // เหมาะกับหมวด ก
+                $this->printOutValueToExcelObjectRadioOnlyMainId($uniqueKeyArr, $objWorksheet, $mainObj);
+                // เหมาะกับหมวด ข
+//                $this->printOutValueToExcelObjectOneSheet($uniqueKeyArr, $objWorksheet, $mainObj);
+                // หมวด ข หลอดไฟ
+//            $this->printOutValueToExcelObjectOneSheetWhereInUniqueKey($uniqueKeyArr, $objWorksheet, $mainObj);
+
+                $i++;
             }
 
-            while (!empty(trim($objWorksheet->getCell($uniqueKeyColumnStart.$uniqueKeyRowStart)->getValue()))){
-                $uniqueKeyArr[] = trim($objWorksheet->getCell($uniqueKeyColumnStart.$uniqueKeyRowStart)->getValue());
-
-                $uniqueKeyColumnStart++;
-            }
-
-//            $this->printOutValueToExcelObjectOneSheet($uniqueKeyArr, $objWorksheet, $mainObj);
-            $this->printOutValueToExcelObjectOneSheetWhereInUniqueKey($uniqueKeyArr, $objWorksheet, $mainObj);
-
-            $i++;
+            $objWriter = new \PHPExcel_Writer_Excel2007($objPHPExcel);
+            $objWriter->save(storage_path(iconv('UTF-8', 'windows-874', 'excel/raw_excel_output/'.$outputFile)));
         }
 
-        $objWriter = new \PHPExcel_Writer_Excel2007($objPHPExcel);
-        $objWriter->save(storage_path(iconv('UTF-8', 'windows-874', 'excel/raw_excel_output/'.$outputFile)));
         echo "success";
     }
 
@@ -216,5 +225,34 @@ class FilterExportController extends Controller
             $startColumn++;
         }
 
+    }
+
+    protected function printOutValueToExcelObjectRadioOnlyMainId($uniqueKey, &$objWorksheet, $mainObj)
+    {
+        $index = 0;
+        foreach ($uniqueKey as $uniqueKeyArr) {
+            $startColumn = 'B';
+            $startRow = 7;
+
+            foreach (Main::$borderWeight as $b_key => $b_weight) {
+                $mainList = $mainObj->filterMain($b_key);
+
+                $whereMainId = implode(",", $mainList);
+                $sql = "SELECT * FROM
+                    (SELECT main_id FROM answers 
+                    WHERE main_id IN ({$whereMainId}) AND {$uniqueKeyArr} GROUP BY main_id) T1 ORDER BY main_id";
+                \DB::setFetchMode(\PDO::FETCH_NUM);
+                $result = \DB::select($sql);
+                \DB::setFetchMode(\PDO::FETCH_CLASS);
+
+                $objWorksheet->fromArray($result, NULL, ($startColumn . $startRow));
+                for ($i = 0; $i < count($uniqueKeyArr); $i++) {
+                    $startColumn++;
+                }
+//                $startColumn++;
+            }
+
+            $index++;
+        }
     }
 }
