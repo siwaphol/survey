@@ -25,7 +25,7 @@ class FilterExportController extends Controller
         $mainObj = new Main();
         $mainObj->initList();
 
-        $excelNumbers = ['a1'];
+        $excelNumbers = ['a14_2'];
 
         foreach ($excelNumbers as $c_number){
             $inputFile = $c_number.".xlsx";
@@ -56,6 +56,10 @@ class FilterExportController extends Controller
 
                 // เหมาะกับหมวด ก
                 $this->printOutValueToExcelObjectRadioOnlyMainId($uniqueKeyArr, $objWorksheet, $mainObj);
+                // หมวด ก แบบที่มี nested radio ด้วย
+//                $this->printOutValueToExcelObjectRadioCustom($uniqueKeyArr, $objWorksheet, $mainObj);
+                // ก7
+//                $this->printOutValueToExcelObjectOneSheetAnswerText($uniqueKeyArr, $objWorksheet, $mainObj);
                 // เหมาะกับหมวด ข
 //                $this->printOutValueToExcelObjectOneSheet($uniqueKeyArr, $objWorksheet, $mainObj);
                 // หมวด ข หลอดไฟ
@@ -227,6 +231,46 @@ class FilterExportController extends Controller
 
     }
 
+    protected function printOutValueToExcelObjectOneSheetAnswerText($uniqueKeyArr, &$objWorkSheet, $mainObj)
+    {
+        $startColumn = 'B';
+        $startRow = 7;
+
+        foreach (Main::$borderWeight as $b_key => $b_weight) {
+            $mainList = $mainObj->filterMain($b_key);
+
+            $template = " SUM(IF(unique_key='param',answer_text,0)) ";
+            $selectSql = "";
+            $whereAllNotZero = "";
+            for ($i = 0; $i < count($uniqueKeyArr); $i++) {
+                if (empty($selectSql))
+                    $selectSql = str_replace("param", $uniqueKeyArr[$i], $template) . " as sum" . ($i + 1);
+                else
+                    $selectSql .= ", " . str_replace("param", $uniqueKeyArr[$i], $template) . " as sum" . ($i + 1);
+
+                if (empty($whereAllNotZero))
+                    $whereAllNotZero = "sum" . ($i + 1) . ">0";
+                else
+                    $whereAllNotZero .= " OR sum" . ($i + 1) . ">0";
+            }
+
+            $whereMainId = implode(",", $mainList);
+            $sql = "SELECT * FROM
+                (SELECT main_id,{$selectSql} FROM answers 
+                WHERE main_id IN ({$whereMainId}) GROUP BY main_id) T1 WHERE {$whereAllNotZero} ORDER BY main_id";
+            \DB::setFetchMode(\PDO::FETCH_NUM);
+            $result = \DB::select($sql);
+            \DB::setFetchMode(\PDO::FETCH_CLASS);
+
+            $objWorkSheet->fromArray($result, NULL, ($startColumn . $startRow));
+            for ($i = 0; $i < count($uniqueKeyArr); $i++) {
+                $startColumn++;
+            }
+            $startColumn++;
+        }
+
+    }
+
     protected function printOutValueToExcelObjectRadioOnlyMainId($uniqueKey, &$objWorksheet, $mainObj)
     {
         $index = 0;
@@ -253,6 +297,49 @@ class FilterExportController extends Controller
             }
 
             $index++;
+        }
+    }
+
+    protected function printOutValueToExcelObjectRadioCustom($uniqueKey, &$objWorksheet, $mainObj)
+    {
+//        $index = 0;
+        $startColumn = 'B';
+
+        for ($index=0;$index<count($uniqueKey);$index++) {
+            $startRow = 7;
+            $c_column = $startColumn;
+
+            foreach (Main::$borderWeight as $b_key => $b_weight) {
+                $mainList = $mainObj->filterMain($b_key);
+
+                $whereMainId = implode(",", $mainList);
+                if ($index>0){
+                    $sql = "SELECT DISTINCT T1.main_id FROM
+                    (SELECT main_id FROM answers 
+                    WHERE main_id IN ({$whereMainId}) AND {$uniqueKey[0]} GROUP BY main_id) T1 
+                    INNER JOIN (SELECT main_id FROM answers 
+                    WHERE main_id IN ({$whereMainId}) AND {$uniqueKey[$index]} GROUP BY main_id) T2
+                    ON T1.main_id=T2.main_id
+                    ORDER BY T1.main_id";
+                }else{
+                    $sql = "SELECT * FROM
+                    (SELECT main_id FROM answers 
+                    WHERE main_id IN ({$whereMainId}) AND {$uniqueKey[0]} GROUP BY main_id) T1 ORDER BY main_id";
+                }
+                \DB::setFetchMode(\PDO::FETCH_NUM);
+                $result = \DB::select($sql);
+                \DB::setFetchMode(\PDO::FETCH_CLASS);
+                $objWorksheet->fromArray($result, NULL, ($c_column . $startRow));
+
+                // suppose there are 3 more unique keys
+//                $startColumn++;
+                for ($i = 0; $i < count($uniqueKey); $i++) {
+                    $c_column++;
+                }
+            }
+            $startColumn++;
+
+//            $index++;
         }
     }
 }
