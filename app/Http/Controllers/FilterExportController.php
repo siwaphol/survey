@@ -342,4 +342,50 @@ class FilterExportController extends Controller
 //            $index++;
         }
     }
+
+    // สำหรับรถแต่ละประเภท ที่มีหลายคัน
+    protected function printOutValueToExcelObjectOneSheetMultipleVehicle($uniqueKeyArr, &$objWorkSheet, $mainObj)
+    {
+        $startColumn = 'B';
+        $startRow = 7;
+
+        foreach (Main::$borderWeight as $b_key => $b_weight) {
+            $mainList = $mainObj->filterMain($b_key);
+
+            $template = " SUM(IF(unique_key='param',answer_numeric,0)) ";
+            $selectSql = "";
+            $whereAllNotZero = "";
+            for ($i = 0; $i < count($uniqueKeyArr); $i++) {
+                // จาก unique_key1,unique_key2,unique_key3 => [0=>unique_key1, 1=>unique_key2, 2=>unique_key3]
+                $newUniqueKeyArr = explode(",", $uniqueKeyArr[$i]);
+
+                if (empty($selectSql)){
+                    $selectSql = str_replace("param", $uniqueKeyArr[$i], $template) . " as sum" . ($i + 1);
+                }
+                else{
+                    $selectSql .= ", " . str_replace("param", $uniqueKeyArr[$i], $template) . " as sum" . ($i + 1);
+                }
+
+                if (empty($whereAllNotZero))
+                    $whereAllNotZero = "sum" . ($i + 1) . ">0";
+                else
+                    $whereAllNotZero .= " OR sum" . ($i + 1) . ">0";
+            }
+
+            $whereMainId = implode(",", $mainList);
+            $sql = "SELECT * FROM
+                (SELECT main_id,{$selectSql} FROM answers 
+                WHERE main_id IN ({$whereMainId}) GROUP BY main_id) T1 WHERE {$whereAllNotZero} ORDER BY main_id";
+            \DB::setFetchMode(\PDO::FETCH_NUM);
+            $result = \DB::select($sql);
+            \DB::setFetchMode(\PDO::FETCH_CLASS);
+
+            $objWorkSheet->fromArray($result, NULL, ($startColumn . $startRow));
+            for ($i = 0; $i < count($uniqueKeyArr); $i++) {
+                $startColumn++;
+            }
+            $startColumn++;
+        }
+
+    }
 }
