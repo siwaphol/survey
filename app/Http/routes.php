@@ -20,6 +20,7 @@ Route::group(['middleware' => 'auth'], function () {
     Route::get('export', 'FilterExportController@index');
     Route::get('test-export', 'FilterExportController@export');
     Route::get('test-export-2', 'FilterExportController@exportWithSheetLoop');
+    Route::get('test-export-3', 'FilterSelectionController@exportWithSheetLoop');
 
     Route::get('html-loop-2/{id}', 'QuestionController@htmlLoop');
     Route::get('html-loop-2/{id}/{sub}', 'QuestionController@htmlLoop');
