@@ -3,6 +3,7 @@
         <a class="navbar-brand" href="{{url('/')}}"><i class="icon-home"></i> Dashboard</a>
         <a class="navbar-brand" href="{{url('main')}}"><i class="icon-stack"></i> กรอกแบบสอบถาม</a>
         <a class="navbar-brand" href="{{url('report')}}"><i class="icon-stack"></i> Report</a>
+        <a class="navbar-brand" href="{{url('filter')}}"><i class="icon-stack"></i> Filter</a>
 
         <ul class="nav navbar-nav pull-right visible-xs-block">
             <li><a data-toggle="collapse" data-target="#navbar-mobile"><i class="icon-tree5"></i></a></li>

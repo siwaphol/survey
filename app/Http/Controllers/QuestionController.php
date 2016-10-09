@@ -149,21 +149,6 @@ class QuestionController extends Controller
             return redirect('main');
         $main_id = (int)$main_id;
 
-//        $section = "";
-//        $menuSection = Menu::whereNull('parent_id')
-//            ->find($id);
-//        if (is_null($menuSection))
-//            return abort(404);
-//        $section = $menuSection->name;
-//
-//        $sub_section = "NULL";
-//        if(!is_null($sub)){
-//            $subMenuSection = Menu::where('parent_id', $id)
-//                ->find($sub);
-//            if (is_null($subMenuSection))
-//                return abort(404);
-//            $sub_section = $subMenuSection->name;
-//        }
         $section = $id;
         $sub_section = $sub;
         $whereSubSql = ' and t1.sub_section_id ';
@@ -201,85 +186,7 @@ class QuestionController extends Controller
         if (count($result)<=0)
             return abort(404);
 
-        $t = collect($result);
-        $grouped = $t->groupBy('id');
-
-        $forgetList =[];
-        foreach ($grouped as $aQuestion){
-            
-            $aQuestion->{"input_type"} = $aQuestion[0]->input_type;
-            $aQuestion->{"id"} = $aQuestion[0]->id;
-            $aQuestion->{"parent_id"} = $aQuestion[0]->parent_id;
-            $aQuestion->{"name"} = $aQuestion[0]->text;
-            $aQuestion->{"subtext"} = null;
-            $aQuestion->{"dependent_parent_option_id"} = $aQuestion[0]->dependent_parent_option_id;
-
-            $aQuestion->{"class"} = "";
-//            if (!is_null($aQuestion->parent_id)){
-//                // 1.ถ้าไม่ขึ้นกับแม่สัก option เลย
-//                // 1.1 title ให้อยู่ล่างแม่ปกติ
-//                // 1.2 text และ number ให้อยู่ล่างแม่ปกติ
-//                // 1.3 checkbox ให้ไปอยู่ให้ทุก option ของแม่
-//                // 1.4 radio ให้อยู่ล่างแม่ปกติ
-//                // 2.ถ้าขึ้นกับแม่
-//                // 2.1 ทั้ง checkbox และ radio ให้อยู่ล่าง option ของแม่ทั้งหมด
-
-            if(!is_null($aQuestion[0]->parent_id)){
-                $typeArr = [Question::TYPE_TITLE, Question::TYPE_TEXT, Question::TYPE_NUMBER];
-                $inArray = in_array($grouped[$aQuestion[0]->parent_id][0]->input_type, $typeArr);
-                if($inArray){
-                    if(!isset($grouped[$aQuestion[0]->parent_id]->{"children"})){
-                        $grouped[$aQuestion[0]->parent_id]->{"children"} = [];
-                    }
-                    $aQuestion->{"class"} = "";
-                    $grouped[$aQuestion[0]->parent_id]->{"children"}[$aQuestion[0]->id] = $aQuestion;
-                }
-
-                $type2Arr = [Question::TYPE_CHECKBOX, Question::TYPE_RADIO];
-                $inArray2 = in_array($grouped[$aQuestion[0]->parent_id][0]->input_type, $type2Arr);
-                if($inArray2){
-                    $aQuestion->{"class"} = ' has-parent';
-
-                    if (is_null($aQuestion->dependent_parent_option_id)){
-                        if ($grouped[$aQuestion[0]->parent_id][0]->input_type===Question::TYPE_RADIO){
-                            if(!isset($grouped[$aQuestion[0]->parent_id]->{"children"})){
-                                $grouped[$aQuestion[0]->parent_id]->{"children"} = [];
-                            }
-                            $grouped[$aQuestion[0]->parent_id]->{"children"}[$aQuestion[0]->id] = $aQuestion;
-                        }
-                        else if ($grouped[$aQuestion[0]->parent_id][0]->input_type===Question::TYPE_CHECKBOX){
-                            foreach ($grouped[$aQuestion[0]->parent_id] as $each_parent_option){
-                                if (!isset($each_parent_option->{"children"})){
-                                    $each_parent_option->{"children"} = [];
-                                }
-
-                                $each_parent_option->{"children"}[$aQuestion[0]->id] = $aQuestion;
-                            }
-                        }
-                    }
-
-                    if (!is_null($aQuestion->dependent_parent_option_id)){
-                        foreach ($grouped[$aQuestion[0]->parent_id] as $each_parent_option){
-                            $dependentArr = explode(",", $aQuestion->dependent_parent_option_id);
-                            if (in_array($each_parent_option->option_id, $dependentArr)){
-                                if (!isset($each_parent_option->{"children"})){
-                                    $each_parent_option->{"children"} = [];
-                                }
-
-                                // ให้หาว่ากรณีที่มีคำตอบอยู่แล้ว parent_option_selected_id เท่ากับค่าของแม่จริงๆ
-                                $each_parent_option->{"children"}[$aQuestion[0]->id] = $aQuestion;
-                            }
-                        }
-                    }
-                }
-
-                $forgetList[] = $aQuestion[0]->id;
-            }
-        }
-        //for get in list
-        foreach ($forgetList as $aId){
-            $grouped->forget((string)$aId);
-        }
+        $grouped = QuestionController::createQuestionGroup($result);
 
         $scope = [];
         $edited = false;
@@ -289,10 +196,12 @@ class QuestionController extends Controller
             ->get();
         if (count($answers)>0)
             $edited = true;
-        $new = $this->generateUniqueKey($grouped, $scope, $answers);
+
+        $testfilter = [];
+        $new = $this->generateUniqueKey($grouped, $scope, $answers,'question.no', false, null, null, $testfilter);
 
         //TODO-nong descriptions table test
-//        dd();
+        dd($testfilter);
 
         $sectionName = Menu::find($section)->name;
         $hasSub = Menu::find($sub_section);
@@ -303,7 +212,7 @@ class QuestionController extends Controller
             compact('grouped','section','sub_section', 'main_id','scope','new', 'sectionName', 'subSectionName','edited'));
     }
 
-    function generateUniqueKey(&$questionArr, &$scope, $answers,$key='question.no', $hideable=false, $condition=null, $parentText = null){
+    function generateUniqueKey(&$questionArr, &$scope, $answers,$key='question.no', $hideable=false, $condition=null, $parentText = null, &$filterTest){
         $list = [];
         foreach ($questionArr as $aQuestion){
             $myObj = clone $aQuestion;
@@ -328,6 +237,8 @@ class QuestionController extends Controller
 //                    $desc->parent_title = $parentText;
 //                    $desc->save();
 //                }
+                $tempKey = str_replace("question.","", $qKey);
+                $filterTest[] = "sum(if(unique_key='{$tempKey}', answer_numeric,0)) as \"" . $aQuestion->name . "\"";
                 // end test descriptions table
 
                 $answer = $answers->where('unique_key', str_replace("question.", "", $qKey))
@@ -350,6 +261,11 @@ class QuestionController extends Controller
                     $myObj[$i] = clone $option;
                     $myObj[$i]->{"unique_key"} = $optionKey;
 
+                    //TODO-nong test filter
+                    $tempKey = str_replace("question.","", $qKey);
+                    $filterTest[] = "if(sum(if(unique_key='{$tempKey}', 1,0))>1, 1,0) as \"" . $option->option_name . "\"";
+                    //end to-do nong test filter
+
                     $answer = $answers->where('unique_key', str_replace("question.", "", $optionKey))
                         ->first();
                     $scopeAnswer = 'false';
@@ -365,7 +281,7 @@ class QuestionController extends Controller
                         $echoName = ($parentText?$parentText . "/":"") . $option->option_name;
 //                        echo $echoName . " - $optionKey - " . " </br>";
                         //End test descriptions table
-                        $myObj[$i]->children = $this->generateUniqueKey($option->children, $scope, $answers,$optionKey, true,$optionKey, $echoName);
+                        $myObj[$i]->children = $this->generateUniqueKey($option->children, $scope, $answers,$optionKey, true,$optionKey, $echoName, $filterTest);
                     }
                     $i++;
                 }
@@ -373,17 +289,31 @@ class QuestionController extends Controller
                 $qKey = $key . '_ra'.$aQuestion->id;
                 $myObj->{"unique_key"} = $qKey;
                 $i = 0;
+
+                //test filter
+                $matchingOptionWithText = "''";
+
                 foreach ($aQuestion as $option){
                     $optionKey = $qKey . '_o' .$option->option_id;
                     $myObj[$i] = clone $option;
                     $myObj[$i]->{"unique_key"} = $optionKey;
 
+                    //test filter
+                    $tempKey = str_replace("question.","", $qKey);
+                    $matchingOptionWithText .= ",if(sum(if(unique_key='{$tempKey}' and option_id={$option->option_id}, 1 , 0))>0, '{$option->option_name}','')";
+
                     if (isset($option->children)){
                         $optionCon = $qKey . "==" . $option->option_id;
-                        $myObj[$i]->children = $this->generateUniqueKey($option->children, $scope, $answers,$optionKey, true,$optionCon);
+                        $myObj[$i]->children = $this->generateUniqueKey($option->children, $scope, $answers,$optionKey, true,$optionCon,null,$filterTest);
                     }
                     $i++;
                 }
+
+                //test filter
+                $matchingOptionWithText = str_replace("param", "''", $matchingOptionWithText);
+//                $matchingOptionWithText .= " as \"" . $aQuestion->name . "\"";
+                $filterTest[] = "CONCAT(" . $matchingOptionWithText . ") as \"" . $aQuestion->name . "\" ";
+
                 $answer = $answers->where('unique_key', str_replace("question.", "", $qKey))
                     ->first();
                 if ($answer){
@@ -391,6 +321,9 @@ class QuestionController extends Controller
                     if (!empty($answer->other_text))
                         $scope[] ='$scope.' . str_replace("no","other",$qKey) . ' = "'.$answer->other_text.'";';
                 }
+                //TODO-nong test filter
+//                $filterTest[] = " if(unique_key='{$optionKey}') ";
+
                 $scope[] = '$scope.' . $qKey . ' = '.(is_null($answer)?'""':'"'.$optionId.'"').';';
             }
 
@@ -400,9 +333,9 @@ class QuestionController extends Controller
 
             if (isset($aQuestion->children)){
                 if ($aQuestion->input_type===Question::TYPE_RADIO){
-                    $myObj->children =  $this->generateUniqueKey($aQuestion->children, $scope, $answers,$qKey, true, $qKey);
+                    $myObj->children =  $this->generateUniqueKey($aQuestion->children, $scope, $answers,$qKey, true, $qKey,null,$filterTest);
                 }else{
-                    $myObj->children = $this->generateUniqueKey($aQuestion->children, $scope, $answers,$qKey, $hideable, $condition);
+                    $myObj->children = $this->generateUniqueKey($aQuestion->children, $scope, $answers,$qKey, $hideable, $condition,null,$filterTest);
                 }
             }
 
@@ -410,5 +343,93 @@ class QuestionController extends Controller
         }
 
         return $list;
+    }
+
+    /**
+     * @param $result
+     * @return static
+     */
+    public static function createQuestionGroup($result)
+    {
+        $t = collect($result);
+        $grouped = $t->groupBy('id');
+
+        $forgetList = [];
+        foreach ($grouped as $aQuestion) {
+
+            $aQuestion->{"input_type"} = $aQuestion[0]->input_type;
+            $aQuestion->{"id"} = $aQuestion[0]->id;
+            $aQuestion->{"parent_id"} = $aQuestion[0]->parent_id;
+            $aQuestion->{"name"} = $aQuestion[0]->text;
+            $aQuestion->{"subtext"} = null;
+            $aQuestion->{"dependent_parent_option_id"} = $aQuestion[0]->dependent_parent_option_id;
+
+            $aQuestion->{"class"} = "";
+//            if (!is_null($aQuestion->parent_id)){
+//                // 1.ถ้าไม่ขึ้นกับแม่สัก option เลย
+//                // 1.1 title ให้อยู่ล่างแม่ปกติ
+//                // 1.2 text และ number ให้อยู่ล่างแม่ปกติ
+//                // 1.3 checkbox ให้ไปอยู่ให้ทุก option ของแม่
+//                // 1.4 radio ให้อยู่ล่างแม่ปกติ
+//                // 2.ถ้าขึ้นกับแม่
+//                // 2.1 ทั้ง checkbox และ radio ให้อยู่ล่าง option ของแม่ทั้งหมด
+
+            if (!is_null($aQuestion[0]->parent_id)) {
+                $typeArr = [Question::TYPE_TITLE, Question::TYPE_TEXT, Question::TYPE_NUMBER];
+                $inArray = in_array($grouped[$aQuestion[0]->parent_id][0]->input_type, $typeArr);
+                if ($inArray) {
+                    if (!isset($grouped[$aQuestion[0]->parent_id]->{"children"})) {
+                        $grouped[$aQuestion[0]->parent_id]->{"children"} = [];
+                    }
+                    $aQuestion->{"class"} = "";
+                    $grouped[$aQuestion[0]->parent_id]->{"children"}[$aQuestion[0]->id] = $aQuestion;
+                }
+
+                $type2Arr = [Question::TYPE_CHECKBOX, Question::TYPE_RADIO];
+                $inArray2 = in_array($grouped[$aQuestion[0]->parent_id][0]->input_type, $type2Arr);
+                if ($inArray2) {
+                    $aQuestion->{"class"} = ' has-parent';
+
+                    if (is_null($aQuestion->dependent_parent_option_id)) {
+                        if ($grouped[$aQuestion[0]->parent_id][0]->input_type === Question::TYPE_RADIO) {
+                            if (!isset($grouped[$aQuestion[0]->parent_id]->{"children"})) {
+                                $grouped[$aQuestion[0]->parent_id]->{"children"} = [];
+                            }
+                            $grouped[$aQuestion[0]->parent_id]->{"children"}[$aQuestion[0]->id] = $aQuestion;
+                        } else if ($grouped[$aQuestion[0]->parent_id][0]->input_type === Question::TYPE_CHECKBOX) {
+                            foreach ($grouped[$aQuestion[0]->parent_id] as $each_parent_option) {
+                                if (!isset($each_parent_option->{"children"})) {
+                                    $each_parent_option->{"children"} = [];
+                                }
+
+                                $each_parent_option->{"children"}[$aQuestion[0]->id] = $aQuestion;
+                            }
+                        }
+                    }
+
+                    if (!is_null($aQuestion->dependent_parent_option_id)) {
+                        foreach ($grouped[$aQuestion[0]->parent_id] as $each_parent_option) {
+                            $dependentArr = explode(",", $aQuestion->dependent_parent_option_id);
+                            if (in_array($each_parent_option->option_id, $dependentArr)) {
+                                if (!isset($each_parent_option->{"children"})) {
+                                    $each_parent_option->{"children"} = [];
+                                }
+
+                                // ให้หาว่ากรณีที่มีคำตอบอยู่แล้ว parent_option_selected_id เท่ากับค่าของแม่จริงๆ
+                                $each_parent_option->{"children"}[$aQuestion[0]->id] = $aQuestion;
+                            }
+                        }
+                    }
+                }
+
+                $forgetList[] = $aQuestion[0]->id;
+            }
+        }
+        //for get in list
+        foreach ($forgetList as $aId) {
+            $grouped->forget((string)$aId);
+        }
+
+        return $grouped;
     }
 }
