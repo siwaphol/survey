@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Answer;
 use App\Main;
+use App\Menu;
 use App\Question;
 use Illuminate\Http\Request;
 
@@ -12,8 +13,18 @@ use App\Http\Controllers\Controller;
 
 class FilterSelectionController extends Controller
 {
+    public function index()
+    {
+        $menus = Menu::whereNull('parent_id')
+            ->orderBy('order')
+            ->get();
+        return view('filter.index', compact('menus'));
+    }
+
     public function testExport($section_id=1, $sub_section_id=null)
     {
+        set_time_limit(3600);
+
         $section = $section_id;
         $sub_section = $sub_section_id;
         $whereSubSql = ' and t1.sub_section_id ';
@@ -61,7 +72,7 @@ class FilterSelectionController extends Controller
         array_unshift($columnHead, "ชุดที่");
 
         $selectSql = "main_id, " . implode(",", $uniqueKeys);
-        $sqlStr = "SELECT {$selectSql} FROM answers WHERE main_id<=2500 GROUP BY main_id ORDER BY main_id";
+        $sqlStr = "SELECT {$selectSql} FROM answers WHERE main_id BETWEEN 0 AND 2500 GROUP BY main_id ORDER BY main_id";
         \DB::setFetchMode(\PDO::FETCH_NUM);
         $sqlResult = \DB::select($sqlStr);
         \DB::setFetchMode(\PDO::FETCH_CLASS);
@@ -70,9 +81,11 @@ class FilterSelectionController extends Controller
 //        dd($sqlResult);
 
         $objPHPExcel = new \PHPExcel();
-        $objPHPExcel->getActiveSheet()->fromArray($sqlResult, NULL, "B7");
+        $objPHPExcel->getActiveSheet()->fromArray($sqlResult, NULL, "B6");
         $objWriter = new \PHPExcel_Writer_Excel2007($objPHPExcel);
-        $objWriter->save(storage_path(iconv('UTF-8', 'windows-874', 'excel/test_selection_export.xlsx')));
+        $objWriter->save(storage_path(iconv('UTF-8', 'windows-874', 'excel/selection_export.xlsx')));
+
+        return response()->download(storage_path('excel/selection_export.xlsx'), 'ข้อมูลดิบ.xlsx');
     }
 
     public function generateUniqueKeyFilterArray(&$questionArr,$key='question.no', $hideable=false, $condition=null, &$filterTest=[], &$columnHead = [])

@@ -18,9 +18,11 @@ Route::group(['middleware' => 'auth'], function () {
 
     Route::post('filter-main', 'MainController@filter');
     Route::get('export', 'FilterExportController@index');
+    Route::get('filter', 'FilterSelectionController@index');
     Route::get('test-export', 'FilterExportController@export');
     Route::get('test-export-2', 'FilterExportController@exportWithSheetLoop');
-    Route::get('test-export-3', 'FilterSelectionController@testExport');
+    Route::get('test-export-3/{section_id}', 'FilterSelectionController@testExport');
+    Route::get('test-export-3/{section_id}/{sub_section_id}', 'FilterSelectionController@testExport');
 
     Route::get('html-loop-2/{id}', 'QuestionController@htmlLoop');
     Route::get('html-loop-2/{id}/{sub}', 'QuestionController@htmlLoop');
