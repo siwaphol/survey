@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Answer;
 use App\Main;
 use App\Question;
 use Illuminate\Http\Request;
@@ -11,7 +12,7 @@ use App\Http\Controllers\Controller;
 
 class FilterSelectionController extends Controller
 {
-    public function testExport($section_id=5, $sub_section_id=6)
+    public function testExport($section_id=1, $sub_section_id=null)
     {
         $section = $section_id;
         $sub_section = $sub_section_id;
@@ -55,7 +56,9 @@ class FilterSelectionController extends Controller
         // พอได้ grouped แล้วก็สามารถดึงค่าตัวแปร unique_key ง่ายขึ้น
         $columnHead = array();
         $filterTest = array();
+//        $answers = Answer::whereBetween('main_id',[1,2500])->get();
         $uniqueKeys = $this->generateUniqueKeyFilterArray($grouped,'question.no', false, null, $filterTest, $columnHead);
+        array_unshift($columnHead, "ชุดที่");
 
         $selectSql = "main_id, " . implode(",", $uniqueKeys);
         $sqlStr = "SELECT {$selectSql} FROM answers WHERE main_id<=2500 GROUP BY main_id ORDER BY main_id";
@@ -63,8 +66,13 @@ class FilterSelectionController extends Controller
         $sqlResult = \DB::select($sqlStr);
         \DB::setFetchMode(\PDO::FETCH_CLASS);
 
-        $sqlResult = array($columnHead) + $sqlResult;
-        dd($sqlResult);
+        array_unshift($sqlResult, $columnHead);
+//        dd($sqlResult);
+
+        $objPHPExcel = new \PHPExcel();
+        $objPHPExcel->getActiveSheet()->fromArray($sqlResult, NULL, "B7");
+        $objWriter = new \PHPExcel_Writer_Excel2007($objPHPExcel);
+        $objWriter->save(storage_path(iconv('UTF-8', 'windows-874', 'excel/test_selection_export.xlsx')));
     }
 
     public function generateUniqueKeyFilterArray(&$questionArr,$key='question.no', $hideable=false, $condition=null, &$filterTest=[], &$columnHead = [])
@@ -72,7 +80,10 @@ class FilterSelectionController extends Controller
         $list = [];
         foreach ($questionArr as $aQuestion){
             $myObj = clone $aQuestion;
-            if ($aQuestion->input_type===Question::TYPE_NUMBER){
+            if ($aQuestion->input_type===Question::TYPE_TITLE){
+                $qKey = $key .'_'. 'ti'.$aQuestion->id;
+                $myObj->{"unique_key"} = $qKey;
+            }elseif ($aQuestion->input_type===Question::TYPE_NUMBER){
                 $qKey = $key .'_'. 'nu'.$aQuestion->id;
                 $myObj->{"unique_key"} = $qKey;
 
@@ -83,6 +94,9 @@ class FilterSelectionController extends Controller
                 $qKey = $key .'_'. 'te'.$aQuestion->id;
                 $myObj->{"unique_key"} = $qKey;
 
+                $tempKey = str_replace("question.","", $qKey);
+                $filterTest[] = "GROUP_CONCAT(if(unique_key='{$tempKey}', answer_text,NULL)) as \"" . $aQuestion->name . "\"";
+                $columnHead[] = $aQuestion->name;
             }elseif ($aQuestion->input_type===Question::TYPE_CHECKBOX){
                 $qKey = $key .'_'. 'ch'.$aQuestion->id ;
                 $myObj->{"unique_key"} = $qKey;
@@ -92,11 +106,9 @@ class FilterSelectionController extends Controller
                     $myObj[$i] = clone $option;
                     $myObj[$i]->{"unique_key"} = $optionKey;
 
-                    //TODO-nong test filter
-                    $tempKey = str_replace("question.","", $qKey);
-                    $filterTest[] = "if(sum(if(unique_key='{$tempKey}', 1,0))>1, 1,0) as \"" . $option->option_name . "\"";
+                    $tempKey = str_replace("question.","", $optionKey);
+                    $filterTest[] = "if(sum(if(unique_key='{$tempKey}', 1,0))>0, 1,0) as \"" . $option->option_name . "\"";
                     $columnHead[] = $option->option_name;
-                    //end to-do nong test filter
 
                     if (isset($option->children)){
                         //End test descriptions table

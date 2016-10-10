@@ -197,11 +197,7 @@ class QuestionController extends Controller
         if (count($answers)>0)
             $edited = true;
 
-        $testfilter = [];
-        $new = $this->generateUniqueKey($grouped, $scope, $answers,'question.no', false, null, null, $testfilter);
-
-        //TODO-nong descriptions table test
-        dd($testfilter);
+        $new = $this->generateUniqueKey($grouped, $scope, $answers,'question.no', false, null, null);
 
         $sectionName = Menu::find($section)->name;
         $hasSub = Menu::find($sub_section);
@@ -212,7 +208,7 @@ class QuestionController extends Controller
             compact('grouped','section','sub_section', 'main_id','scope','new', 'sectionName', 'subSectionName','edited'));
     }
 
-    function generateUniqueKey(&$questionArr, &$scope, $answers,$key='question.no', $hideable=false, $condition=null, $parentText = null, &$filterTest){
+    function generateUniqueKey(&$questionArr, &$scope, $answers,$key='question.no', $hideable=false, $condition=null, $parentText = null){
         $list = [];
         foreach ($questionArr as $aQuestion){
             $myObj = clone $aQuestion;
@@ -222,24 +218,6 @@ class QuestionController extends Controller
             }elseif ($aQuestion->input_type===Question::TYPE_NUMBER){
                 $qKey = $key .'_'. 'nu'.$aQuestion->id;
                 $myObj->{"unique_key"} = $qKey;
-
-                // TODO-nong test descriptions table
-//                $desc = Description::where('unique_key', str_replace('question.',"",$qKey))
-//                    ->first();
-//                if (is_null($desc))
-//                    Description::create([
-//                        'title'=>$aQuestion->name,
-//                        'parent_title'=>$parentText,
-//                        'unique_key'=>str_replace('question.',"",$qKey)
-//                    ]);
-//                else{
-//                    $desc->title = $aQuestion->name;
-//                    $desc->parent_title = $parentText;
-//                    $desc->save();
-//                }
-                $tempKey = str_replace("question.","", $qKey);
-                $filterTest[] = "sum(if(unique_key='{$tempKey}', answer_numeric,0)) as \"" . $aQuestion->name . "\"";
-                // end test descriptions table
 
                 $answer = $answers->where('unique_key', str_replace("question.", "", $qKey))
                     ->first();
@@ -261,11 +239,6 @@ class QuestionController extends Controller
                     $myObj[$i] = clone $option;
                     $myObj[$i]->{"unique_key"} = $optionKey;
 
-                    //TODO-nong test filter
-                    $tempKey = str_replace("question.","", $qKey);
-                    $filterTest[] = "if(sum(if(unique_key='{$tempKey}', 1,0))>1, 1,0) as \"" . $option->option_name . "\"";
-                    //end to-do nong test filter
-
                     $answer = $answers->where('unique_key', str_replace("question.", "", $optionKey))
                         ->first();
                     $scopeAnswer = 'false';
@@ -277,11 +250,8 @@ class QuestionController extends Controller
                     $scope[] = '$scope.' . $optionKey . ' = '.$scopeAnswer.';';
 
                     if (isset($option->children)){
-                        //TODO-nong test descriptions table
-                        $echoName = ($parentText?$parentText . "/":"") . $option->option_name;
-//                        echo $echoName . " - $optionKey - " . " </br>";
                         //End test descriptions table
-                        $myObj[$i]->children = $this->generateUniqueKey($option->children, $scope, $answers,$optionKey, true,$optionKey, $echoName, $filterTest);
+                        $myObj[$i]->children = $this->generateUniqueKey($option->children, $scope, $answers,$optionKey, true,$optionKey);
                     }
                     $i++;
                 }
@@ -290,29 +260,17 @@ class QuestionController extends Controller
                 $myObj->{"unique_key"} = $qKey;
                 $i = 0;
 
-                //test filter
-                $matchingOptionWithText = "''";
-
                 foreach ($aQuestion as $option){
                     $optionKey = $qKey . '_o' .$option->option_id;
                     $myObj[$i] = clone $option;
                     $myObj[$i]->{"unique_key"} = $optionKey;
 
-                    //test filter
-                    $tempKey = str_replace("question.","", $qKey);
-                    $matchingOptionWithText .= ",if(sum(if(unique_key='{$tempKey}' and option_id={$option->option_id}, 1 , 0))>0, '{$option->option_name}','')";
-
                     if (isset($option->children)){
                         $optionCon = $qKey . "==" . $option->option_id;
-                        $myObj[$i]->children = $this->generateUniqueKey($option->children, $scope, $answers,$optionKey, true,$optionCon,null,$filterTest);
+                        $myObj[$i]->children = $this->generateUniqueKey($option->children, $scope, $answers,$optionKey, true,$optionCon,null);
                     }
                     $i++;
                 }
-
-                //test filter
-                $matchingOptionWithText = str_replace("param", "''", $matchingOptionWithText);
-//                $matchingOptionWithText .= " as \"" . $aQuestion->name . "\"";
-                $filterTest[] = "CONCAT(" . $matchingOptionWithText . ") as \"" . $aQuestion->name . "\" ";
 
                 $answer = $answers->where('unique_key', str_replace("question.", "", $qKey))
                     ->first();
@@ -321,8 +279,6 @@ class QuestionController extends Controller
                     if (!empty($answer->other_text))
                         $scope[] ='$scope.' . str_replace("no","other",$qKey) . ' = "'.$answer->other_text.'";';
                 }
-                //TODO-nong test filter
-//                $filterTest[] = " if(unique_key='{$optionKey}') ";
 
                 $scope[] = '$scope.' . $qKey . ' = '.(is_null($answer)?'""':'"'.$optionId.'"').';';
             }
@@ -333,9 +289,9 @@ class QuestionController extends Controller
 
             if (isset($aQuestion->children)){
                 if ($aQuestion->input_type===Question::TYPE_RADIO){
-                    $myObj->children =  $this->generateUniqueKey($aQuestion->children, $scope, $answers,$qKey, true, $qKey,null,$filterTest);
+                    $myObj->children =  $this->generateUniqueKey($aQuestion->children, $scope, $answers,$qKey, true, $qKey,null);
                 }else{
-                    $myObj->children = $this->generateUniqueKey($aQuestion->children, $scope, $answers,$qKey, $hideable, $condition,null,$filterTest);
+                    $myObj->children = $this->generateUniqueKey($aQuestion->children, $scope, $answers,$qKey, $hideable, $condition,null);
                 }
             }
 
