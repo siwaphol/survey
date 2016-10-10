@@ -53,12 +53,21 @@ class FilterSelectionController extends Controller
         $grouped = QuestionController::createQuestionGroup($result);
 
         // พอได้ grouped แล้วก็สามารถดึงค่าตัวแปร unique_key ง่ายขึ้น
-        $uniqueKeys = $this->generateUniqueKeyFilterArray($grouped);
+        $columnHead = array();
+        $filterTest = array();
+        $uniqueKeys = $this->generateUniqueKeyFilterArray($grouped,'question.no', false, null, $filterTest, $columnHead);
 
-        dd($uniqueKeys);
+        $selectSql = "main_id, " . implode(",", $uniqueKeys);
+        $sqlStr = "SELECT {$selectSql} FROM answers WHERE main_id<=2500 GROUP BY main_id ORDER BY main_id";
+        \DB::setFetchMode(\PDO::FETCH_NUM);
+        $sqlResult = \DB::select($sqlStr);
+        \DB::setFetchMode(\PDO::FETCH_CLASS);
+
+        $sqlResult = array($columnHead) + $sqlResult;
+        dd($sqlResult);
     }
 
-    public function generateUniqueKeyFilterArray(&$questionArr,$key='question.no', $hideable=false, $condition=null, &$filterTest=[])
+    public function generateUniqueKeyFilterArray(&$questionArr,$key='question.no', $hideable=false, $condition=null, &$filterTest=[], &$columnHead = [])
     {
         $list = [];
         foreach ($questionArr as $aQuestion){
@@ -69,6 +78,7 @@ class FilterSelectionController extends Controller
 
                 $tempKey = str_replace("question.","", $qKey);
                 $filterTest[] = "sum(if(unique_key='{$tempKey}', answer_numeric,0)) as \"" . $aQuestion->name . "\"";
+                $columnHead[] = $aQuestion->name;
             }elseif ($aQuestion->input_type===Question::TYPE_TEXT){
                 $qKey = $key .'_'. 'te'.$aQuestion->id;
                 $myObj->{"unique_key"} = $qKey;
@@ -85,11 +95,12 @@ class FilterSelectionController extends Controller
                     //TODO-nong test filter
                     $tempKey = str_replace("question.","", $qKey);
                     $filterTest[] = "if(sum(if(unique_key='{$tempKey}', 1,0))>1, 1,0) as \"" . $option->option_name . "\"";
+                    $columnHead[] = $option->option_name;
                     //end to-do nong test filter
 
                     if (isset($option->children)){
                         //End test descriptions table
-                        $myObj[$i]->children = $this->generateUniqueKeyFilterArray($option->children,$optionKey, true,$optionKey, $filterTest);
+                        $myObj[$i]->children = $this->generateUniqueKeyFilterArray($option->children,$optionKey, true,$optionKey, $filterTest, $columnHead);
                     }
                     $i++;
                 }
@@ -112,7 +123,7 @@ class FilterSelectionController extends Controller
 
                     if (isset($option->children)){
                         $optionCon = $qKey . "==" . $option->option_id;
-                        $myObj[$i]->children = $this->generateUniqueKeyFilterArray($option->children,$optionKey, true,$optionCon,$filterTest);
+                        $myObj[$i]->children = $this->generateUniqueKeyFilterArray($option->children,$optionKey, true,$optionCon,$filterTest, $columnHead);
                     }
                     $i++;
                 }
@@ -120,6 +131,7 @@ class FilterSelectionController extends Controller
                 //test filter
                 $matchingOptionWithText = str_replace("param", "''", $matchingOptionWithText);
                 $filterTest[] = "CONCAT(" . $matchingOptionWithText . ") as \"" . $aQuestion->name . "\" ";
+                $columnHead[] = $aQuestion->name;
             }
 
             if ($hideable && !is_null($condition)){
@@ -128,9 +140,9 @@ class FilterSelectionController extends Controller
 
             if (isset($aQuestion->children)){
                 if ($aQuestion->input_type===Question::TYPE_RADIO){
-                    $myObj->children =  $this->generateUniqueKeyFilterArray($aQuestion->children,$qKey, true, $qKey,$filterTest);
+                    $myObj->children =  $this->generateUniqueKeyFilterArray($aQuestion->children,$qKey, true, $qKey,$filterTest, $columnHead);
                 }else{
-                    $myObj->children = $this->generateUniqueKeyFilterArray($aQuestion->children,$qKey, $hideable, $condition,$filterTest);
+                    $myObj->children = $this->generateUniqueKeyFilterArray($aQuestion->children,$qKey, $hideable, $condition,$filterTest, $columnHead);
                 }
             }
 
