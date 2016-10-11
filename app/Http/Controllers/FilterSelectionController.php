@@ -15,10 +15,14 @@ class FilterSelectionController extends Controller
 {
     public function index()
     {
-        $menus = Menu::whereNull('parent_id')
-            ->orderBy('order')
-            ->get();
-        return view('filter.index', compact('menus'));
+        if (in_array(auth()->user()->email, array('test@email.com','boy.kittikun@gmail.com','aiw_w@hotmail.com','pimphram.setaphram@gmail.com'))){
+            $menus = Menu::whereNull('parent_id')
+                ->orderBy('order')
+                ->get();
+            return view('filter.index', compact('menus'));
+        }else
+            return abort(404);
+
     }
 
     public function testExport($section_id=1, $sub_section_id=null)
