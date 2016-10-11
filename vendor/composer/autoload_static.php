@@ -14,10 +14,10 @@ class ComposerStaticInit972b56837168c16a3339717f041e3e16
         '2c102faa651ef8ea5874edb585946bce' => __DIR__ . '/..' . '/swiftmailer/swiftmailer/lib/swift_required.php',
         'e7223560d890eab89cda23685e711e2c' => __DIR__ . '/..' . '/psy/psysh/src/Psy/functions.php',
         '5255c38a0faeba867671b61dfda6d864' => __DIR__ . '/..' . '/paragonie/random_compat/lib/random.php',
-        'f0906e6318348a765ffb6eb24e0d0938' => __DIR__ . '/..' . '/laravel/framework/src/Illuminate/Foundation/helpers.php',
-        '58571171fd5812e6e447dce228f52f4d' => __DIR__ . '/..' . '/laravel/framework/src/Illuminate/Support/helpers.php',
         'f18cc91337d49233e5754e93f3ed9ec3' => __DIR__ . '/..' . '/laravelcollective/html/src/helpers.php',
         'e23faeee409e941dc9b4c80386209c39' => __DIR__ . '/..' . '/laracasts/flash/src/Laracasts/Flash/functions.php',
+        'f0906e6318348a765ffb6eb24e0d0938' => __DIR__ . '/..' . '/laravel/framework/src/Illuminate/Foundation/helpers.php',
+        '58571171fd5812e6e447dce228f52f4d' => __DIR__ . '/..' . '/laravel/framework/src/Illuminate/Support/helpers.php',
     );
 
     public static $prefixLengthsPsr4 = array (
@@ -61,6 +61,7 @@ class ComposerStaticInit972b56837168c16a3339717f041e3e16
         'P' => 
         array (
             'Psy\\' => 4,
+            'Psr\\Log\\' => 8,
             'PhpParser\\' => 10,
         ),
         'M' => 
@@ -198,6 +199,10 @@ class ComposerStaticInit972b56837168c16a3339717f041e3e16
         array (
             0 => __DIR__ . '/..' . '/psy/psysh/src/Psy',
         ),
+        'Psr\\Log\\' => 
+        array (
+            0 => __DIR__ . '/..' . '/psr/log/Psr/Log',
+        ),
         'PhpParser\\' => 
         array (
             0 => __DIR__ . '/..' . '/nikic/php-parser/lib/PhpParser',
@@ -263,10 +268,6 @@ class ComposerStaticInit972b56837168c16a3339717f041e3e16
     public static $prefixesPsr0 = array (
         'P' => 
         array (
-            'Psr\\Log\\' => 
-            array (
-                0 => __DIR__ . '/..' . '/psr/log',
-            ),
             'Prophecy\\' => 
             array (
                 0 => __DIR__ . '/..' . '/phpspec/prophecy/src',
@@ -365,6 +366,7 @@ class ComposerStaticInit972b56837168c16a3339717f041e3e16
         'App\\Http\\Controllers\\Auth\\PasswordController' => __DIR__ . '/../..' . '/app/Http/Controllers/Auth/PasswordController.php',
         'App\\Http\\Controllers\\Controller' => __DIR__ . '/../..' . '/app/Http/Controllers/Controller.php',
         'App\\Http\\Controllers\\FilterExportController' => __DIR__ . '/../..' . '/app/Http/Controllers/FilterExportController.php',
+        'App\\Http\\Controllers\\FilterSelectionController' => __DIR__ . '/../..' . '/app/Http/Controllers/FilterSelectionController.php',
         'App\\Http\\Controllers\\HomeController' => __DIR__ . '/../..' . '/app/Http/Controllers/HomeController.php',
         'App\\Http\\Controllers\\MainController' => __DIR__ . '/../..' . '/app/Http/Controllers/MainController.php',
         'App\\Http\\Controllers\\MenuController' => __DIR__ . '/../..' . '/app/Http/Controllers/MenuController.php',
@@ -384,6 +386,13 @@ class ComposerStaticInit972b56837168c16a3339717f041e3e16
         'App\\Http\\Controllers\\Summary8\\Summary84' => __DIR__ . '/../..' . '/app/Http/Controllers/Summary8/Summary84.php',
         'App\\Http\\Controllers\\Summary8\\Summary85' => __DIR__ . '/../..' . '/app/Http/Controllers/Summary8/Summary85.php',
         'App\\Http\\Controllers\\Summary9\\Summary91' => __DIR__ . '/../..' . '/app/Http/Controllers/Summary9/Summary91.php',
+        'App\\Http\\Controllers\\Summary9\\Summary912' => __DIR__ . '/../..' . '/app/Http/Controllers/Summary9/Summary912.php',
+        'App\\Http\\Controllers\\Summary9\\Summary913' => __DIR__ . '/../..' . '/app/Http/Controllers/Summary9/Summary913.php',
+        'App\\Http\\Controllers\\Summary9\\Summary914' => __DIR__ . '/../..' . '/app/Http/Controllers/Summary9/Summary914.php',
+        'App\\Http\\Controllers\\Summary9\\Summary915' => __DIR__ . '/../..' . '/app/Http/Controllers/Summary9/Summary915.php',
+        'App\\Http\\Controllers\\Summary9\\Summary916' => __DIR__ . '/../..' . '/app/Http/Controllers/Summary9/Summary916.php',
+        'App\\Http\\Controllers\\Summary9\\Summary917' => __DIR__ . '/../..' . '/app/Http/Controllers/Summary9/Summary917.php',
+        'App\\Http\\Controllers\\Summary9\\Summary918' => __DIR__ . '/../..' . '/app/Http/Controllers/Summary9/Summary918.php',
         'App\\Http\\Controllers\\SummaryController' => __DIR__ . '/../..' . '/app/Http/Controllers/SummaryController.php',
         'App\\Http\\Kernel' => __DIR__ . '/../..' . '/app/Http/Kernel.php',
         'App\\Http\\Middleware\\Authenticate' => __DIR__ . '/../..' . '/app/Http/Middleware/Authenticate.php',
@@ -403,6 +412,7 @@ class ComposerStaticInit972b56837168c16a3339717f041e3e16
         'App\\Providers\\RouteServiceProvider' => __DIR__ . '/../..' . '/app/Providers/RouteServiceProvider.php',
         'App\\Question' => __DIR__ . '/../..' . '/app/Question.php',
         'App\\Setting' => __DIR__ . '/../..' . '/app/Setting.php',
+        'App\\SettingGroup' => __DIR__ . '/../..' . '/app/SettingGroup.php',
         'App\\Summary' => __DIR__ . '/../..' . '/app/Summary.php',
         'App\\UniqueKey' => __DIR__ . '/../..' . '/app/UniqueKey.php',
         'App\\User' => __DIR__ . '/../..' . '/app/User.php',
