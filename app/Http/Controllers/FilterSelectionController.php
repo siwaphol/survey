@@ -25,7 +25,7 @@ class FilterSelectionController extends Controller
 
     }
 
-    public function testExport($section_id=1, $sub_section_id=null)
+    public function testExport(Request $request,$section_id=1, $sub_section_id=null)
     {
         set_time_limit(3600);
 
@@ -76,7 +76,13 @@ class FilterSelectionController extends Controller
         array_unshift($columnHead, "ชุดที่");
 
         $selectSql = "main_id, " . implode(",", $uniqueKeys);
-        $sqlStr = "SELECT {$selectSql} FROM answers WHERE main_id BETWEEN 0 AND 2500 GROUP BY main_id ORDER BY main_id";
+        $startBetween = 1;
+        $endBetween = 2500;
+        if($request->input('border')==='bangkok'){
+            $startBetween = 2501;
+            $endBetween = 5000;
+        }
+        $sqlStr = "SELECT {$selectSql} FROM answers WHERE main_id BETWEEN {$startBetween} AND {$endBetween} GROUP BY main_id ORDER BY main_id";
         \DB::setFetchMode(\PDO::FETCH_NUM);
         $sqlResult = \DB::select($sqlStr);
         \DB::setFetchMode(\PDO::FETCH_CLASS);
@@ -89,7 +95,11 @@ class FilterSelectionController extends Controller
         $objWriter = new \PHPExcel_Writer_Excel2007($objPHPExcel);
         $objWriter->save(storage_path(iconv('UTF-8', 'windows-874', 'excel/selection_export.xlsx')));
 
-        return response()->download(storage_path('excel/selection_export.xlsx'), 'ข้อมูลดิบ.xlsx');
+        $outputName = 'ข้อมูลดิบภาคเหนือ';
+        if($request->input('border')==='bangkok'){
+            $outputName = 'ข้อมูลดิบกรุงเทพ และปริมณฑล';
+        }
+        return response()->download(storage_path('excel/selection_export.xlsx'), ($outputName.'.xlsx'));
     }
 
     public function generateUniqueKeyFilterArray(&$questionArr,$key='question.no', $hideable=false, $condition=null, &$filterTest=[], &$columnHead = [])

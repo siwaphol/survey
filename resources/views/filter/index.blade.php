@@ -22,7 +22,8 @@
                     <tr>
                         <th>ชื่อหมวด</th>
                         <th>ชื่อหมวดย่อย</th>
-                        <th>ดาวน์โหลดค่าที่ถูกกรอกในแต่ละชุด</th>
+                        <th>ข้อมูลดิบภาคเหนือ</th>
+                        <th>ข้อมูลดิบกรุงเทพ และปริมณฑล</th>
                     </tr>
                     </thead>
                     <tbody>
@@ -38,12 +39,18 @@
                                     <a class="btn btn-success" href="{{url('test-export-3')}}/{{$menu->id}}">Download</a>
                                 @endif
                             </td>
+                            <td>
+                                @if(count($subMenus)==0)
+                                    <a class="btn btn-success" href="{{url('test-export-3')}}/{{$menu->id}}?border=bangkok">Download</a>
+                                @endif
+                            </td>
                         </tr>
                         @foreach($subMenus as $sub_menu)
                             <tr>
                                 <td></td>
                                 <td>{{$sub_menu->name}}</td>
                                 <td><a class="btn btn-success" href="{{url('test-export-3')}}/{{$menu->id}}/{{$sub_menu->id}}">Download</a></td>
+                                <td><a class="btn btn-success" href="{{url('test-export-3')}}/{{$menu->id}}/{{$sub_menu->id}}?border=bangkok">Download</a></td>
                             </tr>
                         @endforeach
 
