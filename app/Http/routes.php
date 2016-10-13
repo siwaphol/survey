@@ -21,7 +21,6 @@ Route::group(['middleware' => 'auth'], function () {
     Route::get('test-export', 'FilterExportController@export');
     Route::get('test-export-2', 'FilterExportController@exportWithSheetLoop');
 
-
     Route::get('filter', 'FilterSelectionController@index');
     Route::get('test-export-3/{section_id}', 'FilterSelectionController@testExport');
     Route::get('test-export-3/{section_id}/{sub_section_id}', 'FilterSelectionController@testExport');
