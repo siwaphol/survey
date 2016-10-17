@@ -3,5 +3,5 @@ Homestead.yaml
 Homestead.json
 /.idea
 .env
-/public/json
+/public/json/
 /storage/excel/selection_export.xlsx
