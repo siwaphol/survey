@@ -7,6 +7,10 @@ use Illuminate\Database\Eloquent\Model;
 class Main extends Model
 {
     protected $fillable = ['main_id', 'recorder_id'];
+
+    const LOWER_LIMIT = 1;
+    const UPPER_LIMIT = 5000;
+
     const INNER_GROUP_1 = 1;
     const INNER_GROUP_2 = 2;
     const OUTER_GROUP_1 = 3;

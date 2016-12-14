@@ -7,6 +7,7 @@ use App\Main;
 use Illuminate\Http\Request;
 
 use App\Http\Requests;
+use Laracasts\Flash\Flash;
 
 class MainController extends Controller
 {
@@ -31,6 +32,23 @@ class MainController extends Controller
 
     public function postHandle(Request $request)
     {
+        // บังคับให้เลขชุดไม่เกิน limit
+        $messages = [
+            'required' => 'กรุณากรอกเลขชุดแบบสอบถาม',
+            'integer' => 'กรุณากรอกตัวเลข',
+            'between'=>'เลขชุดแบบสอบถามต้องอยู่ระหว่าง :min - :max'
+        ];
+
+        $validator = \Validator::make($request->all(),
+            ['main_id' => 'required|integer|between:'.Main::LOWER_LIMIT.','.Main::UPPER_LIMIT],
+            $messages);
+
+        if ($validator->fails()) {
+            return redirect('/main')
+                ->withErrors($validator)
+                ->withInput();
+        }
+
         $user_id = \Auth::user()->id;
         $main = Main::where([
             'main_id'=>$request->input('main_id'),
@@ -42,7 +60,7 @@ class MainController extends Controller
                 'recorder_id'=>$user_id
             ]);
 
-            $mainId = $request->input('main_id');
+            $mainId = (int)$request->input('main_id');
             $newMain = Main::where('main_id', $mainId)
                 ->count();
             if((int)$newMain===1){ // newly created main
