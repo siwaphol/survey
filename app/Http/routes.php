@@ -69,6 +69,10 @@ Route::group(['middleware' => 'auth'], function () {
     });
 });
 
+Route::get('phpinfo', function(){
+   return phpinfo();
+});
+
 Route::group(['prefix'=>'api'], function (){
     Route::get('menus','MenuController@index');
 });
