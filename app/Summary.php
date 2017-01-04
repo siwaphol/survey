@@ -17,6 +17,9 @@ class Summary extends Model
         $w[3] = $settings->where('code', Setting::NORTHERN_OUTER_GROUP_1_WEIGHT_CODE)->first()->value;
         $w[4] = $settings->where('code', Setting::NORTHERN_OUTER_GROUP_2_WEIGHT_CODE)->first()->value;
 
+        $w[Main::NORTHERN_INNER] = $settings->where('code', Setting::NORTHERN_INNER_WEIGHT_CODE)->first()->value;
+        $w[Main::NORTHERN_OUTER] = $settings->where('code', Setting::NORTHERN_OUTER_WEIGHT_CODE)->first()->value;
+
         $s = [];
         $s[1] = $settings->where('code', Setting::NORTHERN_INNER_GROUP_1_SAMPLE_CODE)->first()->value;
         $s[2] = $settings->where('code', Setting::NORTHERN_INNER_GROUP_2_SAMPLE_CODE)->first()->value;
@@ -136,7 +139,7 @@ class Summary extends Model
             $key5 = preg_replace('/[A-Z]+/', $col, $key);
             $col++;
             $key6 = preg_replace('/[A-Z]+/', $col, $key);
-            $answers[$key6] = ($answers[$key2]*Main::$weight[Main::NORTHERN_INNER] + $answers[$key4]*Main::$weight[Main::NORTHERN_OUTER])/100;
+            $answers[$key6] = ($answers[$key2]*$w[Main::NORTHERN_INNER] + $answers[$key4]*$w[Main::NORTHERN_OUTER])/100;
             $answers[$key5] = ($answers[$key6] ) * (float)$settings->where('code', Setting::NORTHERN_POPULATION_CODE)->first()->value;
             $answers[$key6] *= 100;
 

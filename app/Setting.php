@@ -11,6 +11,9 @@ class Setting extends Model
     const NORTHERN_OUTER_GROUP_1_WEIGHT_CODE = 'wh_outer_province_1';
     const NORTHERN_OUTER_GROUP_2_WEIGHT_CODE = 'wh_outer_province_2';
 
+    const NORTHERN_INNER_WEIGHT_CODE = 'wh_inner_northern';
+    const NORTHERN_OUTER_WEIGHT_CODE = 'wh_outer_northern';
+
     const NORTHERN_INNER_GROUP_1_SAMPLE_CODE = 'real_sample_inner_province_1';
     const NORTHERN_INNER_GROUP_2_SAMPLE_CODE = 'real_sample_inner_province_2';
     const NORTHERN_OUTER_GROUP_1_SAMPLE_CODE = 'real_sample_outer_province_1';
