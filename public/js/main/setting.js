@@ -1,4 +1,3 @@
-var table;
 $(function () {
 
     $.extend( $.fn.dataTable.defaults, {
@@ -21,7 +20,7 @@ $(function () {
         }
     });
 
-    table = $('.datatable-basic').DataTable();
+    var table = $('.datatable-basic').DataTable();
 
     // External table additions
     $('.dataTables_filter input[type=search]').attr('placeholder','Type to filter...');
@@ -41,7 +40,7 @@ $(function () {
     });
     selectSettingGroup.on('select2:select', function (evt) {
         var selectedOption = $(this).val();
-        console.log(selectedOption)
+
         if (parseInt(selectedOption)==0)
             table.column(6).search("").draw()
         else
