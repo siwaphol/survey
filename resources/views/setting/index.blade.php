@@ -20,6 +20,9 @@
                     <div class="col-md-3">
                         {!! Form::select('setting-group', $settingGroup, null, ["class"=>"select-setting-group"]) !!}
                     </div>
+                    <div class="col-md-2">
+                        <a href="{{url('setting/create')}}" class="btn btn-default">เพิ่มตัวแปร</a>
+                    </div>
                 </div>
             </div>
             <table class="table datatable-basic text-center">

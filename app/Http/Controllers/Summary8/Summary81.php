@@ -39,6 +39,9 @@ class Summary81 extends Controller
             ['no_ra27'=>13],
             ['no_ra27'=>1],
         ];
+        $isRadio = true;
+        $startColumn = 'C';
+        $objPHPExcel = Summary::sum($table1,$startColumn,11,$objPHPExcel,$mainObj,$isRadio);
 
         //ตารางที่ 8.2 จำนวนและร้อยละของครัวเรือนจำแนกตามประเภทที่อยู่อาศัยและเขตปกครอง
         $table2 = [
@@ -81,10 +84,6 @@ class Summary81 extends Controller
             'no_ch34_o1',
         ];
 
-
-        $isRadio = true;
-        $startColumn = 'C';
-        $objPHPExcel = Summary::sum($table1,$startColumn,11,$objPHPExcel,$mainObj,$isRadio);
         $startColumn = 'Q';
         $objPHPExcel = Summary::sum($table2,$startColumn,11,$objPHPExcel,$mainObj,$isRadio);
         $startColumn = 'AE';
