@@ -76,7 +76,8 @@ class Summary extends Model
                     $whereInMainId = implode(",", $mainList);
                     $sql = "SELECT COUNT(*) as count FROM (SELECT main_id FROM answers WHERE main_id IN ($whereInMainId) " . $whereCondition . " GROUP BY main_id) t1";
                     $count[$b_key] = \DB::select($sql)[0]->count;
-                    $p[$b_key] = $b_weight * ((float)$count[$b_key] / $s[$b_key]);
+
+                    $p[$b_key] = $w[$b_key] * ((float)$count[$b_key] / $s[$b_key]);
                 }
             } elseif ($isCustomHaving){
                 foreach (Main::$borderWeight as $b_key=>$b_weight){
@@ -86,7 +87,7 @@ class Summary extends Model
                     $whereInMainId = implode(",", $mainList);
                     $sql = "SELECT COUNT(*) as count FROM (SELECT main_id FROM answers WHERE main_id IN ($whereInMainId) GROUP BY main_id $whereCondition ) t1";
                     $count[$b_key] = \DB::select($sql)[0]->count;
-                    $p[$b_key] = $b_weight * ((float)$count[$b_key] / $s[$b_key]);
+                    $p[$b_key] = $w[$b_key] * ((float)$count[$b_key] / $s[$b_key]);
                 }
             } else {
                 foreach (Main::$borderWeight as $b_key=>$b_weight){
@@ -112,7 +113,7 @@ class Summary extends Model
                         return $condition;
                     })->count();
 
-                    $p[$b_key] = $b_weight * ((float)$count[$b_key] / $s[$b_key]);
+                    $p[$b_key] = $w[$b_key] * ((float)$count[$b_key] / $s[$b_key]);
                 }
             }
 
