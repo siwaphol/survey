@@ -12,7 +12,15 @@
 
         <div class="panel panel-flat">
             <div class="panel-heading">
-                <h5 class="panel-title">ค่าตัวแปรต่างๆ</h5>
+                <h4 class="panel-title">ค่าตัวแปรต่างๆ</h4>
+                <div class="row">
+                    <div class="col-md-1">
+                        <h5>แสดงกลุ่ม</h5>
+                    </div>
+                    <div class="col-md-3">
+                        {!! Form::select('setting-group', $settingGroup, null, ["class"=>"select-setting-group"]) !!}
+                    </div>
+                </div>
             </div>
             <table class="table datatable-basic text-center">
                 <thead>
@@ -23,6 +31,7 @@
                     <th class="text-bold">รหัส</th>
                     <th class="text-center text-bold">ค่า</th>
                     <th class="text-center text-bold">หน่วย</th>
+                    <th class="text-center text-bold">groupId</th>
                     <th class="text-center text-bold">กลุ่ม</th>
                     <th class="text-center text-bold">แก้ไข</th>
                 </tr>
@@ -36,6 +45,7 @@
                         <td>{{$setting->code}}</td>
                         <td>{{$setting->value}}</td>
                         <td>{{$setting->unit_of_measure}}</td>
+                        <td>{{$setting->group_id}}</td>
                         <td data-group-id="{{$setting->group_id}}">{{$setting->group_name_th}}</td>
                         <td>
                             <a href="{{url('setting')}}/{{$setting->id}}" class="btn btn-default">แก้ไข</a>

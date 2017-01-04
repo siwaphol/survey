@@ -1,8 +1,12 @@
+var table;
 $(function () {
 
     $.extend( $.fn.dataTable.defaults, {
         autoWidth: false,
         order: [[1, "desc"]],
+        columnDefs: [
+            { targets: [6], visible: false}
+        ],
         dom: '<"datatable-header"fl><"datatable-scroll"t><"datatable-footer"ip>',
         language: {
             search: '<span>Filter:</span> _INPUT_',
@@ -17,7 +21,7 @@ $(function () {
         }
     });
 
-    var table = $('.datatable-basic').DataTable();
+    table = $('.datatable-basic').DataTable();
 
     // External table additions
     $('.dataTables_filter input[type=search]').attr('placeholder','Type to filter...');
@@ -29,5 +33,18 @@ $(function () {
 
     $('.select').select2({
         minimumResultsForSearch: Infinity
+    });
+
+    var selectSettingGroup = $('.select-setting-group')
+    selectSettingGroup.select2({
+        minimumResultsForSearch: Infinity
+    });
+    selectSettingGroup.on('select2:select', function (evt) {
+        var selectedOption = $(this).val();
+        console.log(selectedOption)
+        if (parseInt(selectedOption)==0)
+            table.column(6).search("").draw()
+        else
+            table.column(6).search(selectedOption).draw()
     });
 });

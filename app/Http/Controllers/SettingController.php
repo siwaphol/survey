@@ -17,7 +17,10 @@ class SettingController extends Controller
             ->select('settings.*','setting_groups.name_th as group_name_th')
         ->get();
 
-        return view('setting.index', compact('settings'));
+        $settingGroup = SettingGroup::lists('name_th','id')->toArray();
+        array_unshift($settingGroup,'ทั้งหมด');
+
+        return view('setting.index', compact('settings', 'settingGroup'));
     }
 
     public function create()
