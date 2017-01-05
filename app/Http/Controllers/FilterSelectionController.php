@@ -70,9 +70,10 @@ class FilterSelectionController extends Controller
 
         // พอได้ grouped แล้วก็สามารถดึงค่าตัวแปร unique_key ง่ายขึ้น
         $columnHead = array();
+        $columnHeadUniqueKey = array();
         $filterTest = array();
 //        $answers = Answer::whereBetween('main_id',[1,2500])->get();
-        $uniqueKeys = $this->generateUniqueKeyFilterArray($grouped,'question.no', false, null, $filterTest, $columnHead);
+        $uniqueKeys = $this->generateUniqueKeyFilterArray($grouped,'question.no', false, null, $filterTest, $columnHead, $columnHeadUniqueKey);
         array_unshift($columnHead, "ชุดที่");
 
         $selectSql = "main_id, " . implode(",", $uniqueKeys);
@@ -88,7 +89,8 @@ class FilterSelectionController extends Controller
         \DB::setFetchMode(\PDO::FETCH_CLASS);
 
         array_unshift($sqlResult, $columnHead);
-//        dd($sqlResult);
+        array_unshift($columnHeadUniqueKey, '');
+        array_unshift($sqlResult, $columnHeadUniqueKey);
 
         $objPHPExcel = new \PHPExcel();
         $objPHPExcel->getActiveSheet()->fromArray($sqlResult, NULL, "B6");
@@ -102,7 +104,7 @@ class FilterSelectionController extends Controller
         return response()->download(storage_path('excel/selection_export.xlsx'), ($outputName.'.xlsx'));
     }
 
-    public function generateUniqueKeyFilterArray(&$questionArr,$key='question.no', $hideable=false, $condition=null, &$filterTest=[], &$columnHead = [])
+    public function generateUniqueKeyFilterArray(&$questionArr,$key='question.no', $hideable=false, $condition=null, &$filterTest=[], &$columnHead = [], &$columnHeadUniqueKey= [])
     {
         $list = [];
         foreach ($questionArr as $aQuestion){
@@ -117,6 +119,7 @@ class FilterSelectionController extends Controller
                 $tempKey = str_replace("question.","", $qKey);
                 $filterTest[] = "sum(if(unique_key='{$tempKey}', answer_numeric,0)) as \"" . $aQuestion->name . "\"";
                 $columnHead[] = $aQuestion->name;
+                $columnHeadUniqueKey[] = $tempKey;
             }elseif ($aQuestion->input_type===Question::TYPE_TEXT){
                 $qKey = $key .'_'. 'te'.$aQuestion->id;
                 $myObj->{"unique_key"} = $qKey;
@@ -124,6 +127,7 @@ class FilterSelectionController extends Controller
                 $tempKey = str_replace("question.","", $qKey);
                 $filterTest[] = "GROUP_CONCAT(if(unique_key='{$tempKey}', answer_text,NULL)) as \"" . $aQuestion->name . "\"";
                 $columnHead[] = $aQuestion->name;
+                $columnHeadUniqueKey[] = $tempKey;
             }elseif ($aQuestion->input_type===Question::TYPE_CHECKBOX){
                 $qKey = $key .'_'. 'ch'.$aQuestion->id ;
                 $myObj->{"unique_key"} = $qKey;
@@ -136,10 +140,11 @@ class FilterSelectionController extends Controller
                     $tempKey = str_replace("question.","", $optionKey);
                     $filterTest[] = "if(sum(if(unique_key='{$tempKey}', 1,0))>0, 1,0) as \"" . $option->option_name . "\"";
                     $columnHead[] = $option->option_name;
+                    $columnHeadUniqueKey[] = $tempKey;
 
                     if (isset($option->children)){
                         //End test descriptions table
-                        $myObj[$i]->children = $this->generateUniqueKeyFilterArray($option->children,$optionKey, true,$optionKey, $filterTest, $columnHead);
+                        $myObj[$i]->children = $this->generateUniqueKeyFilterArray($option->children,$optionKey, true,$optionKey, $filterTest, $columnHead, $columnHeadUniqueKey);
                     }
                     $i++;
                 }
@@ -162,15 +167,17 @@ class FilterSelectionController extends Controller
 
                     if (isset($option->children)){
                         $optionCon = $qKey . "==" . $option->option_id;
-                        $myObj[$i]->children = $this->generateUniqueKeyFilterArray($option->children,$optionKey, true,$optionCon,$filterTest, $columnHead);
+                        $myObj[$i]->children = $this->generateUniqueKeyFilterArray($option->children,$optionKey, true,$optionCon,$filterTest, $columnHead, $columnHeadUniqueKey);
                     }
                     $i++;
                 }
 
                 //test filter
+                $tempKey = str_replace("question.","", $qKey);
                 $matchingOptionWithText = str_replace("param", "''", $matchingOptionWithText);
                 $filterTest[] = "CONCAT(" . $matchingOptionWithText . ") as \"" . $aQuestion->name . "\" ";
                 $columnHead[] = $aQuestion->name;
+                $columnHeadUniqueKey[] = $tempKey;
             }
 
             if ($hideable && !is_null($condition)){
@@ -179,9 +186,9 @@ class FilterSelectionController extends Controller
 
             if (isset($aQuestion->children)){
                 if ($aQuestion->input_type===Question::TYPE_RADIO){
-                    $myObj->children =  $this->generateUniqueKeyFilterArray($aQuestion->children,$qKey, true, $qKey,$filterTest, $columnHead);
+                    $myObj->children =  $this->generateUniqueKeyFilterArray($aQuestion->children,$qKey, true, $qKey,$filterTest, $columnHead, $columnHeadUniqueKey);
                 }else{
-                    $myObj->children = $this->generateUniqueKeyFilterArray($aQuestion->children,$qKey, $hideable, $condition,$filterTest, $columnHead);
+                    $myObj->children = $this->generateUniqueKeyFilterArray($aQuestion->children,$qKey, $hideable, $condition,$filterTest, $columnHead, $columnHeadUniqueKey);
                 }
             }
 

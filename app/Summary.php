@@ -142,6 +142,8 @@ class Summary extends Model
 
     public static function average($uniqueKeyArr, $startCol, $startRow, $objPHPExcel, $mainObj, $isRadio = false, $radioArr = [], $year=false, $multiply=null)
     {
+//        list($weight, $sample, $population) = self::getSettingVariables();
+
         $rows = [];
         $rowNumber = $startRow;
         foreach ($uniqueKeyArr as $uniqueKey) {
@@ -835,19 +837,19 @@ class Summary extends Model
         $settings = Setting::all();
 
         $weight = [];
-        $weight[1] = $settings->where('code', Setting::NORTHERN_INNER_GROUP_1_WEIGHT_CODE)->first()->value;
-        $weight[2] = $settings->where('code', Setting::NORTHERN_INNER_GROUP_2_WEIGHT_CODE)->first()->value;
-        $weight[3] = $settings->where('code', Setting::NORTHERN_OUTER_GROUP_1_WEIGHT_CODE)->first()->value;
-        $weight[4] = $settings->where('code', Setting::NORTHERN_OUTER_GROUP_2_WEIGHT_CODE)->first()->value;
+        $weight[Main::INNER_GROUP_1] = $settings->where('code', Setting::NORTHERN_INNER_GROUP_1_WEIGHT_CODE)->first()->value;
+        $weight[Main::INNER_GROUP_2] = $settings->where('code', Setting::NORTHERN_INNER_GROUP_2_WEIGHT_CODE)->first()->value;
+        $weight[Main::OUTER_GROUP_1] = $settings->where('code', Setting::NORTHERN_OUTER_GROUP_1_WEIGHT_CODE)->first()->value;
+        $weight[Main::OUTER_GROUP_2] = $settings->where('code', Setting::NORTHERN_OUTER_GROUP_2_WEIGHT_CODE)->first()->value;
 
         $weight[Main::NORTHERN_INNER] = $settings->where('code', Setting::NORTHERN_INNER_WEIGHT_CODE)->first()->value;
         $weight[Main::NORTHERN_OUTER] = $settings->where('code', Setting::NORTHERN_OUTER_WEIGHT_CODE)->first()->value;
 
         $realSample = [];
-        $realSample[1] = $settings->where('code', Setting::NORTHERN_INNER_GROUP_1_SAMPLE_CODE)->first()->value;
-        $realSample[2] = $settings->where('code', Setting::NORTHERN_INNER_GROUP_2_SAMPLE_CODE)->first()->value;
-        $realSample[3] = $settings->where('code', Setting::NORTHERN_OUTER_GROUP_1_SAMPLE_CODE)->first()->value;
-        $realSample[4] = $settings->where('code', Setting::NORTHERN_OUTER_GROUP_2_SAMPLE_CODE)->first()->value;
+        $realSample[Main::INNER_GROUP_1] = $settings->where('code', Setting::NORTHERN_INNER_GROUP_1_SAMPLE_CODE)->first()->value;
+        $realSample[Main::INNER_GROUP_2] = $settings->where('code', Setting::NORTHERN_INNER_GROUP_2_SAMPLE_CODE)->first()->value;
+        $realSample[Main::OUTER_GROUP_1] = $settings->where('code', Setting::NORTHERN_OUTER_GROUP_1_SAMPLE_CODE)->first()->value;
+        $realSample[Main::OUTER_GROUP_2] = $settings->where('code', Setting::NORTHERN_OUTER_GROUP_2_SAMPLE_CODE)->first()->value;
 
         $population = [];
         $population[Main::NORTHERN_INNER] = (float)$settings->where('code', Setting::NORTHERN_INNER_POPULATION_CODE)->first()->value;

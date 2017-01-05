@@ -25,6 +25,8 @@ Route::group(['middleware' => 'auth'], function () {
     Route::get('test-export-3/{section_id}', 'FilterSelectionController@testExport');
     Route::get('test-export-3/{section_id}/{sub_section_id}', 'FilterSelectionController@testExport');
 
+    Route::get('upload', 'UploadRawController@index');
+
     Route::get('html-loop-2/{id}', 'QuestionController@htmlLoop');
     Route::get('html-loop-2/{id}/{sub}', 'QuestionController@htmlLoop');
     Route::post('test-post','AnswerController@testPost');
