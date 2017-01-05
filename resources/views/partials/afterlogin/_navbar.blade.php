@@ -6,6 +6,7 @@
         @if(in_array(auth()->user()->email, array('test@email.com','boy.kittikun@gmail.com','aiw_w@hotmail.com','pimphram.setaphram@gmail.com')))
         <a class="navbar-brand" href="{{url('filter')}}"><i class="icon-stack"></i> Filter</a>
         <a class="navbar-brand" href="{{url('setting')}}"><i class="icon-gear"></i> Setting</a>
+        <a class="navbar-brand" href="{{url('upload')}}"><i class="icon-upload"></i> Upload</a>
         @endif
 
         <ul class="nav navbar-nav pull-right visible-xs-block">
