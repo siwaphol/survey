@@ -58,9 +58,7 @@ class UploadRawController extends Controller
 
         for ($startRow = 3; $startRow <= $totalRows; $startRow += $chunkSize) {
             $chunkFilter->setRows($startRow,$chunkSize);
-
             $objPHPExcel = $objReader->load($path);
-
             $sheetData = $objPHPExcel->getActiveSheet()->toArray(null,true,true,true);
 
             // loop ไปทีละคอลัมป์ เพราะดูเหมือนว่าตอนนี้มีการ query หลายครั้ง ที่ไม่จำเป็น ถ้าวน row ก่อนวน column
@@ -80,6 +78,20 @@ class UploadRawController extends Controller
                     $curColumn++;
                     continue;
                 }
+
+                if ($this->checkAnswerType($uniqueKey)===Question::TYPE_RADIO){
+                    // ** this one is tricky เพราะ 1 radio สามารถมีได้หลาย option_id
+                    //TODO-nong get list of all option that come with this radio
+                    // and find if text in newValue match any option name
+                    // then insert that option_id
+                    $explodedUK = explode("_",$uniqueKey);
+                    $radioId = filter_var($explodedUK[count($explodedUK)-1],FILTER_SANITIZE_NUMBER_INT );
+                    $curRadioOptions = OptionQuestion::where('question_id', $radioId)
+                        ->leftJoin('options','option_questions.option_id','=','options.id')
+                        ->select(\DB::raw('options.id as option_id, options.name as option_name'))
+                        ->get();
+                }
+
                 // row loop
                 for($i=$startRow; $i <= ($startRow+$chunkSize-1); $i++) {
                     if ($i > $totalRows) {
@@ -115,35 +127,23 @@ class UploadRawController extends Controller
                         }elseif ($this->checkAnswerType($uniqueKey)===Question::TYPE_NUMBER){
                             $oldAnswer->answer_numeric = (float)$newValue;
                         }elseif ($this->checkAnswerType($uniqueKey)===Question::TYPE_RADIO){
-                            // ** this one is tricky เพราะ 1 radio สามารถมีได้หลาย option_id
-                            //TODO-nong get list of all option that come with this radio
-                            // and find if text in newValue match any option name
-                            // then insert that option_id
-                            $explodedUK = explode("_",$uniqueKey);
-                            $radioId = filter_var($explodedUK[count($explodedUK)-1],FILTER_SANITIZE_NUMBER_INT );
-                            $curRadioOptions = OptionQuestion::where('question_id', $radioId)
-                                ->leftJoin('options','option_questions.option_id','=','options.id')
-                                ->select(\DB::raw('options.id as option_id, options.name as option_name'))
-                                ->get();
                             // หาว่าค่าที่รับเข้ามาอยู่ใน option ไหน
                             foreach ($curRadioOptions as $item){
-                                if (strpos($item->option_name,$newValue)!==false){
+                                if (!empty(trim($newValue)) && strpos($item->option_name,$newValue)!==false){
                                     $oldAnswer->option_id = $item->option_id;
                                     break;
                                 }
                             }
-
                         }elseif ($this->checkAnswerType($uniqueKey)===Question::TYPE_CHECKBOX){
+                            if (!empty(trim($newValue)) && (int)trim($newValue)===1)
                             $oldAnswer->option_id = $uniqueKeyAnswer->option_id;
                         }
 
                         $oldAnswer->save();
-
                     }
                 }
                 $curColumn++;
             }
-
         }
 
         return json_encode(array('success'=>true, 'errors'=>$errors));
