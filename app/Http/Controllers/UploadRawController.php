@@ -43,7 +43,7 @@ class UploadRawController extends Controller
 
     public function uploadRaw(Request $request)
     {
-        $path = storage_path('excel/view_mp_suggest.xlsx');
+        $path = storage_path('excel/test_upload.xlsx');
 
         $objReader = \PHPExcel_IOFactory::createReader("Excel2007");
         $objReader->setReadDataOnly(true);
@@ -68,7 +68,8 @@ class UploadRawController extends Controller
 
             $curColumn = "B";
             // column loop each unique_key
-            while (!empty(trim($sheetData[1][$curColumn]))){
+            while (isset($sheetData[1][$curColumn])&&!empty(trim($sheetData[1][$curColumn]))){
+
                 $uniqueKey = trim($sheetData[1][$curColumn]);
                 // อาจจะเกิดปัญหาว่าบางที uniqueKey ที่ใส่เข้ามาผิดแล้วจะทำให้ค่าที่ insert เข้าไปผิดไปด้วย
                 // อาจจะแก้ปัญหาโดยการหาว่ามี unique_key นี้ในระบบหรือไม่
@@ -76,6 +77,7 @@ class UploadRawController extends Controller
                 $uniqueKeyAnswer = Answer::where('unique_key', $uniqueKey)->first();
                 if (is_null($uniqueKeyAnswer)){
                     $errors[] = 'Not found unique key ' . $uniqueKey .' in system';
+                    $curColumn++;
                     continue;
                 }
                 // row loop
@@ -120,8 +122,7 @@ class UploadRawController extends Controller
                             $explodedUK = explode("_",$uniqueKey);
                             $radioId = filter_var($explodedUK[count($explodedUK)-1],FILTER_SANITIZE_NUMBER_INT );
                             $curRadioOptions = OptionQuestion::where('question_id', $radioId)
-                                ->leftJoin('options')
-                                ->on('option_questions.option_id','=','options.id')
+                                ->leftJoin('options','option_questions.option_id','=','options.id')
                                 ->select(\DB::raw('options.id as option_id, options.name as option_name'))
                                 ->get();
                             // หาว่าค่าที่รับเข้ามาอยู่ใน option ไหน
@@ -140,9 +141,11 @@ class UploadRawController extends Controller
 
                     }
                 }
-
+                $curColumn++;
             }
 
         }
+
+        return json_encode(array('success'=>true, 'errors'=>$errors));
     }
 }
