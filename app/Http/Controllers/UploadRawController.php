@@ -81,7 +81,7 @@ class UploadRawController extends Controller
 
                 if ($this->checkAnswerType($uniqueKey)===Question::TYPE_RADIO){
                     // ** this one is tricky เพราะ 1 radio สามารถมีได้หลาย option_id
-                    //TODO-nong get list of all option that come with this radio
+                    // get list of all option that come with this radio
                     // and find if text in newValue match any option name
                     // then insert that option_id
                     $explodedUK = explode("_",$uniqueKey);
@@ -120,6 +120,7 @@ class UploadRawController extends Controller
                             $oldAnswer->question_id = $uniqueKeyAnswer->question_id;
                         }
 
+                        //TODO-nong ตอนนี้คิดว่าควรจะเลือก ตัวแม่ กรณีที่ เป็นความสัมพันธ์ แบบมีตัวแม่หรือไม่ ซึ่งต้องไปดูการคำนวณ ถ้าไม่จำเป็นต้องใช้ตัวแม่ก็น่าจะทำได้
                         // เปลี่ยนค่าตรงนี้
                         // ถ้า unique_key บอกว่าเป็น text หรือ number input ให้ใส่ค่าเข้าไปทันที
                         if ($this->checkAnswerType($uniqueKey)===Question::TYPE_TEXT){
@@ -136,7 +137,7 @@ class UploadRawController extends Controller
                             }
                         }elseif ($this->checkAnswerType($uniqueKey)===Question::TYPE_CHECKBOX){
                             if (!empty(trim($newValue)) && (int)trim($newValue)===1)
-                            $oldAnswer->option_id = $uniqueKeyAnswer->option_id;
+                                $oldAnswer->option_id = $uniqueKeyAnswer->option_id;
                         }
 
                         $oldAnswer->save();
