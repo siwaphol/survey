@@ -7,6 +7,7 @@ use App\Main;
 use App\Option;
 use App\OptionQuestion;
 use App\Question;
+use App\SystemConfig;
 use Carbon\Carbon;
 use Illuminate\Http\Request;
 
@@ -464,6 +465,10 @@ class AnswerController extends Controller
                 }
             }
         }
+
+        $answersLastUpdate = SystemConfig::where('name',SystemConfig::ANSWERS_TABLE_LAST_UPDATE)->first();
+        if ($answersLastUpdate)
+            $answersLastUpdate->touch();
 
         return json_encode(['success'=>true]);
     }
