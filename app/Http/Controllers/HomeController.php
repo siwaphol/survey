@@ -30,10 +30,33 @@ class HomeController extends Controller
         return view('home');
     }
 
+    protected function cacheHasAll($nameArr)
+    {
+        foreach ($nameArr as $name){
+            if (!\Cache::has($name))
+                return false;
+        }
+
+        return true;
+    }
+
     public function dashboard()
     {
         $answerLastUpdate = SystemConfig::where('name', SystemConfig::ANSWERS_TABLE_LAST_UPDATE)->first();
         $dashboardLastUpdate = SystemConfig::where('name', SystemConfig::DASHBOARD_LAST_UPDATE)->first();
+
+        if (is_null($answerLastUpdate)){
+            $answerLastUpdate = new SystemConfig();
+            $answerLastUpdate->name = SystemConfig::ANSWERS_TABLE_LAST_UPDATE;
+            $answerLastUpdate->save();
+        }
+        if (is_null($dashboardLastUpdate)){
+            $dashboardLastUpdate = new SystemConfig();
+            $dashboardLastUpdate->name = SystemConfig::DASHBOARD_LAST_UPDATE;
+            $dashboardLastUpdate->save();
+        }
+        if (!$this->cacheHasAll(['table2Arr', 'table3Arr','table4Arr', 'countAll', 'sumTable1', 'sumTable2', 'sumTable3']))
+            $dashboardLastUpdate->touch();
 
         if ($answerLastUpdate && $dashboardLastUpdate && $answerLastUpdate->updated_at->ne($dashboardLastUpdate->updated_at)){
             $countAll = Main::select(\DB::raw("COUNT(DISTINCT main_id) as allCount"))
