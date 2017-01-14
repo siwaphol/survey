@@ -7,7 +7,7 @@ use Illuminate\Database\Eloquent\Model;
 
 class Summary extends Model
 {
-    public static function sum($uniqueKeyArr, $startCol, $startRow, $objPHPExcel, $mainObj, $isRadio = false, $isCustomHaving = false, $havingUniqueKey=null, $arraySum = false)
+    public static function sum($uniqueKeyArr, $startCol, $startRow, $objPHPExcel, $mainObj, $isRadio = false, $isCustomHaving = false, $havingUniqueKey=null, $arraySum = false, $radioCondition = 'OR')
     {
         list($w, $s, $population) = self::getSettingVariables();
 
@@ -48,7 +48,7 @@ class Summary extends Model
                         if ($idx === 0)
                             $whereCondition .= " AND ( ";
                         else
-                            $whereCondition .= " OR ";
+                            $whereCondition .= " {$radioCondition} ";
                         $whereCondition .= " (unique_key='$radioKey' AND option_id=$radioValue) ";
 
                         $idx++;

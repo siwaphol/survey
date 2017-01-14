@@ -15,7 +15,7 @@ class Summary81 extends Controller
 
     public static function report81()
     {
-        set_time_limit(1200);
+        set_time_limit(2400);
 
         $mainObj = new Main();
         $mainObj->initList();
@@ -46,25 +46,49 @@ class Summary81 extends Controller
         //ตารางที่ 8.2 จำนวนและร้อยละของครัวเรือนจำแนกตามประเภทที่อยู่อาศัยและเขตปกครอง
         $table2 = [
             ['no_ra29'=>14],
-            ['no_ra29_ra30'=>305],
-            ['no_ra29_ra30'=>306],
-            ['no_ra29_ra30'=>307],
+            [],
+            [],
+            [],
             ['no_ra29'=>15],
-            ['no_ra29_ra30'=>305],
-            ['no_ra29_ra30'=>306],
-            ['no_ra29_ra30'=>307],
+            [],
+            [],
+            [],
             ['no_ra29'=>16],
-            ['no_ra29_ra30'=>305],
-            ['no_ra29_ra30'=>306],
-            ['no_ra29_ra30'=>307],
+            [],
+            [],
+            [],
             ['no_ra29'=>17],
-            ['no_ra29_ra30'=>305],
-            ['no_ra29_ra30'=>306],
-            ['no_ra29_ra30'=>307],
+            [],
+            [],
+            [],
             ['no_ra29'=>1],
-            ['no_ra29_ra30'=>305],
-            ['no_ra29_ra30'=>306],
-            ['no_ra29_ra30'=>307],
+            [],
+            [],
+            [],
+        ];
+        $startColumn = 'Q';
+        $objPHPExcel = Summary::sum($table2,$startColumn,11,$objPHPExcel,$mainObj,$isRadio,false,null,false);
+        $table2 = [
+            "",
+            " HAVING SUM(IF(unique_key='no_ra29_ra30' AND option_id=305,1,0))=1 AND SUM(IF(unique_key='no_ra29' AND option_id=14,1,0))=1 " ,
+            " HAVING SUM(IF(unique_key='no_ra29_ra30' AND option_id=306,1,0))=1 AND SUM(IF(unique_key='no_ra29' AND option_id=14,1,0))=1 ",
+            " HAVING SUM(IF(unique_key='no_ra29_ra30' AND option_id=307,1,0))=1 AND SUM(IF(unique_key='no_ra29' AND option_id=14,1,0))=1 ",
+            "",
+            " HAVING SUM(IF(unique_key='no_ra29_ra30' AND option_id=305,1,0))=1 AND SUM(IF(unique_key='no_ra29' AND option_id=15,1,0))=1 ",
+            " HAVING SUM(IF(unique_key='no_ra29_ra30' AND option_id=306,1,0))=1 AND SUM(IF(unique_key='no_ra29' AND option_id=15,1,0))=1 ",
+            " HAVING SUM(IF(unique_key='no_ra29_ra30' AND option_id=307,1,0))=1 AND SUM(IF(unique_key='no_ra29' AND option_id=15,1,0))=1 ",
+            "",
+            " HAVING SUM(IF(unique_key='no_ra29_ra30' AND option_id=305,1,0))=1 AND SUM(IF(unique_key='no_ra29' AND option_id=16,1,0))=1 ",
+            " HAVING SUM(IF(unique_key='no_ra29_ra30' AND option_id=306,1,0))=1 AND SUM(IF(unique_key='no_ra29' AND option_id=16,1,0))=1 ",
+            " HAVING SUM(IF(unique_key='no_ra29_ra30' AND option_id=307,1,0))=1 AND SUM(IF(unique_key='no_ra29' AND option_id=16,1,0))=1 ",
+            "",
+            " HAVING SUM(IF(unique_key='no_ra29_ra30' AND option_id=305,1,0))=1 AND SUM(IF(unique_key='no_ra29' AND option_id=17,1,0))=1 ",
+            " HAVING SUM(IF(unique_key='no_ra29_ra30' AND option_id=306,1,0))=1 AND SUM(IF(unique_key='no_ra29' AND option_id=17,1,0))=1 ",
+            " HAVING SUM(IF(unique_key='no_ra29_ra30' AND option_id=307,1,0))=1 AND SUM(IF(unique_key='no_ra29' AND option_id=17,1,0))=1 ",
+            "",
+            " HAVING SUM(IF(unique_key='no_ra29_ra30' AND option_id=305,1,0))=1 AND SUM(IF(unique_key='no_ra29' AND option_id=18,1,0))=1 ",
+            " HAVING SUM(IF(unique_key='no_ra29_ra30' AND option_id=306,1,0))=1 AND SUM(IF(unique_key='no_ra29' AND option_id=18,1,0))=1 ",
+            " HAVING SUM(IF(unique_key='no_ra29_ra30' AND option_id=307,1,0))=1 AND SUM(IF(unique_key='no_ra29' AND option_id=18,1,0))=1 ",
         ];
 
         //ตารางที่ 8.3 จำนวนและร้อยละของครัวเรือนจำแนกตามกรรมสิทธิ์ในที่อยู่อาศัยและเขตปกครอง
@@ -85,7 +109,8 @@ class Summary81 extends Controller
         ];
 
         $startColumn = 'Q';
-        $objPHPExcel = Summary::sum($table2,$startColumn,11,$objPHPExcel,$mainObj,$isRadio);
+//        $objPHPExcel = Summary::sum($table2,$startColumn,11,$objPHPExcel,$mainObj,$isRadio,false,null,false,'AND');
+        $objPHPExcel = Summary::sum($table2,$startColumn,11,$objPHPExcel,$mainObj,false,true,null,false,'AND');
         $startColumn = 'AE';
         $objPHPExcel = Summary::sum($table3,$startColumn,11,$objPHPExcel,$mainObj,$isRadio);
         $startColumn = 'AS';
