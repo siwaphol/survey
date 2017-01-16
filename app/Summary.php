@@ -201,7 +201,7 @@ class Summary extends Model
                     }
                     $finalSql .= " 0 ";
                     $whereUniqueKey = " AND unique_key IN (" . $whereUniqueKey . ")";
-                    $avgSql = "SELECT SUM(sum1)/".$sample[$b_key]." as average, COUNT(*) as countAll, STDDEV(sum1) as a_stddev FROM
+                    $avgSql = "SELECT SUM(sum1) as a_sum, COUNT(*) as countAll FROM
                         (SELECT $finalSql AS sum1 FROM answers
                         WHERE main_id IN ($whereMainId) " . $whereUniqueKey
                         . " GROUP BY main_id) T1 WHERE sum1>0";
@@ -213,31 +213,47 @@ class Summary extends Model
                         $tempUniqueKey = $whereUniqueKey;
                         $whereUniqueKey = " AND unique_key IN ('" .$whereUniqueKey."') ";
                         $sumSQL = " SUM(IF(unique_key IN ('$tempUniqueKey'),answer_numeric,0)) ";
-                        if (!is_null($multiply))
-                            $sumSQL .= " * $multiply ";
-                        else if ($year)
-                            $sumSQL .= " * 12 ";
                     }else{
                         $whereUniqueKey = " AND unique_key='$value'";
                         $sumSQL = " SUM(IF(unique_key='$value', answer_numeric,0)) ";
-                        if (!is_null($multiply))
-                            $sumSQL .= " * $multiply ";
-                        else if ($year)
-                            $sumSQL .= " * 12 ";
                     }
 
-                    $avgSql = "SELECT SUM(sum1)/".$sample[$b_key]." as average, COUNT(*) as countAll, STDDEV(sum1) as a_stddev FROM
+                    $avgSql = "SELECT SUM(sum1) as a_sum, COUNT(*) as countAll FROM
                         (SELECT $sumSQL AS sum1 FROM answers
                         WHERE main_id IN ($whereMainId) " . $whereUniqueKey
                         . " GROUP BY main_id) T1";
                 }
                 $avgResult = \DB::select($avgSql);
-                $avg[$b_key] = $avgResult[0]->average;
+                if (!is_null($multiply))
+                    $avg[$b_key] = ($avgResult[0]->a_sum*(float)$multiply)/$sample[$b_key];
+                else if ($year)
+                    $avg[$b_key] = ($avgResult[0]->a_sum*12.0)/$sample[$b_key];
+                else
+                    $avg[$b_key] = $avgResult[0]->a_sum/$sample[$b_key];
                 $count[$b_key] = $avgResult[0]->countAll;
-                $stddev[$b_key] = $avgResult[0]->a_stddev;
 
                 $p[$b_key] = $avg[$b_key] * $weight[$b_key];
             }
+
+            //TODO-nong ยังไม่ได้ตรวจกรณีที่เป็น isRadio
+            $outerNorthernMain = array_merge($mainObj->filterMain(Main::OUTER_GROUP_1), $mainObj->filterMain(Main::OUTER_GROUP_2));
+            $outerNorthernMain = implode(",",$outerNorthernMain);
+            $innerNorthernMain = array_merge($mainObj->filterMain(Main::INNER_GROUP_1), $mainObj->filterMain(Main::INNER_GROUP_2));
+            $innerNorthernMain = implode(",", $innerNorthernMain);
+
+            $outerSTDDEVSql = "SELECT STDDEV(sum1) as a_stddev FROM
+                        (SELECT $sumSQL AS sum1 FROM answers
+                        WHERE main_id IN ($outerNorthernMain) "
+                . " GROUP BY main_id) T1";
+            $result = \DB::select($outerSTDDEVSql);
+            $stddev[Main::NORTHERN_OUTER] = $result[0]->a_stddev;
+
+            $innerSTDDEVSql = "SELECT STDDEV(sum1) as a_stddev FROM
+                        (SELECT $sumSQL AS sum1 FROM answers
+                        WHERE main_id IN ($innerNorthernMain) "
+                . " GROUP BY main_id) T1";
+            $result = \DB::select($innerSTDDEVSql);
+            $stddev[Main::NORTHERN_INNER] = $result[0]->a_stddev;
 
             $col = $startCol;
             $col++;
@@ -252,12 +268,20 @@ class Summary extends Model
             $key6 = preg_replace('/[A-Z]+/', $col, $key);
 
             $answers[$key] = $p[Main::INNER_GROUP_1] + $p[Main::INNER_GROUP_2];
-            $answers[$key2] = (($stddev[Main::INNER_GROUP_1]*$weight[Main::INNER_GROUP_1] + $stddev[Main::INNER_GROUP_2]*$weight[Main::INNER_GROUP_2])/2.0)
+            $answers[$key2] = ($stddev[Main::NORTHERN_INNER])
                 / sqrt($count[Main::INNER_GROUP_1] + $count[Main::INNER_GROUP_2]);
+//            $answers[$key2] = (($stddev[Main::INNER_GROUP_1]*$weight[Main::INNER_GROUP_1] + $stddev[Main::INNER_GROUP_2]*$weight[Main::INNER_GROUP_2])/2.0)
+//                / sqrt($count[Main::INNER_GROUP_1] + $count[Main::INNER_GROUP_2]);
+//            $answers[$key2] = (($stddev[Main::INNER_GROUP_1] + $stddev[Main::INNER_GROUP_2])/2.0)
+//                / sqrt($count[Main::INNER_GROUP_1] + $count[Main::INNER_GROUP_2]);
 
             $answers[$key3] = $p[Main::OUTER_GROUP_1] + $p[Main::OUTER_GROUP_2];
-            $answers[$key4] = (($stddev[Main::OUTER_GROUP_1]*$weight[Main::OUTER_GROUP_1] + $stddev[Main::OUTER_GROUP_2]*$weight[Main::OUTER_GROUP_2])/2.0)
+            $answers[$key4] = ($stddev[Main::NORTHERN_OUTER])
                 / sqrt($count[Main::OUTER_GROUP_1] + $count[Main::OUTER_GROUP_2]);
+//            $answers[$key4] = (($stddev[Main::OUTER_GROUP_1]*$weight[Main::OUTER_GROUP_1] + $stddev[Main::OUTER_GROUP_2]*$weight[Main::OUTER_GROUP_2])/2.0)
+//                / sqrt($count[Main::OUTER_GROUP_1] + $count[Main::OUTER_GROUP_2]);
+//            $answers[$key4] = (($stddev[Main::OUTER_GROUP_1] + $stddev[Main::OUTER_GROUP_2])/2.0)
+//                / sqrt($count[Main::OUTER_GROUP_1] + $count[Main::OUTER_GROUP_2]);
 
             $objPHPExcel->getActiveSheet()->setCellValue($key, $answers[$key]);
             $objPHPExcel->getActiveSheet()->setCellValue($key2, $answers[$key2]);
