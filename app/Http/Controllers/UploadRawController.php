@@ -74,7 +74,7 @@ class UploadRawController extends Controller
                 // หาในตาราง answers ว่ามี unique_key นี้มั้ย ถ้าไม่มีก็ ข้ามคอลัมน์ปัจจุบันไปทำคอลัมน์ถัดไป
                 $uniqueKeyAnswer = Answer::where('unique_key', $uniqueKey)->first();
                 if (is_null($uniqueKeyAnswer)){
-                    $errors[] = 'Not found unique key ' . $uniqueKey .' in system';
+                    $errors[] = 'Not found unique key ' . $uniqueKey .' in system, please contact administrator';
                     $curColumn++;
                     continue;
                 }
@@ -101,11 +101,21 @@ class UploadRawController extends Controller
                     if(is_numeric(trim($sheetData[$i]["A"]))){
 
                         $newValue = $sheetData[$i][$curColumn];
-                        // ถ้าค่าที่ใส่มาเป็นช่องเปล่าข้ามไปแถวต่อไป
-                        if (empty($newValue))
-                            continue;
-
                         $mainId = trim($sheetData[$i]["A"]);
+
+                        // ถ้าค่าที่ใส่มาเป็นช่องเปล่าข้ามไปแถวต่อไป
+                        if (empty($newValue)){
+                            if ($this->checkAnswerType($uniqueKey)===Question::TYPE_CHECKBOX) {
+                                //TODO-nong this is slow เพราะถ้ามี checkbox หลายๆอันมันจะ query เท่ากับจำนวนชุดสอบถามเลย
+                                $oldAnswer = Answer::where('main_id', $mainId)
+                                    ->where('unique_key', $uniqueKey)
+                                    ->first();
+                                if ($oldAnswer)
+                                    $oldAnswer->delete();
+                            }
+                            continue;
+                        }
+
                         $oldAnswer = Answer::where('main_id', $mainId)
                             ->where('unique_key', $uniqueKey)
                             ->first();
@@ -136,8 +146,9 @@ class UploadRawController extends Controller
                                 }
                             }
                         }elseif ($this->checkAnswerType($uniqueKey)===Question::TYPE_CHECKBOX){
-                            if (!empty(trim($newValue)) && (int)trim($newValue)===1)
+                            if (!empty(trim($newValue)) && (int)trim($newValue)===1){
                                 $oldAnswer->option_id = $uniqueKeyAnswer->option_id;
+                            }
                         }
 
                         $oldAnswer->save();
