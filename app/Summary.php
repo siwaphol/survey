@@ -142,7 +142,7 @@ class Summary extends Model
 
     public static function average($uniqueKeyArr, $startCol, $startRow, $objPHPExcel, $mainObj, $isRadio = false, $radioArr = [], $year=false, $multiply=null)
     {
-//        list($weight, $sample, $population) = self::getSettingVariables();
+        list($weight, $sample, $population) = self::getSettingVariables();
 
         $rows = [];
         $rowNumber = $startRow;
@@ -175,70 +175,12 @@ class Summary extends Model
             if (empty($value))
                 continue;
 
-            foreach (Main::$provinceWeight as $p_key => $p_weight) {
-                $mainList = $mainObj->filterMain($p_key);
-
-                $avg[$p_key] = 0;
-                $whereMainId = implode(",", $mainList);
-
-                if ($isRadio) {
-
-                    $newSql = " (IF(SUM(IF(unique_key='radioKey' AND option_id=radioValue,1,0))>1,1,SUM(IF(unique_key='radioKey' AND option_id=radioValue,1,0))) * SUM(IF(unique_key='amountKey',answer_numeric,0))) ";
-                    $finalSql = "";
-                    $idx = 0;
-                    $whereUniqueKey = implode("','", $value);
-                    $whereUniqueKey = "'" . $whereUniqueKey . "'";
-                    foreach ($radioArr[$level1Counter] as $radioKey => $radioValue) {
-                        $temp = $newSql;
-                        $temp = str_replace('radioKey', $radioKey, $temp);
-                        $temp = str_replace('radioValue', $radioValue, $temp);
-                        $temp = str_replace('amountKey', $value[$idx], $temp);
-
-                        $finalSql .= $temp . " + ";
-
-                        $whereUniqueKey .= ",'" . $radioKey . "'";
-                        $idx++;
-                    }
-                    $finalSql .= " 0 ";
-                    $whereUniqueKey = " AND unique_key IN (" . $whereUniqueKey . ")";
-                    $avgSql = "SELECT SUM(sum1)/".Main::$provinceSample[$p_key]." as average, COUNT(*) as countAll FROM
-                        (SELECT $finalSql AS sum1 FROM answers
-                        WHERE main_id IN ($whereMainId) " . $whereUniqueKey
-                        . " GROUP BY main_id) T1 WHERE sum1>0 ";
-
-                } else {
-                    if (is_array($value)) {
-                        $whereUniqueKey = implode("','", $value);
-                        $tempUniqueKey = $whereUniqueKey;
-                        $whereUniqueKey = " AND unique_key IN ('" .$whereUniqueKey."') ";
-                        $sumSQL = " SUM(IF(unique_key IN ('$tempUniqueKey'),answer_numeric,0)) ";
-                        if (!is_null($multiply))
-                            $sumSQL .= " * $multiply ";
-                        else if ($year)
-                            $sumSQL .= " * 12 ";
-                    }else{
-                        $whereUniqueKey = " AND unique_key='$value'";
-                        $sumSQL = " SUM(IF(unique_key='$value', answer_numeric,0)) ";
-                        if (!is_null($multiply))
-                            $sumSQL .= " * $multiply ";
-                        elseif ($year)
-                            $sumSQL .= " * 12 ";
-                    }
-
-                    $avgSql = "SELECT SUM(sum1)/".Main::$provinceSample[$p_key]." as average, COUNT(*) as countAll FROM
-                        (SELECT $sumSQL AS sum1 FROM answers
-                        WHERE main_id IN ($whereMainId) " . $whereUniqueKey
-                        . " GROUP BY main_id) T1";
-                }
-                $avgResult = \DB::select($avgSql);
-                $avg[$p_key] = $avgResult[0]->average;
-                $count[$p_key] = $avgResult[0]->countAll;
-            }
-
             foreach (Main::$borderWeight as $b_key => $b_weight) {
                 $mainList = $mainObj->filterMain($b_key);
 
                 $avg[$b_key] = 0;
+                $stddev[$b_key] = 0;
+
                 $whereMainId = implode(",", $mainList);
                 if ($isRadio) {
                     $newSql = " (IF(SUM(IF(unique_key='radioKey' AND option_id=radioValue,1,0))>1,1,SUM(IF(unique_key='radioKey' AND option_id=radioValue,1,0))) * SUM(IF(unique_key='amountKey',answer_numeric,0))) ";
@@ -259,7 +201,7 @@ class Summary extends Model
                     }
                     $finalSql .= " 0 ";
                     $whereUniqueKey = " AND unique_key IN (" . $whereUniqueKey . ")";
-                    $avgSql = "SELECT SUM(sum1)/".Main::$sample[$b_key]." as average, COUNT(*) as countAll FROM
+                    $avgSql = "SELECT SUM(sum1)/".$sample[$b_key]." as average, COUNT(*) as countAll, STDDEV(sum1) as a_stddev FROM
                         (SELECT $finalSql AS sum1 FROM answers
                         WHERE main_id IN ($whereMainId) " . $whereUniqueKey
                         . " GROUP BY main_id) T1 WHERE sum1>0";
@@ -284,7 +226,7 @@ class Summary extends Model
                             $sumSQL .= " * 12 ";
                     }
 
-                    $avgSql = "SELECT SUM(sum1)/".Main::$sample[$b_key]." as average, COUNT(*) as countAll FROM
+                    $avgSql = "SELECT SUM(sum1)/".$sample[$b_key]." as average, COUNT(*) as countAll, STDDEV(sum1) as a_stddev FROM
                         (SELECT $sumSQL AS sum1 FROM answers
                         WHERE main_id IN ($whereMainId) " . $whereUniqueKey
                         . " GROUP BY main_id) T1";
@@ -292,8 +234,9 @@ class Summary extends Model
                 $avgResult = \DB::select($avgSql);
                 $avg[$b_key] = $avgResult[0]->average;
                 $count[$b_key] = $avgResult[0]->countAll;
+                $stddev[$b_key] = $avgResult[0]->a_stddev;
 
-                $p[$b_key] = $avg[$b_key] * $b_weight;
+                $p[$b_key] = $avg[$b_key] * $weight[$b_key];
             }
 
             $col = $startCol;
@@ -309,74 +252,18 @@ class Summary extends Model
             $key6 = preg_replace('/[A-Z]+/', $col, $key);
 
             $answers[$key] = $p[Main::INNER_GROUP_1] + $p[Main::INNER_GROUP_2];
-            if ($count[Main::INNER_GROUP_1] - 1 === 0)
-                $A[Main::INNER_GROUP_1] = 0;
-            else
-                $A[Main::INNER_GROUP_1] = (1.0 / ($count[Main::INNER_GROUP_1] - 1))
-                    * (
-                        pow(($avg[Main::CHIANGMAI_INNER] - $avg[Main::INNER_GROUP_1]), 2)
-                        + pow(($avg[Main::UTARADIT_INNER] - $avg[Main::INNER_GROUP_1]), 2)
-                    );
+            $answers[$key2] = (($stddev[Main::INNER_GROUP_1]*$weight[Main::INNER_GROUP_1] + $stddev[Main::INNER_GROUP_2]*$weight[Main::INNER_GROUP_2])/2.0)
+                / sqrt($count[Main::INNER_GROUP_1] + $count[Main::INNER_GROUP_2]);
 
-            if ($count[Main::INNER_GROUP_2] - 1 === 0)
-                $A[Main::INNER_GROUP_2] = 0;
-            else
-                $A[Main::INNER_GROUP_2] = (1.0 / ($count[Main::INNER_GROUP_2] - 1))
-                    * (
-                        pow(($avg[Main::NAN_INNER] - $avg[Main::INNER_GROUP_2]), 2)
-                        + pow(($avg[Main::PITSANULOK_INNER] - $avg[Main::INNER_GROUP_2]), 2)
-                        + pow(($avg[Main::PETCHABUL_INNER] - $avg[Main::INNER_GROUP_2]), 2)
-                    );
-            if (($count[Main::INNER_GROUP_1] + $count[Main::INNER_GROUP_2]) === 0)
-                $part1 = 0;
-            else
-                $part1 = $count[Main::INNER_GROUP_1] / ($count[Main::INNER_GROUP_1] + $count[Main::INNER_GROUP_2]);
-            $part2 = ($count[Main::INNER_GROUP_1] === 0) ? 0 : ($A[Main::INNER_GROUP_1] / $count[Main::INNER_GROUP_1]);
-            $part3 = ($count[Main::INNER_GROUP_1] + $count[Main::INNER_GROUP_2]) === 0 ?
-                0 : ($count[Main::INNER_GROUP_2] / ($count[Main::INNER_GROUP_1] + $count[Main::INNER_GROUP_2]));
-            $part4 = $count[Main::INNER_GROUP_2] === 0 ? 0 : ($A[Main::INNER_GROUP_2] / $count[Main::INNER_GROUP_2]);
-
-            $answers[$key2] = sqrt(
-                (Main::$weight[Main::INNER_GROUP_1] * (1.0 - $part1) * $part2) +
-                (Main::$weight[Main::INNER_GROUP_2] * (1.0 - $part3) * $part4)
-            );
             $answers[$key3] = $p[Main::OUTER_GROUP_1] + $p[Main::OUTER_GROUP_2];
-            if ($count[Main::OUTER_GROUP_1] - 1 === 0)
-                $A[Main::OUTER_GROUP_1] = 0;
-            else
-                $A[Main::OUTER_GROUP_1] = (1.0 / ($count[Main::OUTER_GROUP_1] - 1))
-                    * (
-                        pow(($avg[Main::CHIANGMAI_OUTER] - $avg[Main::OUTER_GROUP_1]), 2)
-                        + pow(($avg[Main::UTARADIT_OUTER] - $avg[Main::OUTER_GROUP_1]), 2)
-                    );
-            if ($count[Main::OUTER_GROUP_2] - 1 === 0)
-                $A[Main::OUTER_GROUP_2] = 0;
-            else
-                $A[Main::OUTER_GROUP_2] = (1.0 / ($count[Main::OUTER_GROUP_2] - 1))
-                    * (
-                        pow(($avg[Main::NAN_OUTER] - $avg[Main::OUTER_GROUP_2]), 2)
-                        + pow(($avg[Main::PITSANULOK_OUTER] - $avg[Main::OUTER_GROUP_2]), 2)
-                        + pow(($avg[Main::PETCHABUL_OUTER] - $avg[Main::OUTER_GROUP_2]), 2)
-                    );
-            if (($count[Main::OUTER_GROUP_1] + $count[Main::OUTER_GROUP_2]) === 0)
-                $part1 = 0;
-            else
-                $part1 = $count[Main::OUTER_GROUP_1] / ($count[Main::OUTER_GROUP_1] + $count[Main::OUTER_GROUP_2]);
-            $part2 = ($count[Main::OUTER_GROUP_1] === 0) ? 0 : ($A[Main::OUTER_GROUP_1] / $count[Main::OUTER_GROUP_1]);
-            $part3 = ($count[Main::OUTER_GROUP_1] + $count[Main::OUTER_GROUP_2]) === 0 ?
-                0 : ($count[Main::OUTER_GROUP_2] / ($count[Main::OUTER_GROUP_1] + $count[Main::OUTER_GROUP_2]));
-            $part4 = $count[Main::OUTER_GROUP_2] === 0 ? 0 : ($A[Main::OUTER_GROUP_2] / $count[Main::OUTER_GROUP_2]);
-
-            $answers[$key4] = sqrt(
-                (Main::$weight[Main::OUTER_GROUP_1] * (1.0 - $part1) * $part2) +
-                (Main::$weight[Main::OUTER_GROUP_2] * (1.0 - $part3) * $part4)
-            );
+            $answers[$key4] = (($stddev[Main::OUTER_GROUP_1]*$weight[Main::OUTER_GROUP_1] + $stddev[Main::OUTER_GROUP_2]*$weight[Main::OUTER_GROUP_2])/2.0)
+                / sqrt($count[Main::OUTER_GROUP_1] + $count[Main::OUTER_GROUP_2]);
 
             $objPHPExcel->getActiveSheet()->setCellValue($key, $answers[$key]);
             $objPHPExcel->getActiveSheet()->setCellValue($key2, $answers[$key2]);
             $objPHPExcel->getActiveSheet()->setCellValue($key3, $answers[$key3]);
             $objPHPExcel->getActiveSheet()->setCellValue($key4, $answers[$key4]);
-            $objPHPExcel->getActiveSheet()->setCellValue($key5, (($answers[$key]*Main::$weight[Main::NORTHERN_INNER] + $answers[$key3] * Main::$weight[Main::NORTHERN_OUTER])));
+            $objPHPExcel->getActiveSheet()->setCellValue($key5, (($answers[$key]*$weight[Main::NORTHERN_INNER] + $answers[$key3] * $weight[Main::NORTHERN_OUTER])));
             $objPHPExcel->getActiveSheet()->setCellValue($key6, (($answers[$key2] + $answers[$key4]) / 2.0));
 
             $objPHPExcel->getActiveSheet()->getStyle($key)->getNumberFormat()->setFormatCode(Main::NUMBER_FORMAT);
