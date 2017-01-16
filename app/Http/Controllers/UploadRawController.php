@@ -130,7 +130,7 @@ class UploadRawController extends Controller
                         }elseif ($this->checkAnswerType($uniqueKey)===Question::TYPE_RADIO){
                             // หาว่าค่าที่รับเข้ามาอยู่ใน option ไหน
                             foreach ($curRadioOptions as $item){
-                                if (!empty(trim($newValue)) && strpos($item->option_name,$newValue)!==false){
+                                if (!empty(trim($newValue)) && trim($item->option_name)===trim($newValue)){
                                     $oldAnswer->option_id = $item->option_id;
                                     break;
                                 }
