@@ -41,9 +41,12 @@ $(function () {
     selectSettingGroup.on('select2:select', function (evt) {
         var selectedOption = $(this).val();
 
+        console.log(selectedOption)
+
+        var regExSearch = '^' + selectedOption +'$';
         if (parseInt(selectedOption)==0)
             table.column(6).search("").draw()
         else
-            table.column(6).search(selectedOption).draw()
+            table.column(6).search(regExSearch,true,false).draw()
     });
 });

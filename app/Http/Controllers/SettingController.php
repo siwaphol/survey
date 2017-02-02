@@ -117,4 +117,96 @@ class SettingController extends Controller
 
         return redirect('/setting');
     }
+
+    public function importExcelSettingParameter()
+    {
+        $filename = "setting_parameters.xlsx";
+        $path = storage_path("excel\\" . $filename);
+
+        if(explode('.', $filename)[1] === 'xls'){
+            $objReader = \PHPExcel_IOFactory::createReader("Excel5");
+        }
+        else if(explode('.', $filename)[1] === 'xlsx')
+        {
+            $objReader = \PHPExcel_IOFactory::createReader("Excel2007");
+        }
+
+        $objReader->setReadDataOnly(true);
+        $worksheetData = $objReader->listWorksheetInfo($path);
+
+        $chunkSize = 10000;
+        $chunkFilter = new \App\Custom\ChunkReadFilter();
+        $objReader->setReadFilter($chunkFilter);
+
+        $optionSheetNo = 1;
+        $totalRows = $worksheetData[1]['totalRows'];
+        $parameterId = 1;
+        $aText = $bText = $cText = $dText = '';
+
+        for ($startRow = 5; $startRow <= $totalRows; $startRow += $chunkSize) {
+            $chunkFilter->setRows($startRow,$chunkSize);
+
+            $objPHPExcel = $objReader->load($path);
+
+            $sheetData = $objPHPExcel
+                ->getSheet($optionSheetNo)
+                ->toArray(null,true,true,true);
+
+            \DB::transaction(function () use ($startRow, $chunkSize, $totalRows,$sheetData,$parameterId,$aText,$bText,$cText,$dText){
+                Setting::whereIn('group_id',array(1,9,10,11))->delete();
+                for($i=$startRow; $i <= ($startRow+$chunkSize-1); $i++) {
+                    if ($i > $totalRows) {
+                        break;
+                    }
+
+                    if (!empty(trim($sheetData[$i]["A"])))
+                        $aText = $sheetData[$i]["A"];
+                    if (!empty(trim($sheetData[$i]["B"])))
+                        $bText = $sheetData[$i]["B"];
+                    if (!empty(trim($sheetData[$i]["C"])))
+                        $cText = $sheetData[$i]["C"];
+                    if (!empty(trim($sheetData[$i]["D"])))
+                        $dText = $sheetData[$i]["D"];
+
+                    $newSetting = new Setting();
+                    $newSetting->name_en = ' ';
+                    $newSetting->name_th = $aText.'/'.$bText.'/'.$cText.'/'.$dText;
+                    $newSetting->code = 'electric_power_'.$parameterId;
+                    $newSetting->value = (float)$sheetData[$i]["E"];
+                    $newSetting->unit_of_measure = 'กิโลวัตต์';
+                    $newSetting->group_id = 1;
+                    $newSetting->save();
+
+                    $newSetting = new Setting();
+                    $newSetting->name_en = ' ';
+                    $newSetting->name_th = $aText.'/'.$bText.'/'.$cText.'/'.$dText;
+                    $newSetting->code = 'tool_factor_'.$parameterId;
+                    $newSetting->value = (float)$sheetData[$i]["F"];
+                    $newSetting->group_id = 9;
+                    $newSetting->save();
+
+                    $newSetting = new Setting();
+                    $newSetting->name_en = ' ';
+                    $newSetting->name_th = $aText.'/'.$bText.'/'.$cText.'/'.$dText;
+                    $newSetting->code = 'season_factor_'.$parameterId;
+                    $newSetting->value = (float)$sheetData[$i]["G"];
+                    $newSetting->group_id = 10;
+                    $newSetting->save();
+
+                    $newSetting = new Setting();
+                    $newSetting->name_en = ' ';
+                    $newSetting->name_th = $aText.'/'.$bText.'/'.$cText.'/'.$dText;
+                    $newSetting->code = 'usage_factor_'.$parameterId;
+                    $newSetting->value = (float)$sheetData[$i]["H"];
+                    $newSetting->group_id = 11;
+                    $newSetting->save();
+
+                    $parameterId++;
+                }
+            });
+        }
+        dd("complete");
+
+    }
+
 }
