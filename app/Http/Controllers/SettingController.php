@@ -143,6 +143,23 @@ class SettingController extends Controller
         $parameterId = 1;
         $aText = $bText = $cText = $dText = '';
 
+        $settingGroup = SettingGroup::findOrNew(8);
+        $settingGroup->name_en = ' ';
+        $settingGroup->name_th = ' ';
+        $settingGroup->save();
+        $settingGroup = SettingGroup::findOrNew(9);
+        $settingGroup->name_en = 'tool_factor';
+        $settingGroup->name_th = 'แฟกเตอร์อุปกรณ์';
+        $settingGroup->save();
+        $settingGroup = SettingGroup::findOrNew(10);
+        $settingGroup->name_en = 'season_factor';
+        $settingGroup->name_th = 'แฟกเตอร์ฤดูกาล';
+        $settingGroup->save();
+        $settingGroup = SettingGroup::findOrNew(11);
+        $settingGroup->name_en = 'usage_factor';
+        $settingGroup->name_th = 'แฟกเตอร์การใช้งาน';
+        $settingGroup->save();
+
         for ($startRow = 5; $startRow <= $totalRows; $startRow += $chunkSize) {
             $chunkFilter->setRows($startRow,$chunkSize);
 

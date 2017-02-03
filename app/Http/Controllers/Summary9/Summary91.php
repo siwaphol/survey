@@ -13,6 +13,131 @@ use App\Http\Controllers\Controller;
 class Summary91 extends Controller
 {
 
+    public static function report911()
+    {
+        set_time_limit(3600);
+
+        $mainObj = new Main();
+        $mainObj->initList();
+
+        $inputFile = 'summary9.xlsx';
+        $inputSheet = '9.1.1';
+        $startRow = 13;
+        $outputFile = 'sum911.xlsx';
+
+        $objPHPExcel = new \PHPExcel();
+        $objPHPExcelMain = \PHPExcel_IOFactory::load(storage_path('excel/'. $inputFile));
+        $objPHPExcel->addExternalSheet($objPHPExcelMain->getSheetByName($inputSheet));
+        $objPHPExcel->removeSheetByIndex(0);
+        $objPHPExcel->setActiveSheetIndexByName($inputSheet);
+
+        $table1 = [
+            'no_ch1023_o329_ch101_o68',
+            'no_ch1023_o329_ch101_o69_ch102_o72',
+            'no_ch1023_o329_ch101_o69_ch102_o73',
+            'no_ch1023_o329_ch101_o69_ch102_o74',
+            'no_ch1023_o329_ch101_o70',
+            'no_ch1023_o329_ch101_o71',
+            // หลอดไฟ (นอกบ้าน)
+//            'no_ch1023_o330_ch112_o68',
+//            'no_ch1023_o330_ch112_o69_ch113_o72',
+//            'no_ch1023_o330_ch112_o69_ch113_o73',
+//            'no_ch1023_o330_ch112_o69_ch113_o74',
+//            'no_ch1023_o330_ch112_o70',
+//            'no_ch1023_o330_ch112_o71'
+        ];
+        $startColumn = 'E';
+        $objPHPExcel = Summary::sum($table1, $startColumn, $startRow, $objPHPExcel, $mainObj);
+
+        $table2 = [
+            'no_ch1023_o329_ch101_o68_nu103',
+            'no_ch1023_o329_ch101_o69_ch102_o72_nu107',
+            'no_ch1023_o329_ch101_o69_ch102_o73_nu107',
+            'no_ch1023_o329_ch101_o69_ch102_o74_nu107',
+            'no_ch1023_o329_ch101_o70_nu103',
+            'no_ch1023_o329_ch101_o71_nu103',
+
+//            'no_ch1023_o330_ch112_o68_nu114',
+//            'no_ch1023_o330_ch112_o69_ch113_o72_nu118',
+//            'no_ch1023_o330_ch112_o69_ch113_o73_nu118',
+//            'no_ch1023_o330_ch112_o69_ch113_o74_nu118',
+//            'no_ch1023_o330_ch112_o70_nu114',
+//            'no_ch1023_o330_ch112_o71_nu114'
+        ];
+
+        $detailsColumns = [
+            'หลอดไฟ (ในบ้าน) หลอดไส้',
+            'หลอดไฟ (ในบ้าน) หลอดฟลูออเรสเซนต์ ชนิดกลม',
+            'หลอดไฟ (ในบ้าน) หลอดฟลูออเรสเซนต์ ชนิดตรง ขนาดยาว',
+            'หลอดไฟ (ในบ้าน) หลอดฟลูออเรสเซนต์ ชนิดตรง ขนาดสั้น',
+            'หลอดไฟ (ในบ้าน) หลอดคอมแพคฟลูออเรสเซนต์',
+            'หลอดไฟ (ในบ้าน) หลอดแอลอีดี',
+            'หลอดไฟ (นอกบ้าน) หลอดไส้',
+            'หลอดไฟ (นอกบ้าน) หลอดฟลูออเรสเซนต์ ชนิดกลม',
+            'หลอดไฟ (นอกบ้าน) หลอดฟลูออเรสเซนต์ ชนิดตรง ขนาดยาว',
+            'หลอดไฟ (นอกบ้าน) หลอดฟลูออเรสเซนต์ ชนิดตรง ขนาดสั้น',
+            'หลอดไฟ (นอกบ้าน) หลอดคอมแพคฟลูออเรสเซนต์',
+            'หลอดไฟ (นอกบ้าน) หลอดแอลอีดี',
+        ];
+        $startColumn = 'U';
+        //withDetails
+//        Summary::averageWithDetails($table2, $startColumn, $startRow, $objPHPExcel, $mainObj, false,[], $detailsColumns);
+//        dd();
+        $objPHPExcel = Summary::average($table2, $startColumn, $startRow, $objPHPExcel, $mainObj);
+
+        $table3 = [
+            ['no_ch1023_o329_ch101_o68_nu104','no_ch1023_o329_ch101_o68_nu105','no_ch1023_o329_ch101_o68_nu103',0.06],
+            ['no_ch1023_o329_ch101_o69_ch102_o72_nu108','no_ch1023_o329_ch101_o69_ch102_o72_nu109','no_ch1023_o329_ch101_o69_ch102_o72_nu107',0.024],
+            ['no_ch1023_o329_ch101_o69_ch102_o73_nu108','no_ch1023_o329_ch101_o69_ch102_o73_nu109','no_ch1023_o329_ch101_o69_ch102_o73_nu107',0.036],
+            ['no_ch1023_o329_ch101_o69_ch102_o74_nu108','no_ch1023_o329_ch101_o69_ch102_o74_nu109','no_ch1023_o329_ch101_o69_ch102_o74_nu107',0.018],
+            ['no_ch1023_o329_ch101_o70_nu104','no_ch1023_o329_ch101_o70_nu105','no_ch1023_o329_ch101_o70_nu103',0.018],
+            ['no_ch1023_o329_ch101_o71_nu104','no_ch1023_o329_ch101_o71_nu105','no_ch1023_o329_ch101_o71_nu103',0.010],
+
+//            ['no_ch1023_o330_ch112_o68_nu115','no_ch1023_o330_ch112_o68_nu116','no_ch1023_o330_ch112_o68_nu114',0.060],
+//            ['no_ch1023_o330_ch112_o69_ch113_o72_nu119','no_ch1023_o330_ch112_o69_ch113_o72_nu120','no_ch1023_o330_ch112_o69_ch113_o72_nu118',0.024],
+//            ['no_ch1023_o330_ch112_o69_ch113_o73_nu119','no_ch1023_o330_ch112_o69_ch113_o73_nu120','no_ch1023_o330_ch112_o69_ch113_o73_nu118',0.036],
+//            ['no_ch1023_o330_ch112_o69_ch113_o74_nu119','no_ch1023_o330_ch112_o69_ch113_o74_nu120','no_ch1023_o330_ch112_o69_ch113_o74_nu118',0.018],
+//            ['no_ch1023_o330_ch112_o70_nu115','no_ch1023_o330_ch112_o70_nu116','no_ch1023_o330_ch112_o70_nu114',0.018],
+//            ['no_ch1023_o330_ch112_o71_nu115','no_ch1023_o330_ch112_o71_nu116','no_ch1023_o330_ch112_o71_nu114',0.010]
+        ];
+        $startColumn = 'AL';
+        $ktoe = Parameter::$ktoe[Parameter::ELECTRIC];
+        $week = Parameter::WEEK_PER_YEAR;
+        $sumAmountSQL = " (sum(IF(unique_key='param1',answer_numeric,0))* sum(if(unique_key='param2', answer_numeric,0))* {$week})* (param4) * sum(if(unique_key='param3',1,0)) as sumAmount ";
+
+        $sumAmountSQL2 = " (sum(IF(unique_key='param1',answer_numeric,0))* sum(if(unique_key='param2', answer_numeric,0))* {$week})* (param4) * sum(if(unique_key='param3',1,0)) as sumAmount,main_id ";
+        $sumAmountSQLDesc = " อัตราการใช้ชั่วโมงต่อวัน x อัตราการใช้วันต่อสัปดาห์ x {$week}) x กำลังไฟฟ้าหน่วน kWh x จำนวนหลอด </br>";
+
+        $params = [
+            'param1'=>0,
+            'param2'=>1,
+            'param3'=>2,
+            'param4'=>3
+        ];
+        $objPHPExcel = Summary::usageElectric($table3, $startColumn, $startRow,$objPHPExcel, $mainObj,$sumAmountSQL,$params,$ktoe);
+
+        $table4 = [
+            'no_ch1023_o329_ch101_o68_nu106',
+            'no_ch1023_o329_ch101_o69_ch102_o72_nu110',
+            'no_ch1023_o329_ch101_o69_ch102_o73_nu110',
+            'no_ch1023_o329_ch101_o69_ch102_o74_nu110',
+            'no_ch1023_o329_ch101_o70_nu106',
+            'no_ch1023_o329_ch101_o71_nu106',
+
+//            'no_ch1023_o330_ch112_o68_nu117',
+//            'no_ch1023_o330_ch112_o69_ch113_o72_nu121',
+//            'no_ch1023_o330_ch112_o69_ch113_o73_nu121',
+//            'no_ch1023_o330_ch112_o69_ch113_o74_nu121',
+//            'no_ch1023_o330_ch112_o70_nu117',
+//            'no_ch1023_o330_ch112_o71_nu117'
+        ];
+        $startColumn = 'BB';
+        $objPHPExcel = Summary::average($table4, $startColumn, $startRow, $objPHPExcel, $mainObj);
+
+        $objWriter = new \PHPExcel_Writer_Excel2007($objPHPExcel);
+        $objWriter->save(storage_path(iconv('UTF-8', 'windows-874', 'excel/'.$outputFile)));
+    }
+
     // รวมในบ้านกับนอกบ้านเข้าด้วยกัน
     public static function report911Special()
     {
