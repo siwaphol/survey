@@ -4,6 +4,7 @@ namespace App\Http\Controllers\Summary9;
 
 use App\Main;
 use App\Parameter;
+use App\Setting;
 use App\Summary;
 use Illuminate\Http\Request;
 
@@ -38,13 +39,6 @@ class Summary91 extends Controller
             'no_ch1023_o329_ch101_o69_ch102_o74',
             'no_ch1023_o329_ch101_o70',
             'no_ch1023_o329_ch101_o71',
-            // หลอดไฟ (นอกบ้าน)
-//            'no_ch1023_o330_ch112_o68',
-//            'no_ch1023_o330_ch112_o69_ch113_o72',
-//            'no_ch1023_o330_ch112_o69_ch113_o73',
-//            'no_ch1023_o330_ch112_o69_ch113_o74',
-//            'no_ch1023_o330_ch112_o70',
-//            'no_ch1023_o330_ch112_o71'
         ];
         $startColumn = 'E';
         $objPHPExcel = Summary::sum($table1, $startColumn, $startRow, $objPHPExcel, $mainObj);
@@ -55,64 +49,60 @@ class Summary91 extends Controller
             'no_ch1023_o329_ch101_o69_ch102_o73_nu107',
             'no_ch1023_o329_ch101_o69_ch102_o74_nu107',
             'no_ch1023_o329_ch101_o70_nu103',
-            'no_ch1023_o329_ch101_o71_nu103',
-
-//            'no_ch1023_o330_ch112_o68_nu114',
-//            'no_ch1023_o330_ch112_o69_ch113_o72_nu118',
-//            'no_ch1023_o330_ch112_o69_ch113_o73_nu118',
-//            'no_ch1023_o330_ch112_o69_ch113_o74_nu118',
-//            'no_ch1023_o330_ch112_o70_nu114',
-//            'no_ch1023_o330_ch112_o71_nu114'
+            'no_ch1023_o329_ch101_o71_nu103'
         ];
 
-        $detailsColumns = [
-            'หลอดไฟ (ในบ้าน) หลอดไส้',
-            'หลอดไฟ (ในบ้าน) หลอดฟลูออเรสเซนต์ ชนิดกลม',
-            'หลอดไฟ (ในบ้าน) หลอดฟลูออเรสเซนต์ ชนิดตรง ขนาดยาว',
-            'หลอดไฟ (ในบ้าน) หลอดฟลูออเรสเซนต์ ชนิดตรง ขนาดสั้น',
-            'หลอดไฟ (ในบ้าน) หลอดคอมแพคฟลูออเรสเซนต์',
-            'หลอดไฟ (ในบ้าน) หลอดแอลอีดี',
-            'หลอดไฟ (นอกบ้าน) หลอดไส้',
-            'หลอดไฟ (นอกบ้าน) หลอดฟลูออเรสเซนต์ ชนิดกลม',
-            'หลอดไฟ (นอกบ้าน) หลอดฟลูออเรสเซนต์ ชนิดตรง ขนาดยาว',
-            'หลอดไฟ (นอกบ้าน) หลอดฟลูออเรสเซนต์ ชนิดตรง ขนาดสั้น',
-            'หลอดไฟ (นอกบ้าน) หลอดคอมแพคฟลูออเรสเซนต์',
-            'หลอดไฟ (นอกบ้าน) หลอดแอลอีดี',
-        ];
         $startColumn = 'U';
-        //withDetails
-//        Summary::averageWithDetails($table2, $startColumn, $startRow, $objPHPExcel, $mainObj, false,[], $detailsColumns);
-//        dd();
         $objPHPExcel = Summary::average($table2, $startColumn, $startRow, $objPHPExcel, $mainObj);
 
-        $table3 = [
-            ['no_ch1023_o329_ch101_o68_nu104','no_ch1023_o329_ch101_o68_nu105','no_ch1023_o329_ch101_o68_nu103',0.06],
-            ['no_ch1023_o329_ch101_o69_ch102_o72_nu108','no_ch1023_o329_ch101_o69_ch102_o72_nu109','no_ch1023_o329_ch101_o69_ch102_o72_nu107',0.024],
-            ['no_ch1023_o329_ch101_o69_ch102_o73_nu108','no_ch1023_o329_ch101_o69_ch102_o73_nu109','no_ch1023_o329_ch101_o69_ch102_o73_nu107',0.036],
-            ['no_ch1023_o329_ch101_o69_ch102_o74_nu108','no_ch1023_o329_ch101_o69_ch102_o74_nu109','no_ch1023_o329_ch101_o69_ch102_o74_nu107',0.018],
-            ['no_ch1023_o329_ch101_o70_nu104','no_ch1023_o329_ch101_o70_nu105','no_ch1023_o329_ch101_o70_nu103',0.018],
-            ['no_ch1023_o329_ch101_o71_nu104','no_ch1023_o329_ch101_o71_nu105','no_ch1023_o329_ch101_o71_nu103',0.010],
+        $settings = Setting::whereIn('group_id',[1,9,10,11])->get();
+        $factor1 = (float)$settings->where('code','tool_factor_1')->first()->value
+            * (float)$settings->where('code','season_factor_1')->first()->value
+            * (float)$settings->where('code','usage_factor_1')->first()->value;
+        $factor2 = (float)$settings->where('code','tool_factor_2')->first()->value
+            * (float)$settings->where('code','season_factor_2')->first()->value
+            * (float)$settings->where('code','usage_factor_2')->first()->value;
+        $factor3 = (float)$settings->where('code','tool_factor_3')->first()->value
+            * (float)$settings->where('code','season_factor_3')->first()->value
+            * (float)$settings->where('code','usage_factor_3')->first()->value;
+        $factor4 = (float)$settings->where('code','tool_factor_4')->first()->value
+            * (float)$settings->where('code','season_factor_4')->first()->value
+            * (float)$settings->where('code','usage_factor_4')->first()->value;
+        $factor5 = (float)$settings->where('code','tool_factor_5')->first()->value
+            * (float)$settings->where('code','season_factor_5')->first()->value
+            * (float)$settings->where('code','usage_factor_5')->first()->value;
+        $factor6 = (float)$settings->where('code','tool_factor_6')->first()->value
+            * (float)$settings->where('code','season_factor_6')->first()->value
+            * (float)$settings->where('code','usage_factor_6')->first()->value;
 
-//            ['no_ch1023_o330_ch112_o68_nu115','no_ch1023_o330_ch112_o68_nu116','no_ch1023_o330_ch112_o68_nu114',0.060],
-//            ['no_ch1023_o330_ch112_o69_ch113_o72_nu119','no_ch1023_o330_ch112_o69_ch113_o72_nu120','no_ch1023_o330_ch112_o69_ch113_o72_nu118',0.024],
-//            ['no_ch1023_o330_ch112_o69_ch113_o73_nu119','no_ch1023_o330_ch112_o69_ch113_o73_nu120','no_ch1023_o330_ch112_o69_ch113_o73_nu118',0.036],
-//            ['no_ch1023_o330_ch112_o69_ch113_o74_nu119','no_ch1023_o330_ch112_o69_ch113_o74_nu120','no_ch1023_o330_ch112_o69_ch113_o74_nu118',0.018],
-//            ['no_ch1023_o330_ch112_o70_nu115','no_ch1023_o330_ch112_o70_nu116','no_ch1023_o330_ch112_o70_nu114',0.018],
-//            ['no_ch1023_o330_ch112_o71_nu115','no_ch1023_o330_ch112_o71_nu116','no_ch1023_o330_ch112_o71_nu114',0.010]
+        $electricPower = array();
+        for ($i=0;$i<6;$i++)
+        {
+            $electricPower[$i] = (float)$settings->where('code','electric_power_'.($i+1))->first()->value;
+        }
+
+        $table3 = [
+            ['no_ch1023_o329_ch101_o68_nu104','no_ch1023_o329_ch101_o68_nu105','no_ch1023_o329_ch101_o68_nu103',$factor1,$electricPower[0]],
+            ['no_ch1023_o329_ch101_o69_ch102_o72_nu108','no_ch1023_o329_ch101_o69_ch102_o72_nu109','no_ch1023_o329_ch101_o69_ch102_o72_nu107',$factor2,$electricPower[1]],
+            ['no_ch1023_o329_ch101_o69_ch102_o73_nu108','no_ch1023_o329_ch101_o69_ch102_o73_nu109','no_ch1023_o329_ch101_o69_ch102_o73_nu107',$factor3,$electricPower[2]],
+            ['no_ch1023_o329_ch101_o69_ch102_o74_nu108','no_ch1023_o329_ch101_o69_ch102_o74_nu109','no_ch1023_o329_ch101_o69_ch102_o74_nu107',$factor4,$electricPower[3]],
+            ['no_ch1023_o329_ch101_o70_nu104','no_ch1023_o329_ch101_o70_nu105','no_ch1023_o329_ch101_o70_nu103',$factor5,$electricPower[4]],
+            ['no_ch1023_o329_ch101_o71_nu104','no_ch1023_o329_ch101_o71_nu105','no_ch1023_o329_ch101_o71_nu103',$factor6,$electricPower[5]]
         ];
         $startColumn = 'AL';
-        $ktoe = Parameter::$ktoe[Parameter::ELECTRIC];
+        $ktoe = Setting::where('code', 'E9')->first()->value;
         $week = Parameter::WEEK_PER_YEAR;
-        $sumAmountSQL = " (sum(IF(unique_key='param1',answer_numeric,0))* sum(if(unique_key='param2', answer_numeric,0))* {$week})* (param4) * sum(if(unique_key='param3',1,0)) as sumAmount ";
 
-        $sumAmountSQL2 = " (sum(IF(unique_key='param1',answer_numeric,0))* sum(if(unique_key='param2', answer_numeric,0))* {$week})* (param4) * sum(if(unique_key='param3',1,0)) as sumAmount,main_id ";
-        $sumAmountSQLDesc = " อัตราการใช้ชั่วโมงต่อวัน x อัตราการใช้วันต่อสัปดาห์ x {$week}) x กำลังไฟฟ้าหน่วน kWh x จำนวนหลอด </br>";
+        // ระยะเวลาใช้งาน (ชั่วโมง / ปี) คำนวณจาก จำนวนหลอด*อัตราการใช้ (ชั่วโมง/วัน)*อัตราการใช้(วัน/สัปดาห์)*จำนวนอาทิตย์ต่อปี กะไว้ประมาณ 52
+        $sumAmountSQL = " ( sum(IF(unique_key='param1',answer_numeric,0)) * sum(if(unique_key='param2', answer_numeric,0)) * sum(if(unique_key='param3',answer_numeric,0)) * {$week} ) 
+        * (param4) * (param5) as sumAmount ";
 
         $params = [
             'param1'=>0,
             'param2'=>1,
             'param3'=>2,
-            'param4'=>3
+            'param4'=>3,
+            'param5'=>4
         ];
         $objPHPExcel = Summary::usageElectric($table3, $startColumn, $startRow,$objPHPExcel, $mainObj,$sumAmountSQL,$params,$ktoe);
 
@@ -123,13 +113,6 @@ class Summary91 extends Controller
             'no_ch1023_o329_ch101_o69_ch102_o74_nu110',
             'no_ch1023_o329_ch101_o70_nu106',
             'no_ch1023_o329_ch101_o71_nu106',
-
-//            'no_ch1023_o330_ch112_o68_nu117',
-//            'no_ch1023_o330_ch112_o69_ch113_o72_nu121',
-//            'no_ch1023_o330_ch112_o69_ch113_o73_nu121',
-//            'no_ch1023_o330_ch112_o69_ch113_o74_nu121',
-//            'no_ch1023_o330_ch112_o70_nu117',
-//            'no_ch1023_o330_ch112_o71_nu117'
         ];
         $startColumn = 'BB';
         $objPHPExcel = Summary::average($table4, $startColumn, $startRow, $objPHPExcel, $mainObj);

@@ -43,7 +43,7 @@ class Parameter extends Model
     CONST GRAB = 12;
     CONST AGRICULTURAL_REMAIN = 13;
 
-    const WEEK_PER_YEAR = 52.14;
+    const WEEK_PER_YEAR = 52;
 
     const ELECTRIC_KTOE = 0.08521;
     const GAS_KTOE = 0.024;

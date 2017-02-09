@@ -362,17 +362,15 @@ class Summary extends Model
             $col++;
             $key6 = preg_replace('/[A-Z]+/', $col, $key);
 
-            $average = [];
-            $average[Main::INNER_GROUP_1] = ($sum[Main::INNER_GROUP_1] / $sample[Main::INNER_GROUP_1]);
-            $average[Main::INNER_GROUP_2] = ($sum[Main::INNER_GROUP_2] / $sample[Main::INNER_GROUP_2]);
-            $average[Main::OUTER_GROUP_1] = ($sum[Main::OUTER_GROUP_1] / $sample[Main::OUTER_GROUP_1]);
-            $average[Main::OUTER_GROUP_2] = ($sum[Main::OUTER_GROUP_2] / $sample[Main::OUTER_GROUP_2]);
+            $sumUsageHourPerYear = [];
+            $sumUsageHourPerYear[Main::INNER_GROUP_1] = ($sum[Main::INNER_GROUP_1] / $sample[Main::INNER_GROUP_1]) * $weight[Main::INNER_GROUP_1];
+            $sumUsageHourPerYear[Main::INNER_GROUP_2] = ($sum[Main::INNER_GROUP_2] / $sample[Main::INNER_GROUP_2]) * $weight[Main::INNER_GROUP_2];
+            $sumUsageHourPerYear[Main::OUTER_GROUP_1] = ($sum[Main::OUTER_GROUP_1] / $sample[Main::OUTER_GROUP_1]) * $weight[Main::OUTER_GROUP_1];
+            $sumUsageHourPerYear[Main::OUTER_GROUP_2] = ($sum[Main::OUTER_GROUP_2] / $sample[Main::OUTER_GROUP_2]) * $weight[Main::OUTER_GROUP_2];
 
             $y = array();
-            $y[Main::NORTHERN_INNER] = ($average[Main::INNER_GROUP_1] * $weight[Main::INNER_GROUP_1]
-                + $average[Main::INNER_GROUP_2] * $weight[Main::INNER_GROUP_2]);
-            $y[Main::NORTHERN_OUTER] = ($average[Main::OUTER_GROUP_1] * $weight[Main::OUTER_GROUP_1]
-                + $average[Main::OUTER_GROUP_2] * $weight[Main::OUTER_GROUP_2]);
+            $y[Main::NORTHERN_INNER] = ($sumUsageHourPerYear[Main::INNER_GROUP_1] + $sumUsageHourPerYear[Main::INNER_GROUP_2]);
+            $y[Main::NORTHERN_OUTER] = ($sumUsageHourPerYear[Main::OUTER_GROUP_1] + $sumUsageHourPerYear[Main::OUTER_GROUP_2]);
 
             $answers[$key] = $y[Main::NORTHERN_INNER] * $population[Main::NORTHERN_INNER];
             $answers[$key] = $answers[$key] / 1000000.0;
@@ -693,7 +691,7 @@ class Summary extends Model
      * @param $settings
      * @return array
      */
-    protected static function getSettingVariables()
+    public static function getSettingVariables()
     {
         $settings = Setting::all();
 
