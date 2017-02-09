@@ -114,8 +114,16 @@ class Summary91 extends Controller
             'no_ch1023_o329_ch101_o70_nu106',
             'no_ch1023_o329_ch101_o71_nu106',
         ];
+        $table4Amount = [
+            'no_ch1023_o329_ch101_o68_nu103',
+            'no_ch1023_o329_ch101_o69_ch102_o72_nu107',
+            'no_ch1023_o329_ch101_o69_ch102_o73_nu107',
+            'no_ch1023_o329_ch101_o69_ch102_o74_nu107',
+            'no_ch1023_o329_ch101_o70_nu103',
+            'no_ch1023_o329_ch101_o71_nu103'
+        ];
         $startColumn = 'BB';
-        $objPHPExcel = Summary::average($table4, $startColumn, $startRow, $objPHPExcel, $mainObj);
+        $objPHPExcel = Summary::averageLifetime($table4, $table4Amount, $startColumn, $startRow, $objPHPExcel, $mainObj);
 
         $objWriter = new \PHPExcel_Writer_Excel2007($objPHPExcel);
         $objWriter->save(storage_path(iconv('UTF-8', 'windows-874', 'excel/'.$outputFile)));
