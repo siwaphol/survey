@@ -268,16 +268,16 @@ class Summary extends Model
             $key6 = preg_replace('/[A-Z]+/', $col, $key);
 
             $answers[$key] = $p[Main::INNER_GROUP_1] + $p[Main::INNER_GROUP_2];
-            $answers[$key2] = ($stddev[Main::NORTHERN_INNER])
-                / sqrt($count[Main::INNER_GROUP_1] + $count[Main::INNER_GROUP_2]);
+            $sqrtInnerCount = sqrt($count[Main::INNER_GROUP_1] + $count[Main::INNER_GROUP_2]);
+            $answers[$key2] = $sqrtInnerCount?(($stddev[Main::NORTHERN_INNER]) / $sqrtInnerCount):0;
 //            $answers[$key2] = (($stddev[Main::INNER_GROUP_1]*$weight[Main::INNER_GROUP_1] + $stddev[Main::INNER_GROUP_2]*$weight[Main::INNER_GROUP_2])/2.0)
 //                / sqrt($count[Main::INNER_GROUP_1] + $count[Main::INNER_GROUP_2]);
 //            $answers[$key2] = (($stddev[Main::INNER_GROUP_1] + $stddev[Main::INNER_GROUP_2])/2.0)
 //                / sqrt($count[Main::INNER_GROUP_1] + $count[Main::INNER_GROUP_2]);
 
             $answers[$key3] = $p[Main::OUTER_GROUP_1] + $p[Main::OUTER_GROUP_2];
-            $answers[$key4] = ($stddev[Main::NORTHERN_OUTER])
-                / sqrt($count[Main::OUTER_GROUP_1] + $count[Main::OUTER_GROUP_2]);
+            $sqrtOuterCount = sqrt($count[Main::OUTER_GROUP_1] + $count[Main::OUTER_GROUP_2]);
+            $answers[$key4] = $sqrtOuterCount?($stddev[Main::NORTHERN_OUTER] / $sqrtOuterCount):0;
 //            $answers[$key4] = (($stddev[Main::OUTER_GROUP_1]*$weight[Main::OUTER_GROUP_1] + $stddev[Main::OUTER_GROUP_2]*$weight[Main::OUTER_GROUP_2])/2.0)
 //                / sqrt($count[Main::OUTER_GROUP_1] + $count[Main::OUTER_GROUP_2]);
 //            $answers[$key4] = (($stddev[Main::OUTER_GROUP_1] + $stddev[Main::OUTER_GROUP_2])/2.0)
