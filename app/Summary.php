@@ -519,7 +519,9 @@ class Summary extends Model
 
                 $avgResult = \DB::select($avgSql);
 
-                if (!is_null($multiply))
+                if ((int)$avgResult[0]->amount_sum===0)
+                    $avg[$b_key] = 0;
+                else if (!is_null($multiply))
                     $avg[$b_key] = ($avgResult[0]->a_sum*(float)$multiply)/$avgResult[0]->amount_sum;
                 else if ($year)
                     $avg[$b_key] = ($avgResult[0]->a_sum*12.0)/$avgResult[0]->amount_sum;
@@ -565,12 +567,12 @@ class Summary extends Model
             $key6 = preg_replace('/[A-Z]+/', $col, $key);
 
             $answers[$key] = $p[Main::INNER_GROUP_1] + $p[Main::INNER_GROUP_2];
-            $answers[$key2] = ($stddev[Main::NORTHERN_INNER])
-                / sqrt($amount[Main::INNER_GROUP_1] + $amount[Main::INNER_GROUP_2]);
+            $sqrtInnerCount = sqrt($amount[Main::INNER_GROUP_1] + $amount[Main::INNER_GROUP_2]);
+            $answers[$key2] = $sqrtInnerCount?($stddev[Main::NORTHERN_INNER]/ $sqrtInnerCount):0;
 
             $answers[$key3] = $p[Main::OUTER_GROUP_1] + $p[Main::OUTER_GROUP_2];
-            $answers[$key4] = ($stddev[Main::NORTHERN_OUTER])
-                / sqrt($amount[Main::OUTER_GROUP_1] + $amount[Main::OUTER_GROUP_2]);
+            $sqrtOuterCount = sqrt($amount[Main::OUTER_GROUP_1] + $amount[Main::OUTER_GROUP_2]);
+            $answers[$key4] = $sqrtOuterCount?($stddev[Main::NORTHERN_OUTER]/ $sqrtOuterCount):0;
 
             $objPHPExcel->getActiveSheet()->setCellValue($key, $answers[$key]);
             $objPHPExcel->getActiveSheet()->setCellValue($key2, $answers[$key2]);
