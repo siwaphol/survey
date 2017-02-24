@@ -54,14 +54,16 @@ class Summary912 extends Controller
 //            'no_ch1024_o335_ch156_o287',
 //            'no_ch1024_o335_ch156_o288',
         // กาต้อมน้ำไฟฟ้า
-            'no_ch1024_o336',
+//            'no_ch1024_o336',
+        // กระทะไฟฟ้า
 //            'no_ch1024_o337',
 //            'no_ch1024_o338',
 //            'no_ch1024_o339',
 //            'no_ch1024_o340',
-//            'no_ch1025_o341_ch202_o94',
-//            'no_ch1025_o341_ch202_o95',
-//            'no_ch1025_o341_ch202_o96',
+// ==== น้ำมันสำเร็จรูป
+            'no_ch1025_o341_ch202_o94',
+            'no_ch1025_o341_ch202_o95',
+            'no_ch1025_o341_ch202_o96',
 //            'no_ch1026_o342_ch210_o100',
 //            'no_ch1026_o342_ch210_o101',
 //            'no_ch1026_o342_ch210_o102',
@@ -106,14 +108,17 @@ class Summary912 extends Controller
 //            'no_ch1024_o335_ch156_o287_nu157',
 //            'no_ch1024_o335_ch156_o288_nu157',
         // กาต้มน้ำไฟฟ้า
-            'no_ch1024_o336_nu166',
+//            'no_ch1024_o336_nu166',
+//กระทะไฟฟ้า
 //            'no_ch1024_o337_nu174',
 //            'no_ch1024_o338_nu182',
 //            'no_ch1024_o339_nu189',
 //            'no_ch1024_o340_nu196',
-//            ['no_ch1025_o341_ch202_o94_ch204_o97_nu205','no_ch1025_o341_ch202_o94_ch204_o98_nu205','no_ch1025_o341_ch202_o94_ch204_o99_nu205'],
-//            ['no_ch1025_o341_ch202_o95_ch204_o97_nu205','no_ch1025_o341_ch202_o95_ch204_o98_nu205','no_ch1025_o341_ch202_o95_ch204_o99_nu205'],
-//            ['no_ch1025_o341_ch202_o96_ch1018_o97_nu1019'],
+// ==== น้ำมันสำเร็จรูป
+            'no_ch1025_o341_ch202_o94_ch204_o98_nu205',
+            'no_ch1025_o341_ch202_o95_ch204_o98_nu205',
+            'no_ch1025_o341_ch202_o96_ch1018_o97_nu1019',
+
 //            'no_ch1026_o342_ch210_o100_nu211',
 //            'no_ch1026_o342_ch210_o101_nu211',
 //            'no_ch1026_o342_ch210_o102_nu211',
@@ -172,11 +177,12 @@ class Summary912 extends Controller
 //            ['no_ch1024_o335_ch156_o287_nu157','no_ch1024_o335_ch156_o287_nu158', 'no_ch1024_o335_ch156_o287_nu159','no_ch1024_o335_ch156_o287_nu160',$factors[29], $electricPower[29], 'no_ch1024_o335_ch156_o287_ra162'],
 //            ['no_ch1024_o335_ch156_o288_nu157','no_ch1024_o335_ch156_o288_nu158', 'no_ch1024_o335_ch156_o288_nu159','no_ch1024_o335_ch156_o288_nu160',$factors[31], $electricPower[31], 'no_ch1024_o335_ch156_o288_ra162'],
             // กาต้มน้ำไฟฟ้า
-            ['no_ch1024_o336_nu166','no_ch1024_o336_nu167', 'no_ch1024_o336_nu168','no_ch1024_o336_nu169',$factors[33], $electricPower[33], 'no_ch1024_o336_ra171'],
-//            ['no_ch1024_o337_nu175', 'no_ch1024_o337_nu176','no_ch1024_o337_nu177',((float)$settings->where('code','electric_power_35')->first()->value),'no_ch1024_o337_nu174'],
-//            ['no_ch1024_o338_nu183', 'no_ch1024_o338_nu184','no_ch1024_o338_nu185',((float)$settings->where('code','electric_power_37')->first()->value),'no_ch1024_o338_nu182'],
-//            ['no_ch1024_o339_nu190', 'no_ch1024_o339_nu191','no_ch1024_o339_nu192',((float)$settings->where('code','electric_power_38')->first()->value),'no_ch1024_o339_nu189'],
-//            ['no_ch1024_o340_nu197', 'no_ch1024_o340_nu198','no_ch1024_o340_nu199',((float)$settings->where('code','electric_power_39')->first()->value),'no_ch1024_o340_nu196']
+//            ['no_ch1024_o336_nu166','no_ch1024_o336_nu167', 'no_ch1024_o336_nu168','no_ch1024_o336_nu169',$factors[33], $electricPower[33], 'no_ch1024_o336_ra171'],
+        // กระทะไฟฟ้า
+//            ['no_ch1024_o337_nu174','no_ch1024_o337_nu175', 'no_ch1024_o337_nu176','no_ch1024_o337_nu177',$factors[35], $electricPower[35], 'no_ch1024_o337_ra179'],
+//            ['no_ch1024_o338_nu182','no_ch1024_o338_nu183', 'no_ch1024_o338_nu184','no_ch1024_o338_nu185',$factors[37], $electricPower[37], ''],
+//            ['no_ch1024_o339_nu189','no_ch1024_o339_nu190', 'no_ch1024_o339_nu191','no_ch1024_o339_nu192',$factors[38], $electricPower[38], ''],
+//            ['no_ch1024_o340_nu196','no_ch1024_o340_nu197', 'no_ch1024_o340_nu198','no_ch1024_o340_nu199',$factors[39], $electricPower[39], '']
         ];
 
         $week = Parameter::WEEK_PER_YEAR;
@@ -204,32 +210,26 @@ class Summary912 extends Controller
             'param7'=>6  //ฉลากประหยัดไฟ
         ];
         $startColumn = 'AL';
-        $objPHPExcel = Summary::usageElectric($usage, $startColumn, $startRow, $objPHPExcel,$mainObj,$sumAmountSQL,$params,$ktoe);
+//        $objPHPExcel = Summary::usageElectric($usage, $startColumn, $startRow, $objPHPExcel,$mainObj,$sumAmountSQL,$params,$ktoe);
+
         // 13.เตาหุงต้มแก๊ส
-//        $usage2 = [
-//            [
-//                4,'no_ch1025_o341_ch202_o94_ch204_o97_nu205','no_ch1025_o341_ch202_o94_ch204_o97_nu206'
-//                ,15,'no_ch1025_o341_ch202_o94_ch204_o98_nu205','no_ch1025_o341_ch202_o94_ch204_o98_nu206'
-//                ,48,'no_ch1025_o341_ch202_o94_ch204_o99_nu205','no_ch1025_o341_ch202_o94_ch204_o99_nu206'
-//            ],
-//            [
-//                4,'no_ch1025_o341_ch202_o95_ch204_o97_nu205','no_ch1025_o341_ch202_o95_ch204_o97_nu206',
-//                15,'no_ch1025_o341_ch202_o95_ch204_o98_nu205','no_ch1025_o341_ch202_o95_ch204_o98_nu206',
-//                48,'no_ch1025_o341_ch202_o95_ch204_o99_nu205','no_ch1025_o341_ch202_o95_ch204_o99_nu206'
-//            ],
-//            [4,'no_ch1025_o341_ch202_o96_ch1018_o97_nu1019','no_ch1025_o341_ch202_o96_ch1018_o97_nu1020']
-//        ];
-//        $params = [
-//            'param1'=>0,
-//            'param2'=>1,
-//            'param3'=>2
-//        ];
-//
+        $usage2 = [
+            ['no_ch1025_o341_ch202_o94_ch204_o98_nu206',''],
+            ['no_ch1025_o341_ch202_o95_ch204_o98_nu206',''],
+            ['no_ch1025_o341_ch202_o96_ch1018_o97_nu1020','']
+        ];
+
+        $params = [
+            'param1'=>0
+        ];
+
 //        // คูณกับ 0.00042 เพื่อแปลงหน่วยก๊าซเป็นหน่วย m^3
-//        $ktoe = $settings->where('code','E1')->first()->value * 0.00042;
-//
-//        $startRow = 32;
-//        $sumAmountSQL = " ( param1 * sum(IF(unique_key='param2',answer_numeric,0)) * sum(if(unique_key='param3', answer_numeric,0)) ) ";
+        $ktoe = $settings->where('code','E2')->first()->value;
+
+        $startRow = 32;
+        $sumAmountSQL = " sum(IF(unique_key='param1',answer_numeric,0)) 
+        * 
+        as sumAmount ";
 //        $table97 = [];
 //        foreach ($usage2 as $eachGasTank){
 //            $temp = $sumAmountSQL;
@@ -297,14 +297,17 @@ class Summary912 extends Controller
 //            'no_ch1024_o335_ch156_o287_nu161',
 //            'no_ch1024_o335_ch156_o288_nu161',
         // กาต้มน้ำ
-            'no_ch1024_o336_nu170',
+//            'no_ch1024_o336_nu170',
+// กระทะไฟฟ้า
 //            'no_ch1024_o337_nu178',
 //            'no_ch1024_o338_nu186',
 //            'no_ch1024_o339_nu193',
 //            'no_ch1024_o340_nu200',
-//            ['no_ch1025_o341_ch202_o94_ch204_o97_nu207', 'no_ch1025_o341_ch202_o94_ch204_o98_nu207', 'no_ch1025_o341_ch202_o94_ch204_o99_nu207'],
-//            ['no_ch1025_o341_ch202_o95_ch204_o97_nu207', 'no_ch1025_o341_ch202_o95_ch204_o98_nu207', 'no_ch1025_o341_ch202_o95_ch204_o99_nu207'],
-//            'no_ch1025_o341_ch202_o96_ch1018_o97_nu1021',
+// =========== น้ำมันสำเร็จรูป ===========
+            'no_ch1025_o341_ch202_o94_ch204_o98_nu207',
+            'no_ch1025_o341_ch202_o95_ch204_o98_nu207',
+            'no_ch1025_o341_ch202_o96_ch1018_o97_nu1021',
+
 //            'no_ch1026_o342_ch210_o100_nu214',
 //            'no_ch1026_o342_ch210_o101_nu214',
 //            'no_ch1026_o342_ch210_o102_nu214',
@@ -346,7 +349,16 @@ class Summary912 extends Controller
 //            'no_ch1024_o335_ch156_o287_nu157',
 //            'no_ch1024_o335_ch156_o288_nu157',
             // กาต้มน้ำ
-            'no_ch1024_o336_nu166',
+//            'no_ch1024_o336_nu166',
+        // กระทะไฟฟ้า
+//            'no_ch1024_o337_nu174',
+//            'no_ch1024_o338_nu182',
+//            'no_ch1024_o339_nu189',
+//            'no_ch1024_o340_nu196',
+        //====== น้ำมันสำเร็จรูป =======
+            'no_ch1025_o341_ch202_o94_ch204_o98_nu205',
+            'no_ch1025_o341_ch202_o95_ch204_o98_nu205',
+            'no_ch1025_o341_ch202_o96_ch1018_o97_nu1019',
         ];
         $startColumn = 'BB';
         $startRow = 13;
