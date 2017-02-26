@@ -61,9 +61,10 @@ class Summary912 extends Controller
 //            'no_ch1024_o339',
 //            'no_ch1024_o340',
 // ==== น้ำมันสำเร็จรูป
-            'no_ch1025_o341_ch202_o94',
-            'no_ch1025_o341_ch202_o95',
-            'no_ch1025_o341_ch202_o96',
+//            'no_ch1025_o341_ch202_o94',
+//            'no_ch1025_o341_ch202_o95',
+//            'no_ch1025_o341_ch202_o96',
+        //======== พลังงานหมุนเวียนดั้งเดิม
 //            'no_ch1026_o342_ch210_o100',
 //            'no_ch1026_o342_ch210_o101',
 //            'no_ch1026_o342_ch210_o102',
@@ -115,10 +116,10 @@ class Summary912 extends Controller
 //            'no_ch1024_o339_nu189',
 //            'no_ch1024_o340_nu196',
 // ==== น้ำมันสำเร็จรูป
-            'no_ch1025_o341_ch202_o94_ch204_o98_nu205',
-            'no_ch1025_o341_ch202_o95_ch204_o98_nu205',
-            'no_ch1025_o341_ch202_o96_ch1018_o97_nu1019',
-
+//            'no_ch1025_o341_ch202_o94_ch204_o98_nu205',
+//            'no_ch1025_o341_ch202_o95_ch204_o98_nu205',
+//            'no_ch1025_o341_ch202_o96_ch1018_o97_nu1019',
+//======== พลังงานหมุนเวียนดั้งเดิม
 //            'no_ch1026_o342_ch210_o100_nu211',
 //            'no_ch1026_o342_ch210_o101_nu211',
 //            'no_ch1026_o342_ch210_o102_nu211',
@@ -143,7 +144,7 @@ class Summary912 extends Controller
         $startColumn = 'U';
         $objPHPExcel = Summary::average($amountUniqueKey, $startColumn, $startRow, $objPHPExcel, $mainObj);
 
-        $settings = Setting::whereIn('group_id',[1,9,10,11])
+        $settings = Setting::whereIn('group_id',[1,9,10,11,12,13])
             ->get();
         $factors = array();
         $electricPower = array();
@@ -213,23 +214,39 @@ class Summary912 extends Controller
 //        $objPHPExcel = Summary::usageElectric($usage, $startColumn, $startRow, $objPHPExcel,$mainObj,$sumAmountSQL,$params,$ktoe);
 
         // 13.เตาหุงต้มแก๊ส
+        $fuelFactors = array();
+        $fuelPrice = array();
+        $volumes = array();
+
+        for ($i = 1; $i<=22; $i++){
+            $fuelFactors[$i] = (float)$settings->where('code','tool_factor_fuel_'. $i)->first()->value
+                * (float)$settings->where('code','season_factor_fuel_'. $i)->first()->value
+                * (float)$settings->where('code','usage_factor_fuel_'. $i)->first()->value;
+            if ($i<5){
+                $volumes[$i] = (float)$settings->where('code', 'volume_fuel_'. $i)->first()->value;
+            }
+            if ($i>=5){
+                $fuelPrice[$i] = (float)$settings->where('code', 'fuel_price_fuel_' . $i)->first()->value;
+            }
+        }
         $usage2 = [
-            ['no_ch1025_o341_ch202_o94_ch204_o98_nu206',''],
-            ['no_ch1025_o341_ch202_o95_ch204_o98_nu206',''],
-            ['no_ch1025_o341_ch202_o96_ch1018_o97_nu1020','']
+            ['no_ch1025_o341_ch202_o94_ch204_o98_nu206',$volumes[1], $fuelFactors[1]],
+            ['no_ch1025_o341_ch202_o95_ch204_o98_nu206',$volumes[2], $fuelFactors[2]],
+            ['no_ch1025_o341_ch202_o96_ch1018_o97_nu1020',$volumes[3], $fuelFactors[3]]
         ];
 
         $params = [
-            'param1'=>0
+            'param1'=>0,
+            'param2'=>1,
+            'param3'=>2
         ];
-
-//        // คูณกับ 0.00042 เพื่อแปลงหน่วยก๊าซเป็นหน่วย m^3
-        $ktoe = $settings->where('code','E2')->first()->value;
-
+        $ktoe = Setting::where('code','E2')->first()->value;
         $startRow = 32;
         $sumAmountSQL = " sum(IF(unique_key='param1',answer_numeric,0)) 
-        * 
+        * param2 * param3
         as sumAmount ";
+//        $objPHPExcel = Summary::usageElectric($usage2, $startColumn, $startRow, $objPHPExcel,$mainObj,$sumAmountSQL,$params,$ktoe);
+
 //        $table97 = [];
 //        foreach ($usage2 as $eachGasTank){
 //            $temp = $sumAmountSQL;
@@ -303,11 +320,7 @@ class Summary912 extends Controller
 //            'no_ch1024_o338_nu186',
 //            'no_ch1024_o339_nu193',
 //            'no_ch1024_o340_nu200',
-// =========== น้ำมันสำเร็จรูป ===========
-            'no_ch1025_o341_ch202_o94_ch204_o98_nu207',
-            'no_ch1025_o341_ch202_o95_ch204_o98_nu207',
-            'no_ch1025_o341_ch202_o96_ch1018_o97_nu1021',
-
+//======== พลังงานหมุนเวียนดั้งเดิม
 //            'no_ch1026_o342_ch210_o100_nu214',
 //            'no_ch1026_o342_ch210_o101_nu214',
 //            'no_ch1026_o342_ch210_o102_nu214',
@@ -355,14 +368,29 @@ class Summary912 extends Controller
 //            'no_ch1024_o338_nu182',
 //            'no_ch1024_o339_nu189',
 //            'no_ch1024_o340_nu196',
-        //====== น้ำมันสำเร็จรูป =======
-            'no_ch1025_o341_ch202_o94_ch204_o98_nu205',
-            'no_ch1025_o341_ch202_o95_ch204_o98_nu205',
-            'no_ch1025_o341_ch202_o96_ch1018_o97_nu1019',
+            //======== พลังงานหมุนเวียนดั้งเดิม
         ];
+
+        $table4_2 = [
+// =========== น้ำมันสำเร็จรูป ===========
+//            'no_ch1025_o341_ch202_o94_ch204_o98_nu207',
+//            'no_ch1025_o341_ch202_o95_ch204_o98_nu207',
+//            'no_ch1025_o341_ch202_o96_ch1018_o97_nu1021',
+        ];
+        $table4Amount_2 = [
+            //====== น้ำมันสำเร็จรูป =======
+//            'no_ch1025_o341_ch202_o94_ch204_o98_nu205',
+//            'no_ch1025_o341_ch202_o95_ch204_o98_nu205',
+//            'no_ch1025_o341_ch202_o96_ch1018_o97_nu1019',
+        ];
+
         $startColumn = 'BB';
         $startRow = 13;
-        $objPHPExcel = Summary::averageLifetime($table4, $table4Amount, $startColumn, $startRow, $objPHPExcel, $mainObj);
+        // สำหรับเครื่องใช้ไฟฟ้า
+//        $objPHPExcel = Summary::averageLifetime($table4, $table4Amount, $startColumn, $startRow, $objPHPExcel, $mainObj);
+        // สำหรับเตาแก๊ส
+//        $objPHPExcel = Summary::averageLifetime($table4_2, $table4Amount_2, $startColumn, $startRow, $objPHPExcel, $mainObj
+//            ,false,[],false,null,1);
 
         $objWriter = new \PHPExcel_Writer_Excel2007($objPHPExcel);
         $objWriter->save(storage_path(iconv('UTF-8', 'windows-874', 'excel/'.$outputFile)));

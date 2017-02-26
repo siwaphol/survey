@@ -418,7 +418,7 @@ class Summary extends Model
         return $objPHPExcel;
     }
 
-    public static function averageLifetime($uniqueKeyArr,$uniqueKeyArrAmount, $startCol, $startRow, $objPHPExcel, $mainObj, $isRadio = false, $radioArr = [], $year=false, $multiply=null)
+    public static function averageLifetime($uniqueKeyArr,$uniqueKeyArrAmount, $startCol, $startRow, $objPHPExcel, $mainObj, $isRadio = false, $radioArr = [], $year=false, $multiply=null, $amountColumn='answer_numeric')
     {
         list($weight, $sample, $population) = self::getSettingVariables();
 
@@ -500,7 +500,7 @@ class Summary extends Model
                     }else{
                         $whereUniqueKey = " AND (unique_key='$value' OR unique_key='$uniqueKeyArrAmount[$level1Counter]') ";
                         $sumSQL = " SUM(IF(unique_key='$value', answer_numeric,0)) ";
-                        $sumAmountSQL = " SUM(IF(unique_key='$uniqueKeyArrAmount[$level1Counter]', answer_numeric,0)) ";
+                        $sumAmountSQL = " SUM(IF(unique_key='$uniqueKeyArrAmount[$level1Counter]', {$amountColumn},0)) ";
 
 //                        $whereUniqueKey = " AND unique_key='$value'";
 //                        $sumSQL = " SUM(IF(unique_key='$value', answer_numeric,0)) ";

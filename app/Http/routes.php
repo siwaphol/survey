@@ -81,7 +81,7 @@ Route::group(['prefix'=>'api'], function (){
 });
 
 //Route::get('import-excel','QuestionController@importExcelQuestion');
-//Route::get('import-parameter', 'SettingController@importExcelSettingParameter');
+Route::get('import-parameter', 'SettingController@importExcelSettingParameter');
 Route::auth();
 Route::get('test-sum',function(){
    \App\Http\Controllers\Summary9\Summary91::report917();

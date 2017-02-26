@@ -45,14 +45,25 @@ class UploadRawController extends Controller
     {
         $path = storage_path('excel/test_upload.xlsx');
 
-        $objReader = \PHPExcel_IOFactory::createReader("Excel2007");
-        $objReader->setReadDataOnly(true);
-        $worksheetData = $objReader->listWorksheetInfo($path);
-        $totalRows = $worksheetData[0]['totalRows'];
-        $totalColumns = $worksheetData[0]['totalColumns'];
-        $chunkSize = 10000;
-        $chunkFilter = new ChunkReadFilter();
-        $objReader->setReadFilter($chunkFilter);
+        try{
+            $objReader = \PHPExcel_IOFactory::createReader("Excel2007");
+            $objReader->setReadDataOnly(true);
+            $worksheetData = $objReader->listWorksheetInfo($path);
+            $totalRows = $worksheetData[0]['totalRows'];
+            $totalColumns = $worksheetData[0]['totalColumns'];
+            $chunkSize = 10000;
+            $chunkFilter = new ChunkReadFilter();
+            $objReader->setReadFilter($chunkFilter);
+        }catch (\Exception $e){
+            \Log::error($e->getMessage());
+            return abort(505);
+        }
+
+        // ถ้าเกิน 10000 เจอปัญหาละ
+        if ($totalRows>10000){
+            \Log::error('ข้อมูลขนาดเกิน');
+            return abort(505);
+        }
 
         $errors = array();
 
