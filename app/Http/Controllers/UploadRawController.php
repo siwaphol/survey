@@ -65,6 +65,7 @@ class UploadRawController extends Controller
             return abort(505);
         }
 
+//        dd($totalRows);
         $errors = array();
 
         for ($startRow = 3; $startRow <= $totalRows; $startRow += $chunkSize) {
@@ -118,11 +119,15 @@ class UploadRawController extends Controller
                         if (empty($newValue)){
                             if ($this->checkAnswerType($uniqueKey)===Question::TYPE_CHECKBOX) {
                                 //TODO-nong this is slow เพราะถ้ามี checkbox หลายๆอันมันจะ query เท่ากับจำนวนชุดสอบถามเลย
-                                $oldAnswer = Answer::where('main_id', $mainId)
-                                    ->where('unique_key', $uniqueKey)
-                                    ->first();
-                                if ($oldAnswer)
-                                    $oldAnswer->delete();
+//                                $oldAnswer = Answer::where('main_id', $mainId)
+//                                    ->where('unique_key', $uniqueKey)
+//                                    ->first();
+//                                if ($oldAnswer)
+//                                    $oldAnswer->delete();
+                                // เฉพาะกิจ ลบลูกๆด้วย
+                                Answer::where('main_id', $mainId)
+                                    ->where('unique_key', 'LIKE' , $uniqueKey.'%')
+                                    ->delete();
                             }
                             continue;
                         }

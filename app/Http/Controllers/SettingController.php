@@ -121,8 +121,9 @@ class SettingController extends Controller
     public function importExcelSettingParameter()
     {
 //        $filename = "setting_parameters.xlsx";
-        $filename = "parameter_fuel.xlsx";
-        $category = 'fuel_';
+//        $filename = "parameter_fuel.xlsx";
+        $filename = "parameter_renewable.xlsx";
+        $category = 'renewable_';
 
         $path = storage_path("excel\\" . $filename);
 
@@ -228,27 +229,28 @@ class SettingController extends Controller
                     $newSetting->value = (float)$sheetData[$i]["H"];
                     $newSetting->group_id = 11;
                     $newSetting->save();
-                    // ปริมาตร
-                    if (trim($sheetData[$i]["I"])!==""){
-                        $newSetting = new Setting();
-                        $newSetting->name_en = ' ';
-                        $newSetting->name_th = $aText.'/'.$bText.'/'.$cText.'/'.$dText;
-                        $newSetting->code = 'volume_' . $category .$parameterId;
-                        $newSetting->value = (float)$sheetData[$i]["I"];
-                        $newSetting->group_id = 12;
-                        $newSetting->save();
-                    }
 
-                    // รคาน้ำมัน
-                    if (trim($sheetData[$i]["J"])!==""){
-                        $newSetting = new Setting();
-                        $newSetting->name_en = ' ';
-                        $newSetting->name_th = $aText.'/'.$bText.'/'.$cText.'/'.$dText;
-                        $newSetting->code = 'fuel_price_' . $category .$parameterId;
-                        $newSetting->value = (float)$sheetData[$i]["J"];
-                        $newSetting->group_id = 13;
-                        $newSetting->save();
-                    }
+//                    // ปริมาตร
+//                    if (trim($sheetData[$i]["I"])!==""){
+//                        $newSetting = new Setting();
+//                        $newSetting->name_en = ' ';
+//                        $newSetting->name_th = $aText.'/'.$bText.'/'.$cText.'/'.$dText;
+//                        $newSetting->code = 'volume_' . $category .$parameterId;
+//                        $newSetting->value = (float)$sheetData[$i]["I"];
+//                        $newSetting->group_id = 12;
+//                        $newSetting->save();
+//                    }
+//
+//                    // รคาน้ำมัน
+//                    if (trim($sheetData[$i]["J"])!==""){
+//                        $newSetting = new Setting();
+//                        $newSetting->name_en = ' ';
+//                        $newSetting->name_th = $aText.'/'.$bText.'/'.$cText.'/'.$dText;
+//                        $newSetting->code = 'fuel_price_' . $category .$parameterId;
+//                        $newSetting->value = (float)$sheetData[$i]["J"];
+//                        $newSetting->group_id = 13;
+//                        $newSetting->save();
+//                    }
 
                     $parameterId++;
                 }
