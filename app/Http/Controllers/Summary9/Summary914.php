@@ -95,7 +95,7 @@ class Summary914 extends Controller
             'no_ch1028_o367',
             'no_ch1028_o368',
             'no_ch1028_o369',
-            'no_ch1028_o370'
+//            'no_ch1028_o370'
         ];
         $startColumn = 'E';
         $objPHPExcel = Summary::sum($table1, $startColumn, $startRow, $objPHPExcel, $mainObj);
@@ -164,7 +164,7 @@ class Summary914 extends Controller
             'no_ch1028_o367_nu441',
             'no_ch1028_o368_nu447',
             'no_ch1028_o369_nu453',
-            ['no_ch1029_o370_ch461_o208_nu462', 'no_ch1029_o370_ch461_o209_nu462', 'no_ch1029_o370_ch461_o210_nu462']
+//            ['no_ch1029_o370_ch461_o208_nu462', 'no_ch1029_o370_ch461_o209_nu462', 'no_ch1029_o370_ch461_o210_nu462']
         ];
         $startColumn = 'U';
         $objPHPExcel = Summary::average($table2, $startColumn, $startRow, $objPHPExcel, $mainObj);
@@ -390,9 +390,10 @@ class Summary914 extends Controller
             'no_ch1028_o367_nu444',
             'no_ch1028_o368_nu450',
             'no_ch1028_o369_nu456',
-            ['no_ch1029_o370_ch461_o208_nu464', 'no_ch1029_o370_ch461_o209_nu464', 'no_ch1029_o370_ch461_o210_nu464']
+//            ['no_ch1029_o370_ch461_o208_nu464', 'no_ch1029_o370_ch461_o209_nu464', 'no_ch1029_o370_ch461_o210_nu464']
         ];
         $startColumn = 'BB';
+        $startRow = 71;
         $objPHPExcel = Summary::averageLifetime($table4,$table2,$startColumn ,$startRow, $objPHPExcel, $mainObj);
 
         $objWriter = new \PHPExcel_Writer_Excel2007($objPHPExcel);

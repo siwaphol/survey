@@ -135,8 +135,7 @@ class SummaryController extends Controller
         return $first->main_id==$second->main_id &&
         $first->question_id==$second->question_id &&
         $first->answer_numeric==$second->answer_numeric &&
-        $first->answer_text==$second->answer_text &&
-        $first->updated_at==$second->updated_at;
+        $first->answer_text==$second->answer_text;
     }
 
     public function index()

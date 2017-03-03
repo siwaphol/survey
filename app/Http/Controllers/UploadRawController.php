@@ -65,7 +65,6 @@ class UploadRawController extends Controller
             return abort(505);
         }
 
-//        dd($totalRows);
         $errors = array();
 
         for ($startRow = 3; $startRow <= $totalRows; $startRow += $chunkSize) {
@@ -135,6 +134,17 @@ class UploadRawController extends Controller
                         $oldAnswer = Answer::where('main_id', $mainId)
                             ->where('unique_key', $uniqueKey)
                             ->first();
+
+                        // ลบอันซ้ำออก
+//                        $dupliCate = Answer::where('main_id', $mainId)
+//                            ->where('unique_key', $uniqueKey)
+//                            ->get();
+//                        if ($dupliCate->count()>1){
+//                            for ($i=1;$i<$dupliCate->count();$i++){
+//                                $deleting = Answer::find($dupliCate[$i]->id);
+//                                $deleting->delete();
+//                            }
+//                        }
 
                         if (is_null($oldAnswer)){
                             $oldAnswer = new Answer();
