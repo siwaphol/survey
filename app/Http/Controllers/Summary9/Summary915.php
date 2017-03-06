@@ -61,14 +61,15 @@ class Summary915 extends Controller
         }
 
         $table3 = [
-            ['no_ch1030_o371_ch466_o100_nu467','no_ch1030_o371_ch466_o100_nu468','no_ch1030_o371_ch466_o100_nu469',0.37848],
-            ['no_ch1030_o371_ch466_o101_nu467','no_ch1030_o371_ch466_o101_nu468','no_ch1030_o371_ch466_o101_nu469',0.68364],
-            ['no_ch1030_o371_ch466_o102_nu467','no_ch1030_o371_ch466_o102_nu468','no_ch1030_o371_ch466_o102_nu469',0.34083],
-            ['no_ch1030_o371_ch466_o103_nu467','no_ch1030_o371_ch466_o103_nu468','no_ch1030_o371_ch466_o103_nu469',0.30021],
-            ['no_ch1030_o372_ch472_o100_nu473','no_ch1030_o372_ch472_o100_nu474','no_ch1030_o372_ch472_o100_nu475',0.37848],
-            ['no_ch1030_o372_ch472_o101_nu473','no_ch1030_o372_ch472_o101_nu474','no_ch1030_o372_ch472_o101_nu475',0.68364],
-            ['no_ch1030_o372_ch472_o102_nu473','no_ch1030_o372_ch472_o102_nu474','no_ch1030_o372_ch472_o102_nu475',0.34083],
-            ['no_ch1030_o372_ch472_o103_nu473','no_ch1030_o372_ch472_o103_nu474','no_ch1030_o372_ch472_o103_nu475',0.30021],
+            ['no_ch1030_o371_ch466_o100_nu467','no_ch1030_o371_ch466_o100_nu468','no_ch1030_o371_ch466_o100_nu469',$settings->where('code','E10')->first()->value, $renewableFactors[21]],
+            ['no_ch1030_o371_ch466_o101_nu467','no_ch1030_o371_ch466_o101_nu468','no_ch1030_o371_ch466_o101_nu469',$settings->where('code','E11')->first()->value, $renewableFactors[22]],
+            ['no_ch1030_o371_ch466_o102_nu467','no_ch1030_o371_ch466_o102_nu468','no_ch1030_o371_ch466_o102_nu469',$settings->where('code','E12')->first()->value, $renewableFactors[23]],
+            ['no_ch1030_o371_ch466_o103_nu467','no_ch1030_o371_ch466_o103_nu468','no_ch1030_o371_ch466_o103_nu469',$settings->where('code','E13')->first()->value, $renewableFactors[24]],
+
+            ['no_ch1030_o372_ch472_o100_nu473','no_ch1030_o372_ch472_o100_nu474','no_ch1030_o372_ch472_o100_nu475',$settings->where('code','E10')->first()->value, $renewableFactors[25]],
+            ['no_ch1030_o372_ch472_o101_nu473','no_ch1030_o372_ch472_o101_nu474','no_ch1030_o372_ch472_o101_nu475',$settings->where('code','E11')->first()->value, $renewableFactors[26]],
+            ['no_ch1030_o372_ch472_o102_nu473','no_ch1030_o372_ch472_o102_nu474','no_ch1030_o372_ch472_o102_nu475',$settings->where('code','E12')->first()->value, $renewableFactors[27]],
+            ['no_ch1030_o372_ch472_o103_nu473','no_ch1030_o372_ch472_o103_nu474','no_ch1030_o372_ch472_o103_nu475',$settings->where('code','E13')->first()->value, $renewableFactors[28]],
         ];
 
         $table4 = [
@@ -88,14 +89,14 @@ class Summary915 extends Controller
 
         $objPHPExcel = Summary::sum($table1, $startColumn[0], $startRow, $objPHPExcel, $mainObj);
         $objPHPExcel = Summary::average($table2, $startColumn[1], $startRow, $objPHPExcel, $mainObj);
-        $sumAmountSQL = " sum(IF(unique_key='param1',answer_numeric,0)) * sum(IF(unique_key='param2',answer_numeric,0)) * sum(IF(unique_key='param3',answer_numeric,0)) * 12 as sumAmount ";
-        $params = [
-            'param1'=>0,
-            'param2'=>1,
-            'param3'=>2
-        ];
-        $objPHPExcel = Summary::usageElectric($table3, $startColumn[2], $startRow,$objPHPExcel, $mainObj,$sumAmountSQL,$params,0,false,3);
-        $objPHPExcel = Summary::average($table4, $startColumn[3], $startRow, $objPHPExcel, $mainObj);
+        $ktoeIdx = 3;
+        $sumAmountSQL = " sum(IF(unique_key='param1',answer_numeric,0)) * sum(IF(unique_key='param2',answer_numeric,0)) * sum(IF(unique_key='param3',answer_numeric,0)) * 12.0 * param4 as sumAmount ";
+        $params = ['param1'=>0, 'param2'=>1, 'param3'=>2, 'param4'=>4];
+        $objPHPExcel = Summary::usageElectric($table3, $startColumn[2], $startRow, $objPHPExcel, $mainObj, $sumAmountSQL, $params,0,true, $ktoeIdx);
+
+
+        $objPHPExcel = Summary::averageLifetime($table4,$table2, $startColumn[3], $startRow, $objPHPExcel, $mainObj);
+
         $objWriter = new \PHPExcel_Writer_Excel2007($objPHPExcel);
         $objWriter->save(storage_path(iconv('UTF-8', 'windows-874', 'excel/'.$outputFile)));
     }

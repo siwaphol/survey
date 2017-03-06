@@ -247,23 +247,6 @@ class Summary912 extends Controller
         as sumAmount ";
 //        $objPHPExcel = Summary::usageElectric($usage2, $startColumn, $startRow, $objPHPExcel,$mainObj,$sumAmountSQL,$params,$ktoe);
 
-//        $table97 = [];
-//        foreach ($usage2 as $eachGasTank){
-//            $temp = $sumAmountSQL;
-//            $finalSql = "";
-//            for ($i=0; $i<count($eachGasTank); $i+=3){
-//                $temp = str_replace("param1", $eachGasTank[$i], $temp);
-//                $temp = str_replace("param2", $eachGasTank[$i+1], $temp);
-//                $temp = str_replace("param3", $eachGasTank[$i+2], $temp);
-//
-//                $finalSql .= $temp ." + ";
-//            }
-//            $finalSql .= " 0 ";
-//            $table97[] = $finalSql;
-//        }
-//        $objPHPExcel = Summary::specialUsage($table97,$startColumn,$startRow,$objPHPExcel,$mainObj,$ktoe);
-////        $objPHPExcel = Summary::usageElectric($usage2, $startColumn, $startRow, $objPHPExcel,$mainObj, $sumAmountSQL, $params,$ktoe,true);
-
         // ดั้งเดิม
         $renewableFactors = array();
         for ($i = 1; $i<=32; $i++){
