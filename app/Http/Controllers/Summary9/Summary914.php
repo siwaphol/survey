@@ -95,7 +95,7 @@ class Summary914 extends Controller
             'no_ch1028_o367',
             'no_ch1028_o368',
             'no_ch1028_o369',
-//            'no_ch1028_o370'
+            'no_ch1028_o370'
         ];
         $startColumn = 'E';
         $objPHPExcel = Summary::sum($table1, $startColumn, $startRow, $objPHPExcel, $mainObj);
@@ -164,7 +164,7 @@ class Summary914 extends Controller
             'no_ch1028_o367_nu441',
             'no_ch1028_o368_nu447',
             'no_ch1028_o369_nu453',
-//            ['no_ch1029_o370_ch461_o208_nu462', 'no_ch1029_o370_ch461_o209_nu462', 'no_ch1029_o370_ch461_o210_nu462']
+            'no_ch1029_o370_ch461_o209_nu462',
         ];
         $startColumn = 'U';
         $objPHPExcel = Summary::average($table2, $startColumn, $startRow, $objPHPExcel, $mainObj);
@@ -309,22 +309,25 @@ class Summary914 extends Controller
         ];
         $objPHPExcel = Summary::usageElectric($tabl3MinuteEachTime, $startColumn, $startRow, $objPHPExcel,$mainObj,$sumAmountSQL,$params,$ktoe);
 
-//        $table3Petro = [
-//            ['no_ch1029_o370_ch461_o208_nu462','no_ch1029_o370_ch461_o208_nu463',4
-//                ,'no_ch1029_o370_ch461_o209_nu462','no_ch1029_o370_ch461_o209_nu463',15
-//                ,'no_ch1029_o370_ch461_o210_nu462','no_ch1029_o370_ch461_o210_nu463',48]
-//        ];
-//        $sumAmountSQL = " (sum(IF(unique_key='param1',answer_numeric,0)) * sum(IF(unique_key='param2',answer_numeric,0)) * param3) + " .
-//            " (sum(IF(unique_key='param4',answer_numeric,0)) * sum(IF(unique_key='param5',answer_numeric,0)) * param6) + " .
-//            " (sum(IF(unique_key='param7',answer_numeric,0)) * sum(IF(unique_key='param8',answer_numeric,0)) * param9) as sumAmount ";
-//        $params = [
-//            'param1'=>0,'param2'=>1, 'param3'=>2,
-//            'param4'=>3,'param5'=>4, 'param6'=>5,
-//            'param7'=>6, 'param8'=>7, 'param9'=>8
-//        ];
-//        $ktoe = Parameter::GAS_KTOE;
-//        $gasStartRow = 76;
-//        $objPHPExcel = Summary::usageElectric($table3Petro, $startColumn, $gasStartRow,$objPHPExcel, $mainObj,$sumAmountSQL,$params,$ktoe, true);
+        // เครื่องทำน้ำอุ่นแก๊ส
+        $volumes = (float)$settings->where('code', 'volume_fuel_4')->first()->value;
+        $fuelFactors = (float)$settings->where('code','tool_factor_fuel_4')->first()->value
+            * (float)$settings->where('code','season_factor_fuel_4')->first()->value
+            * (float)$settings->where('code','usage_factor_fuel_4')->first()->value;
+        $table3Petro = [
+            ['no_ch1029_o370_ch461_o209_nu463',$volumes,$fuelFactors]
+        ];
+        $params = [
+            'param1'=>0,
+            'param2'=>1,
+            'param3'=>2
+        ];
+        $ktoe = Setting::where('code','E2')->first()->value;
+        $startRow = 76;
+        $sumAmountSQL = " sum(IF(unique_key='param1',answer_numeric,0)) 
+        * param2 * param3
+        as sumAmount ";
+        $objPHPExcel = Summary::usageElectric($table3Petro, $startColumn, $startRow, $objPHPExcel,$mainObj,$sumAmountSQL,$params,$ktoe);
 
         $table4 = [
             'no_ch1028_o356_ch323_o149_ch324_o156_nu328',
@@ -390,7 +393,7 @@ class Summary914 extends Controller
             'no_ch1028_o367_nu444',
             'no_ch1028_o368_nu450',
             'no_ch1028_o369_nu456',
-//            ['no_ch1029_o370_ch461_o208_nu464', 'no_ch1029_o370_ch461_o209_nu464', 'no_ch1029_o370_ch461_o210_nu464']
+            'no_ch1029_o370_ch461_o209_nu464'
         ];
         $startColumn = 'BB';
         $startRow = 71;
