@@ -95,7 +95,7 @@ class Summary914 extends Controller
             'no_ch1028_o367',
             'no_ch1028_o368',
             'no_ch1028_o369',
-            'no_ch1028_o370'
+            'no_ch1029_o370'
         ];
         $startColumn = 'E';
         $objPHPExcel = Summary::sum($table1, $startColumn, $startRow, $objPHPExcel, $mainObj);
@@ -392,12 +392,17 @@ class Summary914 extends Controller
             'no_ch1028_o366_nu438',
             'no_ch1028_o367_nu444',
             'no_ch1028_o368_nu450',
-            'no_ch1028_o369_nu456',
-            'no_ch1029_o370_ch461_o209_nu464'
+            'no_ch1028_o369_nu456'
         ];
         $startColumn = 'BB';
-        $startRow = 71;
+        $startRow = 13;
         $objPHPExcel = Summary::averageLifetime($table4,$table2,$startColumn ,$startRow, $objPHPExcel, $mainObj);
+        // สำหรับเครื่องทำน้ำอุ่น
+        $startRow = 76;
+        $table4_2 = ['no_ch1029_o370_ch461_o209_nu464'];
+        $table4_2_amount = ['no_ch1029_o370'];
+        $objPHPExcel = Summary::averageLifetime($table4_2, $table4_2_amount, $startColumn, $startRow, $objPHPExcel, $mainObj
+            ,false,[],false,null,1);
 
         $objWriter = new \PHPExcel_Writer_Excel2007($objPHPExcel);
         $objWriter->save(storage_path(iconv('UTF-8', 'windows-874', 'excel/'.$outputFile)));

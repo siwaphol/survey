@@ -411,9 +411,9 @@ class Summary912 extends Controller
         ];
         $table4Amount_2 = [
             //====== น้ำมันสำเร็จรูป =======
-//            'no_ch1025_o341_ch202_o94_ch204_o98_nu205',
-//            'no_ch1025_o341_ch202_o95_ch204_o98_nu205',
-//            'no_ch1025_o341_ch202_o96_ch1018_o97_nu1019',
+//            'no_ch1025_o341_ch202_o94',
+//            'no_ch1025_o341_ch202_o95',
+//            'no_ch1025_o341_ch202_o96',
         ];
 
         $startColumn = 'BB';

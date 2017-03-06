@@ -3,6 +3,7 @@
 namespace App\Http\Controllers\Summary9;
 
 use App\Main;
+use App\Setting;
 use App\Summary;
 use Illuminate\Http\Request;
 
@@ -50,6 +51,15 @@ class Summary915 extends Controller
             'no_ch1030_o372_ch472_o103_nu473',
         ];
 
+        $renewableFactors = array();
+        $settings = Setting::whereIn('group_id',[1,5,9,10,11,12,13])
+            ->get();
+        for ($i = 1; $i<=32; $i++){
+            $renewableFactors[$i] = (float)$settings->where('code','tool_factor_renewable_'. $i)->first()->value
+                * (float)$settings->where('code','season_factor_renewable_'. $i)->first()->value
+                * (float)$settings->where('code','usage_factor_renewable_'. $i)->first()->value;
+        }
+
         $table3 = [
             ['no_ch1030_o371_ch466_o100_nu467','no_ch1030_o371_ch466_o100_nu468','no_ch1030_o371_ch466_o100_nu469',0.37848],
             ['no_ch1030_o371_ch466_o101_nu467','no_ch1030_o371_ch466_o101_nu468','no_ch1030_o371_ch466_o101_nu469',0.68364],
@@ -73,6 +83,7 @@ class Summary915 extends Controller
         ];
 
         $startColumn = ['E','U','AL','BB'];
+
         $startRow = 13;
 
         $objPHPExcel = Summary::sum($table1, $startColumn[0], $startRow, $objPHPExcel, $mainObj);
