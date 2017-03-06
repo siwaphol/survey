@@ -115,7 +115,7 @@
      ng-mouseenter="hovered()" ng-mouseleave="hovered()"
      toggling-method="click" menu-state="ctrl.menuState" main-action="ctrl.mainAction()">
     <button mfb-button icon="@{{button.icon}}" ng-click="loc(button.href)"
-            label="@{{button.label}}" ng-repeat="button in buttons"></button>
+            label="@{{button.label}}" ng-repeat="button in buttons" ng-disabled="isDisabled"></button>
 </nav>
 @endif
 
