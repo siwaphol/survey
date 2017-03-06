@@ -83,4 +83,37 @@ class MenuController extends Controller
 
         return $menus;
     }
+
+    public static function getReportDownloadLink($menu_id, $sub_menu_id=null){
+
+        $mainMenuArr = array(
+            2=>'get-report81',
+            3=>'get-report82',
+            4=>'get-report83',
+            34=>'get-report84',
+            35=>'get-report85',
+            5=>'get-report911',
+            7=>'get-report912',
+            11=>'get-report913',
+            13=>'get-report914',
+            16=>'get-report915',
+            18=>'get-report916',
+            21=>'get-report917',
+            23=>'get-report918',
+            25=>'get-report11-1',
+            26=>'get-report11-2',
+            27=>'get-report121',
+            28=>'get-report122',
+            29=>'get-report123',
+            30=>'get-report124',
+            31=>'get-report131',
+            32=>'get-report132',
+            33=>'get-report133'
+        );
+
+        if (array_key_exists((int)$menu_id,$mainMenuArr))
+            return $mainMenuArr[(int)$menu_id];
+
+        return null;
+    }
 }
