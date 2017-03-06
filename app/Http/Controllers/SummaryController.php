@@ -20,6 +20,7 @@ use App\Http\Controllers\Summary9\Summary912;
 use App\Http\Controllers\Summary9\Summary913;
 use App\Http\Controllers\Summary9\Summary914;
 use App\Http\Controllers\Summary9\Summary915;
+use App\Http\Controllers\Summary9\Summary916;
 use App\Main;
 use App\Menu;
 use App\Parameter;
@@ -70,14 +71,12 @@ class SummaryController extends Controller
 
     public function downloadSum912()
     {
-//        app('App\Http\Controllers\SummaryController')->report912();
         Summary912::report912();
         return response()->download(storage_path('excel/sum912.xlsx'), '9.1.2 หมวดประกอบอาหาร.xlsx');
     }
 
     public function downloadSum913()
     {
-//        app('App\Http\Controllers\SummaryController')->report913();
         Summary913::report913();
         return response()->download(storage_path('excel/sum913.xlsx'), '9.1.3 หมวดข่าวสารบันเทิง.xlsx');
     }
@@ -96,7 +95,7 @@ class SummaryController extends Controller
 
     public function downloadSum916()
     {
-        Summary91::report916();
+        Summary916::report916();
         return response()->download(storage_path('excel/sum916.xlsx'), '9.1.6 หมวดไล่และล่อแมลง.xlsx');
     }
     public function downloadSum917()
