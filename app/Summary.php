@@ -201,6 +201,9 @@ class Summary extends Model
                     }
                     $finalSql .= " 0 ";
                     $whereUniqueKey = " AND unique_key IN (" . $whereUniqueKey . ")";
+
+                    $sumSQL = $finalSql;
+
                     $avgSql = "SELECT SUM(sum1) as a_sum, COUNT(*) as countAll FROM
                         (SELECT $finalSql AS sum1 FROM answers
                         WHERE main_id IN ($whereMainId) " . $whereUniqueKey
@@ -235,7 +238,6 @@ class Summary extends Model
                 $p[$b_key] = $avg[$b_key] * $weight[$b_key];
             }
 
-            //TODO-nong ยังไม่ได้ตรวจกรณีที่เป็น isRadio
             $outerNorthernMain = array_merge($mainObj->filterMain(Main::OUTER_GROUP_1), $mainObj->filterMain(Main::OUTER_GROUP_2));
             $outerNorthernMain = implode(",",$outerNorthernMain);
             $innerNorthernMain = array_merge($mainObj->filterMain(Main::INNER_GROUP_1), $mainObj->filterMain(Main::INNER_GROUP_2));
@@ -487,23 +489,24 @@ class Summary extends Model
                     $avgSql = "SELECT SUM(sum1) as a_sum, COUNT(*) as countAll FROM
                         (SELECT $finalSql AS sum1 FROM answers
                         WHERE main_id IN ($whereMainId) " . $whereUniqueKey
-                        . " GROUP BY main_id) T1 WHERE sum1>0";
+                        . " GROUP BY main_id) T1 WHERE sum1>0 ";
 
                 } else {
-                    //old2
                     if (is_array($value)) {
-                        //TODO-nong not edit yet
                         $whereUniqueKey = implode("','", $value);
                         $tempUniqueKey = $whereUniqueKey;
-                        $whereUniqueKey = " AND unique_key IN ('" .$whereUniqueKey."') ";
+
+                        $whereAmountUniqueKey = implode("','", $uniqueKeyArrAmount[$level1Counter]);
+                        $tempAmountUniqueKey = $whereAmountUniqueKey;
+
+                        $whereUniqueKey = " AND (unique_key IN ('" .$whereUniqueKey."') OR unique_key IN ('$whereAmountUniqueKey')) ";
                         $sumSQL = " SUM(IF(unique_key IN ('$tempUniqueKey'),answer_numeric,0)) ";
+
+                        $sumAmountSQL = " SUM(IF(unique_key IN ('$tempAmountUniqueKey'), {$amountColumn},0)) ";
                     }else{
                         $whereUniqueKey = " AND (unique_key='$value' OR unique_key='$uniqueKeyArrAmount[$level1Counter]') ";
                         $sumSQL = " SUM(IF(unique_key='$value', answer_numeric,0)) ";
                         $sumAmountSQL = " SUM(IF(unique_key='$uniqueKeyArrAmount[$level1Counter]', {$amountColumn},0)) ";
-
-//                        $whereUniqueKey = " AND unique_key='$value'";
-//                        $sumSQL = " SUM(IF(unique_key='$value', answer_numeric,0)) ";
                     }
 
                     $avgSql = "SELECT SUM(sum1) as a_sum, COUNT(*) as countAll, SUM(sumAmount1) as amount_sum FROM
@@ -535,6 +538,183 @@ class Summary extends Model
             }
 
             //TODO-nong ยังไม่ได้ตรวจกรณีที่เป็น isRadio
+            $outerNorthernMain = array_merge($mainObj->filterMain(Main::OUTER_GROUP_1), $mainObj->filterMain(Main::OUTER_GROUP_2));
+            $outerNorthernMain = implode(",",$outerNorthernMain);
+            $innerNorthernMain = array_merge($mainObj->filterMain(Main::INNER_GROUP_1), $mainObj->filterMain(Main::INNER_GROUP_2));
+            $innerNorthernMain = implode(",", $innerNorthernMain);
+
+            $outerSTDDEVSql = "SELECT STDDEV(sum1) as a_stddev FROM
+                        (SELECT $sumSQL AS sum1 FROM answers
+                        WHERE main_id IN ($outerNorthernMain) "
+                . " GROUP BY main_id) T1";
+            $result = \DB::select($outerSTDDEVSql);
+            $stddev[Main::NORTHERN_OUTER] = $result[0]->a_stddev;
+
+            $innerSTDDEVSql = "SELECT STDDEV(sum1) as a_stddev FROM
+                        (SELECT $sumSQL AS sum1 FROM answers
+                        WHERE main_id IN ($innerNorthernMain) "
+                . " GROUP BY main_id) T1";
+            $result = \DB::select($innerSTDDEVSql);
+            $stddev[Main::NORTHERN_INNER] = $result[0]->a_stddev;
+
+            $col = $startCol;
+            $col++;
+            $key2 = preg_replace('/[A-Z]+/', $col, $key);
+            $col++;
+            $key3 = preg_replace('/[A-Z]+/', $col, $key);
+            $col++;
+            $key4 = preg_replace('/[A-Z]+/', $col, $key);
+            $col++;
+            $key5 = preg_replace('/[A-Z]+/', $col, $key);
+            $col++;
+            $key6 = preg_replace('/[A-Z]+/', $col, $key);
+
+            $answers[$key] = $p[Main::INNER_GROUP_1] + $p[Main::INNER_GROUP_2];
+            $sqrtInnerCount = sqrt($amount[Main::INNER_GROUP_1] + $amount[Main::INNER_GROUP_2]);
+            $answers[$key2] = $sqrtInnerCount?($stddev[Main::NORTHERN_INNER]/ $sqrtInnerCount):0;
+
+            $answers[$key3] = $p[Main::OUTER_GROUP_1] + $p[Main::OUTER_GROUP_2];
+            $sqrtOuterCount = sqrt($amount[Main::OUTER_GROUP_1] + $amount[Main::OUTER_GROUP_2]);
+            $answers[$key4] = $sqrtOuterCount?($stddev[Main::NORTHERN_OUTER]/ $sqrtOuterCount):0;
+
+            $objPHPExcel->getActiveSheet()->setCellValue($key, $answers[$key]);
+            $objPHPExcel->getActiveSheet()->setCellValue($key2, $answers[$key2]);
+            $objPHPExcel->getActiveSheet()->setCellValue($key3, $answers[$key3]);
+            $objPHPExcel->getActiveSheet()->setCellValue($key4, $answers[$key4]);
+            $objPHPExcel->getActiveSheet()->setCellValue($key5, (($answers[$key]*$weight[Main::NORTHERN_INNER] + $answers[$key3] * $weight[Main::NORTHERN_OUTER])));
+            $objPHPExcel->getActiveSheet()->setCellValue($key6, (($answers[$key2] + $answers[$key4]) / 2.0));
+
+            $objPHPExcel->getActiveSheet()->getStyle($key)->getNumberFormat()->setFormatCode(Main::NUMBER_FORMAT);
+            $objPHPExcel->getActiveSheet()->getStyle($key2)->getNumberFormat()->setFormatCode(Main::NUMBER_FORMAT);
+            $objPHPExcel->getActiveSheet()->getStyle($key3)->getNumberFormat()->setFormatCode(Main::NUMBER_FORMAT);
+            $objPHPExcel->getActiveSheet()->getStyle($key4)->getNumberFormat()->setFormatCode(Main::NUMBER_FORMAT);
+            $objPHPExcel->getActiveSheet()->getStyle($key5)->getNumberFormat()->setFormatCode(Main::NUMBER_FORMAT);
+            $objPHPExcel->getActiveSheet()->getStyle($key6)->getNumberFormat()->setFormatCode(Main::NUMBER_FORMAT);
+
+            $level1Counter++;
+        }
+
+        return $objPHPExcel;
+    }
+
+    public static function averageLifetimeRadio($uniqueKeyArr,$uniqueKeyArrAmount, $startCol, $startRow, $objPHPExcel, $mainObj, $isRadio = false, $radioArr = [], $year=false, $multiply=null, $amountColumn='answer_numeric')
+    {
+        list($weight, $sample, $population) = self::getSettingVariables();
+
+        $rows = [];
+        $rowNumber = $startRow;
+        foreach ($uniqueKeyArr as $uniqueKey) {
+            $rows[$startCol . $rowNumber] = $uniqueKey;
+            $rowNumber++;
+        }
+
+        $allUniqueArr = [];
+        foreach ($uniqueKeyArr as $item) {
+            if (!is_array($item))
+                $allUniqueArr[] = $item;
+            else {
+                foreach ($item as $subItem)
+                    $allUniqueArr[] = $subItem;
+            }
+        }
+
+        $whereIn = [];
+        $answers = [];
+        $amount = []; // จำนวณอุปกรณ์
+
+        $level1Counter = 0;
+        foreach ($rows as $key => $value) {
+            $whereIn[] = $value;
+            $p = [];
+            $avg = [];
+
+            if (empty($value))
+                continue;
+
+            foreach (Main::$borderWeight as $b_key => $b_weight) {
+                $mainList = $mainObj->filterMain($b_key);
+
+                $avg[$b_key] = 0;
+                $stddev[$b_key] = 0;
+
+                $whereMainId = implode(",", $mainList);
+                if ($isRadio) {
+                    $newSql = " (IF(SUM(IF(unique_key='radioKey' AND option_id=radioValue,1,0))>1,1, SUM(IF(unique_key='radioKey' AND option_id=radioValue,1,0)) ";
+                    $finalSql = "";
+                    $idx = 0;
+                    $whereUniqueKey = implode("','", $value);
+                    $whereUniqueKey = "'" . $whereUniqueKey . "'";
+                    foreach ($radioArr[$level1Counter] as $radioKey => $radioValue) {
+                        $temp = $newSql;
+                        $temp = str_replace('radioKey', $radioKey, $temp);
+                        $temp = str_replace('radioValue', $radioValue, $temp);
+
+                        $finalSql .= $temp . " + ";
+
+                        $whereUniqueKey .= ",'" . $radioKey . "'";
+                        $idx++;
+                    }
+
+                    // สำหรับจำนวน
+                    $sumAmountSQL = " SUM(IF(unique_key='radioKey' AND option_id=radioValue, {$amountColumn},0)) ";
+                    $finalAmountSql = "";
+                    $idx = 0;
+                    foreach ($uniqueKeyArrAmount[$level1Counter] as $radioKey=> $radioValue){
+                        $temp = $sumAmountSQL;
+                        $temp = str_replace('radioKey', $radioKey, $temp);
+                        $temp = str_replace('radioValue', $radioValue, $temp);
+                        $temp = str_replace('amountKey', $value[$idx], $temp);
+
+                        $finalAmountSql .= $temp . " + ";
+
+                        $whereUniqueKey .= ",'" . $radioKey . "'";
+                        $idx++;
+                    }
+
+                    $finalSql .= " 0 ";
+                    $whereUniqueKey = " AND unique_key IN (" . $whereUniqueKey . ")";
+                    $avgSql = "SELECT SUM(sum1) as a_sum, COUNT(*) as countAll, SUM(sumAmount1) as amount_sum FROM
+                        (SELECT $finalSql AS sum1, $sumAmountSQL AS sumAmount1 FROM answers
+                        WHERE main_id IN ($whereMainId) " . $whereUniqueKey
+                        . " GROUP BY main_id) T1";
+
+                } else {
+                    //old2
+                    if (is_array($value)) {
+                        $whereUniqueKey = implode("','", $value);
+                        $tempUniqueKey = $whereUniqueKey;
+                        $whereUniqueKey = " AND unique_key IN ('" .$whereUniqueKey."') ";
+                        $sumSQL = " SUM(IF(unique_key IN ('$tempUniqueKey'),answer_numeric,0)) ";
+                    }else{
+                        $whereUniqueKey = " AND (unique_key='$value' OR unique_key='$uniqueKeyArrAmount[$level1Counter]') ";
+                        $sumSQL = " SUM(IF(unique_key='$value', answer_numeric,0)) ";
+                        $sumAmountSQL = " SUM(IF(unique_key='$uniqueKeyArrAmount[$level1Counter]', {$amountColumn},0)) ";
+                    }
+
+                    $avgSql = "SELECT SUM(sum1) as a_sum, COUNT(*) as countAll, SUM(sumAmount1) as amount_sum FROM
+                        (SELECT $sumSQL AS sum1, $sumAmountSQL AS sumAmount1 FROM answers
+                        WHERE main_id IN ($whereMainId) " . $whereUniqueKey
+                        . " GROUP BY main_id) T1";
+
+                }
+
+                $avgResult = \DB::select($avgSql);
+
+                if ((int)$avgResult[0]->amount_sum===0)
+                    $avg[$b_key] = 0;
+                else if (!is_null($multiply))
+                    $avg[$b_key] = ($avgResult[0]->a_sum*(float)$multiply)/$avgResult[0]->amount_sum;
+                else if ($year)
+                    $avg[$b_key] = ($avgResult[0]->a_sum*12.0)/$avgResult[0]->amount_sum;
+                else
+                    $avg[$b_key] = $avgResult[0]->a_sum/$avgResult[0]->amount_sum;
+
+//                $count[$b_key] = $avgResult[0]->countAll;
+                $amount[$b_key] = $avgResult[0]->amount_sum;
+
+                $p[$b_key] = $avg[$b_key] * $weight[$b_key];
+            }
+
             $outerNorthernMain = array_merge($mainObj->filterMain(Main::OUTER_GROUP_1), $mainObj->filterMain(Main::OUTER_GROUP_2));
             $outerNorthernMain = implode(",",$outerNorthernMain);
             $innerNorthernMain = array_merge($mainObj->filterMain(Main::INNER_GROUP_1), $mainObj->filterMain(Main::INNER_GROUP_2));
