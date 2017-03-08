@@ -183,7 +183,7 @@ class Summary extends Model
 
                 $whereMainId = implode(",", $mainList);
                 if ($isRadio) {
-                    $newSql = " (IF(SUM(IF(unique_key='radioKey' AND option_id=radioValue,1,0))>1,1,SUM(IF(unique_key='radioKey' AND option_id=radioValue,1,0))) * SUM(IF(unique_key='amountKey',answer_numeric,0))) ";
+                    $newSql = " (IF(SUM(IF(unique_key='radioKey' AND option_id=radioValue,1,0))>0,1,0) * SUM(IF(unique_key='amountKey',answer_numeric,0))) ";
                     $finalSql = "";
                     $idx = 0;
                     $whereUniqueKey = implode("','", $value);
@@ -207,7 +207,7 @@ class Summary extends Model
                     $avgSql = "SELECT SUM(sum1) as a_sum, COUNT(*) as countAll FROM
                         (SELECT $finalSql AS sum1 FROM answers
                         WHERE main_id IN ($whereMainId) " . $whereUniqueKey
-                        . " GROUP BY main_id) T1 WHERE sum1>0";
+                        . " GROUP BY main_id) T1";
 
                 } else {
                     //old2
