@@ -3,6 +3,7 @@
 namespace App\Http\Controllers\Summary9;
 
 use App\Main;
+use App\Setting;
 use App\Summary;
 use Illuminate\Http\Request;
 
@@ -35,6 +36,7 @@ class Summary917 extends Controller
             ['no_ch1033_o376_ch495_o300_ra498'=>215],
             ['no_ch1033_o376_ch495_o300_ra498'=>216],
             ['no_ch1033_o376_ch495_o300_ra498'=>217],
+
             ['no_ch1033_o377_ch504_o300_ra507'=>213],
             ['no_ch1033_o377_ch504_o300_ra507'=>214],
             ['no_ch1033_o377_ch504_o300_ra507'=>215],
@@ -43,6 +45,7 @@ class Summary917 extends Controller
             ['no_ch1033_o377_ch504_o300_ra507'=>218],
             ['no_ch1033_o377_ch504_o300_ra507'=>220],
             ['no_ch1033_o377_ch504_o300_ra507'=>219],
+
             ['no_ch1033_o378_ch513_o300_ra516'=>213],
             ['no_ch1033_o378_ch513_o300_ra516'=>214],
             ['no_ch1033_o378_ch513_o300_ra516'=>215],
@@ -177,7 +180,7 @@ class Summary917 extends Controller
             'no_ra808_o81_ti809_ch810_o235_nu820'
         ];
         $table3 = [];
-        $countTable1 = count($table1);
+        $countTable2 = count($table2);
         // จำนวนรถทุกคันที่ * จำนวนเงินที่เติม * ความถี่ที่เติม
 //        $radioCondition = " (IF(SUM(IF(unique_key='radioKey' AND option_id=radioValue,1,0))>0,1,0) * SUM(IF(unique_key='amountKey',answer_numeric,0))) ";
 
@@ -187,8 +190,8 @@ class Summary917 extends Controller
         * IF(SUM(IF(unique_key='radioKey' AND option_id=radioValue,1,0))>0,1,0)
          ) ";
         $whereSql = "";
-        for($i=0;$i<$countTable1;$i++){
-            $sumAmountSql = "";
+        for($i=0;$i<$countTable2;$i++){
+            $sumAmountSql = " ( ";
             for ($j=0;$j<5;$j++){
                 $tempSql = $sql;
                 $currentRadioKey = array_keys($table2RadioArr[$i])[$j];
@@ -199,10 +202,22 @@ class Summary917 extends Controller
                 $tempSql = str_replace('freqFillKey',$frequencyFill[$i][$j], $tempSql);
 
                 $sumAmountSql .= $tempSql . " + ";
-                $j++;
             }
-            $sumAmountSql .= $sumAmountSql . " 0 ";
+            $sumAmountSql = $sumAmountSql . " 0)  * param1 * param2 * 12 as sumAmount ";
             $table3[] = $sumAmountSql;
+        }
+
+        $settings = Setting::whereIn('group_id',[1,5,9,10,11,12,13])
+            ->get();
+        $fuelFactors = array();
+        $fuelPrice = array();
+        for ($i = 1; $i<=22; $i++){
+            $fuelFactors[$i] = (float)$settings->where('code','tool_factor_fuel_'. $i)->first()->value
+                * (float)$settings->where('code','season_factor_fuel_'. $i)->first()->value
+                * (float)$settings->where('code','usage_factor_fuel_'. $i)->first()->value;
+            if ($i>=5){
+                $fuelPrice[$i] = (float)$settings->where('code', 'fuel_price_fuel_' . $i)->first()->value;
+            }
         }
 
         $table4 = [
@@ -233,13 +248,34 @@ class Summary917 extends Controller
         $startColumn = 'E';
 //        $objPHPExcel = Summary::sum($table1,$startColumn,13,$objPHPExcel,$mainObj,$isRadio);
         $startColumn = 'U';
-        $objPHPExcel =Summary::average($table2, $startColumn, 13, $objPHPExcel, $mainObj, $isRadio, $table2RadioArr);
+//        $objPHPExcel =Summary::average($table2, $startColumn, 13, $objPHPExcel, $mainObj, $isRadio, $table2RadioArr);
         $startColumn = 'AL';
         $startRow = 13;
+
+        $params = array('param1'=>0,'param2'=>1);
+        $idx = 0;
+        $ktoe = 1;
+        $fuelFactorsArr = [
+            $fuelFactors[5],$fuelFactors[6],$fuelFactors[7],$fuelFactors[8],$fuelFactors[8],
+            $fuelFactors[9],$fuelFactors[10],$fuelFactors[11],$fuelFactors[12],$fuelFactors[12],$fuelFactors[12],$fuelFactors[12],$fuelFactors[12],
+            $fuelFactors[13],$fuelFactors[13],$fuelFactors[13],$fuelFactors[13],$fuelFactors[13],$fuelFactors[13],$fuelFactors[13],$fuelFactors[13]
+        ];
+        $fuelPriceArr = [
+            $fuelPrice[5],$fuelPrice[6],$fuelPrice[7],$fuelPrice[8],$fuelPrice[8],
+            $fuelPrice[9],$fuelPrice[10],$fuelPrice[11],$fuelPrice[12],$fuelPrice[12],$fuelPrice[12],$fuelPrice[12],$fuelPrice[12],
+            $fuelPrice[13],$fuelPrice[13],$fuelPrice[13],$fuelPrice[13],$fuelPrice[13],$fuelPrice[13],$fuelPrice[13],$fuelPrice[13]
+        ];
         foreach ($table3 as $sqlStr){
-            $objPHPExcel = Summary::usageElectric($table3_1, $startColumn, $startRow,$objPHPExcel, $mainObj,$sqlStr,$params,$ktoe);
+            $uniqueKeyArr = array();
+            $temp = [$fuelFactorsArr[$idx],$fuelPriceArr[$idx]];
+
+            $temp = array_merge($temp,array_keys($table2RadioArr[$idx]),$table2[$idx], $moneyFill[$idx],$frequencyFill[$idx]);
+            $uniqueKeyArr[]= $temp;
+
+            $objPHPExcel = Summary::usageElectric($uniqueKeyArr, $startColumn, $startRow,$objPHPExcel, $mainObj,$sqlStr,$params,$ktoe);
 
             $startRow++;
+            $idx++;
         }
 //        $objPHPExcel = Summary::specialUsage($table3, $startColumn, 13, $objPHPExcel,$mainObj,$ktoe);
         $startColumn = 'BB';
