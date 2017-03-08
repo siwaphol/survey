@@ -28,29 +28,6 @@ class Summary917 extends Controller
         $objPHPExcel->removeSheetByIndex(0);
         $objPHPExcel->setActiveSheetIndexByName($inputSheet);
 
-//        $table1 = [
-//            ['no_ch1033_o376_ch495_o300_ra498'=>213, 'no_ch1033_o376_ch495_o301_ra498'=>213, 'no_ch1033_o376_ch495_o302_ra498'=>213, 'no_ch1033_o376_ch495_o303_ra498'=>213, 'no_ch1033_o376_ch495_o304_ra498'=>213],
-//            ['no_ch1033_o376_ch495_o300_ra498'=>214, 'no_ch1033_o376_ch495_o301_ra498'=>214, 'no_ch1033_o376_ch495_o302_ra498'=>214, 'no_ch1033_o376_ch495_o303_ra498'=>214, 'no_ch1033_o376_ch495_o304_ra498'=>214],
-//            ['no_ch1033_o376_ch495_o300_ra498'=>215, 'no_ch1033_o376_ch495_o301_ra498'=>215, 'no_ch1033_o376_ch495_o302_ra498'=>215, 'no_ch1033_o376_ch495_o303_ra498'=>215, 'no_ch1033_o376_ch495_o304_ra498'=>215],
-//            ['no_ch1033_o376_ch495_o300_ra498'=>216, 'no_ch1033_o376_ch495_o301_ra498'=>216, 'no_ch1033_o376_ch495_o302_ra498'=>216, 'no_ch1033_o376_ch495_o303_ra498'=>216, 'no_ch1033_o376_ch495_o304_ra498'=>216],
-//            ['no_ch1033_o376_ch495_o300_ra498'=>217, 'no_ch1033_o376_ch495_o301_ra498'=>217, 'no_ch1033_o376_ch495_o302_ra498'=>217, 'no_ch1033_o376_ch495_o303_ra498'=>217, 'no_ch1033_o376_ch495_o304_ra498'=>213],
-//            ['no_ch1033_o377_ch504_o300_ra507'=>213, 'no_ch1033_o377_ch504_o301_ra507'=>213, 'no_ch1033_o377_ch504_o302_ra507'=>213, 'no_ch1033_o377_ch504_o303_ra507'=>213, 'no_ch1033_o377_ch504_o304_ra507'=>213],
-//            ['no_ch1033_o377_ch504_o300_ra507'=>214, 'no_ch1033_o377_ch504_o301_ra507'=>214, 'no_ch1033_o377_ch504_o302_ra507'=>214, 'no_ch1033_o377_ch504_o303_ra507'=>214, 'no_ch1033_o377_ch504_o304_ra507'=>214],
-//            ['no_ch1033_o377_ch504_o300_ra507'=>215, 'no_ch1033_o377_ch504_o301_ra507'=>215, 'no_ch1033_o377_ch504_o302_ra507'=>215, 'no_ch1033_o377_ch504_o303_ra507'=>215, 'no_ch1033_o377_ch504_o304_ra507'=>215],
-//            ['no_ch1033_o377_ch504_o300_ra507'=>216, 'no_ch1033_o377_ch504_o301_ra507'=>216, 'no_ch1033_o377_ch504_o302_ra507'=>216, 'no_ch1033_o377_ch504_o303_ra507'=>216, 'no_ch1033_o377_ch504_o304_ra507'=>216],
-//            ['no_ch1033_o377_ch504_o300_ra507'=>217, 'no_ch1033_o377_ch504_o301_ra507'=>217, 'no_ch1033_o377_ch504_o302_ra507'=>217, 'no_ch1033_o377_ch504_o303_ra507'=>217, 'no_ch1033_o377_ch504_o304_ra507'=>217],
-//            ['no_ch1033_o377_ch504_o300_ra507'=>218, 'no_ch1033_o377_ch504_o301_ra507'=>218, 'no_ch1033_o377_ch504_o302_ra507'=>218, 'no_ch1033_o377_ch504_o303_ra507'=>218, 'no_ch1033_o377_ch504_o304_ra507'=>218],
-//            ['no_ch1033_o377_ch504_o300_ra507'=>220, 'no_ch1033_o377_ch504_o301_ra507'=>220, 'no_ch1033_o377_ch504_o302_ra507'=>220, 'no_ch1033_o377_ch504_o303_ra507'=>220, 'no_ch1033_o377_ch504_o304_ra507'=>220],
-//            ['no_ch1033_o377_ch504_o300_ra507'=>219, 'no_ch1033_o377_ch504_o301_ra507'=>219, 'no_ch1033_o377_ch504_o302_ra507'=>219, 'no_ch1033_o377_ch504_o303_ra507'=>219, 'no_ch1033_o377_ch504_o304_ra507'=>219],
-//            ['no_ch1033_o378_ch513_o300_ra516'=>213, 'no_ch1033_o378_ch513_o301_ra516'=>213, 'no_ch1033_o378_ch513_o302_ra516'=>213, 'no_ch1033_o378_ch513_o303_ra516'=>213, 'no_ch1033_o378_ch513_o304_ra516'=>213],
-//            ['no_ch1033_o378_ch513_o300_ra516'=>214, 'no_ch1033_o378_ch513_o301_ra516'=>214, 'no_ch1033_o378_ch513_o302_ra516'=>214, 'no_ch1033_o378_ch513_o303_ra516'=>214, 'no_ch1033_o378_ch513_o304_ra516'=>214],
-//            ['no_ch1033_o378_ch513_o300_ra516'=>215, 'no_ch1033_o378_ch513_o301_ra516'=>215, 'no_ch1033_o378_ch513_o302_ra516'=>215, 'no_ch1033_o378_ch513_o303_ra516'=>215, 'no_ch1033_o378_ch513_o304_ra516'=>215],
-//            ['no_ch1033_o378_ch513_o300_ra516'=>216, 'no_ch1033_o378_ch513_o301_ra516'=>216, 'no_ch1033_o378_ch513_o302_ra516'=>216, 'no_ch1033_o378_ch513_o303_ra516'=>216, 'no_ch1033_o378_ch513_o304_ra516'=>216],
-//            ['no_ch1033_o378_ch513_o300_ra516'=>217, 'no_ch1033_o378_ch513_o301_ra516'=>217, 'no_ch1033_o378_ch513_o302_ra516'=>217, 'no_ch1033_o378_ch513_o303_ra516'=>217, 'no_ch1033_o378_ch513_o304_ra516'=>217],
-//            ['no_ch1033_o378_ch513_o300_ra516'=>218, 'no_ch1033_o378_ch513_o301_ra516'=>218, 'no_ch1033_o378_ch513_o302_ra516'=>218, 'no_ch1033_o378_ch513_o303_ra516'=>218, 'no_ch1033_o378_ch513_o304_ra516'=>218],
-//            ['no_ch1033_o378_ch513_o300_ra516'=>220, 'no_ch1033_o378_ch513_o301_ra516'=>220, 'no_ch1033_o378_ch513_o302_ra516'=>220, 'no_ch1033_o378_ch513_o303_ra516'=>220, 'no_ch1033_o378_ch513_o304_ra516'=>220],
-//            ['no_ch1033_o378_ch513_o300_ra516'=>219, 'no_ch1033_o378_ch513_o301_ra516'=>219, 'no_ch1033_o378_ch513_o302_ra516'=>219, 'no_ch1033_o378_ch513_o303_ra516'=>219, 'no_ch1033_o378_ch513_o304_ra516'=>219]
-//        ];
         // คำนวณใหม่เอาเฉพาะคันที่ 1
         $table1 = [
             ['no_ch1033_o376_ch495_o300_ra498'=>213],
@@ -201,28 +178,29 @@ class Summary917 extends Controller
         ];
         $table3 = [];
         $countTable1 = count($table1);
-        $gasPrice = 20;
-        $ktoe = 0.745;
-        $radioCondition = " IF(SUM(IF(unique_key='param1' AND option_id=param2,1,0))>1,1,SUM(IF(unique_key='param1' AND option_id=param2,1,0))) ";
-        $sql = " (param1 * (SUM(IF(unique_key='param2', answer_numeric,0))) * 
-         (SUM(IF(unique_key='param3', answer_numeric,0))/ SUM(IF(unique_key='param4', answer_numeric,0))) *
-         (SUM(IF(unique_key='param5', answer_numeric,0))) * 12) ";
+        // จำนวนรถทุกคันที่ * จำนวนเงินที่เติม * ความถี่ที่เติม
+//        $radioCondition = " (IF(SUM(IF(unique_key='radioKey' AND option_id=radioValue,1,0))>0,1,0) * SUM(IF(unique_key='amountKey',answer_numeric,0))) ";
+
+        $sql = " (SUM(IF(unique_key='amountKey',answer_numeric,0)) 
+        * SUM(IF(unique_key='moneyFillKey',answer_numeric,0)) 
+        * SUM(IF(unique_key='freqFillKey',answer_numeric,0))
+        * IF(SUM(IF(unique_key='radioKey' AND option_id=radioValue,1,0))>0,1,0)
+         ) ";
         $whereSql = "";
         for($i=0;$i<$countTable1;$i++){
             $sumAmountSql = "";
-            $j=0;
-            foreach ($table1[$i] as $key=>$value){
-                $tempRadioCon = $radioCondition;
-                $tempRadioCon = str_replace('param1', $key, $tempRadioCon);
-                $tempRadioCon = str_replace('param2', $value, $tempRadioCon);
+            for ($j=0;$j<5;$j++){
+//                $tempRadioCon = $radioCondition;
+//                $tempRadioCon = str_replace('param1', $key, $tempRadioCon);
+//                $tempRadioCon = str_replace('param2', $value, $tempRadioCon);
 
                 $tempSql = $sql;
-                $tempSql = str_replace('param1',$tempRadioCon, $tempSql);
-                $tempSql = str_replace('param2',$table2[$i][$j], $tempSql);
-                $tempSql = str_replace('param3',$moneyFill[$i][$j], $tempSql);
-                $tempSql = str_replace('param4',$priceFields[$i], $tempSql);
-                $tempSql = str_replace('param5',$frequencyFill[$i][$j], $tempSql);
-//                $tempSql = str_replace('param5',$table2[$i][$j], $tempSql);
+                $currentRadioKey = array_keys($table2RadioArr[$i])[$j];
+                $tempSql = str_replace('radioKey', $currentRadioKey, $tempSql);
+                $tempSql = str_replace('radioValue',$table2RadioArr[$i][$currentRadioKey], $tempSql);
+                $tempSql = str_replace('amountKey',$table2[$i][$j], $tempSql);
+                $tempSql = str_replace('moneyFillKey',$moneyFill[$i][$j], $tempSql);
+                $tempSql = str_replace('freqFillKey',$frequencyFill[$i][$j], $tempSql);
 
                 $sumAmountSql .= $tempSql . " + ";
                 $j++;
@@ -230,6 +208,7 @@ class Summary917 extends Controller
             $sumAmountSql .= $sumAmountSql . " 0 ";
             $table3[] = $sumAmountSql;
         }
+        dd($table3);
 
         $table4 = [
             ['no_ch1033_o376_ch495_o300_nu503', 'no_ch1033_o376_ch495_o301_nu503', 'no_ch1033_o376_ch495_o302_nu503', 'no_ch1033_o376_ch495_o303_nu503', 'no_ch1033_o376_ch495_o304_nu503'],
