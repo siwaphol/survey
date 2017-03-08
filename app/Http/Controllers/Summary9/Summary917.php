@@ -190,10 +190,6 @@ class Summary917 extends Controller
         for($i=0;$i<$countTable1;$i++){
             $sumAmountSql = "";
             for ($j=0;$j<5;$j++){
-//                $tempRadioCon = $radioCondition;
-//                $tempRadioCon = str_replace('param1', $key, $tempRadioCon);
-//                $tempRadioCon = str_replace('param2', $value, $tempRadioCon);
-
                 $tempSql = $sql;
                 $currentRadioKey = array_keys($table2RadioArr[$i])[$j];
                 $tempSql = str_replace('radioKey', $currentRadioKey, $tempSql);
@@ -208,7 +204,6 @@ class Summary917 extends Controller
             $sumAmountSql .= $sumAmountSql . " 0 ";
             $table3[] = $sumAmountSql;
         }
-        dd($table3);
 
         $table4 = [
             ['no_ch1033_o376_ch495_o300_nu503', 'no_ch1033_o376_ch495_o301_nu503', 'no_ch1033_o376_ch495_o302_nu503', 'no_ch1033_o376_ch495_o303_nu503', 'no_ch1033_o376_ch495_o304_nu503'],
@@ -240,6 +235,12 @@ class Summary917 extends Controller
         $startColumn = 'U';
         $objPHPExcel =Summary::average($table2, $startColumn, 13, $objPHPExcel, $mainObj, $isRadio, $table2RadioArr);
         $startColumn = 'AL';
+        $startRow = 13;
+        foreach ($table3 as $sqlStr){
+            $objPHPExcel = Summary::usageElectric($table3_1, $startColumn, $startRow,$objPHPExcel, $mainObj,$sqlStr,$params,$ktoe);
+
+            $startRow++;
+        }
 //        $objPHPExcel = Summary::specialUsage($table3, $startColumn, 13, $objPHPExcel,$mainObj,$ktoe);
         $startColumn = 'BB';
 //        $objPHPExcel = Summary::averageLifetime($table4, $table2, $startColumn, 13, $objPHPExcel, $mainObj, $isRadio,$table2);
