@@ -22,6 +22,7 @@ use App\Http\Controllers\Summary9\Summary914;
 use App\Http\Controllers\Summary9\Summary915;
 use App\Http\Controllers\Summary9\Summary916;
 use App\Http\Controllers\Summary9\Summary917;
+use App\Http\Controllers\Summary9\Summary918;
 use App\Main;
 use App\Menu;
 use App\Parameter;
@@ -106,7 +107,7 @@ class SummaryController extends Controller
     }
     public function downloadSum918()
     {
-        Summary91::report918();
+        Summary918::report918();
         return response()->download(storage_path('excel/sum918.xlsx'), '9.1.8 หมวดเกษตรกรรม.xlsx');
     }
 
