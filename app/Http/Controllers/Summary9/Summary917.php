@@ -231,7 +231,7 @@ class Summary917 extends Controller
 
         $isRadio = true;
         $startColumn = 'E';
-//        $objPHPExcel = Summary::sum($table1,$startColumn,13,$objPHPExcel,$mainObj,$isRadio);
+        $objPHPExcel = Summary::sum($table1,$startColumn,13,$objPHPExcel,$mainObj,$isRadio);
         $startColumn = 'U';
         $objPHPExcel =Summary::average($table2, $startColumn, 13, $objPHPExcel, $mainObj, $isRadio, $table2RadioArr);
         $startColumn = 'AL';
@@ -261,19 +261,16 @@ class Summary917 extends Controller
             $temp = array_merge($temp,array_keys($table2RadioArr[$idx]),$table2[$idx], $moneyFill[$idx],$frequencyFill[$idx]);
             $uniqueKeyArr[]= $temp;
 
-//            $objPHPExcel = Summary::usageElectric($uniqueKeyArr, $startColumn, $startRow,$objPHPExcel, $mainObj,$sqlStr,$params,$ktoeArr[$idx]);
+            $objPHPExcel = Summary::usageElectric($uniqueKeyArr, $startColumn, $startRow,$objPHPExcel, $mainObj,$sqlStr,$params,$ktoeArr[$idx]);
 
             $startRow++;
             $idx++;
         }
-//        $objPHPExcel = Summary::specialUsage($table3, $startColumn, 13, $objPHPExcel,$mainObj,$ktoe);
         $startColumn = 'BB';
-        echo "=====</br>";
-//        $objPHPExcel = Summary::averageLifetime($table4, $table2, $startColumn, 13, $objPHPExcel, $mainObj, $isRadio,$table2RadioArr);
+        $objPHPExcel = Summary::averageLifetime($table4, $table2, $startColumn, 13, $objPHPExcel, $mainObj, $isRadio,$table2RadioArr);
 
-        dd();
-//        $objWriter = new \PHPExcel_Writer_Excel2007($objPHPExcel);
-//        $objWriter->save(storage_path(iconv('UTF-8', 'windows-874', 'excel/'.$outputFile)));
+        $objWriter = new \PHPExcel_Writer_Excel2007($objPHPExcel);
+        $objWriter->save(storage_path(iconv('UTF-8', 'windows-874', 'excel/'.$outputFile)));
     }
 
 }

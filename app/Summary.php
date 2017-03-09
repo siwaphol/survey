@@ -262,19 +262,17 @@ class Summary extends Model
 
                     $outerSTDDEVSql = "SELECT STDDEV(sum1) as a_stddev FROM
                         (SELECT $sumSQL AS sum1 FROM answers
-                        WHERE main_id IN ($outerNorthernMain) "
-                        . " GROUP BY main_id) T1";
+                        WHERE main_id IN ($outerNorthernMain)"
+                        . " GROUP BY main_id) T1 where sum1>0";
                     $result = \DB::select($outerSTDDEVSql);
                     $stddevForEachRadio[Main::NORTHERN_OUTER][] = $result[0]->a_stddev * $result[0]->a_stddev;
-                    echo "=> outer " . $result[0]->a_stddev . " -- ";
 
                     $innerSTDDEVSql = "SELECT STDDEV(sum1) as a_stddev FROM
                         (SELECT $sumSQL AS sum1 FROM answers
-                        WHERE main_id IN ($innerNorthernMain) "
-                        . " GROUP BY main_id) T1";
+                        WHERE main_id IN ($innerNorthernMain)"
+                        . " GROUP BY main_id) T1 where sum1>0";
                     $result = \DB::select($innerSTDDEVSql);
                     $stddevForEachRadio[Main::NORTHERN_INNER][] = $result[0]->a_stddev * $result[0]->a_stddev;
-                    echo " inner ".$result[0]->a_stddev . " </br>";
 
                     $idx++;
                 }
@@ -285,8 +283,6 @@ class Summary extends Model
                 $stddev[Main::NORTHERN_INNER] = $stddevForEachRadio[Main::NORTHERN_INNER]?
                     sqrt(array_sum($stddevForEachRadio[Main::NORTHERN_INNER])/count($stddevForEachRadio[Main::NORTHERN_INNER]))
                     :0;
-
-                echo " outer ".$stddev[Main::NORTHERN_OUTER] . " -- inner " . $stddev[Main::NORTHERN_INNER] . "</br>";
             }else{
                 $outerSTDDEVSql = "SELECT STDDEV(sum1) as a_stddev FROM
                         (SELECT $sumSQL AS sum1 FROM answers
@@ -614,18 +610,16 @@ class Summary extends Model
                     $outerSTDDEVSql = "SELECT STDDEV(sum1) as a_stddev FROM
                         (SELECT $sumSQL AS sum1 FROM answers
                         WHERE main_id IN ($outerNorthernMain) "
-                        . " GROUP BY main_id) T1";
+                        . " GROUP BY main_id) T1 where sum1>0";
                     $result = \DB::select($outerSTDDEVSql);
                     $stddevForEachRadio[Main::NORTHERN_OUTER][] = $result[0]->a_stddev * $result[0]->a_stddev;
-                    echo "=>" . $result[0]->a_stddev . " -- ";
 
                     $innerSTDDEVSql = "SELECT STDDEV(sum1) as a_stddev FROM
                         (SELECT $sumSQL AS sum1 FROM answers
                         WHERE main_id IN ($innerNorthernMain) "
-                        . " GROUP BY main_id) T1";
+                        . " GROUP BY main_id) T1 where sum1>0";
                     $result = \DB::select($innerSTDDEVSql);
                     $stddevForEachRadio[Main::NORTHERN_INNER][] = $result[0]->a_stddev * $result[0]->a_stddev;
-                    echo $result[0]->a_stddev . " </br>";
 
                     $idx++;
                 }
@@ -636,7 +630,6 @@ class Summary extends Model
                 $stddev[Main::NORTHERN_INNER] = $stddevForEachRadio[Main::NORTHERN_INNER]?
                     sqrt(array_sum($stddevForEachRadio[Main::NORTHERN_INNER])/count($stddevForEachRadio[Main::NORTHERN_INNER]))
                     :0;
-                echo $stddev[Main::NORTHERN_OUTER] . " -- " . $stddev[Main::NORTHERN_INNER] . "</br>";
             }else{
                 $outerSTDDEVSql = "SELECT STDDEV(sum1) as a_stddev FROM
                         (SELECT $sumSQL AS sum1 FROM answers
