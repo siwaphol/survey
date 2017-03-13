@@ -115,7 +115,7 @@ class UploadRawController extends Controller
                         $mainId = trim($sheetData[$i]["A"]);
 
                         // ถ้าค่าที่ใส่มาเป็นช่องเปล่าข้ามไปแถวต่อไป
-                        if (empty($newValue)){
+                        if (trim($newValue)===""){
                             if ($this->checkAnswerType($uniqueKey)===Question::TYPE_CHECKBOX) {
                                 //TODO-nong this is slow เพราะถ้ามี checkbox หลายๆอันมันจะ query เท่ากับจำนวนชุดสอบถามเลย
 //                                $oldAnswer = Answer::where('main_id', $mainId)

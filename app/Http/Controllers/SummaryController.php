@@ -117,15 +117,18 @@ class SummaryController extends Controller
         $result = \DB::select($sqlStr);
 
         foreach ($result as $row){
-            $dupAns = Answer::where('main_id', $row->main_id)->where('unique_key', $row->unique_key)->get();
+            $dupAns = Answer::where('main_id', $row->main_id)
+                ->where('unique_key', $row->unique_key)
+                ->orderBy('updated_at','DESC')
+                ->get();
             if (count($dupAns)>1){
                 $count = count($dupAns);
                 for ($i=1;$i<$count;$i++){
-                    if ( $this->checkDuplicate($dupAns[0], $dupAns[$i])){
+//                    if ( $this->checkDuplicate($dupAns[0], $dupAns[$i])){
                         echo 'D: ' . $dupAns[$i]->main_id . '-' . $dupAns[$i]->unique_key . "\n";
                         $deleteAns = Answer::find($dupAns[$i]->id);
                         $deleteAns->delete();
-                    }
+//                    }
                 }
             }
         }
