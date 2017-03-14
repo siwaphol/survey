@@ -925,7 +925,7 @@ class Summary extends Model
             }
 
             $percentage = $p[1] + $p[2];
-            $answers[$key] = $percentage*$population[1];
+            $answers[$key] = $percentage*$population[Main::NORTHERN_INNER];
             $col = $startCol;
             $col++;
             $key2 = preg_replace('/[A-Z]+/', $col, $key);
@@ -935,7 +935,7 @@ class Summary extends Model
 
             $percentage = $p[3] + $p[4];
 
-            $answers[$key3] = $percentage*$population[3];
+            $answers[$key3] = $percentage*$population[Main::NORTHERN_OUTER];
             $col++;
             $key4 = preg_replace('/[A-Z]+/', $col, $key);
             $answers[$key4] = $percentage*100;
