@@ -63,10 +63,16 @@ class Summary121 extends Controller
         ];
         //ตารางที่ 12.6 ค่าเฉลี่ยและค่าความคลาดเคลื่อนมาตรฐานของราคาจำหน่ายถ่านของครัวเรือนจำแนกตามเขตปกครอง
         $table12_6 =[
-            " IF(SUM(IF(unique_key='no_ra700_o81_ch701_o237',1,0))>=1,1,0) * SUM(IF(unique_key='no_ra700_o81_nu709',answer_numeric,0)) ",
-            " IF(SUM(IF(unique_key='no_ra700_o81_ch701_o238',1,0))>=1,1,0) * SUM(IF(unique_key='no_ra700_o81_nu709',answer_numeric,0)) ",
-            " IF(SUM(IF(unique_key='no_ra700_o81_ch701_o239',1,0))>=1,1,0) * SUM(IF(unique_key='no_ra700_o81_nu709',answer_numeric,0)) ",
-            " IF(SUM(IF(unique_key='no_ra700_o81_ch701_o1',1,0))>=1,1,0) * SUM(IF(unique_key='no_ra700_o81_nu709',answer_numeric,0)) ",
+            " IF(SUM(IF(unique_key='no_ra700_o81_ch701_o237',1,0))>1,1,0) * SUM(IF(unique_key='no_ra700_o81_nu709',answer_numeric,0)) ",
+            " IF(SUM(IF(unique_key='no_ra700_o81_ch701_o238',1,0))>1,1,0) * SUM(IF(unique_key='no_ra700_o81_nu709',answer_numeric,0)) ",
+            " IF(SUM(IF(unique_key='no_ra700_o81_ch701_o239',1,0))>1,1,0) * SUM(IF(unique_key='no_ra700_o81_nu709',answer_numeric,0)) ",
+            " IF(SUM(IF(unique_key='no_ra700_o81_ch701_o1',1,0))>1,1,0) * SUM(IF(unique_key='no_ra700_o81_nu709',answer_numeric,0)) ",
+        ];
+        $table12_6_where = [
+            " AND unique_key in ('no_ra700_o81_ch701_o237','no_ra700_o81_nu709') ",
+            " AND unique_key in ('no_ra700_o81_ch701_o238','no_ra700_o81_nu709') ",
+            " AND unique_key in ('no_ra700_o81_ch701_o239','no_ra700_o81_nu709') ",
+            " AND unique_key in ('no_ra700_o81_ch701_o1','no_ra700_o81_nu709') "
         ];
 
         $isRadio = true;
@@ -92,7 +98,8 @@ class Summary121 extends Controller
 
         $startColumn = "BV";
         $startRow = 11;
-        $objPHPExcel = Summary121::average($table12_6, $startColumn, $startRow, $objPHPExcel, $mainObj);
+//        $objPHPExcel = Summary121::average($table12_6, $startColumn, $startRow, $objPHPExcel, $mainObj);
+        $objPHPExcel = Summary::average($table12_6, $startColumn, $startRow, $objPHPExcel, $mainObj,$table12_6,$table12_6_where);
 
         $objWriter = new \PHPExcel_Writer_Excel2007($objPHPExcel);
         $objWriter->save(storage_path(iconv('UTF-8', 'windows-874', 'excel/' . $outputFile)));
