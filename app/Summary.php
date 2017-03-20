@@ -7,7 +7,7 @@ use Illuminate\Database\Eloquent\Model;
 
 class Summary extends Model
 {
-    public static function sum($uniqueKeyArr, $startCol, $startRow, $objPHPExcel, $mainObj, $isRadio = false, $isCustomHaving = false, $havingUniqueKey=null, $arraySum = false, $radioCondition = 'OR')
+    public static function sum($uniqueKeyArr, $startCol, $startRow, $objPHPExcel, $mainObj, $isRadio = false, $isCustomHaving = false, $havingUniqueKey=null, $arraySum = false, $radioCondition = 'OR', $colSkip=0)
     {
         list($w, $s, $population) = self::getSettingVariables();
 
@@ -105,16 +105,22 @@ class Summary extends Model
             $col++;
             $key2 = preg_replace('/[A-Z]+/', $col, $key);
             $answers[$key2] = $percentage1*100;
+
             $col++;
+            for($i=0;$i<$colSkip;$i++){
+                $col++;
+            }
             $key3 = preg_replace('/[A-Z]+/', $col, $key);
             $percentage2 = $p[Main::OUTER_GROUP_1] + $p[Main::OUTER_GROUP_2];
-
             $answers[$key3] = $percentage2* $population[Main::NORTHERN_OUTER];
             $col++;
             $key4 = preg_replace('/[A-Z]+/', $col, $key);
             $answers[$key4] = $percentage2*100;
             //รวม
             $col++;
+            for($i=0;$i<$colSkip;$i++){
+                $col++;
+            }
             $key5 = preg_replace('/[A-Z]+/', $col, $key);
             $col++;
             $key6 = preg_replace('/[A-Z]+/', $col, $key);
@@ -937,11 +943,11 @@ class Summary extends Model
             $answers[$key5] = ($answers[$key6]) * (float)$paramSheet->getCell(Parameter::$populationColumn[Main::NORTHERN])->getValue();
 			$answers[$key6] *= 100;
 
-            $objPHPExcel->getActiveSheet()->setCellValue($key, $answers[$key]);
+            $objPHPExcel->getActiveSheet()->setCellValue($key, (int)$answers[$key]);
             $objPHPExcel->getActiveSheet()->setCellValue($key2, ($answers[$key2]));
-            $objPHPExcel->getActiveSheet()->setCellValue($key3, $answers[$key3]);
+            $objPHPExcel->getActiveSheet()->setCellValue($key3, (int)$answers[$key3]);
             $objPHPExcel->getActiveSheet()->setCellValue($key4, ($answers[$key4]));
-            $objPHPExcel->getActiveSheet()->setCellValue($key5, $answers[$key5]);
+            $objPHPExcel->getActiveSheet()->setCellValue($key5, (int)$answers[$key5]);
             $objPHPExcel->getActiveSheet()->setCellValue($key6, ($answers[$key6]));
 
             $objPHPExcel->getActiveSheet()->getStyle($key)->getNumberFormat()->setFormatCode(Main::NUMBER_FORMAT);
@@ -955,6 +961,278 @@ class Summary extends Model
 
         return $objPHPExcel;
     }
+
+    // สำหรับหมวด ค
+    public static function sum11($uniqueKeyArr, $startCol, $startRow, $objPHPExcel, $mainObj)
+    {
+        list($weight, $sample, $population) = self::getSettingVariables();
+
+        $w = [];
+        $w[1] = $weight[Main::INNER_GROUP_1];
+        $w[2] = $weight[Main::INNER_GROUP_2];
+        $w[3] = $weight[Main::OUTER_GROUP_1];
+        $w[4] = $weight[Main::OUTER_GROUP_2];
+
+        $s = [];
+        $s[1] = $sample[Main::INNER_GROUP_1];
+        $s[2] = $sample[Main::INNER_GROUP_2];
+        $s[3] = $sample[Main::OUTER_GROUP_1];
+        $s[4] = $sample[Main::OUTER_GROUP_2];
+
+        $parameterExcel = \PHPExcel_IOFactory::load(storage_path('excel/parameters.xlsx'));
+        $parameterExcel->setActiveSheetIndex(2);
+        $paramSheet = $parameterExcel->getActiveSheet();
+        $S = [];
+        $S[1] = (float)$population[Main::NORTHERN_INNER];
+        $S[2] = (float)$population[Main::NORTHERN_INNER];
+        $S[3] = (float)$population[Main::NORTHERN_OUTER];
+        $S[4] = (float)$population[Main::NORTHERN_OUTER];
+
+//        $rows = [];
+//        $rowNumber = $startRow;
+//        foreach ($uniqueKeyArr as $uniqueKey){
+//            $rows[$startCol.$rowNumber] = $uniqueKey;
+//            $rowNumber++;
+//        }
+//        $answerObj = Answer::whereIn('unique_key', $uniqueKeyArr)->get();
+
+//        $whereIn = [];
+        $answers = [];
+        $percents = [];
+        if (!isset($answers[Main::NORTHERN_INNER])){
+            $answers[Main::NORTHERN_INNER] = array();
+            $percents[Main::NORTHERN_INNER] = array();
+        }
+        if (!isset($answers[Main::NORTHERN_OUTER])){
+            $answers[Main::NORTHERN_OUTER] = array();
+            $percents[Main::NORTHERN_OUTER] = array();
+        }
+        if (!isset($answers[Main::NORTHERN])){
+            $answers[Main::NORTHERN] = array();
+            $percents[Main::NORTHERN] = array();
+        }
+        foreach ($uniqueKeyArr as $unique_key=>$options){
+//            $whereIn[] = $value;
+            if (empty($options)){
+                $startRow++;
+                continue;
+            }
+            $p = [];
+            $count = [];
+
+            for ($i=1; $i<=4; $i++){
+                $mainList = $mainObj->filterMain($i);
+                $whereCondition = "";
+                $selectCountSql = "";
+
+                $idx = 0;
+                $count[$i] = array();
+                $p[$i] = array();
+                $allCountAttr = [];
+                foreach ($options as $option_id){
+                    if ($idx===0){
+                        $whereCondition .= " AND ( ";
+                        $selectCountSql .= " SUM(IF(unique_key='$unique_key' AND option_id=$option_id,1,0)) AS count{$option_id} ";
+                        $allCountAttr[] = "count".$option_id;
+                    }
+                    else{
+                        $whereCondition .= " OR ";
+                        $selectCountSql .= " ,SUM(IF(unique_key='$unique_key' AND option_id=$option_id,1,0)) AS count{$option_id} ";
+                        $allCountAttr[] = "count".$option_id;
+                    }
+                    $whereCondition .= " (unique_key='$unique_key' AND option_id=$option_id) ";
+
+                    $idx++;
+                }
+                $whereCondition .= " )";
+
+                $whereInMainId = implode(",", $mainList);
+                $sql = "SELECT {$selectCountSql} FROM (SELECT main_id,unique_key,option_id FROM answers WHERE main_id IN ($whereInMainId) " . $whereCondition . " GROUP BY main_id,unique_key,option_id) t1";
+
+                $result = \DB::select($sql)[0];
+
+                foreach ($allCountAttr as $attr){
+                    $count[$i][$attr] = $result->{$attr};
+                    $percents[$i][$attr] = $w[$i] * ((float)$count[$i][$attr] / $s[$i]);
+//                    $p[$i][$attr] = $w[$i] * ((float)$count[$i][$attr] / $s[$i]);
+                }
+//                $count[$i] = \DB::select($sql)[0]->count;
+//                $p[$i] = $w[$i] * ((float)$count[$i]/ $s[$i]) * $S[$i];
+            }
+
+            $tempCol = $startCol;
+            foreach ($allCountAttr as $attr){
+                $percents[Main::NORTHERN_INNER][$attr] = $percents[Main::INNER_GROUP_1][$attr]+$percents[Main::INNER_GROUP_2][$attr];
+                $percents[Main::NORTHERN_OUTER][$attr] = $percents[Main::OUTER_GROUP_1][$attr]+$percents[Main::OUTER_GROUP_2][$attr];
+
+                $answers[Main::NORTHERN_INNER][$attr] = $percents[Main::NORTHERN_INNER][$attr]*$population[Main::NORTHERN_INNER];
+                $answers[Main::NORTHERN_OUTER][$attr] = $percents[Main::NORTHERN_OUTER][$attr]*$population[Main::NORTHERN_OUTER];
+
+                $percents[Main::NORTHERN][$attr] = $percents[Main::NORTHERN_INNER][$attr]*$weight[Main::NORTHERN_INNER]
+                    + $percents[Main::NORTHERN_OUTER][$attr]*$weight[Main::NORTHERN_OUTER];
+                $answers[Main::NORTHERN][$attr] = $percents[Main::NORTHERN][$attr]*$population[Main::NORTHERN];
+
+                $l_loop = [Main::NORTHERN,Main::NORTHERN_OUTER, Main::NORTHERN_INNER];
+                foreach ($l_loop as $l_key){
+                    $objPHPExcel->getActiveSheet()->setCellValue($tempCol[$l_key].$startRow, (int)$answers[$l_key][$attr]);
+                    $objPHPExcel->getActiveSheet()->getStyle($tempCol[$l_key].$startRow)->getNumberFormat()->setFormatCode(Main::NUMBER_FORMAT);
+                    $tempCol[$l_key]++;
+                    $objPHPExcel->getActiveSheet()->setCellValue($tempCol[$l_key].$startRow, $percents[$l_key][$attr]*100);
+                    $objPHPExcel->getActiveSheet()->getStyle($tempCol[$l_key].$startRow)->getNumberFormat()->setFormatCode(Main::NUMBER_FORMAT);
+                    $tempCol[$l_key]++;
+                }
+            }
+            $startRow++;
+//            $answers[Main::NORTHERN_INNER] = (int)($p[Main::INNER_GROUP_1] + $p[Main::INNER_GROUP_2]);
+        }
+
+        return $objPHPExcel;
+    }
+
+    public static function average11($uniqueKeyArr, $startCol, $startRow, $objPHPExcel, $mainObj, $multiplier,$year = false, $customSql=false)
+    {
+        list($weight, $sample, $population) = self::getSettingVariables();
+
+        $rows = [];
+        $rowNumber = $startRow;
+        foreach ($uniqueKeyArr as $uniqueKey) {
+            $rows[$startCol . $rowNumber] = $uniqueKey;
+            $rowNumber++;
+        }
+
+        $allUniqueArr = [];
+        foreach ($uniqueKeyArr as $item) {
+            if (!is_array($item))
+                $allUniqueArr[] = $item;
+            else {
+                foreach ($item as $subItem)
+                    $allUniqueArr[] = $subItem;
+            }
+        }
+
+        $whereIn = [];
+        $answers = [];
+        $count = [];
+        $A = [];
+
+        $level1Counter = 0;
+        foreach ($rows as $key => $value) {
+            $whereIn[] = $value;
+            $p = [];
+            $avg = [];
+
+            if (empty($value))
+                continue;
+
+            foreach (Main::$borderWeight as $b_key => $b_weight) {
+                $mainList = $mainObj->filterMain($b_key);
+
+                $avg[$b_key] = 0;
+                $stddev[$b_key] = 0;
+
+                $whereMainId = implode(",", $mainList);
+
+                if ($customSql){
+                    $sumSQL = $value;
+
+                    $avgSql = "SELECT SUM(sum1) as a_sum, COUNT(*) as countAll FROM
+                        (SELECT $sumSQL AS sum1 FROM answers
+                        WHERE main_id IN ($whereMainId) "
+                        . " GROUP BY main_id) T1 WHERE sum1>0";
+                }else{
+                    if (is_array($value)) {
+                        $whereUniqueKey = implode("','", $value);
+                        $tempUniqueKey = $whereUniqueKey;
+                        $whereUniqueKey = " AND unique_key IN ('" .$whereUniqueKey."','$multiplier[$level1Counter]') ";
+                        $sumSQL = " SUM(IF(unique_key IN ('$tempUniqueKey'),answer_numeric,0)) * 
+                    SUM(IF(unique_key='$multiplier[$level1Counter]',answer_numeric,0)) ";
+                    }else{
+                        $whereUniqueKey = " AND (unique_key='$value' OR unique_key='$multiplier[$level1Counter]') ";
+                        $sumSQL = " SUM(IF(unique_key='$value', answer_numeric,0)) * 
+                    SUM(IF(unique_key='$multiplier[$level1Counter]',answer_numeric,0)) ";
+                    }
+
+                    $avgSql = "SELECT SUM(sum1) as a_sum, COUNT(*) as countAll FROM
+                    (SELECT $sumSQL AS sum1 FROM answers
+                    WHERE main_id IN ($whereMainId) " . $whereUniqueKey
+                        . " GROUP BY main_id) T1";
+                }
+
+                $avgResult = \DB::select($avgSql);
+                $avg[$b_key] = $avgResult[0]->a_sum/$sample[$b_key];
+
+                $count[$b_key] = $avgResult[0]->countAll;
+
+                $p[$b_key] = $avg[$b_key] * $weight[$b_key];
+            }
+
+            $outerNorthernMain = array_merge($mainObj->filterMain(Main::OUTER_GROUP_1), $mainObj->filterMain(Main::OUTER_GROUP_2));
+            $outerNorthernMain = implode(",",$outerNorthernMain);
+            $innerNorthernMain = array_merge($mainObj->filterMain(Main::INNER_GROUP_1), $mainObj->filterMain(Main::INNER_GROUP_2));
+            $innerNorthernMain = implode(",", $innerNorthernMain);
+
+            $outerSTDDEVSql = "SELECT STDDEV(sum1) as a_stddev FROM
+                    (SELECT $sumSQL AS sum1 FROM answers
+                    WHERE main_id IN ($outerNorthernMain) "
+                . " GROUP BY main_id) T1";
+            $result = \DB::select($outerSTDDEVSql);
+            $stddev[Main::NORTHERN_OUTER] = $result[0]->a_stddev;
+
+            $innerSTDDEVSql = "SELECT STDDEV(sum1) as a_stddev FROM
+                    (SELECT $sumSQL AS sum1 FROM answers
+                    WHERE main_id IN ($innerNorthernMain) "
+                . " GROUP BY main_id) T1";
+            $result = \DB::select($innerSTDDEVSql);
+            $stddev[Main::NORTHERN_INNER] = $result[0]->a_stddev;
+
+            $col = $startCol;
+            $col++;
+            $key2 = preg_replace('/[A-Z]+/', $col, $key);
+            $col++;
+            $key3 = preg_replace('/[A-Z]+/', $col, $key);
+            $col++;
+            $key4 = preg_replace('/[A-Z]+/', $col, $key);
+            $col++;
+            $key5 = preg_replace('/[A-Z]+/', $col, $key);
+            $col++;
+            $key6 = preg_replace('/[A-Z]+/', $col, $key);
+
+            $answers[$key] = $p[Main::INNER_GROUP_1] + $p[Main::INNER_GROUP_2];
+            $sqrtInnerCount = sqrt($count[Main::INNER_GROUP_1] + $count[Main::INNER_GROUP_2]);
+            $answers[$key2] = $sqrtInnerCount?(($stddev[Main::NORTHERN_INNER]) / $sqrtInnerCount):0;
+//            $answers[$key2] = (($stddev[Main::INNER_GROUP_1]*$weight[Main::INNER_GROUP_1] + $stddev[Main::INNER_GROUP_2]*$weight[Main::INNER_GROUP_2])/2.0)
+//                / sqrt($count[Main::INNER_GROUP_1] + $count[Main::INNER_GROUP_2]);
+//            $answers[$key2] = (($stddev[Main::INNER_GROUP_1] + $stddev[Main::INNER_GROUP_2])/2.0)
+//                / sqrt($count[Main::INNER_GROUP_1] + $count[Main::INNER_GROUP_2]);
+
+            $answers[$key3] = $p[Main::OUTER_GROUP_1] + $p[Main::OUTER_GROUP_2];
+            $sqrtOuterCount = sqrt($count[Main::OUTER_GROUP_1] + $count[Main::OUTER_GROUP_2]);
+            $answers[$key4] = $sqrtOuterCount?($stddev[Main::NORTHERN_OUTER] / $sqrtOuterCount):0;
+//            $answers[$key4] = (($stddev[Main::OUTER_GROUP_1]*$weight[Main::OUTER_GROUP_1] + $stddev[Main::OUTER_GROUP_2]*$weight[Main::OUTER_GROUP_2])/2.0)
+//                / sqrt($count[Main::OUTER_GROUP_1] + $count[Main::OUTER_GROUP_2]);
+//            $answers[$key4] = (($stddev[Main::OUTER_GROUP_1] + $stddev[Main::OUTER_GROUP_2])/2.0)
+//                / sqrt($count[Main::OUTER_GROUP_1] + $count[Main::OUTER_GROUP_2]);
+
+            $objPHPExcel->getActiveSheet()->setCellValue($key, $answers[$key]);
+            $objPHPExcel->getActiveSheet()->setCellValue($key2, $answers[$key2]);
+            $objPHPExcel->getActiveSheet()->setCellValue($key3, $answers[$key3]);
+            $objPHPExcel->getActiveSheet()->setCellValue($key4, $answers[$key4]);
+            $objPHPExcel->getActiveSheet()->setCellValue($key5, (($answers[$key]*$weight[Main::NORTHERN_INNER] + $answers[$key3] * $weight[Main::NORTHERN_OUTER])));
+            $objPHPExcel->getActiveSheet()->setCellValue($key6, (($answers[$key2] + $answers[$key4]) / 2.0));
+
+            $objPHPExcel->getActiveSheet()->getStyle($key)->getNumberFormat()->setFormatCode(Main::NUMBER_FORMAT);
+            $objPHPExcel->getActiveSheet()->getStyle($key2)->getNumberFormat()->setFormatCode(Main::NUMBER_FORMAT);
+            $objPHPExcel->getActiveSheet()->getStyle($key3)->getNumberFormat()->setFormatCode(Main::NUMBER_FORMAT);
+            $objPHPExcel->getActiveSheet()->getStyle($key4)->getNumberFormat()->setFormatCode(Main::NUMBER_FORMAT);
+            $objPHPExcel->getActiveSheet()->getStyle($key5)->getNumberFormat()->setFormatCode(Main::NUMBER_FORMAT);
+            $objPHPExcel->getActiveSheet()->getStyle($key6)->getNumberFormat()->setFormatCode(Main::NUMBER_FORMAT);
+
+            $level1Counter++;
+        }
+
+        return $objPHPExcel;
+    }
+
 
     /**
      * @param $settings
