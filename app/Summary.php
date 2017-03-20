@@ -146,7 +146,7 @@ class Summary extends Model
         return $objPHPExcel;
     }
 
-    public static function average($uniqueKeyArr, $startCol, $startRow, $objPHPExcel, $mainObj, $isRadio = false, $radioArr = [], $year=false, $multiply=null)
+    public static function average($uniqueKeyArr, $startCol, $startRow, $objPHPExcel, $mainObj, $isRadio = false, $radioArr = [], $year=false, $multiply=null, $customSql=false,$customWhere=false)
     {
         list($weight, $sample, $population) = self::getSettingVariables();
 
@@ -215,7 +215,17 @@ class Summary extends Model
                         WHERE main_id IN ($whereMainId) " . $whereUniqueKey
                         . " GROUP BY main_id) T1";
 
-                } else {
+                }
+                else if($customSql){
+                    $sumSQL = $customSql[$level1Counter];
+                    $customWhere = $customWhere[$level1Counter];
+
+                    $avgSql = "SELECT SUM(sum1) as a_sum, COUNT(*) as countAll FROM
+                        (SELECT $sumSQL AS sum1 FROM answers
+                        WHERE main_id IN ($whereMainId) " . $customWhere
+                        . " GROUP BY main_id) T1";
+                }
+                else {
                     //old2
                     if (is_array($value)) {
                         $whereUniqueKey = implode("','", $value);
@@ -841,26 +851,28 @@ class Summary extends Model
 
     public static function sum13($uniqueKeyArr, $startCol, $startRow, $objPHPExcel, $mainObj, $changeUnique, $notSure, $notInNotSure, $mainUnique, $uniqueVal)
     {
-        $w = [];
-        $w[1] = Main::$weight[Main::INNER_GROUP_1];
-        $w[2] = Main::$weight[Main::INNER_GROUP_2];
-        $w[3] = Main::$weight[Main::OUTER_GROUP_1];
-        $w[4] = Main::$weight[Main::OUTER_GROUP_2];
+        list($weight, $sample, $population) = self::getSettingVariables();
 
-        $s = [];
-        $s[1] = Main::$sample[Main::INNER_GROUP_1];
-        $s[2] = Main::$sample[Main::INNER_GROUP_2];
-        $s[3] = Main::$sample[Main::OUTER_GROUP_1];
-        $s[4] = Main::$sample[Main::OUTER_GROUP_2];
+//        $w = [];
+//        $w[1] = Main::$weight[Main::INNER_GROUP_1];
+//        $w[2] = Main::$weight[Main::INNER_GROUP_2];
+//        $w[3] = Main::$weight[Main::OUTER_GROUP_1];
+//        $w[4] = Main::$weight[Main::OUTER_GROUP_2];
+
+//        $s = [];
+//        $s[1] = Main::$sample[Main::INNER_GROUP_1];
+//        $s[2] = Main::$sample[Main::INNER_GROUP_2];
+//        $s[3] = Main::$sample[Main::OUTER_GROUP_1];
+//        $s[4] = Main::$sample[Main::OUTER_GROUP_2];
 
         $parameterExcel = \PHPExcel_IOFactory::load(storage_path('excel/parameters.xlsx'));
         $parameterExcel->setActiveSheetIndex(2);
         $paramSheet = $parameterExcel->getActiveSheet();
-        $S = [];
-        $S[1] = (float)$paramSheet->getCell(Parameter::$populationColumn[Main::NORTHERN_INNER])->getValue();
-        $S[2] = (float)$paramSheet->getCell(Parameter::$populationColumn[Main::NORTHERN_INNER])->getValue();
-        $S[3] = (float)$paramSheet->getCell(Parameter::$populationColumn[Main::NORTHERN_OUTER])->getValue();
-        $S[4] = (float)$paramSheet->getCell(Parameter::$populationColumn[Main::NORTHERN_OUTER])->getValue();
+//        $S = [];
+//        $S[1] = (float)$paramSheet->getCell($population[Main::NORTHERN_INNER])->getValue();
+//        $S[2] = (float)$paramSheet->getCell($population[Main::NORTHERN_INNER])->getValue();
+//        $S[3] = (float)$paramSheet->getCell($population[Main::NORTHERN_OUTER])->getValue();
+//        $S[4] = (float)$paramSheet->getCell($population[Main::NORTHERN_OUTER])->getValue();
 
         $rows = [];
         $rowNumber = $startRow;
@@ -914,12 +926,12 @@ class Summary extends Model
                 $result2 = \DB::select($sql2);
                 $count[$i] = count($result1)==0?0:$result1[0]->count;
                 $count[$i] += count($result2)==0?0:$result2[0]->count;
-                $p[$i] = $w[$i] * ((float)$count[$i] / $s[$i]);
+                $p[$i] = $weight[$i] * ((float)$count[$i] / $sample[$i]);
                 //echo $w[$i]." / ".$count[$i]." / ". $s[$i]." / ".$p[$i]."<br><br>";
             }
 
             $percentage = $p[1] + $p[2];
-            $answers[$key] = $percentage*$S[1];
+            $answers[$key] = $percentage*$population[Main::NORTHERN_INNER];
             $col = $startCol;
             $col++;
             $key2 = preg_replace('/[A-Z]+/', $col, $key);
@@ -929,8 +941,7 @@ class Summary extends Model
 
             $percentage = $p[3] + $p[4];
 
-
-            $answers[$key3] = $percentage*$S[3];
+            $answers[$key3] = $percentage*$population[Main::NORTHERN_OUTER];
             $col++;
             $key4 = preg_replace('/[A-Z]+/', $col, $key);
             $answers[$key4] = $percentage*100;
@@ -939,8 +950,8 @@ class Summary extends Model
             $key5 = preg_replace('/[A-Z]+/', $col, $key);
             $col++;
             $key6 = preg_replace('/[A-Z]+/', $col, $key);
-            $answers[$key6] = ($answers[$key2]*Main::$weight[Main::NORTHERN_INNER] + $answers[$key4]*Main::$weight[Main::NORTHERN_OUTER])/100;
-            $answers[$key5] = ($answers[$key6]) * (float)$paramSheet->getCell(Parameter::$populationColumn[Main::NORTHERN])->getValue();
+            $answers[$key6] = ($answers[$key2]*$weight[Main::NORTHERN_INNER] + $answers[$key4]*$weight[Main::NORTHERN_OUTER])/100;
+            $answers[$key5] = ($answers[$key6]) * (float)$paramSheet->getCell($population[Main::NORTHERN])->getValue();
 			$answers[$key6] *= 100;
 
             $objPHPExcel->getActiveSheet()->setCellValue($key, (int)$answers[$key]);
