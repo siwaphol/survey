@@ -130,7 +130,8 @@ class Summary11Controller extends Controller
             'no_ra808_o81_ti829_ch830_o266_ra831'=>[326,327,328],
             'no_ra808_o81_ti829_ch830_o267_ra831'=>[326,327,328],
             'no_ra808_o81_ti829_ch830_o268_ra831'=>[326,327,328],
-            'no_ra808_o81_ti829_ch830_o269_ra831'=>[326,327,328],
+            'no_ra808_o81_ti829_ch830_o286_ra831'=>[326,327,328],
+
             'no_ra808_o81_ti809_ch810_o228_ra811'=>[326,327,328],
             'no_ra808_o81_ti809_ch810_o229_ra811'=>[326,327,328],
             'no_ra808_o81_ti809_ch810_o230_ra811'=>[326,327,328],
@@ -139,15 +140,16 @@ class Summary11Controller extends Controller
             'no_ra808_o81_ti809_ch810_o233_ra811'=>[326,327,328],
             'no_ra808_o81_ti809_ch810_o234_ra811'=>[326,327,328],
             'no_ra808_o81_ti809_ch810_o235_ra811'=>[326,327,328],
+
             'no_ra808_o81_ti821_ch822_o236_ra823'=>[326,327,328],
             'no_ra808_o81_ti829_ch830_o1_ra831'=>[326,327,328]
         ];
 
         $startColumn = [
-            Main::NORTHERN=>'C',
-            Main::NORTHERN_INNER=> 'K',
-            Main::NORTHERN_OUTER=>'S'];
-        $startRow = 10;
+            Main::NORTHERN=>'O',
+            Main::NORTHERN_INNER=> 'C',
+            Main::NORTHERN_OUTER=>'I'];
+        $startRow = 12;
         $objPHPExcel = Summary::sum11($table1, $startColumn,$startRow,$objPHPExcel,$mainObj);
 
         // ครั้งต่อเดือน
@@ -155,7 +157,7 @@ class Summary11Controller extends Controller
             'no_ra808_o81_ti829_ch830_o266_nu834',
             'no_ra808_o81_ti829_ch830_o267_nu834',
             'no_ra808_o81_ti829_ch830_o268_nu834',
-            'no_ra808_o81_ti829_ch830_o269_nu834',
+            'no_ra808_o81_ti829_ch830_o286_nu834',
             ['no_ra808_o81_ti809_ch810_o228_ch3000_o281_nu3002', 'no_ra808_o81_ti809_ch810_o228_ch3000_o282_nu3002','no_ra808_o81_ti809_ch810_o228_ch3000_o283_nu3002'],
             ['no_ra808_o81_ti809_ch810_o229_ch3000_o281_nu3002','no_ra808_o81_ti809_ch810_o229_ch3000_o282_nu3002','no_ra808_o81_ti809_ch810_o229_ch3000_o283_nu3002'],
             ['no_ra808_o81_ti809_ch810_o230_ch3000_o281_nu3002','no_ra808_o81_ti809_ch810_o230_ch3000_o282_nu3002','no_ra808_o81_ti809_ch810_o230_ch3000_o283_nu3002'],
@@ -168,10 +170,12 @@ class Summary11Controller extends Controller
         ];
         $startColumn = "AY";
         $startRow = 11;
-        $objPHPExcel = Summary::average($table11_9_1,$startColumn,$startRow,$objPHPExcel,$mainObj,false,[],true);
+        $objPHPExcel = Summary::average($table11_9_1,$startColumn,$startRow,$objPHPExcel,$mainObj);
         // ถังต่อปี
         $table11_9_2 =[
-            ['no_ra808_o81_ti821_ch822_o236_ch825_o208_nu826','no_ra808_o81_ti821_ch822_o236_ch825_o209_nu826','no_ra808_o81_ti821_ch822_o236_ch825_o210_nu826']
+            ['no_ra808_o81_ti821_ch822_o236_ch825_o208_nu826',
+                'no_ra808_o81_ti821_ch822_o236_ch825_o209_nu826',
+                'no_ra808_o81_ti821_ch822_o236_ch825_o210_nu826']
         ];
         $startRow = 23;
         $objPHPExcel = Summary::average($table11_9_2,$startColumn,$startRow,$objPHPExcel,$mainObj);
@@ -179,18 +183,21 @@ class Summary11Controller extends Controller
             'no_ra808_o81_ti829_ch830_o1_nu834'
         ];
         $startRow = 24;
-        $objPHPExcel = Summary::average($table11_9_3,$startColumn,$startRow,$objPHPExcel,$mainObj, false,[], true);
+        $objPHPExcel = Summary::average($table11_9_3,$startColumn,$startRow,$objPHPExcel,$mainObj);
 
         // ตารางที่ 11.10
         // แบบคูณตรงๆ
         $table11_10_1 = [
-            'no_ra808_o81_ti829_ch830_o266_nu833', 'no_ra808_o81_ti829_ch830_o267_nu833', 'no_ra808_o81_ti829_ch830_o268_nu833', 'no_ra808_o81_ti829_ch830_o269_nu833'
+            'no_ra808_o81_ti829_ch830_o266_nu833',
+            'no_ra808_o81_ti829_ch830_o267_nu833',
+            'no_ra808_o81_ti829_ch830_o268_nu833',
+            'no_ra808_o81_ti829_ch830_o286_nu833'
         ];
-        $multiplier11_10_1 = ['no_ra808_o81_ti829_ch830_o266_nu834',            'no_ra808_o81_ti829_ch830_o267_nu834',            'no_ra808_o81_ti829_ch830_o268_nu834', 'no_ra808_o81_ti829_ch830_o269_nu834',
-        ];
+//        $multiplier11_10_1 = ['no_ra808_o81_ti829_ch830_o266_nu834',            'no_ra808_o81_ti829_ch830_o267_nu834',            'no_ra808_o81_ti829_ch830_o268_nu834', 'no_ra808_o81_ti829_ch830_o269_nu834',];
         $startColumn = 'BN';
         $startRow = 11;
-        $objPHPExcel = Summary::average11($table11_10_1,$startColumn,$startRow,$objPHPExcel,$mainObj,$multiplier11_10_1,true);
+//        $objPHPExcel = Summary::average11($table11_10_1,$startColumn,$startRow,$objPHPExcel,$mainObj,$multiplier11_10_1,true);
+        $objPHPExcel = Summary::average($table11_10_1,$startColumn,$startRow,$objPHPExcel,$mainObj);
         // บาทต่อครั้ง
         $table11_10_2 = [
             ['no_ra808_o81_ti809_ch810_o228_ch3000_o281_nu3001', 'no_ra808_o81_ti809_ch810_o228_ch3000_o282_nu3001', 'no_ra808_o81_ti809_ch810_o228_ch3000_o283_nu3001'],
@@ -320,7 +327,8 @@ class Summary11Controller extends Controller
             'no_ra808_o81_ti829_ch830_o266_nu835',
             'no_ra808_o81_ti829_ch830_o267_nu835',
             'no_ra808_o81_ti829_ch830_o268_nu835',
-            'no_ra808_o81_ti829_ch830_o269_nu835',
+            'no_ra808_o81_ti829_ch830_o286_nu835',
+
             'no_ra808_o81_ti809_ch810_o228_nu819',
             'no_ra808_o81_ti809_ch810_o229_nu819',
             'no_ra808_o81_ti809_ch810_o230_nu819',
@@ -354,7 +362,7 @@ class Summary11Controller extends Controller
             'no_ra808_o81_ti829_ch830_o266_nu836',
             'no_ra808_o81_ti829_ch830_o267_nu836',
             'no_ra808_o81_ti829_ch830_o268_nu836',
-            'no_ra808_o81_ti829_ch830_o269_nu836',
+            'no_ra808_o81_ti829_ch830_o286_nu836',
             'no_ra808_o81_ti809_ch810_o228_nu820',
             'no_ra808_o81_ti809_ch810_o229_nu820',
             'no_ra808_o81_ti809_ch810_o230_nu820',
