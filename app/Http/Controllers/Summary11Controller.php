@@ -67,7 +67,8 @@ class Summary11Controller extends Controller
             'no_ra800_o81_ti801_ch802_o268_nu805',
             'no_ra800_o81_ti801_ch802_o286_nu805',
         ];
-        $objPHPExcel = Summary::average11($table8, 'AQ', 11,$objPHPExcel,$mainObj, $table7);
+//        $objPHPExcel = Summary::average11($table8, 'AQ', 11,$objPHPExcel,$mainObj, $table7);
+        $objPHPExcel = Summary::average($table8, 'AQ', 11,$objPHPExcel,$mainObj);
 
         $startColumn = 'BE';
         $isRadio = true;

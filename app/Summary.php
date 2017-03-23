@@ -128,11 +128,11 @@ class Summary extends Model
             $answers[$key5] = ($answers[$key6] ) * $population[Main::NORTHERN];
             $answers[$key6] *= 100;
 
-            $objPHPExcel->getActiveSheet()->setCellValue($key, $answers[$key]);
+            $objPHPExcel->getActiveSheet()->setCellValue($key, (int)$answers[$key]);
             $objPHPExcel->getActiveSheet()->setCellValue($key2, ($answers[$key2]));
-            $objPHPExcel->getActiveSheet()->setCellValue($key3, $answers[$key3]);
+            $objPHPExcel->getActiveSheet()->setCellValue($key3, (int)$answers[$key3]);
             $objPHPExcel->getActiveSheet()->setCellValue($key4, ($answers[$key4]));
-            $objPHPExcel->getActiveSheet()->setCellValue($key5, $answers[$key5]);
+            $objPHPExcel->getActiveSheet()->setCellValue($key5, (int)$answers[$key5]);
             $objPHPExcel->getActiveSheet()->setCellValue($key6, ($answers[$key6]));
 
             $objPHPExcel->getActiveSheet()->getStyle($key)->getNumberFormat()->setFormatCode(Main::NUMBER_FORMAT);
@@ -881,7 +881,7 @@ class Summary extends Model
             $rowNumber++;
         }
 //        $start = microtime(true);
-        $answerObj = Answer::whereIn('unique_key', $uniqueKeyArr)->get();
+//        $answerObj = Answer::whereIn('unique_key', $uniqueKeyArr)->get();
 //        $time_elapsed_secs = microtime(true) - $start;
 //        echo " Answer query : " . $time_elapsed_secs . " seconds</br>";
 
@@ -990,9 +990,9 @@ class Summary extends Model
         $s[3] = $sample[Main::OUTER_GROUP_1];
         $s[4] = $sample[Main::OUTER_GROUP_2];
 
-        $parameterExcel = \PHPExcel_IOFactory::load(storage_path('excel/parameters.xlsx'));
-        $parameterExcel->setActiveSheetIndex(2);
-        $paramSheet = $parameterExcel->getActiveSheet();
+//        $parameterExcel = \PHPExcel_IOFactory::load(storage_path('excel/parameters.xlsx'));
+//        $parameterExcel->setActiveSheetIndex(2);
+//        $paramSheet = $parameterExcel->getActiveSheet();
         $S = [];
         $S[1] = (float)$population[Main::NORTHERN_INNER];
         $S[2] = (float)$population[Main::NORTHERN_INNER];
