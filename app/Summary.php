@@ -865,9 +865,9 @@ class Summary extends Model
 //        $s[3] = Main::$sample[Main::OUTER_GROUP_1];
 //        $s[4] = Main::$sample[Main::OUTER_GROUP_2];
 
-        $parameterExcel = \PHPExcel_IOFactory::load(storage_path('excel/parameters.xlsx'));
-        $parameterExcel->setActiveSheetIndex(2);
-        $paramSheet = $parameterExcel->getActiveSheet();
+//        $parameterExcel = \PHPExcel_IOFactory::load(storage_path('excel/parameters.xlsx'));
+//        $parameterExcel->setActiveSheetIndex(2);
+//        $paramSheet = $parameterExcel->getActiveSheet();
 //        $S = [];
 //        $S[1] = (float)$paramSheet->getCell($population[Main::NORTHERN_INNER])->getValue();
 //        $S[2] = (float)$paramSheet->getCell($population[Main::NORTHERN_INNER])->getValue();
@@ -951,7 +951,7 @@ class Summary extends Model
             $col++;
             $key6 = preg_replace('/[A-Z]+/', $col, $key);
             $answers[$key6] = ($answers[$key2]*$weight[Main::NORTHERN_INNER] + $answers[$key4]*$weight[Main::NORTHERN_OUTER])/100;
-            $answers[$key5] = ($answers[$key6]) * (float)$paramSheet->getCell($population[Main::NORTHERN])->getValue();
+            $answers[$key5] = ($answers[$key6]) * $population[Main::NORTHERN];
 			$answers[$key6] *= 100;
 
             $objPHPExcel->getActiveSheet()->setCellValue($key, (int)$answers[$key]);

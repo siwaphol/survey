@@ -30,7 +30,6 @@ class Summary133 extends Controller
         $objPHPExcel->removeSheetByIndex(0);
         $objPHPExcel->setActiveSheetIndexByName($inputSheet);
 
-
         //ตารางที่ 13.18
         $table1 = [
             ['no_ra908' => 264],
@@ -120,8 +119,6 @@ class Summary133 extends Controller
         $startColumn = 'CI';
         $startRow = 11;
         $objPHPExcel = Summary::sum13($table7,$startColumn,$startRow,$objPHPExcel,$mainObj, 'no_ra908_o264_ra910', 'no_ra908_o265_ra909', 'no_ra908_o265_ra910', 'no_ra908_o264_ra909', 285);
-
-
 
         $objWriter = new \PHPExcel_Writer_Excel2007($objPHPExcel);
         $objWriter->save(storage_path(iconv('UTF-8', 'windows-874', 'excel/'.$outputFile)));
