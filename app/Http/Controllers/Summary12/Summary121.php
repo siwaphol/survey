@@ -99,7 +99,7 @@ class Summary121 extends Controller
         $startColumn = "BV";
         $startRow = 11;
 //        $objPHPExcel = Summary121::average($table12_6, $startColumn, $startRow, $objPHPExcel, $mainObj);
-        $objPHPExcel = Summary::average($table12_6, $startColumn, $startRow, $objPHPExcel, $mainObj,$table12_6,$table12_6_where);
+        $objPHPExcel = Summary::average($table12_6, $startColumn, $startRow, $objPHPExcel, $mainObj,false,[],false,null,$table12_6,$table12_6_where);
 
         $objWriter = new \PHPExcel_Writer_Excel2007($objPHPExcel);
         $objWriter->save(storage_path(iconv('UTF-8', 'windows-874', 'excel/' . $outputFile)));

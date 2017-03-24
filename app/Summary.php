@@ -218,11 +218,11 @@ class Summary extends Model
                 }
                 else if($customSql){
                     $sumSQL = $customSql[$level1Counter];
-                    $customWhere = $customWhere[$level1Counter];
+                    $whereSql = $customWhere[$level1Counter];
 
                     $avgSql = "SELECT SUM(sum1) as a_sum, COUNT(*) as countAll FROM
                         (SELECT $sumSQL AS sum1 FROM answers
-                        WHERE main_id IN ($whereMainId) " . $customWhere
+                        WHERE main_id IN ($whereMainId) " . $whereSql
                         . " GROUP BY main_id) T1";
                 }
                 else {

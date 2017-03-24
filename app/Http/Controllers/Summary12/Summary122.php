@@ -53,9 +53,11 @@ class Summary122 extends Controller
             ['no_ra716_o245_ch718_o246_ra722' => 291],
             ['no_ra716_o245_ch718_o246_ra722' => 292],
             ['no_ra716_o245_ch718_o246_ra722' => 293],
+            [],
             ['no_ra716_o245_ch718_o247_ra722' => 291],
             ['no_ra716_o245_ch718_o247_ra722' => 292],
             ['no_ra716_o245_ch718_o247_ra722' => 293],
+            [],
             ['no_ra716_o245_ch718_o1_ra722' => 291],
             ['no_ra716_o245_ch718_o1_ra722' => 292],
             ['no_ra716_o245_ch718_o1_ra722' => 293],
@@ -82,27 +84,36 @@ class Summary122 extends Controller
         $startColumn = 'Q';
         $startRow = 11;
         $table12_8_final = [];
+        $table12_8_where = [];
         $level = 0;
         foreach ($table12_8 as $row) {
             $finalSql = " ( 0 ";
             $level2 = 0;
             foreach ($row as $row2) {
                 $sql = " SUM(IF(unique_key='param1',answer_numeric,0)) * SUM(IF(unique_key='param2',answer_numeric,0)) * SUM(IF(unique_key='param3',answer_numeric,0)) ";
+                $whereSql = " AND unique_key IN ('param1','param2','param3') ";
+
                 $temp = str_replace("param1", $row2, $sql);
                 $temp = str_replace("param2", $multiplier12_8_1[$level][$level2], $temp);
                 $temp = str_replace("param3", $multiplier12_8_2[$level][$level2], $temp);
+
+                $tempWhereSql = str_replace("param1", $row2, $whereSql);
+                $tempWhereSql = str_replace("param2", $multiplier12_8_1[$level][$level2], $tempWhereSql);
+                $tempWhereSql = str_replace("param3", $multiplier12_8_2[$level][$level2], $tempWhereSql);
+                
                 $finalSql .= " + " . $temp;
                 $finalSql .= " ) ";
                 $level2++;
             }
             $table12_8_final[] = $finalSql;
+            $table12_8_where[] = $tempWhereSql;
             $level++;
         }
-        $objPHPExcel = Summary122::average($table12_8_final, $startColumn, $startRow, $objPHPExcel, $mainObj, null, false, true);
+        $objPHPExcel = Summary::average($table12_8_final, $startColumn, $startRow, $objPHPExcel, $mainObj, null, false, false,null,$table12_8_final,$table12_8_where);
 
         $startColumn = 'AE';
         $startRow = 12;
-        $objPHPExcel = Summary122::sum($table3,$startColumn, $startRow,$objPHPExcel,$mainObj,$isRadio);
+        $objPHPExcel = Summary::sum($table3,$startColumn, $startRow,$objPHPExcel,$mainObj,$isRadio);
 
         $startColumn = 'AS';
         $startRow = 11;
