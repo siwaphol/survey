@@ -41,7 +41,7 @@ class Summary124 extends Controller
             'no_ra735_o81_ch736_o254_ti737_nu738',
             'no_ra735_o81_ch736_o254_ti737_nu739',
             'no_ra735_o81_ch736_o254_ti737_nu740',
-            'no_ra735_o81_ch736_o254_ti737_nu742',
+            'no_ra735_o81_ch736_o254_ti741_nu742',
             'no_ra735_o81_ch736_o254_nu744',
             'no_ra735_o81_ch736_o254_ti745_nu746',
         ];
