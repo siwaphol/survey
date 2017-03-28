@@ -30,6 +30,7 @@ class Summary131 extends Controller
         $objPHPExcel->removeSheetByIndex(0);
         $objPHPExcel->setActiveSheetIndexByName($inputSheet);
 
+        // 266 ฟืน , 267 ถ่าน , 268 แกลบ,269 ขี้เลื่อย, 270 แอลพีจี, 271 ชีวภาพ, 272 ไฟฟ้า
 
         //ตารางที่ 13.1 จำนวนและร้อยละของครัวเรือนที่มีแนมโน้มการเปลี่ยนการใช้พลังงานในการประกอบอาหารจำแนก
         $table1 = [
@@ -39,67 +40,67 @@ class Summary131 extends Controller
         ];
         //ตารางที่ 13.2 จำนวนและร้อยละของการเปลี่ยนการใช้พลังงานในการประกอบอาหารจากฟืนจำแนกตามเขตปกครอง
         $table2 = [
-            ['no_ra900_o264_ra901' => 267],
-            ['no_ra900_o264_ra901' => 268],
-            ['no_ra900_o264_ra901' => 269],
-            ['no_ra900_o264_ra901' => 270],
-            ['no_ra900_o264_ra901' => 271],
-            ['no_ra900_o264_ra901' => 272],
+            ['no_ra900_o264_ra902' => 267],
+            ['no_ra900_o264_ra902' => 268],
+            ['no_ra900_o264_ra902' => 269],
+            ['no_ra900_o264_ra902' => 270],
+            ['no_ra900_o264_ra902' => 271],
+            ['no_ra900_o264_ra902' => 272],
         ];
         //ตารางที่ 13.3
         $table3 = [
-            ['no_ra900_o264_ra901' => 266],
-            ['no_ra900_o264_ra901' => 268],
-            ['no_ra900_o264_ra901' => 269],
-            ['no_ra900_o264_ra901' => 270],
-            ['no_ra900_o264_ra901' => 271],
-            ['no_ra900_o264_ra901' => 272],
+            ['no_ra900_o264_ra902' => 266],
+            ['no_ra900_o264_ra902' => 268],
+            ['no_ra900_o264_ra902' => 269],
+            ['no_ra900_o264_ra902' => 270],
+            ['no_ra900_o264_ra902' => 271],
+            ['no_ra900_o264_ra902' => 272],
         ];
 
         //ตารางที่ 13.4
         $table4 = [
-            ['no_ra900_o264_ra901' => 266],
-            ['no_ra900_o264_ra901' => 267],
-            ['no_ra900_o264_ra901' => 269],
-            ['no_ra900_o264_ra901' => 270],
-            ['no_ra900_o264_ra901' => 271],
-            ['no_ra900_o264_ra901' => 272],
+            ['no_ra900_o264_ra902' => 266],
+            ['no_ra900_o264_ra902' => 267],
+            ['no_ra900_o264_ra902' => 269],
+            ['no_ra900_o264_ra902' => 270],
+            ['no_ra900_o264_ra902' => 271],
+            ['no_ra900_o264_ra902' => 272],
         ];
         //ตารางที่ 13.5
         $table5 = [
-            ['no_ra900_o264_ra901' => 266],
-            ['no_ra900_o264_ra901' => 267],
-            ['no_ra900_o264_ra901' => 268],
-            ['no_ra900_o264_ra901' => 270],
-            ['no_ra900_o264_ra901' => 271],
-            ['no_ra900_o264_ra901' => 272],
+            ['no_ra900_o264_ra902' => 266],
+            ['no_ra900_o264_ra902' => 267],
+            ['no_ra900_o264_ra902' => 268],
+            ['no_ra900_o264_ra902' => 270],
+            ['no_ra900_o264_ra902' => 271],
+            ['no_ra900_o264_ra902' => 272],
         ];
         //ตารางที่ 13.6
         $table6 = [
-            ['no_ra900_o264_ra901' => 266],
-            ['no_ra900_o264_ra901' => 267],
-            ['no_ra900_o264_ra901' => 268],
-            ['no_ra900_o264_ra901' => 269],
-            ['no_ra900_o264_ra901' => 271],
-            ['no_ra900_o264_ra901' => 272],
+            ['no_ra900_o264_ra902' => 266],
+            ['no_ra900_o264_ra902' => 267],
+            ['no_ra900_o264_ra902' => 268],
+            ['no_ra900_o264_ra902' => 269],
+            ['no_ra900_o264_ra902' => 271],
+            ['no_ra900_o264_ra902' => 272],
         ];
         //ตารางที่ 13.7
         $table7 = [
-            ['no_ra900_o264_ra901' => 266],
-            ['no_ra900_o264_ra901' => 267],
-            ['no_ra900_o264_ra901' => 268],
-            ['no_ra900_o264_ra901' => 269],
-            ['no_ra900_o264_ra901' => 270],
-            ['no_ra900_o264_ra901' => 272],
+            ['no_ra900_o264_ra902' => 266],
+            ['no_ra900_o264_ra902' => 267],
+            ['no_ra900_o264_ra902' => 268],
+            ['no_ra900_o264_ra902' => 269],
+            ['no_ra900_o264_ra902' => 270],
+            ['no_ra900_o264_ra902' => 272],
         ];
         //ตารางที่ 13.8
         $table8 = [
-            ['no_ra900_o264_ra901' => 266],
-            ['no_ra900_o264_ra901' => 267],
-            ['no_ra900_o264_ra901' => 268],
-            ['no_ra900_o264_ra901' => 269],
-            ['no_ra900_o264_ra901' => 270],
-            ['no_ra900_o264_ra901' => 271],
+            ['no_ra900_o264_ra902' => 266],
+            ['no_ra900_o264_ra902' => 267],
+            ['no_ra900_o264_ra902' => 268],
+            ['no_ra900_o264_ra902' => 269],
+            ['no_ra900_o264_ra902' => 270],
+            ['no_ra900_o264_ra902' => 271],
         ];
 
         $isRadio = true;
@@ -113,27 +114,27 @@ class Summary131 extends Controller
 
         $startColumn = 'AE';
         $startRow = 11;
-        $objPHPExcel = Summary::sum13($table2,$startColumn,$startRow,$objPHPExcel,$mainObj, 'no_ra900_o264_ra902', 'no_ra900_o265_ra901', 'no_ra900_o265_ra902', 'no_ra900_o264_ra901', 267);
+        $objPHPExcel = Summary::sum13($table3,$startColumn,$startRow,$objPHPExcel,$mainObj, 'no_ra900_o264_ra902', 'no_ra900_o265_ra901', 'no_ra900_o265_ra902', 'no_ra900_o264_ra901', 267);
 
         $startColumn = 'AS';
         $startRow = 11;
-        $objPHPExcel = Summary::sum13($table2,$startColumn,$startRow,$objPHPExcel,$mainObj, 'no_ra900_o264_ra902', 'no_ra900_o265_ra901', 'no_ra900_o265_ra902', 'no_ra900_o264_ra901', 268);
+        $objPHPExcel = Summary::sum13($table4,$startColumn,$startRow,$objPHPExcel,$mainObj, 'no_ra900_o264_ra902', 'no_ra900_o265_ra901', 'no_ra900_o265_ra902', 'no_ra900_o264_ra901', 268);
 
         $startColumn = 'BG';
         $startRow = 11;
-        $objPHPExcel = Summary::sum13($table2,$startColumn,$startRow,$objPHPExcel,$mainObj, 'no_ra900_o264_ra902', 'no_ra900_o265_ra901', 'no_ra900_o265_ra902', 'no_ra900_o264_ra901', 269);
+        $objPHPExcel = Summary::sum13($table5,$startColumn,$startRow,$objPHPExcel,$mainObj, 'no_ra900_o264_ra902', 'no_ra900_o265_ra901', 'no_ra900_o265_ra902', 'no_ra900_o264_ra901', 269);
 
         $startColumn = 'BU';
         $startRow = 11;
-        $objPHPExcel = Summary::sum13($table2,$startColumn,$startRow,$objPHPExcel,$mainObj, 'no_ra900_o264_ra902', 'no_ra900_o265_ra901', 'no_ra900_o265_ra902', 'no_ra900_o264_ra901', 270);
+        $objPHPExcel = Summary::sum13($table6,$startColumn,$startRow,$objPHPExcel,$mainObj, 'no_ra900_o264_ra902', 'no_ra900_o265_ra901', 'no_ra900_o265_ra902', 'no_ra900_o264_ra901', 270);
 
         $startColumn = 'CI';
         $startRow = 11;
-        $objPHPExcel = Summary::sum13($table2,$startColumn,$startRow,$objPHPExcel,$mainObj, 'no_ra900_o264_ra902', 'no_ra900_o265_ra901', 'no_ra900_o265_ra902', 'no_ra900_o264_ra901', 271);
+        $objPHPExcel = Summary::sum13($table7,$startColumn,$startRow,$objPHPExcel,$mainObj, 'no_ra900_o264_ra902', 'no_ra900_o265_ra901', 'no_ra900_o265_ra902', 'no_ra900_o264_ra901', 271);
 
         $startColumn = 'CW';
         $startRow = 11;
-        $objPHPExcel = Summary::sum13($table2,$startColumn,$startRow,$objPHPExcel,$mainObj, 'no_ra900_o264_ra902', 'no_ra900_o265_ra901', 'no_ra900_o265_ra902', 'no_ra900_o264_ra901', 272);
+        $objPHPExcel = Summary::sum13($table8,$startColumn,$startRow,$objPHPExcel,$mainObj, 'no_ra900_o264_ra902', 'no_ra900_o265_ra901', 'no_ra900_o265_ra902', 'no_ra900_o264_ra901', 272);
 
 
         $objWriter = new \PHPExcel_Writer_Excel2007($objPHPExcel);
