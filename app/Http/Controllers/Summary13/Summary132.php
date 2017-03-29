@@ -30,7 +30,6 @@ class Summary132 extends Controller
         $objPHPExcel->removeSheetByIndex(0);
         $objPHPExcel->setActiveSheetIndexByName($inputSheet);
 
-
         //ตารางที่ 13.9
         $table1 = [
             ['no_ra904' => 264],
@@ -46,6 +45,7 @@ class Summary132 extends Controller
             ['no_ra900_o264_ra906' => 233],
             ['no_ra900_o264_ra906' => 270],
             ['no_ra900_o264_ra906' => 234],
+            ['no_ra900_o264_ra906' => 1],
         ];
         //ตารางที่ 13.11
         $table3 = [
@@ -56,6 +56,7 @@ class Summary132 extends Controller
             ['no_ra900_o264_ra906' => 233],
             ['no_ra900_o264_ra906' => 270],
             ['no_ra900_o264_ra906' => 234],
+            ['no_ra900_o264_ra906' => 1],
         ];
 
         //ตารางที่ 13.12
@@ -67,6 +68,7 @@ class Summary132 extends Controller
             ['no_ra900_o264_ra906' => 233],
             ['no_ra900_o264_ra906' => 270],
             ['no_ra900_o264_ra906' => 234],
+            ['no_ra900_o264_ra906' => 1],
         ];
         //ตารางที่ 13.13
         $table5 = [
@@ -77,6 +79,7 @@ class Summary132 extends Controller
             ['no_ra900_o264_ra906' => 233],
             ['no_ra900_o264_ra906' => 270],
             ['no_ra900_o264_ra906' => 234],
+            ['no_ra900_o264_ra906' => 1],
         ];
         //ตารางที่ 13.14
         $table6 = [
@@ -87,6 +90,7 @@ class Summary132 extends Controller
             ['no_ra900_o264_ra906' => 233],
             ['no_ra900_o264_ra906' => 270],
             ['no_ra900_o264_ra906' => 234],
+            ['no_ra900_o264_ra906' => 1],
         ];
         //ตารางที่ 13.15
         $table7 = [
@@ -97,6 +101,7 @@ class Summary132 extends Controller
             ['no_ra900_o264_ra906' => 232],
             ['no_ra900_o264_ra906' => 270],
             ['no_ra900_o264_ra906' => 234],
+            ['no_ra900_o264_ra906' => 1],
         ];
         //ตารางที่ 13.16
         $table8 = [
@@ -107,6 +112,7 @@ class Summary132 extends Controller
             ['no_ra900_o264_ra906' => 232],
             ['no_ra900_o264_ra906' => 233],
             ['no_ra900_o264_ra906' => 234],
+            ['no_ra900_o264_ra906' => 1],
         ];
 
         //ตารางที่ 13.17
@@ -118,6 +124,7 @@ class Summary132 extends Controller
             ['no_ra900_o264_ra906' => 232],
             ['no_ra900_o264_ra906' => 233],
             ['no_ra900_o264_ra906' => 270],
+            ['no_ra900_o264_ra906' => 1],
         ];
 
         $isRadio = true;
@@ -127,35 +134,43 @@ class Summary132 extends Controller
 
         $startColumn = 'Q';
         $startRow = 11;
-        $objPHPExcel = Summary::sum13($table2,$startColumn,$startRow,$objPHPExcel,$mainObj, 'no_ra904_o264_ra906', 'no_ra904_o265_ra905', 'no_ra904_o265_ra905', 'no_ra904_o264_ra905', 228);
+        $objPHPExcel = Summary::sum13($table2,$startColumn,$startRow,$objPHPExcel,$mainObj, 'no_ra904_o264_ra906', 'no_ra904_o265_ra905', 'no_ra904_o265_ra905', 'no_ra904_o264_ra905', 228,
+            'no_ra904', 264);
 
         $startColumn = 'AE';
         $startRow = 11;
-        $objPHPExcel = Summary::sum13($table3,$startColumn,$startRow,$objPHPExcel,$mainObj, 'no_ra904_o264_ra906', 'no_ra904_o265_ra905', 'no_ra904_o265_ra905', 'no_ra904_o264_ra905', 229);
+        $objPHPExcel = Summary::sum13($table3,$startColumn,$startRow,$objPHPExcel,$mainObj, 'no_ra904_o264_ra906', 'no_ra904_o265_ra905', 'no_ra904_o265_ra905', 'no_ra904_o264_ra905', 229,
+            'no_ra904', 264);
 
         $startColumn = 'AS';
         $startRow = 11;
-        $objPHPExcel = Summary::sum13($table4,$startColumn,$startRow,$objPHPExcel,$mainObj, 'no_ra904_o264_ra906', 'no_ra904_o265_ra905', 'no_ra904_o265_ra905', 'no_ra904_o264_ra905', 230);
+        $objPHPExcel = Summary::sum13($table4,$startColumn,$startRow,$objPHPExcel,$mainObj, 'no_ra904_o264_ra906', 'no_ra904_o265_ra905', 'no_ra904_o265_ra905', 'no_ra904_o264_ra905', 230,
+            'no_ra904', 264);
 
         $startColumn = 'BG';
         $startRow = 11;
-        $objPHPExcel = Summary::sum13($table5,$startColumn,$startRow,$objPHPExcel,$mainObj, 'no_ra904_o264_ra906', 'no_ra904_o265_ra905', 'no_ra904_o265_ra905', 'no_ra904_o264_ra905', 231);
+        $objPHPExcel = Summary::sum13($table5,$startColumn,$startRow,$objPHPExcel,$mainObj, 'no_ra904_o264_ra906', 'no_ra904_o265_ra905', 'no_ra904_o265_ra905', 'no_ra904_o264_ra905', 231,
+            'no_ra904', 264);
 
         $startColumn = 'BU';
         $startRow = 11;
-        $objPHPExcel = Summary::sum13($table6,$startColumn,$startRow,$objPHPExcel,$mainObj, 'no_ra904_o264_ra906', 'no_ra904_o265_ra905', 'no_ra904_o265_ra905', 'no_ra904_o264_ra905', 232);
+        $objPHPExcel = Summary::sum13($table6,$startColumn,$startRow,$objPHPExcel,$mainObj, 'no_ra904_o264_ra906', 'no_ra904_o265_ra905', 'no_ra904_o265_ra905', 'no_ra904_o264_ra905', 232,
+            'no_ra904', 264);
 
         $startColumn = 'CI';
         $startRow = 11;
-        $objPHPExcel = Summary::sum13($table7,$startColumn,$startRow,$objPHPExcel,$mainObj, 'no_ra904_o264_ra906', 'no_ra904_o265_ra905', 'no_ra904_o265_ra905', 'no_ra904_o264_ra905', 233);
+        $objPHPExcel = Summary::sum13($table7,$startColumn,$startRow,$objPHPExcel,$mainObj, 'no_ra904_o264_ra906', 'no_ra904_o265_ra905', 'no_ra904_o265_ra905', 'no_ra904_o264_ra905', 233,
+            'no_ra904', 264);
 
         $startColumn = 'CW';
         $startRow = 11;
-        $objPHPExcel = Summary::sum13($table8,$startColumn,$startRow,$objPHPExcel,$mainObj, 'no_ra904_o264_ra906', 'no_ra904_o265_ra905', 'no_ra904_o265_ra905', 'no_ra904_o264_ra905', 270);
+        $objPHPExcel = Summary::sum13($table8,$startColumn,$startRow,$objPHPExcel,$mainObj, 'no_ra904_o264_ra906', 'no_ra904_o265_ra905', 'no_ra904_o265_ra905', 'no_ra904_o264_ra905', 270,
+            'no_ra904', 264);
 
         $startColumn = 'DK';
         $startRow = 11;
-        $objPHPExcel = Summary::sum13($table9,$startColumn,$startRow,$objPHPExcel,$mainObj, 'no_ra904_o264_ra906', 'no_ra904_o265_ra905', 'no_ra904_o265_ra905', 'no_ra904_o264_ra905', 234);
+        $objPHPExcel = Summary::sum13($table9,$startColumn,$startRow,$objPHPExcel,$mainObj, 'no_ra904_o264_ra906', 'no_ra904_o265_ra905', 'no_ra904_o265_ra905', 'no_ra904_o264_ra905', 234,
+            'no_ra904', 264);
 
 
         $objWriter = new \PHPExcel_Writer_Excel2007($objPHPExcel);

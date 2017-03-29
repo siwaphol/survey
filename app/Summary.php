@@ -849,30 +849,9 @@ class Summary extends Model
         return $objPHPExcel;
     }
 
-    public static function sum13($uniqueKeyArr, $startCol, $startRow, $objPHPExcel, $mainObj, $changeUnique, $notSure, $notInNotSure, $mainUnique, $uniqueVal)
+    public static function sum13($uniqueKeyArr, $startCol, $startRow, $objPHPExcel, $mainObj, $changeUnique, $notSure, $notInNotSure, $mainUnique, $uniqueVal, $changeAnswerUnique, $changeAnswerValue)
     {
         list($weight, $sample, $population) = self::getSettingVariables();
-
-//        $w = [];
-//        $w[1] = Main::$weight[Main::INNER_GROUP_1];
-//        $w[2] = Main::$weight[Main::INNER_GROUP_2];
-//        $w[3] = Main::$weight[Main::OUTER_GROUP_1];
-//        $w[4] = Main::$weight[Main::OUTER_GROUP_2];
-
-//        $s = [];
-//        $s[1] = Main::$sample[Main::INNER_GROUP_1];
-//        $s[2] = Main::$sample[Main::INNER_GROUP_2];
-//        $s[3] = Main::$sample[Main::OUTER_GROUP_1];
-//        $s[4] = Main::$sample[Main::OUTER_GROUP_2];
-
-//        $parameterExcel = \PHPExcel_IOFactory::load(storage_path('excel/parameters.xlsx'));
-//        $parameterExcel->setActiveSheetIndex(2);
-//        $paramSheet = $parameterExcel->getActiveSheet();
-//        $S = [];
-//        $S[1] = (float)$paramSheet->getCell($population[Main::NORTHERN_INNER])->getValue();
-//        $S[2] = (float)$paramSheet->getCell($population[Main::NORTHERN_INNER])->getValue();
-//        $S[3] = (float)$paramSheet->getCell($population[Main::NORTHERN_OUTER])->getValue();
-//        $S[4] = (float)$paramSheet->getCell($population[Main::NORTHERN_OUTER])->getValue();
 
         $rows = [];
         $rowNumber = $startRow;
@@ -880,16 +859,11 @@ class Summary extends Model
             $rows[$startCol . $rowNumber] = $uniqueKey;
             $rowNumber++;
         }
-//        $start = microtime(true);
-//        $answerObj = Answer::whereIn('unique_key', $uniqueKeyArr)->get();
-//        $time_elapsed_secs = microtime(true) - $start;
-//        echo " Answer query : " . $time_elapsed_secs . " seconds</br>";
 
         $whereIn = [];
         $answers = [];
         foreach ($rows as $key => $value) {
             $whereIn[] = $value;
-//            echo $value . "\n";
             $p = [];
             $count = [];
             for ($i = 1; $i <= 4; $i++) { //กลุ่มจังหวัด
@@ -921,15 +895,21 @@ class Summary extends Model
                 $sql = "SELECT COUNT(*) as count FROM (SELECT main_id FROM answers WHERE main_id IN ($whereInMainId) " . $whereCondition1 . " )  t1 ";
                 $sql .= " inner join (SELECT main_id FROM answers WHERE main_id IN ($whereInMainId) " . $whereCondition2 . " ) t2 on t1.main_id = t2.main_id ";
 
-                $sql2 = "SELECT COUNT(*) as count FROM (SELECT main_id FROM answers WHERE main_id IN ($whereInMainId) " . $whereCondition3 . " )  t1 ";
-                $sql2 .= " inner join (SELECT main_id FROM answers WHERE main_id IN ($whereInMainId) " . $whereCondition4 . " ) t2 on t1.main_id = t2.main_id ";
+                $newSql = " SELECT COUNT(*) as count FROM 
+                  (
+                  SELECT SUM(IF(unique_key='{$mainUnique}' AND option_id='{$uniqueVal}',1,0)) * SUM(IF(unique_key='{$changeUnique}' AND option_id='{$radioValue}',1,0)) 
+                  * SUM(IF(unique_key='{$changeAnswerUnique}' AND option_id='{$changeAnswerValue}',1,0)) as sumAmount
+                  FROM answers where main_id IN ($whereInMainId) GROUP BY main_id ) t1
+                  WHERE sumAmount>0 ";
+
+//                $sql2 = "SELECT COUNT(*) as count FROM (SELECT main_id FROM answers WHERE main_id IN ($whereInMainId) " . $whereCondition3 . " )  t1 ";
+//                $sql2 .= " inner join (SELECT main_id FROM answers WHERE main_id IN ($whereInMainId) " . $whereCondition4 . " ) t2 on t1.main_id = t2.main_id ";
                 //echo $sql;
-                $result1 = \DB::select($sql);
+                $result1 = \DB::select($newSql);
 //                $result2 = \DB::select($sql2);
                 $count[$i] = count($result1)==0?0:$result1[0]->count;
 //                $count[$i] += count($result2)==0?0:$result2[0]->count;
                 $p[$i] = $weight[$i] * ((float)$count[$i] / $sample[$i]);
-                //echo $w[$i]." / ".$count[$i]." / ". $s[$i]." / ".$p[$i]."<br><br>";
             }
 
             $percentage = $p[1] + $p[2];
