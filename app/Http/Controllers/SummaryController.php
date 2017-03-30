@@ -71,15 +71,15 @@ class SummaryController extends Controller
         return response()->download(storage_path('excel/sum911.xlsx'), '9.1.1 หมวดแสงสว่าง.xlsx');
     }
 
-    public function downloadSum912(Request $request,$order)
+    public function downloadSum912($order)
     {
-        if ($order===1){
+        if ((int)$order===1){
             Summary912::report912_1();
             return response()->download(storage_path('excel/sum912.xlsx'), 'หมวดประกอบอาหาร_ไฟฟ้า.xlsx');
-        }else if($order===2){
+        }else if((int)$order===2){
             Summary912::report912_2();
             return response()->download(storage_path('excel/sum912.xlsx'), 'หมวดประกอบอาหาร_น้ำมันสำเร็จรูป.xlsx');
-        }else if($order===3){
+        }else if((int)$order===3){
             Summary912::report912_3();
             return response()->download(storage_path('excel/sum912.xlsx'), 'หมวดประกอบอาหาร_พลังงานหมุนเวียนดั้งเดิม.xlsx');
         }

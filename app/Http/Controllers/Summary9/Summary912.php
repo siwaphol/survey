@@ -58,7 +58,7 @@ class Summary912 extends Controller
             'no_ch1024_o337',
             'no_ch1024_o338',
             'no_ch1024_o339',
-            'no_ch1024_o340',
+            'no_ch1024_o340'
         ];
         $startColumn = 'E';
         $objPHPExcel = Summary::sum($amount, $startColumn, $startRow, $objPHPExcel, $mainObj);
@@ -88,7 +88,7 @@ class Summary912 extends Controller
             'no_ch1024_o337_nu174',
             'no_ch1024_o338_nu182',
             'no_ch1024_o339_nu189',
-            'no_ch1024_o340_nu196',
+            'no_ch1024_o340_nu196'
         ];
         $startColumn = 'U';
         $objPHPExcel = Summary::average($amountUniqueKey, $startColumn, $startRow, $objPHPExcel, $mainObj);
@@ -137,7 +137,6 @@ class Summary912 extends Controller
 
         $week = Parameter::WEEK_PER_YEAR;
         $ktoe = Setting::where('code', 'E9')->first()->value;
-
         // ที่มีฉลากประหยัดไปเบอร์ 5
         // [ จำนวนหม้อ * อัตราการใช้ (นาที/ครั้ง) * อัตราการใช้ (ครั้งต่อวัน) * อัตราการใช้ (วัน/สัปดาห์) * (52/60) ] * factor * electric power
         $sumAmountSQL = " (sum(IF(unique_key='param1',answer_numeric,0)) 
@@ -160,6 +159,7 @@ class Summary912 extends Controller
             'param7'=>6  //ฉลากประหยัดไฟ
         ];
         $startColumn = 'AL';
+        $startRow = 13;
         $objPHPExcel = Summary::usageElectric($usage, $startColumn, $startRow, $objPHPExcel,$mainObj,$sumAmountSQL,$params,$ktoe);
 
         //Table4
@@ -188,7 +188,7 @@ class Summary912 extends Controller
             'no_ch1024_o337_nu178',
             'no_ch1024_o338_nu186',
             'no_ch1024_o339_nu193',
-            'no_ch1024_o340_nu200',
+            'no_ch1024_o340_nu200'
         ];
         $table4Amount = [
             'no_ch1024_o331_ch123_o75_ch124_o78_nu125',
@@ -215,7 +215,7 @@ class Summary912 extends Controller
             'no_ch1024_o337_nu174',
             'no_ch1024_o338_nu182',
             'no_ch1024_o339_nu189',
-            'no_ch1024_o340_nu196',
+            'no_ch1024_o340_nu196'
         ];
 
         $startColumn = 'BB';
