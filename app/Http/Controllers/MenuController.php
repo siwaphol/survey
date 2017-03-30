@@ -116,6 +116,14 @@ class MenuController extends Controller
             8=>'get-report912/1',
             9=>'get-report912/2',
             10=>'get-report912/3',
+            12=>'get-report913',
+            14=>'get-report914/1',
+            15=>'get-report913/2',
+            17=>'get-report915',
+            19=>'get-report916/1',
+            20=>'get-report916/2',
+            22=>'get-report917',
+            24=>'get-report918',
         );
 
         if (array_key_exists((int)$menu_id,$mainMenuArr) && is_null($sub_menu_id))
