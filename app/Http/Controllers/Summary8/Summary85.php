@@ -36,6 +36,10 @@ class Summary85 extends Controller
             ['no_ti59_ch60_o46_nu61','no_ti59_ch60_o47_nu61','no_ti59_ch60_o48_nu61','no_ti59_ch60_o49_nu61'],
             ['no_ti62_ch63_o53_nu64','no_ti62_ch63_o54_nu64','no_ti62_ch63_o55_nu64','no_ti62_ch63_o56_nu64'],
         ];
+        $startColumn = 'C';
+        $startRow = 11;
+        $objPHPExcel = Summary::average($table1, $startColumn, $startRow, $objPHPExcel, $mainObj, false,[],true);
+
         //ตารางที่ 8.13 ค่าเฉลี่ยและค่าความคลาดเคลื่อนมาตรฐานของแหล่งที่มาของรายได้และเขตปกครอง
         $table2 = [
             'no_ti59_ch60_o46_nu61',
@@ -47,30 +51,53 @@ class Summary85 extends Controller
             'no_ti59_ch60_o52_nu61',
             'no_ti59_ch60_o1_nu61',
         ];
+        $startColumn = 'Q';
+        $startRow = 11;
+        $objPHPExcel = Summary::average($table2, $startColumn, $startRow, $objPHPExcel, $mainObj, false,[], true);
+
+
         //ตารางที่ 8.14 ค่าเฉลี่ยและค่าความคลาดเคลื่อนมาตรฐานของประเภทรายจ่ายและเขตปกครอง
         $table3 = [
             'no_ti62_ch63_o53_nu64',
             'no_ti62_ch63_o54_nu64',
             'no_ti62_ch63_o55_nu64',
             'no_ti62_ch63_o56_nu64',
+        ];
+        $startColumn = 'AE';
+        $startRow = 11;
+        $objPHPExcel = Summary::average($table3, $startColumn, $startRow, $objPHPExcel, $mainObj, false,[],true);
+        // ค่าไฟฟ้า * 5
+        $electricMultiplier = 5;
+        $table3_electric = [
             'no_ti62_ch63_o57_nu64',
-            'no_ti62_ch63_o58_nu64',
+            'no_ti62_ch63_o58_nu64'
+        ];
+        $startRow = 15;
+        $objPHPExcel = Summary::average($table3_electric, $startColumn, $startRow, $objPHPExcel, $mainObj, false,[],false,$electricMultiplier);
+        $table3 = [
             'no_ti62_ch63_o59_nu64',
             'no_ti62_ch63_o60_nu64',
             'no_ti62_ch63_o61_nu64',
             'no_ti62_ch63_o62_nu64',
-
         ];
+        $startRow = 17;
+        $objPHPExcel = Summary::average($table3, $startColumn, $startRow, $objPHPExcel, $mainObj, false,[],true);
+        // ค่าเรียน เป็นเทอมให้ * 3
+        $tuitionMultiplier = 3;
         $table3_2 = [
-            'no_ti62_ch63_o63_nu64',
-            'no_ti62_ch63_o64_nu64'
+            'no_ti62_ch63_o63_nu64'
         ];
+        $startRow = 21;
+        $objPHPExcel = Summary::average($table3_2, $startColumn, $startRow, $objPHPExcel, $mainObj, false,[],true,$tuitionMultiplier);
         $table3_3 = [
-            'no_ti62_ch63_o65_nu64'
-        ];
-        $table3_4 = [
+            'no_ti62_ch63_o64_nu64',
+            'no_ti62_ch63_o65_nu64',
             'no_ti62_ch63_o1_nu64'
         ];
+        $startRow = 22;
+        $objPHPExcel = Summary::average($table3_3, $startColumn, $startRow, $objPHPExcel, $mainObj, false,[],true);
+
+        // =================================//
         //ตารางที่ 8.15 จำนวนและร้อยของครัวเรือนจำแนกตามการมีหนี้สินและเขตปกครอง
         $table4 = [
             ['no_ra65'=>66],
@@ -82,26 +109,8 @@ class Summary85 extends Controller
             'no_ra65_o66_nu66',
         ];
 
-        $startColumn = 'C';
-        $startRow = 11;
-        $objPHPExcel = Summary::average($table1, $startColumn, $startRow, $objPHPExcel, $mainObj, false,[],true);
-
-        $startColumn = 'Q';
-        $startRow = 11;
-        $objPHPExcel = Summary::average($table2, $startColumn, $startRow, $objPHPExcel, $mainObj, false,[], true);
-
-        $startColumn = 'AE';
-        $startRow = 11;
-        $objPHPExcel = Summary::average($table3, $startColumn, $startRow, $objPHPExcel, $mainObj, false,[],true);
-        $startRow = 21;
-        $objPHPExcel = Summary::average($table3_2, $startColumn, $startRow, $objPHPExcel, $mainObj, false,[],true,2);
-        $startRow = 23;
-        $objPHPExcel = Summary::average($table3_3, $startColumn, $startRow, $objPHPExcel, $mainObj, false,[],true);
-        $startRow = 24;
-        $objPHPExcel = Summary::average($table3_4, $startColumn, $startRow, $objPHPExcel, $mainObj);
-
         $isRadio = true;
-        $startColumn = 'AR';
+        $startColumn = 'AS';
         $startRow = 11;
         $objPHPExcel = Summary::sum($table4,$startColumn,$startRow,$objPHPExcel,$mainObj,$isRadio);
 

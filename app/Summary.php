@@ -243,6 +243,7 @@ class Summary extends Model
                         . " GROUP BY main_id) T1";
                 }
                 $avgResult = \DB::select($avgSql);
+
                 if (!is_null($multiply))
                     $avg[$b_key] = ($avgResult[0]->a_sum*(float)$multiply)/$sample[$b_key];
                 else if ($year)
