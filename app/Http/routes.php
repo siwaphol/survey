@@ -42,7 +42,8 @@ Route::group(['middleware' => 'auth'], function () {
     Route::get('get-report84', 'SummaryController@downloadSum84');
     Route::get('get-report85', 'SummaryController@downloadSum85');
     Route::get('get-report911', 'SummaryController@downloadSum911');
-    Route::get('get-report912', 'SummaryController@downloadSum912');
+
+    Route::get('get-report912/{order}', 'SummaryController@downloadSum912');
     // หมวดความสะดวกสบาย
     Route::get('get-report913', 'SummaryController@downloadSum913');
     Route::get('get-report914', 'SummaryController@downloadSum914');

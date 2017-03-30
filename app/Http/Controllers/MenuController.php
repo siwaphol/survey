@@ -111,8 +111,18 @@ class MenuController extends Controller
             33=>'get-report133'
         );
 
-        if (array_key_exists((int)$menu_id,$mainMenuArr))
+        $subMenuArr = array(
+            6=>'get-report911',
+            8=>'get-report912/1',
+            9=>'get-report912/2',
+            10=>'get-report912/3',
+        );
+
+        if (array_key_exists((int)$menu_id,$mainMenuArr) && is_null($sub_menu_id))
             return $mainMenuArr[(int)$menu_id];
+
+        if (!is_null($sub_menu_id) && array_key_exists((int)$sub_menu_id,$subMenuArr))
+            return $subMenuArr[(int)$sub_menu_id];
 
         return null;
     }
