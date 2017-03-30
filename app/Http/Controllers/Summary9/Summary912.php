@@ -13,14 +13,228 @@ use App\Http\Controllers\Controller;
 
 class Summary912 extends Controller
 {
-    public static function report912()
+    // ประกอบอาหารไฟฟ้า
+    public static function report912_1()
     {
         set_time_limit(3600);
 
         $mainObj = new Main();
         $mainObj->initList();
 
-//        $settings = Setting::all();
+        $inputFile = 'summary9.xlsx';
+        $inputSheet = '9.1.2';
+        $startRow = 13;
+        $outputFile = 'sum912.xlsx';
+
+        $objPHPExcel = new \PHPExcel();
+        $objPHPExcelMain = \PHPExcel_IOFactory::load(storage_path('excel/'. $inputFile));
+        $objPHPExcel->addExternalSheet($objPHPExcelMain->getSheetByName($inputSheet));
+        $objPHPExcel->removeSheetByIndex(0);
+        $objPHPExcel->setActiveSheetIndexByName($inputSheet);
+
+        // หมวดประกอบอาหาร
+        $amount = [
+            'no_ch1024_o331_ch123_o75_ch124_o78',
+            'no_ch1024_o331_ch123_o75_ch124_o79',
+            'no_ch1024_o331_ch123_o75_ch124_o80',
+            'no_ch1024_o331_ch123_o76_ch1011_o78',
+            'no_ch1024_o331_ch123_o76_ch1011_o79',
+            'no_ch1024_o331_ch123_o77_ch1011_o78',
+            'no_ch1024_o331_ch123_o77_ch1011_o79',
+            // เตาหุงต้มไฟฟ้า
+            'no_ch1024_o332_ch132_o83',
+            'no_ch1024_o332_ch132_o84',
+            'no_ch1024_o332_ch132_o85',
+            //ไมโครเวฟ
+            'no_ch1024_o333',
+            //เตาอบไฟฟ้า
+            'no_ch1024_o334',
+            // กระติกน้ำร้อน
+            'no_ch1024_o335_ch156_o287',
+            'no_ch1024_o335_ch156_o288',
+            // กาต้อมน้ำไฟฟ้า
+            'no_ch1024_o336',
+            // กระทะไฟฟ้า
+            'no_ch1024_o337',
+            'no_ch1024_o338',
+            'no_ch1024_o339',
+            'no_ch1024_o340',
+        ];
+        $startColumn = 'E';
+        $objPHPExcel = Summary::sum($amount, $startColumn, $startRow, $objPHPExcel, $mainObj);
+
+        $amountUniqueKey = [
+            'no_ch1024_o331_ch123_o75_ch124_o78_nu125',
+            'no_ch1024_o331_ch123_o75_ch124_o79_nu125',
+            'no_ch1024_o331_ch123_o75_ch124_o80_nu125',
+            'no_ch1024_o331_ch123_o76_ch1011_o78_nu1012',
+            'no_ch1024_o331_ch123_o76_ch1011_o79_nu1012',
+            'no_ch1024_o331_ch123_o77_ch1011_o78_nu1012',
+            'no_ch1024_o331_ch123_o77_ch1011_o79_nu1012',
+            // เตาหุงต้มไฟฟ้า
+            'no_ch1024_o332_ch132_o83_nu133',
+            'no_ch1024_o332_ch132_o84_nu133',
+            'no_ch1024_o332_ch132_o85_nu133',
+//ไมโครเวฟ
+            'no_ch1024_o333_nu141',
+//เตาอบไฟฟ้า
+            'no_ch1024_o334_nu149',
+            // กระติกน้ำร้อน
+            'no_ch1024_o335_ch156_o287_nu157',
+            'no_ch1024_o335_ch156_o288_nu157',
+            // กาต้มน้ำไฟฟ้า
+            'no_ch1024_o336_nu166',
+//กระทะไฟฟ้า
+            'no_ch1024_o337_nu174',
+            'no_ch1024_o338_nu182',
+            'no_ch1024_o339_nu189',
+            'no_ch1024_o340_nu196',
+        ];
+        $startColumn = 'U';
+        $objPHPExcel = Summary::average($amountUniqueKey, $startColumn, $startRow, $objPHPExcel, $mainObj);
+
+        $settings = Setting::whereIn('group_id',[1,5,9,10,11,12,13])
+            ->get();
+        $factors = array();
+        $electricPower = array();
+        $factorLastDigit = [7,9,11,13,15,17,19,21,22,23,25,27,29,31,33,35,37,38,39];
+        foreach ($factorLastDigit as $lastDigit){
+            $electricPower[$lastDigit] = (float)$settings->where('code', 'electric_power_' . $lastDigit)->first()->value;
+
+            $factors[$lastDigit] = (float)$settings->where('code','tool_factor_'. $lastDigit)->first()->value
+                * (float)$settings->where('code','season_factor_'. $lastDigit)->first()->value
+                * (float)$settings->where('code','usage_factor_'. $lastDigit)->first()->value;
+        }
+
+        //usage and ktoe
+        $usage = [
+            ['no_ch1024_o331_ch123_o75_ch124_o78_nu125','no_ch1024_o331_ch123_o75_ch124_o78_nu126', 'no_ch1024_o331_ch123_o75_ch124_o78_nu127','no_ch1024_o331_ch123_o75_ch124_o78_nu128',$factors[7], $electricPower[7],'no_ch1024_o331_ch123_o75_ch124_o78_ra130'],
+            ['no_ch1024_o331_ch123_o75_ch124_o79_nu125','no_ch1024_o331_ch123_o75_ch124_o79_nu126', 'no_ch1024_o331_ch123_o75_ch124_o79_nu127','no_ch1024_o331_ch123_o75_ch124_o79_nu128',$factors[9], $electricPower[9], 'no_ch1024_o331_ch123_o75_ch124_o79_ra130'],
+            ['no_ch1024_o331_ch123_o75_ch124_o80_nu125','no_ch1024_o331_ch123_o75_ch124_o80_nu126', 'no_ch1024_o331_ch123_o75_ch124_o80_nu127','no_ch1024_o331_ch123_o75_ch124_o80_nu128',$factors[11], $electricPower[11], 'no_ch1024_o331_ch123_o75_ch124_o80_ra130'],
+            ['no_ch1024_o331_ch123_o76_ch1011_o78_nu1012','no_ch1024_o331_ch123_o76_ch1011_o78_nu1013', 'no_ch1024_o331_ch123_o76_ch1011_o78_nu1014','no_ch1024_o331_ch123_o76_ch1011_o78_nu1015',$factors[13], $electricPower[13],'no_ch1024_o331_ch123_o76_ch1011_o78_ra1017'],
+            ['no_ch1024_o331_ch123_o76_ch1011_o79_nu1012','no_ch1024_o331_ch123_o76_ch1011_o79_nu1013', 'no_ch1024_o331_ch123_o76_ch1011_o79_nu1014','no_ch1024_o331_ch123_o76_ch1011_o79_nu1015',$factors[15], $electricPower[15],'no_ch1024_o331_ch123_o76_ch1011_o79_ra1017'],
+            ['no_ch1024_o331_ch123_o77_ch1011_o78_nu1012','no_ch1024_o331_ch123_o77_ch1011_o78_nu1013', 'no_ch1024_o331_ch123_o77_ch1011_o78_nu1014','no_ch1024_o331_ch123_o77_ch1011_o78_nu1015',$factors[17], $electricPower[17],'no_ch1024_o331_ch123_o77_ch1011_o78_ra1017'],
+            ['no_ch1024_o331_ch123_o77_ch1011_o79_nu1012','no_ch1024_o331_ch123_o77_ch1011_o79_nu1013', 'no_ch1024_o331_ch123_o77_ch1011_o79_nu1014','no_ch1024_o331_ch123_o77_ch1011_o79_nu1015',$factors[19], $electricPower[19],'no_ch1024_o331_ch123_o77_ch1011_o79_ra1017'],
+            // เตาหุงต้มไฟฟ้า
+            ['no_ch1024_o332_ch132_o83_nu133','no_ch1024_o332_ch132_o83_nu134', 'no_ch1024_o332_ch132_o83_nu135','no_ch1024_o332_ch132_o83_nu136',$factors[21],$electricPower[21],''],
+            ['no_ch1024_o332_ch132_o84_nu133','no_ch1024_o332_ch132_o84_nu134', 'no_ch1024_o332_ch132_o84_nu135','no_ch1024_o332_ch132_o84_nu136',$factors[22],$electricPower[22],''],
+            ['no_ch1024_o332_ch132_o85_nu133','no_ch1024_o332_ch132_o85_nu134', 'no_ch1024_o332_ch132_o85_nu135','no_ch1024_o332_ch132_o85_nu136',$factors[23],$electricPower[23],'no_ch1024_o332_ch132_o85_ra138'],
+//ไมโครเวฟ
+            ['no_ch1024_o333_nu141','no_ch1024_o333_nu142', 'no_ch1024_o333_nu143','no_ch1024_o333_nu144',$factors[25],$electricPower[25],'no_ch1024_o333_ra146'],
+//เตาอบไฟฟ้า
+            ['no_ch1024_o334_nu149','no_ch1024_o334_nu150', 'no_ch1024_o334_nu151','no_ch1024_o334_nu152',$factors[27], $electricPower[27], 'no_ch1024_o334_ra154'],
+            //กระติกน้ำร้อน
+            ['no_ch1024_o335_ch156_o287_nu157','no_ch1024_o335_ch156_o287_nu158', 'no_ch1024_o335_ch156_o287_nu159','no_ch1024_o335_ch156_o287_nu160',$factors[29], $electricPower[29], 'no_ch1024_o335_ch156_o287_ra162'],
+            ['no_ch1024_o335_ch156_o288_nu157','no_ch1024_o335_ch156_o288_nu158', 'no_ch1024_o335_ch156_o288_nu159','no_ch1024_o335_ch156_o288_nu160',$factors[31], $electricPower[31], 'no_ch1024_o335_ch156_o288_ra162'],
+            // กาต้มน้ำไฟฟ้า
+            ['no_ch1024_o336_nu166','no_ch1024_o336_nu167', 'no_ch1024_o336_nu168','no_ch1024_o336_nu169',$factors[33], $electricPower[33], 'no_ch1024_o336_ra171'],
+            // กระทะไฟฟ้า
+            ['no_ch1024_o337_nu174','no_ch1024_o337_nu175', 'no_ch1024_o337_nu176','no_ch1024_o337_nu177',$factors[35], $electricPower[35], 'no_ch1024_o337_ra179'],
+            ['no_ch1024_o338_nu182','no_ch1024_o338_nu183', 'no_ch1024_o338_nu184','no_ch1024_o338_nu185',$factors[37], $electricPower[37], ''],
+            ['no_ch1024_o339_nu189','no_ch1024_o339_nu190', 'no_ch1024_o339_nu191','no_ch1024_o339_nu192',$factors[38], $electricPower[38], ''],
+            ['no_ch1024_o340_nu196','no_ch1024_o340_nu197', 'no_ch1024_o340_nu198','no_ch1024_o340_nu199',$factors[39], $electricPower[39], '']
+        ];
+
+        $week = Parameter::WEEK_PER_YEAR;
+        $ktoe = Setting::where('code', 'E9')->first()->value;
+
+        // ที่มีฉลากประหยัดไปเบอร์ 5
+        // [ จำนวนหม้อ * อัตราการใช้ (นาที/ครั้ง) * อัตราการใช้ (ครั้งต่อวัน) * อัตราการใช้ (วัน/สัปดาห์) * (52/60) ] * factor * electric power
+        $sumAmountSQL = " (sum(IF(unique_key='param1',answer_numeric,0)) 
+        * sum(if(unique_key='param2', answer_numeric,0)) 
+        * sum(if(unique_key='param3', answer_numeric,0)))
+        * sum(if(unique_key='param4',answer_numeric,0)
+        * ({$week} / 60)) 
+        * param5
+        * param6 
+        * (if(sum(if(unique_key='param7' and option_id=81,1,0)) + if('param7'='',1,0) >0,1,0)) 
+        as sumAmount ";
+
+        $params = [
+            'param1'=>0, //จำนวนหม้อ
+            'param2'=>1, //อัตราการใช้ (นาที/ครั้ง)
+            'param3'=>2, //อัตราการใช้ (ครั้งต่อวัน)
+            'param4'=>3, //อัตราการใช้ (วัน/สัปดาห์)
+            'param5'=>4, //factor
+            'param6'=>5, //electric power
+            'param7'=>6  //ฉลากประหยัดไฟ
+        ];
+        $startColumn = 'AL';
+        $objPHPExcel = Summary::usageElectric($usage, $startColumn, $startRow, $objPHPExcel,$mainObj,$sumAmountSQL,$params,$ktoe);
+
+        //Table4
+        $table4 = [
+            'no_ch1024_o331_ch123_o75_ch124_o78_nu129',
+            'no_ch1024_o331_ch123_o75_ch124_o79_nu129',
+            'no_ch1024_o331_ch123_o75_ch124_o80_nu129',
+            'no_ch1024_o331_ch123_o76_ch1011_o78_nu1016',
+            'no_ch1024_o331_ch123_o76_ch1011_o79_nu1016',
+            'no_ch1024_o331_ch123_o77_ch1011_o78_nu1016',
+            'no_ch1024_o331_ch123_o77_ch1011_o79_nu1016',
+            // เตาหุงต้มไฟฟ้า
+            'no_ch1024_o332_ch132_o83_nu137',
+            'no_ch1024_o332_ch132_o84_nu137',
+            'no_ch1024_o332_ch132_o85_nu137',
+// ไมโครเวฟ
+            'no_ch1024_o333_nu145',
+            //เตาอบไฟฟ้า
+            'no_ch1024_o334_nu153',
+//กระติกน้ำร้อน
+            'no_ch1024_o335_ch156_o287_nu161',
+            'no_ch1024_o335_ch156_o288_nu161',
+            // กาต้มน้ำ
+            'no_ch1024_o336_nu170',
+// กระทะไฟฟ้า
+            'no_ch1024_o337_nu178',
+            'no_ch1024_o338_nu186',
+            'no_ch1024_o339_nu193',
+            'no_ch1024_o340_nu200',
+        ];
+        $table4Amount = [
+            'no_ch1024_o331_ch123_o75_ch124_o78_nu125',
+            'no_ch1024_o331_ch123_o75_ch124_o79_nu125',
+            'no_ch1024_o331_ch123_o75_ch124_o80_nu125',
+            'no_ch1024_o331_ch123_o76_ch1011_o78_nu1012',
+            'no_ch1024_o331_ch123_o76_ch1011_o79_nu1012',
+            'no_ch1024_o331_ch123_o77_ch1011_o78_nu1012',
+            'no_ch1024_o331_ch123_o77_ch1011_o79_nu1012',
+//         เตาหุงต้มไฟฟ้า
+            'no_ch1024_o332_ch132_o83_nu133',
+            'no_ch1024_o332_ch132_o84_nu133',
+            'no_ch1024_o332_ch132_o85_nu133',
+            // ไมโครเวฟ
+            'no_ch1024_o333_nu141',
+            //เตาอบไฟฟ้า
+            'no_ch1024_o334_nu149',
+            //กระติกน้ำร้อน
+            'no_ch1024_o335_ch156_o287_nu157',
+            'no_ch1024_o335_ch156_o288_nu157',
+            // กาต้มน้ำ
+            'no_ch1024_o336_nu166',
+            // กระทะไฟฟ้า
+            'no_ch1024_o337_nu174',
+            'no_ch1024_o338_nu182',
+            'no_ch1024_o339_nu189',
+            'no_ch1024_o340_nu196',
+        ];
+
+        $startColumn = 'BB';
+        $startRow = 13;
+        // สำหรับเครื่องใช้ไฟฟ้า
+        $objPHPExcel = Summary::averageLifetime($table4, $table4Amount, $startColumn, $startRow, $objPHPExcel, $mainObj);
+
+        $objWriter = new \PHPExcel_Writer_Excel2007($objPHPExcel);
+        $objWriter->save(storage_path(iconv('UTF-8', 'windows-874', 'excel/'.$outputFile)));
+
+        return response()->download(storage_path('excel/'.$outputFile), 'ตารางสรุปหมวดประกอบอาหาร.xlsx');
+    }
+
+    public static function report912()
+    {
+        set_time_limit(3600);
+
+        $mainObj = new Main();
+        $mainObj->initList();
 
         $inputFile = 'summary9.xlsx';
         $inputSheet = '9.1.2';

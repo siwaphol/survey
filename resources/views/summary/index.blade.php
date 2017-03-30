@@ -55,7 +55,7 @@
                             </tr>
                             @foreach($subMenus as $sub_menu)
                                 <?php
-                                $menuLink = \App\Http\Controllers\MenuController::getReportDownloadLink($sub_menu->parent_id);
+                                $menuLink = \App\Http\Controllers\MenuController::getReportDownloadLink($sub_menu->parent_id, $sub_menu->id);
                                 ?>
                                 <tr>
                                     <td></td>
