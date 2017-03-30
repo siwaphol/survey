@@ -47,11 +47,11 @@ class Summary82 extends Controller
         //ตารางที่ 8.7 จำนวนและร้อยละจำแนกตามอายุของหัวหน้าครัวเรือนและเขตปกครอง
         $ageUniqueKey = 'no_ti37_te38';
         $table3 = [
-            " HAVING SUM(IF(unique_key='$ageUniqueKey', answer_text,0))<=20 ",
-            " HAVING SUM(IF(unique_key='$ageUniqueKey', answer_text,0)) between 21 and 30 ",
-            " HAVING SUM(IF(unique_key='$ageUniqueKey', answer_text,0)) between 31 and 40 ",
-            " HAVING SUM(IF(unique_key='$ageUniqueKey', answer_text,0)) between 41 and 50 ",
-            " HAVING SUM(IF(unique_key='$ageUniqueKey', answer_text,0)) between 51 and 60 ",
+            " HAVING SUM(IF(unique_key='$ageUniqueKey', answer_text,0))<=17 ",
+            " HAVING SUM(IF(unique_key='$ageUniqueKey', answer_text,0)) between 18 and 25 ",
+            " HAVING SUM(IF(unique_key='$ageUniqueKey', answer_text,0)) between 26 and 49 ",
+            " HAVING SUM(IF(unique_key='$ageUniqueKey', answer_text,0)) between 50 and 60 ",
+//            " HAVING SUM(IF(unique_key='$ageUniqueKey', answer_text,0)) between 51 and 60 ",
             " HAVING SUM(IF(unique_key='$ageUniqueKey', answer_text,0))>60 ",
         ];
 
@@ -78,7 +78,8 @@ class Summary82 extends Controller
         //Summary::sum($table3,$startColumn,$startRow,$objPHPExcel,$mainObj,$isRadio);
         $startColumn = 'AS';
         $startRow = 11;
-        $objPHPExcel = Summary::average($table4, $startColumn, $startRow, $objPHPExcel, $mainObj);
+        $objPHPExcel = Summary::average($table4, $startColumn, $startRow, $objPHPExcel, $mainObj
+            , false,array(), false, null, false,false, true);
 
         $objWriter = new \PHPExcel_Writer_Excel2007($objPHPExcel);
         $objWriter->save(storage_path(iconv('UTF-8', 'windows-874', 'excel/'.$outputFile)));

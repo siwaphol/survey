@@ -146,7 +146,7 @@ class Summary extends Model
         return $objPHPExcel;
     }
 
-    public static function average($uniqueKeyArr, $startCol, $startRow, $objPHPExcel, $mainObj, $isRadio = false, $radioArr = [], $year=false, $multiply=null, $customSql=false,$customWhere=false)
+    public static function average($uniqueKeyArr, $startCol, $startRow, $objPHPExcel, $mainObj, $isRadio = false, $radioArr = [], $year=false, $multiply=null, $customSql=false,$customWhere=false, $useSum = false)
     {
         list($weight, $sample, $population) = self::getSettingVariables();
 
@@ -250,7 +250,11 @@ class Summary extends Model
                 else
                     $avg[$b_key] = $avgResult[0]->a_sum/$sample[$b_key];
 
-                $count[$b_key] = $avgResult[0]->countAll;
+                if ($useSum){
+                    $count[$b_key] = $avgResult[0]->a_sum;
+                }else{
+                    $count[$b_key] = $avgResult[0]->countAll;
+                }
 
                 $p[$b_key] = $avg[$b_key] * $weight[$b_key];
             }
