@@ -409,5 +409,4 @@ class Summary914 extends Controller
 
         return true;
     }
-
 }

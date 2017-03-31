@@ -43,7 +43,7 @@
                     <div class="form-group {{$errors->has('code')?"has-error has-feedback":""}}">
                         <label class="control-label col-lg-2">รหัส *</label>
                         <div class="col-lg-10">
-                            <input type="text" name="code" value="{{$setting->code}}" class="form-control">
+                            <input type="text" name="code" value="{{$setting->code}}" class="form-control" readonly>
                             @if($errors->has('code'))
                                 <div class="form-control-feedback">
                                     <i class="icon-cancel-circle2"></i>
