@@ -45,7 +45,7 @@ class Summary91 extends Controller
             'no_ch1023_o329_ch101_o69'
         ];
         $startColumn = 'E';
-//        $objPHPExcel = Summary::sum($table1, $startColumn, $startRow, $objPHPExcel, $mainObj);
+        $objPHPExcel = Summary::sum($table1, $startColumn, $startRow, $objPHPExcel, $mainObj);
 
         $table2 = [
             'no_ch1023_o329_ch101_o68_nu103',
@@ -67,7 +67,7 @@ class Summary91 extends Controller
         ];
 
         $startColumn = 'U';
-//        $objPHPExcel = Summary::average($table2, $startColumn, $startRow, $objPHPExcel, $mainObj);
+        $objPHPExcel = Summary::average($table2, $startColumn, $startRow, $objPHPExcel, $mainObj);
 
         $settings = Setting::whereIn('group_id',[1,9,10,11])->get();
         $factor1 = (float)$settings->where('code','tool_factor_1')->first()->value
@@ -118,7 +118,7 @@ class Summary91 extends Controller
             'param4'=>3,
             'param5'=>4
         ];
-//        $objPHPExcel = Summary::usageElectric($table3, $startColumn, $startRow,$objPHPExcel, $mainObj,$sumAmountSQL,$params,$ktoe);
+        $objPHPExcel = Summary::usageElectric($table3, $startColumn, $startRow,$objPHPExcel, $mainObj,$sumAmountSQL,$params,$ktoe);
 
         $table4 = [
             'no_ch1023_o329_ch101_o68_nu106',
