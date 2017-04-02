@@ -18,8 +18,12 @@ class Summary extends Model
             $rowNumber++;
         }
 
-        if (!$isRadio && !$arraySum)
-            $answerObj = Answer::whereIn('unique_key', $uniqueKeyArr)->get();
+        if (!$isRadio && !$arraySum){
+            $uniqueKeyArrWithoutEmptyValue = array_filter($uniqueKeyArr, function($var){
+                return !empty($var) && (is_string($var)||is_array($var));
+            });
+            $answerObj = Answer::whereIn('unique_key', $uniqueKeyArrWithoutEmptyValue)->get();
+        }
         else if($arraySum){
             $allUniqueKeys = array_reduce($uniqueKeyArr, 'array_merge', array());
             $answerObj = Answer::whereIn('unique_key', $allUniqueKeys)->get();

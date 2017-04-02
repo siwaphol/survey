@@ -71,6 +71,10 @@ Route::group(['middleware' => 'auth'], function () {
     Route::get('echo-report', function(){
         \App\EchoSummary::report911Test();
     });
+
+    Route::group(['prefix'=>'report'], function(){
+        Route::get('tool/{tool_number}', 'Summary9ByToolElectric@reportTool');
+    });
 });
 
 Route::get('phpinfo', function(){
