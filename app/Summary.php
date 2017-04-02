@@ -182,8 +182,10 @@ class Summary extends Model
             $p = [];
             $avg = [];
 
-            if (empty($value))
+            if (empty($value)){
+                $level1Counter++;
                 continue;
+            }
 
             foreach (Main::$borderWeight as $b_key => $b_weight) {
                 $mainList = $mainObj->filterMain($b_key);
@@ -396,8 +398,10 @@ class Summary extends Model
         foreach ($rows as $key => $value) {
             $sum = [];
 
-            if (empty($value))
+            if (empty($value)){
+                $level1Index++;
                 continue;
+            }
 
             foreach (Main::$borderWeight as $b_key => $b_weight) {
                 $mainList = $mainObj->filterMain($b_key);
@@ -518,8 +522,10 @@ class Summary extends Model
             $p = [];
             $avg = [];
 
-            if (empty($value))
+            if (empty($value)){
+                $level1Counter++;
                 continue;
+            }
 
             foreach (Main::$borderWeight as $b_key => $b_weight) {
                 $mainList = $mainObj->filterMain($b_key);
@@ -584,9 +590,10 @@ class Summary extends Model
                     }
 
                     $avgSql = "SELECT SUM(sum1) as a_sum, COUNT(*) as countAll, SUM(sumAmount1) as amount_sum FROM
-                        (SELECT $sumSQL AS sum1, $sumAmountSQL AS sumAmount1 FROM answers
+                         ( SELECT $sumSQL AS sum1, $sumAmountSQL AS sumAmount1 FROM answers
                         WHERE main_id IN ($whereMainId) " . $whereUniqueKey
-                        . " GROUP BY main_id) T1";
+                        . " GROUP BY main_id ) T1";
+
 //                    $avgSql = "SELECT SUM(sum1) as a_sum, COUNT(*) as countAll FROM
 //                        (SELECT $sumSQL AS sum1 FROM answers
 //                        WHERE main_id IN ($whereMainId) " . $whereUniqueKey
@@ -1123,8 +1130,10 @@ class Summary extends Model
             $p = [];
             $avg = [];
 
-            if (empty($value))
+            if (empty($value)){
+                $level1Counter++;
                 continue;
+            }
 
             foreach (Main::$borderWeight as $b_key => $b_weight) {
                 $mainList = $mainObj->filterMain($b_key);
