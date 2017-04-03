@@ -20,8 +20,18 @@ class Summary extends Model
 
         if (!$isRadio && !$arraySum){
             $uniqueKeyArrWithoutEmptyValue = array_filter($uniqueKeyArr, function($var){
-                return !empty($var) && (is_string($var)||is_array($var));
+                return !empty($var) && is_string($var);
             });
+
+            foreach ($uniqueKeyArr as $item){
+                if (!empty($item) && is_array($item)){
+                    foreach ($item as $sub_unique_key){
+                        if (!in_array($sub_unique_key,$uniqueKeyArrWithoutEmptyValue))
+                            $uniqueKeyArrWithoutEmptyValue[] = $sub_unique_key;
+                    }
+                }
+            }
+
             $answerObj = Answer::whereIn('unique_key', $uniqueKeyArrWithoutEmptyValue)->get();
         }
         else if($arraySum){
@@ -455,13 +465,7 @@ class Summary extends Model
             * $population[Main::NORTHERN] / 1000000.0;
 
             //ktoe
-            if ($gas) {
-                $answers[$key2] = $answers[$key] * 0.00042 * $ktoe;
-                $answers[$key4] = $answers[$key3] * 0.00042 * $ktoe;
-                //TODO-nong I don't know why below
-//                $answers[$key5] = $answers[$key] * 0.00042 + $answers[$key3];
-                $answers[$key6] = $answers[$key5] * 0.00042 * $ktoe;
-            } elseif ($ktoeIdx !== false) {
+            if ($ktoeIdx !== false) {
                 $answers[$key2] = $answers[$key] * $value[$ktoeIdx];
                 $answers[$key4] = $answers[$key3] * $value[$ktoeIdx];
                 $answers[$key6] = $answers[$key5] * $value[$ktoeIdx];

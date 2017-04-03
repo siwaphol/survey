@@ -52,12 +52,15 @@ class Summary912 extends Controller
             // กระติกน้ำร้อน
             'no_ch1024_o335_ch156_o287',
             'no_ch1024_o335_ch156_o288',
-            // กาต้อมน้ำไฟฟ้า
+            // กาต้มน้ำไฟฟ้า
             'no_ch1024_o336',
             // กระทะไฟฟ้า
             'no_ch1024_o337',
+
             'no_ch1024_o338',
+
             'no_ch1024_o339',
+
             'no_ch1024_o340'
         ];
         $startColumn = 'E';
@@ -86,8 +89,11 @@ class Summary912 extends Controller
             'no_ch1024_o336_nu166',
             //กระทะไฟฟ้า
             'no_ch1024_o337_nu174',
+
             'no_ch1024_o338_nu182',
+
             'no_ch1024_o339_nu189',
+
             'no_ch1024_o340_nu196'
         ];
         $startColumn = 'U';
@@ -186,8 +192,11 @@ class Summary912 extends Controller
             'no_ch1024_o336_nu170',
             // กระทะไฟฟ้า
             'no_ch1024_o337_nu178',
+
             'no_ch1024_o338_nu186',
+
             'no_ch1024_o339_nu193',
+
             'no_ch1024_o340_nu200'
         ];
         $table4Amount = [
