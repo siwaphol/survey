@@ -1167,4 +1167,447 @@ class Summary9ByToolElectric extends Controller
 
         return array($outputFile, 'เตาบาร์บีคิวไฟฟ้า.xlsx');
     }
+    // โทรทัศน์
+    public static function report12()
+    {
+        set_time_limit(3600);
+
+        $mainObj = new Main();
+        $mainObj->initList();
+
+        $inputFile = Summary9ByToolElectric::$inputFile;
+        $inputSheet = '12';
+        $startRow = 5;
+        $outputFile = Summary9ByToolElectric::$outputFile;
+
+        $objPHPExcel = new \PHPExcel();
+        $objPHPExcelMain = \PHPExcel_IOFactory::load(storage_path('excel/'. $inputFile));
+        $objPHPExcel->addExternalSheet($objPHPExcelMain->getSheetByName($inputSheet));
+        $objPHPExcel->removeSheetByIndex(0);
+        $objPHPExcel->setActiveSheetIndexByName($inputSheet);
+
+        $table1 = [
+            'no_ch1027_o347_ch240_o104_ch241_o108',
+            'no_ch1027_o347_ch240_o104_ch241_o109',
+            'no_ch1027_o347_ch240_o104_ch241_o110',
+            'no_ch1027_o347_ch240_o104_ch241_o111',
+            'no_ch1027_o347_ch240_o104_ch241_o112',
+            'no_ch1027_o347_ch240_o104_ch241_o113',
+            'no_ch1027_o347_ch240_o104_ch241_o114',
+
+            'no_ch1027_o347_ch240_o105_ch248_o115',
+            'no_ch1027_o347_ch240_o105_ch248_o116',
+            'no_ch1027_o347_ch240_o105_ch248_o117',
+            'no_ch1027_o347_ch240_o105_ch248_o118',
+            'no_ch1027_o347_ch240_o105_ch248_o119',
+
+            'no_ch1027_o347_ch240_o106_ch254_o108',
+            'no_ch1027_o347_ch240_o106_ch254_o109',
+            'no_ch1027_o347_ch240_o106_ch254_o110',
+            'no_ch1027_o347_ch240_o106_ch254_o111',
+            'no_ch1027_o347_ch240_o106_ch254_o112',
+            'no_ch1027_o347_ch240_o106_ch254_o113',
+            'no_ch1027_o347_ch240_o106_ch254_o114',
+            'no_ch1027_o347_ch240_o106_ch254_o115',
+            'no_ch1027_o347_ch240_o106_ch254_o116',
+            'no_ch1027_o347_ch240_o106_ch254_o117',
+            'no_ch1027_o347_ch240_o106_ch254_o118',
+            'no_ch1027_o347_ch240_o106_ch254_o119',
+
+            'no_ch1027_o347_ch240_o107_ch260_o108',
+            'no_ch1027_o347_ch240_o107_ch260_o109',
+            'no_ch1027_o347_ch240_o107_ch260_o110',
+            'no_ch1027_o347_ch240_o107_ch260_o111',
+            'no_ch1027_o347_ch240_o107_ch260_o112',
+            'no_ch1027_o347_ch240_o107_ch260_o113',
+            'no_ch1027_o347_ch240_o107_ch260_o114',
+            'no_ch1027_o347_ch240_o107_ch260_o115',
+            'no_ch1027_o347_ch240_o107_ch260_o116',
+            'no_ch1027_o347_ch240_o107_ch260_o117',
+            'no_ch1027_o347_ch240_o107_ch260_o118',
+            'no_ch1027_o347_ch240_o107_ch260_o119',
+            // รวม
+            'no_ch1027_o347',
+
+            'no_ch1027_o347_ch240_o104',
+            'no_ch1027_o347_ch240_o105',
+            'no_ch1027_o347_ch240_o106',
+            'no_ch1027_o347_ch240_o107'
+        ];
+        $startColumn = 'D';
+        $objPHPExcel = Summary::sum($table1, $startColumn, $startRow, $objPHPExcel, $mainObj);
+
+        $table2 = [
+            'no_ch1027_o347_ch240_o104_ch241_o108_nu242',
+            'no_ch1027_o347_ch240_o104_ch241_o109_nu242',
+            'no_ch1027_o347_ch240_o104_ch241_o110_nu242',
+            'no_ch1027_o347_ch240_o104_ch241_o111_nu242',
+            'no_ch1027_o347_ch240_o104_ch241_o112_nu242',
+            'no_ch1027_o347_ch240_o104_ch241_o113_nu242',
+            'no_ch1027_o347_ch240_o104_ch241_o114_nu242',
+
+            'no_ch1027_o347_ch240_o105_ch248_o115_nu249',
+            'no_ch1027_o347_ch240_o105_ch248_o116_nu249',
+            'no_ch1027_o347_ch240_o105_ch248_o117_nu249',
+            'no_ch1027_o347_ch240_o105_ch248_o118_nu249',
+            'no_ch1027_o347_ch240_o105_ch248_o119_nu249',
+
+            'no_ch1027_o347_ch240_o106_ch254_o108_nu255',
+            'no_ch1027_o347_ch240_o106_ch254_o109_nu255',
+            'no_ch1027_o347_ch240_o106_ch254_o110_nu255',
+            'no_ch1027_o347_ch240_o106_ch254_o111_nu255',
+            'no_ch1027_o347_ch240_o106_ch254_o112_nu255',
+            'no_ch1027_o347_ch240_o106_ch254_o113_nu255',
+            'no_ch1027_o347_ch240_o106_ch254_o114_nu255',
+            'no_ch1027_o347_ch240_o106_ch254_o115_nu255',
+            'no_ch1027_o347_ch240_o106_ch254_o116_nu255',
+            'no_ch1027_o347_ch240_o106_ch254_o117_nu255',
+            'no_ch1027_o347_ch240_o106_ch254_o118_nu255',
+            'no_ch1027_o347_ch240_o106_ch254_o119_nu255',
+
+            'no_ch1027_o347_ch240_o107_ch260_o108_nu261',
+            'no_ch1027_o347_ch240_o107_ch260_o109_nu261',
+            'no_ch1027_o347_ch240_o107_ch260_o110_nu261',
+            'no_ch1027_o347_ch240_o107_ch260_o111_nu261',
+            'no_ch1027_o347_ch240_o107_ch260_o112_nu261',
+            'no_ch1027_o347_ch240_o107_ch260_o113_nu261',
+            'no_ch1027_o347_ch240_o107_ch260_o114_nu261',
+            'no_ch1027_o347_ch240_o107_ch260_o115_nu261',
+            'no_ch1027_o347_ch240_o107_ch260_o116_nu261',
+            'no_ch1027_o347_ch240_o107_ch260_o117_nu261',
+            'no_ch1027_o347_ch240_o107_ch260_o118_nu261',
+            'no_ch1027_o347_ch240_o107_ch260_o119_nu261',
+            [
+                'no_ch1027_o347_ch240_o104_ch241_o108_nu242',
+                'no_ch1027_o347_ch240_o104_ch241_o109_nu242',
+                'no_ch1027_o347_ch240_o104_ch241_o110_nu242',
+                'no_ch1027_o347_ch240_o104_ch241_o111_nu242',
+                'no_ch1027_o347_ch240_o104_ch241_o112_nu242',
+                'no_ch1027_o347_ch240_o104_ch241_o113_nu242',
+                'no_ch1027_o347_ch240_o104_ch241_o114_nu242',
+                'no_ch1027_o347_ch240_o105_ch248_o115_nu249',
+                'no_ch1027_o347_ch240_o105_ch248_o116_nu249',
+                'no_ch1027_o347_ch240_o105_ch248_o117_nu249',
+                'no_ch1027_o347_ch240_o105_ch248_o118_nu249',
+                'no_ch1027_o347_ch240_o105_ch248_o119_nu249',
+                'no_ch1027_o347_ch240_o106_ch254_o108_nu255',
+                'no_ch1027_o347_ch240_o106_ch254_o109_nu255',
+                'no_ch1027_o347_ch240_o106_ch254_o110_nu255',
+                'no_ch1027_o347_ch240_o106_ch254_o111_nu255',
+                'no_ch1027_o347_ch240_o106_ch254_o112_nu255',
+                'no_ch1027_o347_ch240_o106_ch254_o113_nu255',
+                'no_ch1027_o347_ch240_o106_ch254_o114_nu255',
+                'no_ch1027_o347_ch240_o106_ch254_o115_nu255',
+                'no_ch1027_o347_ch240_o106_ch254_o116_nu255',
+                'no_ch1027_o347_ch240_o106_ch254_o117_nu255',
+                'no_ch1027_o347_ch240_o106_ch254_o118_nu255',
+                'no_ch1027_o347_ch240_o106_ch254_o119_nu255',
+                'no_ch1027_o347_ch240_o107_ch260_o108_nu261',
+                'no_ch1027_o347_ch240_o107_ch260_o109_nu261',
+                'no_ch1027_o347_ch240_o107_ch260_o110_nu261',
+                'no_ch1027_o347_ch240_o107_ch260_o111_nu261',
+                'no_ch1027_o347_ch240_o107_ch260_o112_nu261',
+                'no_ch1027_o347_ch240_o107_ch260_o113_nu261',
+                'no_ch1027_o347_ch240_o107_ch260_o114_nu261',
+                'no_ch1027_o347_ch240_o107_ch260_o115_nu261',
+                'no_ch1027_o347_ch240_o107_ch260_o116_nu261',
+                'no_ch1027_o347_ch240_o107_ch260_o117_nu261',
+                'no_ch1027_o347_ch240_o107_ch260_o118_nu261',
+                'no_ch1027_o347_ch240_o107_ch260_o119_nu261'
+            ],
+
+            ['no_ch1027_o347_ch240_o104_ch241_o108_nu242',
+            'no_ch1027_o347_ch240_o104_ch241_o109_nu242',
+            'no_ch1027_o347_ch240_o104_ch241_o110_nu242',
+            'no_ch1027_o347_ch240_o104_ch241_o111_nu242',
+            'no_ch1027_o347_ch240_o104_ch241_o112_nu242',
+            'no_ch1027_o347_ch240_o104_ch241_o113_nu242',
+            'no_ch1027_o347_ch240_o104_ch241_o114_nu242'],
+
+            ['no_ch1027_o347_ch240_o105_ch248_o115_nu249',
+            'no_ch1027_o347_ch240_o105_ch248_o116_nu249',
+            'no_ch1027_o347_ch240_o105_ch248_o117_nu249',
+            'no_ch1027_o347_ch240_o105_ch248_o118_nu249',
+            'no_ch1027_o347_ch240_o105_ch248_o119_nu249'],
+
+            ['no_ch1027_o347_ch240_o106_ch254_o108_nu255',
+            'no_ch1027_o347_ch240_o106_ch254_o109_nu255',
+            'no_ch1027_o347_ch240_o106_ch254_o110_nu255',
+            'no_ch1027_o347_ch240_o106_ch254_o111_nu255',
+            'no_ch1027_o347_ch240_o106_ch254_o112_nu255',
+            'no_ch1027_o347_ch240_o106_ch254_o113_nu255',
+            'no_ch1027_o347_ch240_o106_ch254_o114_nu255',
+            'no_ch1027_o347_ch240_o106_ch254_o115_nu255',
+            'no_ch1027_o347_ch240_o106_ch254_o116_nu255',
+            'no_ch1027_o347_ch240_o106_ch254_o117_nu255',
+            'no_ch1027_o347_ch240_o106_ch254_o118_nu255',
+            'no_ch1027_o347_ch240_o106_ch254_o119_nu255'],
+
+            ['no_ch1027_o347_ch240_o107_ch260_o108_nu261',
+            'no_ch1027_o347_ch240_o107_ch260_o109_nu261',
+            'no_ch1027_o347_ch240_o107_ch260_o110_nu261',
+            'no_ch1027_o347_ch240_o107_ch260_o111_nu261',
+            'no_ch1027_o347_ch240_o107_ch260_o112_nu261',
+            'no_ch1027_o347_ch240_o107_ch260_o113_nu261',
+            'no_ch1027_o347_ch240_o107_ch260_o114_nu261',
+            'no_ch1027_o347_ch240_o107_ch260_o115_nu261',
+            'no_ch1027_o347_ch240_o107_ch260_o116_nu261',
+            'no_ch1027_o347_ch240_o107_ch260_o117_nu261',
+            'no_ch1027_o347_ch240_o107_ch260_o118_nu261',
+            'no_ch1027_o347_ch240_o107_ch260_o119_nu261']
+        ];
+        $startColumn = 'O';
+        $objPHPExcel = Summary::average($table2, $startColumn, $startRow, $objPHPExcel, $mainObj);
+
+        $settings = Setting::whereIn('group_id',[1,5,9,10,11,12,13])
+            ->get();
+        $factors = array();
+        $electricPower = array();
+        $startLastDigit = 40;
+        $endLastDigit = 134;
+        // โทรทัศน์ เพราะมีที่มีเบอร์ 5 กับไม่มีเบอร์ 5
+        for ($i=$startLastDigit;$i<=$endLastDigit;$i++){
+            $electricPower[$i] = (float)$settings->where('code', 'electric_power_' . $i)->first()->value;
+
+            $factors[$i] = (float)$settings->where('code','tool_factor_'. $i)->first()->value
+                * (float)$settings->where('code','season_factor_'. $i)->first()->value
+                * (float)$settings->where('code','usage_factor_'. $i)->first()->value;
+        }
+
+        //table 3
+        $table3 = [
+            ['no_ch1027_o347_ch240_o104_ch241_o108_nu242','no_ch1027_o347_ch240_o104_ch241_o108_nu243','no_ch1027_o347_ch240_o104_ch241_o108_nu244',$factors[40],$electricPower[40],'no_ch1027_o347_ch240_o104_ch241_o108_ra246',81],
+            ['no_ch1027_o347_ch240_o104_ch241_o108_nu242','no_ch1027_o347_ch240_o104_ch241_o108_nu243','no_ch1027_o347_ch240_o104_ch241_o108_nu244',$factors[41],$electricPower[41],'no_ch1027_o347_ch240_o104_ch241_o108_ra246',82],
+            ['no_ch1027_o347_ch240_o104_ch241_o109_nu242','no_ch1027_o347_ch240_o104_ch241_o109_nu243','no_ch1027_o347_ch240_o104_ch241_o109_nu244',$factors[42],$electricPower[42],'no_ch1027_o347_ch240_o104_ch241_o109_ra246',81],
+            ['no_ch1027_o347_ch240_o104_ch241_o109_nu242','no_ch1027_o347_ch240_o104_ch241_o109_nu243','no_ch1027_o347_ch240_o104_ch241_o109_nu244',$factors[43],$electricPower[43],'no_ch1027_o347_ch240_o104_ch241_o109_ra246',82],
+            ['no_ch1027_o347_ch240_o104_ch241_o110_nu242','no_ch1027_o347_ch240_o104_ch241_o110_nu243','no_ch1027_o347_ch240_o104_ch241_o110_nu244',$factors[44],$electricPower[44],'no_ch1027_o347_ch240_o104_ch241_o110_ra246',81],
+            ['no_ch1027_o347_ch240_o104_ch241_o110_nu242','no_ch1027_o347_ch240_o104_ch241_o110_nu243','no_ch1027_o347_ch240_o104_ch241_o110_nu244',$factors[45],$electricPower[45],'no_ch1027_o347_ch240_o104_ch241_o110_ra246',82],
+            ['no_ch1027_o347_ch240_o104_ch241_o111_nu242','no_ch1027_o347_ch240_o104_ch241_o111_nu243','no_ch1027_o347_ch240_o104_ch241_o111_nu244',$factors[46],$electricPower[46],'no_ch1027_o347_ch240_o104_ch241_o111_ra246',81],
+            ['no_ch1027_o347_ch240_o104_ch241_o111_nu242','no_ch1027_o347_ch240_o104_ch241_o111_nu243','no_ch1027_o347_ch240_o104_ch241_o111_nu244',$factors[47],$electricPower[47],'no_ch1027_o347_ch240_o104_ch241_o111_ra246',82],
+            ['no_ch1027_o347_ch240_o104_ch241_o112_nu242','no_ch1027_o347_ch240_o104_ch241_o112_nu243','no_ch1027_o347_ch240_o104_ch241_o112_nu244',$factors[48],$electricPower[48],'no_ch1027_o347_ch240_o104_ch241_o112_ra246',81],
+            ['no_ch1027_o347_ch240_o104_ch241_o112_nu242','no_ch1027_o347_ch240_o104_ch241_o112_nu243','no_ch1027_o347_ch240_o104_ch241_o112_nu244',$factors[49],$electricPower[49],'no_ch1027_o347_ch240_o104_ch241_o112_ra246',82],
+            ['no_ch1027_o347_ch240_o104_ch241_o113_nu242','no_ch1027_o347_ch240_o104_ch241_o113_nu243','no_ch1027_o347_ch240_o104_ch241_o113_nu244',$factors[50],$electricPower[50],'no_ch1027_o347_ch240_o104_ch241_o113_ra246',81],
+            ['no_ch1027_o347_ch240_o104_ch241_o113_nu242','no_ch1027_o347_ch240_o104_ch241_o113_nu243','no_ch1027_o347_ch240_o104_ch241_o113_nu244',$factors[51],$electricPower[51],'no_ch1027_o347_ch240_o104_ch241_o113_ra246',82],
+            ['no_ch1027_o347_ch240_o104_ch241_o114_nu242','no_ch1027_o347_ch240_o104_ch241_o114_nu243','no_ch1027_o347_ch240_o104_ch241_o114_nu244',$factors[52],$electricPower[52],'no_ch1027_o347_ch240_o104_ch241_o114_ra246',81],
+            ['no_ch1027_o347_ch240_o104_ch241_o114_nu242','no_ch1027_o347_ch240_o104_ch241_o114_nu243','no_ch1027_o347_ch240_o104_ch241_o114_nu244',$factors[53],$electricPower[53],'no_ch1027_o347_ch240_o104_ch241_o114_ra246',82],
+
+            ['no_ch1027_o347_ch240_o105_ch248_o115_nu249','no_ch1027_o347_ch240_o105_ch248_o115_nu250','no_ch1027_o347_ch240_o105_ch248_o115_nu251',$factors[54],$electricPower[54],'no_ch1027_o347_ch240_o105_ch248_o115_ra253',81],
+            ['no_ch1027_o347_ch240_o105_ch248_o115_nu249','no_ch1027_o347_ch240_o105_ch248_o115_nu250','no_ch1027_o347_ch240_o105_ch248_o115_nu251',$factors[55],$electricPower[55],'no_ch1027_o347_ch240_o105_ch248_o115_ra253',82],
+            ['no_ch1027_o347_ch240_o105_ch248_o116_nu249','no_ch1027_o347_ch240_o105_ch248_o116_nu250','no_ch1027_o347_ch240_o105_ch248_o116_nu251',$factors[56],$electricPower[56],'no_ch1027_o347_ch240_o105_ch248_o116_ra253',81],
+            ['no_ch1027_o347_ch240_o105_ch248_o116_nu249','no_ch1027_o347_ch240_o105_ch248_o116_nu250','no_ch1027_o347_ch240_o105_ch248_o116_nu251',$factors[57],$electricPower[57],'no_ch1027_o347_ch240_o105_ch248_o116_ra253',82],
+            ['no_ch1027_o347_ch240_o105_ch248_o117_nu249','no_ch1027_o347_ch240_o105_ch248_o117_nu250','no_ch1027_o347_ch240_o105_ch248_o117_nu251',$factors[58],$electricPower[58],'no_ch1027_o347_ch240_o105_ch248_o117_ra253',81],
+            ['no_ch1027_o347_ch240_o105_ch248_o117_nu249','no_ch1027_o347_ch240_o105_ch248_o117_nu250','no_ch1027_o347_ch240_o105_ch248_o117_nu251',$factors[59],$electricPower[59],'no_ch1027_o347_ch240_o105_ch248_o117_ra253',82],
+            ['no_ch1027_o347_ch240_o105_ch248_o118_nu249','no_ch1027_o347_ch240_o105_ch248_o118_nu250','no_ch1027_o347_ch240_o105_ch248_o118_nu251',$factors[60],$electricPower[60],'no_ch1027_o347_ch240_o105_ch248_o118_ra253',81],
+            ['no_ch1027_o347_ch240_o105_ch248_o118_nu249','no_ch1027_o347_ch240_o105_ch248_o118_nu250','no_ch1027_o347_ch240_o105_ch248_o118_nu251',$factors[61],$electricPower[61],'no_ch1027_o347_ch240_o105_ch248_o118_ra253',82],
+            ['no_ch1027_o347_ch240_o105_ch248_o119_nu249','no_ch1027_o347_ch240_o105_ch248_o119_nu250','no_ch1027_o347_ch240_o105_ch248_o119_nu251',$factors[62],$electricPower[62],'no_ch1027_o347_ch240_o105_ch248_o119_ra253',81],
+            ['no_ch1027_o347_ch240_o105_ch248_o119_nu249','no_ch1027_o347_ch240_o105_ch248_o119_nu250','no_ch1027_o347_ch240_o105_ch248_o119_nu251',$factors[63],$electricPower[63],'no_ch1027_o347_ch240_o105_ch248_o119_ra253',82],
+
+            ['no_ch1027_o347_ch240_o106_ch254_o108_nu255','no_ch1027_o347_ch240_o106_ch254_o108_nu256','no_ch1027_o347_ch240_o106_ch254_o108_nu257',$factors[64],$electricPower[64],'no_ch1027_o347_ch240_o106_ch254_o108_ra259',81],
+            ['no_ch1027_o347_ch240_o106_ch254_o108_nu255','no_ch1027_o347_ch240_o106_ch254_o108_nu256','no_ch1027_o347_ch240_o106_ch254_o108_nu257',$factors[65],$electricPower[65],'no_ch1027_o347_ch240_o106_ch254_o108_ra259',82],
+            ['no_ch1027_o347_ch240_o106_ch254_o109_nu255','no_ch1027_o347_ch240_o106_ch254_o109_nu256','no_ch1027_o347_ch240_o106_ch254_o109_nu257',$factors[66],$electricPower[66],'no_ch1027_o347_ch240_o106_ch254_o109_ra259',81],
+            ['no_ch1027_o347_ch240_o106_ch254_o109_nu255','no_ch1027_o347_ch240_o106_ch254_o109_nu256','no_ch1027_o347_ch240_o106_ch254_o109_nu257',$factors[67],$electricPower[67],'no_ch1027_o347_ch240_o106_ch254_o109_ra259',82],
+            ['no_ch1027_o347_ch240_o106_ch254_o110_nu255','no_ch1027_o347_ch240_o106_ch254_o110_nu256','no_ch1027_o347_ch240_o106_ch254_o110_nu257',$factors[68],$electricPower[68],'no_ch1027_o347_ch240_o106_ch254_o110_ra259',81],
+            ['no_ch1027_o347_ch240_o106_ch254_o110_nu255','no_ch1027_o347_ch240_o106_ch254_o110_nu256','no_ch1027_o347_ch240_o106_ch254_o110_nu257',$factors[68],$electricPower[68],'no_ch1027_o347_ch240_o106_ch254_o110_ra259',82],
+            ['no_ch1027_o347_ch240_o106_ch254_o111_nu255','no_ch1027_o347_ch240_o106_ch254_o111_nu256','no_ch1027_o347_ch240_o106_ch254_o111_nu257',$factors[70],$electricPower[70],'no_ch1027_o347_ch240_o106_ch254_o111_ra259',81],
+            ['no_ch1027_o347_ch240_o106_ch254_o111_nu255','no_ch1027_o347_ch240_o106_ch254_o111_nu256','no_ch1027_o347_ch240_o106_ch254_o111_nu257',$factors[71],$electricPower[71],'no_ch1027_o347_ch240_o106_ch254_o111_ra259',82],
+            ['no_ch1027_o347_ch240_o106_ch254_o112_nu255','no_ch1027_o347_ch240_o106_ch254_o112_nu256','no_ch1027_o347_ch240_o106_ch254_o112_nu257',$factors[72],$electricPower[72],'no_ch1027_o347_ch240_o106_ch254_o112_ra259',81],
+            ['no_ch1027_o347_ch240_o106_ch254_o112_nu255','no_ch1027_o347_ch240_o106_ch254_o112_nu256','no_ch1027_o347_ch240_o106_ch254_o112_nu257',$factors[73],$electricPower[73],'no_ch1027_o347_ch240_o106_ch254_o112_ra259',82],
+            ['no_ch1027_o347_ch240_o106_ch254_o113_nu255','no_ch1027_o347_ch240_o106_ch254_o113_nu256','no_ch1027_o347_ch240_o106_ch254_o113_nu257',$factors[74],$electricPower[74],'no_ch1027_o347_ch240_o106_ch254_o113_ra259',81],
+            ['no_ch1027_o347_ch240_o106_ch254_o113_nu255','no_ch1027_o347_ch240_o106_ch254_o113_nu256','no_ch1027_o347_ch240_o106_ch254_o113_nu257',$factors[75],$electricPower[75],'no_ch1027_o347_ch240_o106_ch254_o113_ra259',82],
+            ['no_ch1027_o347_ch240_o106_ch254_o114_nu255','no_ch1027_o347_ch240_o106_ch254_o114_nu256','no_ch1027_o347_ch240_o106_ch254_o114_nu257',$factors[76],$electricPower[76],'no_ch1027_o347_ch240_o106_ch254_o114_ra259',81],
+            ['no_ch1027_o347_ch240_o106_ch254_o114_nu255','no_ch1027_o347_ch240_o106_ch254_o114_nu256','no_ch1027_o347_ch240_o106_ch254_o114_nu257',$factors[77],$electricPower[77],'no_ch1027_o347_ch240_o106_ch254_o114_ra259',82],
+            ['no_ch1027_o347_ch240_o106_ch254_o115_nu255','no_ch1027_o347_ch240_o106_ch254_o115_nu256','no_ch1027_o347_ch240_o106_ch254_o115_nu257',$factors[78],$electricPower[78],'no_ch1027_o347_ch240_o106_ch254_o115_ra259',81],
+            ['no_ch1027_o347_ch240_o106_ch254_o115_nu255','no_ch1027_o347_ch240_o106_ch254_o115_nu256','no_ch1027_o347_ch240_o106_ch254_o115_nu257',$factors[79],$electricPower[79],'no_ch1027_o347_ch240_o106_ch254_o115_ra259',82],
+            ['no_ch1027_o347_ch240_o106_ch254_o116_nu255','no_ch1027_o347_ch240_o106_ch254_o116_nu256','no_ch1027_o347_ch240_o106_ch254_o116_nu257',$factors[80],$electricPower[80],'no_ch1027_o347_ch240_o106_ch254_o116_ra259',81],
+            ['no_ch1027_o347_ch240_o106_ch254_o116_nu255','no_ch1027_o347_ch240_o106_ch254_o116_nu256','no_ch1027_o347_ch240_o106_ch254_o116_nu257',$factors[81],$electricPower[81],'no_ch1027_o347_ch240_o106_ch254_o116_ra259',82],
+            ['no_ch1027_o347_ch240_o106_ch254_o117_nu255','no_ch1027_o347_ch240_o106_ch254_o117_nu256','no_ch1027_o347_ch240_o106_ch254_o117_nu257',$factors[82],$electricPower[82],'no_ch1027_o347_ch240_o106_ch254_o117_ra259',81],
+            ['no_ch1027_o347_ch240_o106_ch254_o117_nu255','no_ch1027_o347_ch240_o106_ch254_o117_nu256','no_ch1027_o347_ch240_o106_ch254_o117_nu257',$factors[83],$electricPower[83],'no_ch1027_o347_ch240_o106_ch254_o117_ra259',82],
+            ['no_ch1027_o347_ch240_o106_ch254_o118_nu255','no_ch1027_o347_ch240_o106_ch254_o118_nu256','no_ch1027_o347_ch240_o106_ch254_o118_nu257',$factors[84],$electricPower[84],'no_ch1027_o347_ch240_o106_ch254_o118_ra259',81],
+            ['no_ch1027_o347_ch240_o106_ch254_o118_nu255','no_ch1027_o347_ch240_o106_ch254_o118_nu256','no_ch1027_o347_ch240_o106_ch254_o118_nu257',$factors[85],$electricPower[85],'no_ch1027_o347_ch240_o106_ch254_o118_ra259',82],
+            ['no_ch1027_o347_ch240_o106_ch254_o119_nu255','no_ch1027_o347_ch240_o106_ch254_o119_nu256','no_ch1027_o347_ch240_o106_ch254_o119_nu257',$factors[86],$electricPower[86],'no_ch1027_o347_ch240_o106_ch254_o119_ra259',81],
+            ['no_ch1027_o347_ch240_o106_ch254_o119_nu255','no_ch1027_o347_ch240_o106_ch254_o119_nu256','no_ch1027_o347_ch240_o106_ch254_o119_nu257',$factors[87],$electricPower[87],'no_ch1027_o347_ch240_o106_ch254_o119_ra259',82],
+
+            ['no_ch1027_o347_ch240_o107_ch260_o108_nu261','no_ch1027_o347_ch240_o107_ch260_o108_nu262','no_ch1027_o347_ch240_o107_ch260_o108_nu261',$factors[88],$electricPower[88],'no_ch1027_o347_ch240_o107_ch260_o108_ra265',81],
+            ['no_ch1027_o347_ch240_o107_ch260_o108_nu261','no_ch1027_o347_ch240_o107_ch260_o108_nu262','no_ch1027_o347_ch240_o107_ch260_o108_nu261',$factors[89],$electricPower[89],'no_ch1027_o347_ch240_o107_ch260_o108_ra265',82],
+            ['no_ch1027_o347_ch240_o107_ch260_o109_nu261','no_ch1027_o347_ch240_o107_ch260_o109_nu262','no_ch1027_o347_ch240_o107_ch260_o109_nu261',$factors[90],$electricPower[90],'no_ch1027_o347_ch240_o107_ch260_o109_ra265',81],
+            ['no_ch1027_o347_ch240_o107_ch260_o109_nu261','no_ch1027_o347_ch240_o107_ch260_o109_nu262','no_ch1027_o347_ch240_o107_ch260_o109_nu261',$factors[91],$electricPower[91],'no_ch1027_o347_ch240_o107_ch260_o109_ra265',82],
+            ['no_ch1027_o347_ch240_o107_ch260_o110_nu261','no_ch1027_o347_ch240_o107_ch260_o110_nu262','no_ch1027_o347_ch240_o107_ch260_o110_nu261',$factors[92],$electricPower[92],'no_ch1027_o347_ch240_o107_ch260_o110_ra265',81],
+            ['no_ch1027_o347_ch240_o107_ch260_o110_nu261','no_ch1027_o347_ch240_o107_ch260_o110_nu262','no_ch1027_o347_ch240_o107_ch260_o110_nu261',$factors[93],$electricPower[93],'no_ch1027_o347_ch240_o107_ch260_o110_ra265',82],
+            ['no_ch1027_o347_ch240_o107_ch260_o111_nu261','no_ch1027_o347_ch240_o107_ch260_o111_nu262','no_ch1027_o347_ch240_o107_ch260_o111_nu263',$factors[94],$electricPower[94],'no_ch1027_o347_ch240_o107_ch260_o111_ra265',81],
+            ['no_ch1027_o347_ch240_o107_ch260_o111_nu261','no_ch1027_o347_ch240_o107_ch260_o111_nu262','no_ch1027_o347_ch240_o107_ch260_o111_nu263',$factors[95],$electricPower[95],'no_ch1027_o347_ch240_o107_ch260_o111_ra265',82],
+            ['no_ch1027_o347_ch240_o107_ch260_o112_nu261','no_ch1027_o347_ch240_o107_ch260_o112_nu262','no_ch1027_o347_ch240_o107_ch260_o112_nu263',$factors[96],$electricPower[96],'no_ch1027_o347_ch240_o107_ch260_o112_ra265',81],
+            ['no_ch1027_o347_ch240_o107_ch260_o112_nu261','no_ch1027_o347_ch240_o107_ch260_o112_nu262','no_ch1027_o347_ch240_o107_ch260_o112_nu263',$factors[97],$electricPower[97],'no_ch1027_o347_ch240_o107_ch260_o112_ra265',82],
+            ['no_ch1027_o347_ch240_o107_ch260_o113_nu261','no_ch1027_o347_ch240_o107_ch260_o113_nu262','no_ch1027_o347_ch240_o107_ch260_o113_nu263',$factors[98],$electricPower[98],'no_ch1027_o347_ch240_o107_ch260_o113_ra265',81],
+            ['no_ch1027_o347_ch240_o107_ch260_o113_nu261','no_ch1027_o347_ch240_o107_ch260_o113_nu262','no_ch1027_o347_ch240_o107_ch260_o113_nu263',$factors[99],$electricPower[99],'no_ch1027_o347_ch240_o107_ch260_o113_ra265',82],
+            ['no_ch1027_o347_ch240_o107_ch260_o114_nu261','no_ch1027_o347_ch240_o107_ch260_o114_nu262','no_ch1027_o347_ch240_o107_ch260_o114_nu263',$factors[100],$electricPower[100],'no_ch1027_o347_ch240_o107_ch260_o114_ra265',81],
+            ['no_ch1027_o347_ch240_o107_ch260_o114_nu261','no_ch1027_o347_ch240_o107_ch260_o114_nu262','no_ch1027_o347_ch240_o107_ch260_o114_nu263',$factors[101],$electricPower[101],'no_ch1027_o347_ch240_o107_ch260_o114_ra265',82],
+            ['no_ch1027_o347_ch240_o107_ch260_o115_nu261','no_ch1027_o347_ch240_o107_ch260_o115_nu262','no_ch1027_o347_ch240_o107_ch260_o115_nu263',$factors[102],$electricPower[102],'no_ch1027_o347_ch240_o107_ch260_o115_ra265',81],
+            ['no_ch1027_o347_ch240_o107_ch260_o115_nu261','no_ch1027_o347_ch240_o107_ch260_o115_nu262','no_ch1027_o347_ch240_o107_ch260_o115_nu263',$factors[103],$electricPower[103],'no_ch1027_o347_ch240_o107_ch260_o115_ra265',82],
+            ['no_ch1027_o347_ch240_o107_ch260_o116_nu261','no_ch1027_o347_ch240_o107_ch260_o116_nu262','no_ch1027_o347_ch240_o107_ch260_o116_nu263',$factors[104],$electricPower[104],'no_ch1027_o347_ch240_o107_ch260_o116_ra265',81],
+            ['no_ch1027_o347_ch240_o107_ch260_o116_nu261','no_ch1027_o347_ch240_o107_ch260_o116_nu262','no_ch1027_o347_ch240_o107_ch260_o116_nu263',$factors[105],$electricPower[105],'no_ch1027_o347_ch240_o107_ch260_o116_ra265',82],
+            ['no_ch1027_o347_ch240_o107_ch260_o117_nu261','no_ch1027_o347_ch240_o107_ch260_o117_nu262','no_ch1027_o347_ch240_o107_ch260_o117_nu263',$factors[106],$electricPower[106],'no_ch1027_o347_ch240_o107_ch260_o117_ra265',81],
+            ['no_ch1027_o347_ch240_o107_ch260_o117_nu261','no_ch1027_o347_ch240_o107_ch260_o117_nu262','no_ch1027_o347_ch240_o107_ch260_o117_nu263',$factors[107],$electricPower[107],'no_ch1027_o347_ch240_o107_ch260_o117_ra265',82],
+            ['no_ch1027_o347_ch240_o107_ch260_o118_nu261','no_ch1027_o347_ch240_o107_ch260_o118_nu262','no_ch1027_o347_ch240_o107_ch260_o118_nu263',$factors[108],$electricPower[108],'no_ch1027_o347_ch240_o107_ch260_o118_ra265',81],
+            ['no_ch1027_o347_ch240_o107_ch260_o118_nu261','no_ch1027_o347_ch240_o107_ch260_o118_nu262','no_ch1027_o347_ch240_o107_ch260_o118_nu263',$factors[109],$electricPower[109],'no_ch1027_o347_ch240_o107_ch260_o118_ra265',82],
+            ['no_ch1027_o347_ch240_o107_ch260_o119_nu261','no_ch1027_o347_ch240_o107_ch260_o119_nu262','no_ch1027_o347_ch240_o107_ch260_o119_nu263',$factors[110],$electricPower[110],'no_ch1027_o347_ch240_o107_ch260_o119_ra265',81],
+            ['no_ch1027_o347_ch240_o107_ch260_o119_nu261','no_ch1027_o347_ch240_o107_ch260_o119_nu262','no_ch1027_o347_ch240_o107_ch260_o119_nu263',$factors[111],$electricPower[111],'no_ch1027_o347_ch240_o107_ch260_o119_ra265',82],
+        ];
+
+        $week = Parameter::WEEK_PER_YEAR;
+        $ktoe = Setting::where('code', 'E9')->first()->value;
+
+        // ที่มีฉลากประหยัดไปเบอร์ 5
+        // [ จำนวนหม้อ * อัตราการใช้ (นาที/ครั้ง) * อัตราการใช้ (ครั้งต่อวัน) * อัตราการใช้ (วัน/สัปดาห์) * (52/60) ] * factor * electric power
+        $sumAmountSQL = " (sum(IF(unique_key='param1',answer_numeric,0)) 
+        * sum(if(unique_key='param2', answer_numeric,0)) 
+        * sum(if(unique_key='param3', answer_numeric,0)))
+        * {$week}
+        * param4
+        * param5 
+        * (if(sum(if(unique_key='param6' and option_id=param7,1,0)) + if('param6'='',1,0) >0,1,0)) 
+        as sumAmount ";
+
+        $params = [
+            'param1'=>0, //จำนวน
+            'param2'=>1, //อัตราการใช้ (ชั่วโมง/วัน)
+            'param3'=>2, //อัตราการใช้ (วัน/สัปดาห์)
+            'param4'=>3, //factor
+            'param5'=>4, //electric power
+            'param6'=>5,  //ฉลากประหยัดไฟ
+            'param7'=>6
+        ];
+        $startColumn = 'AB';
+        $objPHPExcel = Summary::usageElectric($table3, $startColumn, $startRow, $objPHPExcel,$mainObj,$sumAmountSQL,$params,$ktoe);
+
+        // Table 4
+        $table4 = [
+            'no_ch1027_o347_ch240_o104_ch241_o108_nu245',
+            'no_ch1027_o347_ch240_o104_ch241_o109_nu245',
+            'no_ch1027_o347_ch240_o104_ch241_o110_nu245',
+            'no_ch1027_o347_ch240_o104_ch241_o111_nu245',
+            'no_ch1027_o347_ch240_o104_ch241_o112_nu245',
+            'no_ch1027_o347_ch240_o104_ch241_o113_nu245',
+            'no_ch1027_o347_ch240_o104_ch241_o114_nu245',
+            'no_ch1027_o347_ch240_o105_ch248_o115_nu252',
+            'no_ch1027_o347_ch240_o105_ch248_o116_nu252',
+            'no_ch1027_o347_ch240_o105_ch248_o117_nu252',
+            'no_ch1027_o347_ch240_o105_ch248_o118_nu252',
+            'no_ch1027_o347_ch240_o105_ch248_o119_nu252',
+            'no_ch1027_o347_ch240_o106_ch254_o108_nu258',
+            'no_ch1027_o347_ch240_o106_ch254_o109_nu258',
+            'no_ch1027_o347_ch240_o106_ch254_o110_nu258',
+            'no_ch1027_o347_ch240_o106_ch254_o111_nu258',
+            'no_ch1027_o347_ch240_o106_ch254_o112_nu258',
+            'no_ch1027_o347_ch240_o106_ch254_o113_nu258',
+            'no_ch1027_o347_ch240_o106_ch254_o114_nu258',
+            'no_ch1027_o347_ch240_o106_ch254_o115_nu258',
+            'no_ch1027_o347_ch240_o106_ch254_o116_nu258',
+            'no_ch1027_o347_ch240_o106_ch254_o117_nu258',
+            'no_ch1027_o347_ch240_o106_ch254_o118_nu258',
+            'no_ch1027_o347_ch240_o106_ch254_o119_nu258',
+            'no_ch1027_o347_ch240_o107_ch260_o108_nu264',
+            'no_ch1027_o347_ch240_o107_ch260_o109_nu264',
+            'no_ch1027_o347_ch240_o107_ch260_o110_nu264',
+            'no_ch1027_o347_ch240_o107_ch260_o111_nu264',
+            'no_ch1027_o347_ch240_o107_ch260_o112_nu264',
+            'no_ch1027_o347_ch240_o107_ch260_o113_nu264',
+            'no_ch1027_o347_ch240_o107_ch260_o114_nu264',
+            'no_ch1027_o347_ch240_o107_ch260_o115_nu264',
+            'no_ch1027_o347_ch240_o107_ch260_o116_nu264',
+            'no_ch1027_o347_ch240_o107_ch260_o117_nu264',
+            'no_ch1027_o347_ch240_o107_ch260_o118_nu264',
+            'no_ch1027_o347_ch240_o107_ch260_o119_nu264',
+            [
+                'no_ch1027_o347_ch240_o104_ch241_o108_nu245',
+                'no_ch1027_o347_ch240_o104_ch241_o109_nu245',
+                'no_ch1027_o347_ch240_o104_ch241_o110_nu245',
+                'no_ch1027_o347_ch240_o104_ch241_o111_nu245',
+                'no_ch1027_o347_ch240_o104_ch241_o112_nu245',
+                'no_ch1027_o347_ch240_o104_ch241_o113_nu245',
+                'no_ch1027_o347_ch240_o104_ch241_o114_nu245',
+                'no_ch1027_o347_ch240_o105_ch248_o115_nu252',
+                'no_ch1027_o347_ch240_o105_ch248_o116_nu252',
+                'no_ch1027_o347_ch240_o105_ch248_o117_nu252',
+                'no_ch1027_o347_ch240_o105_ch248_o118_nu252',
+                'no_ch1027_o347_ch240_o105_ch248_o119_nu252',
+                'no_ch1027_o347_ch240_o106_ch254_o108_nu258',
+                'no_ch1027_o347_ch240_o106_ch254_o109_nu258',
+                'no_ch1027_o347_ch240_o106_ch254_o110_nu258',
+                'no_ch1027_o347_ch240_o106_ch254_o111_nu258',
+                'no_ch1027_o347_ch240_o106_ch254_o112_nu258',
+                'no_ch1027_o347_ch240_o106_ch254_o113_nu258',
+                'no_ch1027_o347_ch240_o106_ch254_o114_nu258',
+                'no_ch1027_o347_ch240_o106_ch254_o115_nu258',
+                'no_ch1027_o347_ch240_o106_ch254_o116_nu258',
+                'no_ch1027_o347_ch240_o106_ch254_o117_nu258',
+                'no_ch1027_o347_ch240_o106_ch254_o118_nu258',
+                'no_ch1027_o347_ch240_o106_ch254_o119_nu258',
+                'no_ch1027_o347_ch240_o107_ch260_o108_nu264',
+                'no_ch1027_o347_ch240_o107_ch260_o109_nu264',
+                'no_ch1027_o347_ch240_o107_ch260_o110_nu264',
+                'no_ch1027_o347_ch240_o107_ch260_o111_nu264',
+                'no_ch1027_o347_ch240_o107_ch260_o112_nu264',
+                'no_ch1027_o347_ch240_o107_ch260_o113_nu264',
+                'no_ch1027_o347_ch240_o107_ch260_o114_nu264',
+                'no_ch1027_o347_ch240_o107_ch260_o115_nu264',
+                'no_ch1027_o347_ch240_o107_ch260_o116_nu264',
+                'no_ch1027_o347_ch240_o107_ch260_o117_nu264',
+                'no_ch1027_o347_ch240_o107_ch260_o118_nu264',
+                'no_ch1027_o347_ch240_o107_ch260_o119_nu264',
+            ],
+            [
+                'no_ch1027_o347_ch240_o104_ch241_o108_nu245',
+                'no_ch1027_o347_ch240_o104_ch241_o109_nu245',
+                'no_ch1027_o347_ch240_o104_ch241_o110_nu245',
+                'no_ch1027_o347_ch240_o104_ch241_o111_nu245',
+                'no_ch1027_o347_ch240_o104_ch241_o112_nu245',
+                'no_ch1027_o347_ch240_o104_ch241_o113_nu245',
+                'no_ch1027_o347_ch240_o104_ch241_o114_nu245',
+            ],
+            [
+                'no_ch1027_o347_ch240_o105_ch248_o115_nu252',
+                'no_ch1027_o347_ch240_o105_ch248_o116_nu252',
+                'no_ch1027_o347_ch240_o105_ch248_o117_nu252',
+                'no_ch1027_o347_ch240_o105_ch248_o118_nu252',
+                'no_ch1027_o347_ch240_o105_ch248_o119_nu252',
+            ],
+            [
+                'no_ch1027_o347_ch240_o106_ch254_o108_nu258',
+                'no_ch1027_o347_ch240_o106_ch254_o109_nu258',
+                'no_ch1027_o347_ch240_o106_ch254_o110_nu258',
+                'no_ch1027_o347_ch240_o106_ch254_o111_nu258',
+                'no_ch1027_o347_ch240_o106_ch254_o112_nu258',
+                'no_ch1027_o347_ch240_o106_ch254_o113_nu258',
+                'no_ch1027_o347_ch240_o106_ch254_o114_nu258',
+                'no_ch1027_o347_ch240_o106_ch254_o115_nu258',
+                'no_ch1027_o347_ch240_o106_ch254_o116_nu258',
+                'no_ch1027_o347_ch240_o106_ch254_o117_nu258',
+                'no_ch1027_o347_ch240_o106_ch254_o118_nu258',
+                'no_ch1027_o347_ch240_o106_ch254_o119_nu258',
+            ],
+            [
+                'no_ch1027_o347_ch240_o107_ch260_o108_nu264',
+                'no_ch1027_o347_ch240_o107_ch260_o109_nu264',
+                'no_ch1027_o347_ch240_o107_ch260_o110_nu264',
+                'no_ch1027_o347_ch240_o107_ch260_o111_nu264',
+                'no_ch1027_o347_ch240_o107_ch260_o112_nu264',
+                'no_ch1027_o347_ch240_o107_ch260_o113_nu264',
+                'no_ch1027_o347_ch240_o107_ch260_o114_nu264',
+                'no_ch1027_o347_ch240_o107_ch260_o115_nu264',
+                'no_ch1027_o347_ch240_o107_ch260_o116_nu264',
+                'no_ch1027_o347_ch240_o107_ch260_o117_nu264',
+                'no_ch1027_o347_ch240_o107_ch260_o118_nu264',
+                'no_ch1027_o347_ch240_o107_ch260_o119_nu264',
+            ]
+        ];
+
+        $startColumn = 'AM';
+        $objPHPExcel = Summary::averageLifetime($table4,$table2,$startColumn ,$startRow, $objPHPExcel, $mainObj);
+
+        $objWriter = new \PHPExcel_Writer_Excel2007($objPHPExcel);
+        $objWriter->save(storage_path(iconv('UTF-8', 'windows-874', 'excel/'.$outputFile)));
+
+        return array($outputFile, 'โทรทัศน์.xlsx');
+    }
+
 }

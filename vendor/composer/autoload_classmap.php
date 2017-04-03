@@ -24,6 +24,7 @@ return array(
     'CreateQuestionsTable' => $baseDir . '/database/migrations/2016_05_10_060933_create_questions_table.php',
     'CreateSettingGroupsTable' => $baseDir . '/database/migrations/2016_09_19_161739_create_setting_groups_table.php',
     'CreateSettingsTable' => $baseDir . '/database/migrations/2016_09_19_162240_create_settings_table.php',
+    'CreateSummaryToolsTable' => $baseDir . '/database/migrations/2017_04_03_160644_create_summary_tools_table.php',
     'CreateTableSystemConfigsTable' => $baseDir . '/database/migrations/2017_01_14_123750_create_table_system_configs_table.php',
     'CreateUsersTable' => $baseDir . '/database/migrations/2014_10_12_000000_create_users_table.php',
     'DatabaseSeeder' => $baseDir . '/database/seeds/DatabaseSeeder.php',

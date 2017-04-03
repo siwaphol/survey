@@ -195,11 +195,11 @@ class Summary913 extends Controller
             ['no_ch1027_o347_ch240_o104_ch241_o113_nu242','no_ch1027_o347_ch240_o104_ch241_o113_nu243','no_ch1027_o347_ch240_o104_ch241_o113_nu244',$factors[50],$electricPower[50],'no_ch1027_o347_ch240_o104_ch241_o113_ra246'],
             ['no_ch1027_o347_ch240_o104_ch241_o114_nu242','no_ch1027_o347_ch240_o104_ch241_o114_nu243','no_ch1027_o347_ch240_o104_ch241_o114_nu244',$factors[52],$electricPower[52],'no_ch1027_o347_ch240_o104_ch241_o114_ra246'],
 
-            ['no_ch1027_o347_ch240_o105_ch248_o115_nu249','no_ch1027_o347_ch240_o105_ch248_o115_nu250','no_ch1027_o347_ch240_o105_ch248_o115_nu251',$factors[54],$electricPower[54],'no_ch1027_o347_ch240_o105_ch248_o115_nu253'],
-            ['no_ch1027_o347_ch240_o105_ch248_o116_nu249','no_ch1027_o347_ch240_o105_ch248_o116_nu250','no_ch1027_o347_ch240_o105_ch248_o116_nu251',$factors[56],$electricPower[56],'no_ch1027_o347_ch240_o105_ch248_o116_nu253'],
-            ['no_ch1027_o347_ch240_o105_ch248_o117_nu249','no_ch1027_o347_ch240_o105_ch248_o117_nu250','no_ch1027_o347_ch240_o105_ch248_o117_nu251',$factors[58],$electricPower[58],'no_ch1027_o347_ch240_o105_ch248_o117_nu253'],
-            ['no_ch1027_o347_ch240_o105_ch248_o118_nu249','no_ch1027_o347_ch240_o105_ch248_o118_nu250','no_ch1027_o347_ch240_o105_ch248_o118_nu251',$factors[60],$electricPower[60],'no_ch1027_o347_ch240_o105_ch248_o118_nu253'],
-            ['no_ch1027_o347_ch240_o105_ch248_o119_nu249','no_ch1027_o347_ch240_o105_ch248_o119_nu250','no_ch1027_o347_ch240_o105_ch248_o119_nu251',$factors[62],$electricPower[62],'no_ch1027_o347_ch240_o105_ch248_o119_nu253'],
+            ['no_ch1027_o347_ch240_o105_ch248_o115_nu249','no_ch1027_o347_ch240_o105_ch248_o115_nu250','no_ch1027_o347_ch240_o105_ch248_o115_nu251',$factors[54],$electricPower[54],'no_ch1027_o347_ch240_o105_ch248_o115_ra253'],
+            ['no_ch1027_o347_ch240_o105_ch248_o116_nu249','no_ch1027_o347_ch240_o105_ch248_o116_nu250','no_ch1027_o347_ch240_o105_ch248_o116_nu251',$factors[56],$electricPower[56],'no_ch1027_o347_ch240_o105_ch248_o116_ra253'],
+            ['no_ch1027_o347_ch240_o105_ch248_o117_nu249','no_ch1027_o347_ch240_o105_ch248_o117_nu250','no_ch1027_o347_ch240_o105_ch248_o117_nu251',$factors[58],$electricPower[58],'no_ch1027_o347_ch240_o105_ch248_o117_ra253'],
+            ['no_ch1027_o347_ch240_o105_ch248_o118_nu249','no_ch1027_o347_ch240_o105_ch248_o118_nu250','no_ch1027_o347_ch240_o105_ch248_o118_nu251',$factors[60],$electricPower[60],'no_ch1027_o347_ch240_o105_ch248_o118_ra253'],
+            ['no_ch1027_o347_ch240_o105_ch248_o119_nu249','no_ch1027_o347_ch240_o105_ch248_o119_nu250','no_ch1027_o347_ch240_o105_ch248_o119_nu251',$factors[62],$electricPower[62],'no_ch1027_o347_ch240_o105_ch248_o119_ra253'],
 
             ['no_ch1027_o347_ch240_o106_ch254_o108_nu255','no_ch1027_o347_ch240_o106_ch254_o108_nu256','no_ch1027_o347_ch240_o106_ch254_o108_nu257',$factors[64],$electricPower[64],'no_ch1027_o347_ch240_o106_ch254_o108_ra259'],
             ['no_ch1027_o347_ch240_o106_ch254_o109_nu255','no_ch1027_o347_ch240_o106_ch254_o109_nu256','no_ch1027_o347_ch240_o106_ch254_o109_nu257',$factors[66],$electricPower[66],'no_ch1027_o347_ch240_o106_ch254_o109_ra259'],

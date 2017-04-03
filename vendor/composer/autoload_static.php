@@ -365,6 +365,7 @@ class ComposerStaticInit972b56837168c16a3339717f041e3e16
         'CreateQuestionsTable' => __DIR__ . '/../..' . '/database/migrations/2016_05_10_060933_create_questions_table.php',
         'CreateSettingGroupsTable' => __DIR__ . '/../..' . '/database/migrations/2016_09_19_161739_create_setting_groups_table.php',
         'CreateSettingsTable' => __DIR__ . '/../..' . '/database/migrations/2016_09_19_162240_create_settings_table.php',
+        'CreateSummaryToolsTable' => __DIR__ . '/../..' . '/database/migrations/2017_04_03_160644_create_summary_tools_table.php',
         'CreateTableSystemConfigsTable' => __DIR__ . '/../..' . '/database/migrations/2017_01_14_123750_create_table_system_configs_table.php',
         'CreateUsersTable' => __DIR__ . '/../..' . '/database/migrations/2014_10_12_000000_create_users_table.php',
         'DatabaseSeeder' => __DIR__ . '/../..' . '/database/seeds/DatabaseSeeder.php',
