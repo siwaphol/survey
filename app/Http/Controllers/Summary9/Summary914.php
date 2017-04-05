@@ -97,11 +97,17 @@ class Summary914 extends Controller
             'no_ch1028_o364_ch420_o197_ch421_o199',
             'no_ch1028_o364_ch420_o197_ch421_o200',
             'no_ch1028_o364_ch420_o197_ch421_o201',
+
             'no_ch1028_o365',
+
             'no_ch1028_o366',
+
             'no_ch1028_o367',
+
             'no_ch1028_o368',
+
             'no_ch1028_o369',
+
             'no_ch1029_o370'
         ];
         $startColumn = 'E';
@@ -173,9 +179,12 @@ class Summary914 extends Controller
             'no_ch1028_o364_ch420_o197_ch421_o199_nu422',
             'no_ch1028_o364_ch420_o197_ch421_o200_nu422',
             'no_ch1028_o364_ch420_o197_ch421_o201_nu422',
+
             'no_ch1028_o365_nu429',
             'no_ch1028_o366_nu435',
+
             'no_ch1028_o367_nu441',
+
             'no_ch1028_o368_nu447',
             'no_ch1028_o369_nu453',
             'no_ch1029_o370_ch461_o209_nu462',
@@ -409,10 +418,14 @@ class Summary914 extends Controller
             'no_ch1028_o364_ch420_o197_ch421_o199_nu426',
             'no_ch1028_o364_ch420_o197_ch421_o200_nu427',
             'no_ch1028_o364_ch420_o197_ch421_o201_nu428',
+
             'no_ch1028_o365_nu432',
             'no_ch1028_o366_nu438',
+
             'no_ch1028_o367_nu444',
+
             'no_ch1028_o368_nu450',
+
             'no_ch1028_o369_nu456'
         ];
         $startColumn = 'BB';
