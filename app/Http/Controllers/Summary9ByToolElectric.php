@@ -1609,5 +1609,848 @@ class Summary9ByToolElectric extends Controller
 
         return array($outputFile, 'โทรทัศน์.xlsx');
     }
+    // เครื่องเล่นแผ่น
+    public static function report13()
+    {
+        set_time_limit(3600);
+
+        $mainObj = new Main();
+        $mainObj->initList();
+
+        $inputFile = Summary9ByToolElectric::$inputFile;
+        $inputSheet = '13';
+        $startRow = 5;
+        $outputFile = Summary9ByToolElectric::$outputFile;
+
+        $objPHPExcel = new \PHPExcel();
+        $objPHPExcelMain = \PHPExcel_IOFactory::load(storage_path('excel/'. $inputFile));
+        $objPHPExcel->addExternalSheet($objPHPExcelMain->getSheetByName($inputSheet));
+        $objPHPExcel->removeSheetByIndex(0);
+        $objPHPExcel->setActiveSheetIndexByName($inputSheet);
+
+        $table1 = [
+            'no_ch1027_o348_ch267_o122',
+            'no_ch1027_o348_ch267_o123',
+            'no_ch1027_o348',
+        ];
+        $startColumn = 'D';
+        $objPHPExcel = Summary::sum($table1, $startColumn, $startRow, $objPHPExcel, $mainObj);
+
+        $table2 = [
+            'no_ch1027_o348_ch267_o122_nu268',
+            'no_ch1027_o348_ch267_o123_nu268',
+            ['no_ch1027_o348_ch267_o122_nu268',
+                'no_ch1027_o348_ch267_o123_nu268']
+        ];
+        $startColumn = 'O';
+        $objPHPExcel = Summary::average($table2, $startColumn, $startRow, $objPHPExcel, $mainObj);
+
+        $settings = Setting::whereIn('group_id',[1,5,9,10,11,12,13])
+            ->get();
+        $factors = array();
+        $electricPower = array();
+        $startLastDigit = 40;
+        $endLastDigit = 134;
+        // โทรทัศน์ เพราะมีที่มีเบอร์ 5 กับไม่มีเบอร์ 5
+        for ($i=$startLastDigit;$i<=$endLastDigit;$i++){
+            $electricPower[$i] = (float)$settings->where('code', 'electric_power_' . $i)->first()->value;
+
+            $factors[$i] = (float)$settings->where('code','tool_factor_'. $i)->first()->value
+                * (float)$settings->where('code','season_factor_'. $i)->first()->value
+                * (float)$settings->where('code','usage_factor_'. $i)->first()->value;
+        }
+
+        //table 3
+        $table3 = [
+            ['no_ch1027_o348_ch267_o122_nu268','no_ch1027_o348_ch267_o122_nu269','no_ch1027_o348_ch267_o122_nu270',$factors[112],$electricPower[112],'',81],
+            ['no_ch1027_o348_ch267_o123_nu268','no_ch1027_o348_ch267_o123_nu269','no_ch1027_o348_ch267_o123_nu270',$factors[113],$electricPower[113],'',81],
+        ];
+
+        $week = Parameter::WEEK_PER_YEAR;
+        $ktoe = Setting::where('code', 'E9')->first()->value;
+
+        // ที่มีฉลากประหยัดไปเบอร์ 5
+        // [ จำนวนหม้อ * อัตราการใช้ (นาที/ครั้ง) * อัตราการใช้ (ครั้งต่อวัน) * อัตราการใช้ (วัน/สัปดาห์) * (52/60) ] * factor * electric power
+        $sumAmountSQL = " (sum(IF(unique_key='param1',answer_numeric,0)) 
+        * sum(if(unique_key='param2', answer_numeric,0)) 
+        * sum(if(unique_key='param3', answer_numeric,0)))
+        * {$week}
+        * param4
+        * param5 
+        * (if(sum(if(unique_key='param6' and option_id=param7,1,0)) + if('param6'='',1,0) >0,1,0)) 
+        as sumAmount ";
+
+        $params = [
+            'param1'=>0, //จำนวน
+            'param2'=>1, //อัตราการใช้ (ชั่วโมง/วัน)
+            'param3'=>2, //อัตราการใช้ (วัน/สัปดาห์)
+            'param4'=>3, //factor
+            'param5'=>4, //electric power
+            'param6'=>5,  //ฉลากประหยัดไฟ
+            'param7'=>6
+        ];
+        $startColumn = 'AB';
+        $objPHPExcel = Summary::usageElectric($table3, $startColumn, $startRow, $objPHPExcel,$mainObj,$sumAmountSQL,$params,$ktoe);
+
+        // Table 4
+        $table4 = [
+            'no_ch1027_o348_ch267_o122_nu271',
+            'no_ch1027_o348_ch267_o123_nu271',
+            ['no_ch1027_o348_ch267_o122_nu271',
+                'no_ch1027_o348_ch267_o123_nu271']
+        ];
+
+        $startColumn = 'AM';
+        $objPHPExcel = Summary::averageLifetime($table4,$table2,$startColumn ,$startRow, $objPHPExcel, $mainObj);
+
+        $objWriter = new \PHPExcel_Writer_Excel2007($objPHPExcel);
+        $objWriter->save(storage_path(iconv('UTF-8', 'windows-874', 'excel/'.$outputFile)));
+
+        return array($outputFile, 'เครื่องเล่นแผ่น.xlsx');
+    }
+    // มินิคอมโป
+    public static function report14()
+    {
+        set_time_limit(3600);
+
+        $mainObj = new Main();
+        $mainObj->initList();
+
+        $inputFile = Summary9ByToolElectric::$inputFile;
+        $inputSheet = '14';
+        $startRow = 5;
+        $outputFile = Summary9ByToolElectric::$outputFile;
+
+        $objPHPExcel = new \PHPExcel();
+        $objPHPExcelMain = \PHPExcel_IOFactory::load(storage_path('excel/'. $inputFile));
+        $objPHPExcel->addExternalSheet($objPHPExcelMain->getSheetByName($inputSheet));
+        $objPHPExcel->removeSheetByIndex(0);
+        $objPHPExcel->setActiveSheetIndexByName($inputSheet);
+
+        $table1 = [
+            'no_ch1027_o349'
+        ];
+        $startColumn = 'D';
+        $objPHPExcel = Summary::sum($table1, $startColumn, $startRow, $objPHPExcel, $mainObj);
+
+        $table2 = [
+            'no_ch1027_o349_nu274',
+        ];
+        $startColumn = 'O';
+        $objPHPExcel = Summary::average($table2, $startColumn, $startRow, $objPHPExcel, $mainObj);
+
+        $settings = Setting::whereIn('group_id',[1,5,9,10,11,12,13])
+            ->get();
+        $factors = array();
+        $electricPower = array();
+        $startLastDigit = 40;
+        $endLastDigit = 134;
+        // โทรทัศน์ เพราะมีที่มีเบอร์ 5 กับไม่มีเบอร์ 5
+        for ($i=$startLastDigit;$i<=$endLastDigit;$i++){
+            $electricPower[$i] = (float)$settings->where('code', 'electric_power_' . $i)->first()->value;
+
+            $factors[$i] = (float)$settings->where('code','tool_factor_'. $i)->first()->value
+                * (float)$settings->where('code','season_factor_'. $i)->first()->value
+                * (float)$settings->where('code','usage_factor_'. $i)->first()->value;
+        }
+
+        //table 3
+        $table3 = [
+            ['no_ch1027_o349_nu274','no_ch1027_o349_nu275','no_ch1027_o349_nu276',$factors[115],$electricPower[115],'',81],
+        ];
+
+        $week = Parameter::WEEK_PER_YEAR;
+        $ktoe = Setting::where('code', 'E9')->first()->value;
+
+        // ที่มีฉลากประหยัดไปเบอร์ 5
+        // [ จำนวนหม้อ * อัตราการใช้ (นาที/ครั้ง) * อัตราการใช้ (ครั้งต่อวัน) * อัตราการใช้ (วัน/สัปดาห์) * (52/60) ] * factor * electric power
+        $sumAmountSQL = " (sum(IF(unique_key='param1',answer_numeric,0)) 
+        * sum(if(unique_key='param2', answer_numeric,0)) 
+        * sum(if(unique_key='param3', answer_numeric,0)))
+        * {$week}
+        * param4
+        * param5 
+        * (if(sum(if(unique_key='param6' and option_id=param7,1,0)) + if('param6'='',1,0) >0,1,0)) 
+        as sumAmount ";
+
+        $params = [
+            'param1'=>0, //จำนวน
+            'param2'=>1, //อัตราการใช้ (ชั่วโมง/วัน)
+            'param3'=>2, //อัตราการใช้ (วัน/สัปดาห์)
+            'param4'=>3, //factor
+            'param5'=>4, //electric power
+            'param6'=>5,  //ฉลากประหยัดไฟ
+            'param7'=>6
+        ];
+        $startColumn = 'AB';
+        $objPHPExcel = Summary::usageElectric($table3, $startColumn, $startRow, $objPHPExcel,$mainObj,$sumAmountSQL,$params,$ktoe);
+
+        // Table 4
+        $table4 = [
+            'no_ch1027_o349_nu277',
+        ];
+
+        $startColumn = 'AM';
+        $objPHPExcel = Summary::averageLifetime($table4,$table2,$startColumn ,$startRow, $objPHPExcel, $mainObj);
+
+        $objWriter = new \PHPExcel_Writer_Excel2007($objPHPExcel);
+        $objWriter->save(storage_path(iconv('UTF-8', 'windows-874', 'excel/'.$outputFile)));
+
+        return array($outputFile, 'มินิคอมโป.xlsx');
+    }
+    // ชุดโฮมเธียเตอร์
+    public static function report15()
+    {
+        set_time_limit(3600);
+
+        $mainObj = new Main();
+        $mainObj->initList();
+
+        $inputFile = Summary9ByToolElectric::$inputFile;
+        $inputSheet = '15';
+        $startRow = 5;
+        $outputFile = Summary9ByToolElectric::$outputFile;
+
+        $objPHPExcel = new \PHPExcel();
+        $objPHPExcelMain = \PHPExcel_IOFactory::load(storage_path('excel/'. $inputFile));
+        $objPHPExcel->addExternalSheet($objPHPExcelMain->getSheetByName($inputSheet));
+        $objPHPExcel->removeSheetByIndex(0);
+        $objPHPExcel->setActiveSheetIndexByName($inputSheet);
+
+        $table1 = [
+            'no_ch1027_o350',
+        ];
+        $startColumn = 'D';
+        $objPHPExcel = Summary::sum($table1, $startColumn, $startRow, $objPHPExcel, $mainObj);
+
+        $table2 = [
+            'no_ch1027_o350_nu280'
+        ];
+        $startColumn = 'O';
+        $objPHPExcel = Summary::average($table2, $startColumn, $startRow, $objPHPExcel, $mainObj);
+
+        $settings = Setting::whereIn('group_id',[1,5,9,10,11,12,13])
+            ->get();
+        $factors = array();
+        $electricPower = array();
+        $startLastDigit = 40;
+        $endLastDigit = 134;
+        // โทรทัศน์ เพราะมีที่มีเบอร์ 5 กับไม่มีเบอร์ 5
+        for ($i=$startLastDigit;$i<=$endLastDigit;$i++){
+            $electricPower[$i] = (float)$settings->where('code', 'electric_power_' . $i)->first()->value;
+
+            $factors[$i] = (float)$settings->where('code','tool_factor_'. $i)->first()->value
+                * (float)$settings->where('code','season_factor_'. $i)->first()->value
+                * (float)$settings->where('code','usage_factor_'. $i)->first()->value;
+        }
+
+        //table 3
+        $table3 = [
+            ['no_ch1027_o350_nu280','no_ch1027_o350_nu281','no_ch1027_o350_nu282',$factors[116],$electricPower[116],'',81]
+        ];
+
+        $week = Parameter::WEEK_PER_YEAR;
+        $ktoe = Setting::where('code', 'E9')->first()->value;
+
+        // ที่มีฉลากประหยัดไปเบอร์ 5
+        // [ จำนวนหม้อ * อัตราการใช้ (นาที/ครั้ง) * อัตราการใช้ (ครั้งต่อวัน) * อัตราการใช้ (วัน/สัปดาห์) * (52/60) ] * factor * electric power
+        $sumAmountSQL = " (sum(IF(unique_key='param1',answer_numeric,0)) 
+        * sum(if(unique_key='param2', answer_numeric,0)) 
+        * sum(if(unique_key='param3', answer_numeric,0)))
+        * {$week}
+        * param4
+        * param5 
+        * (if(sum(if(unique_key='param6' and option_id=param7,1,0)) + if('param6'='',1,0) >0,1,0)) 
+        as sumAmount ";
+
+        $params = [
+            'param1'=>0, //จำนวน
+            'param2'=>1, //อัตราการใช้ (ชั่วโมง/วัน)
+            'param3'=>2, //อัตราการใช้ (วัน/สัปดาห์)
+            'param4'=>3, //factor
+            'param5'=>4, //electric power
+            'param6'=>5,  //ฉลากประหยัดไฟ
+            'param7'=>6
+        ];
+        $startColumn = 'AB';
+        $objPHPExcel = Summary::usageElectric($table3, $startColumn, $startRow, $objPHPExcel,$mainObj,$sumAmountSQL,$params,$ktoe);
+
+        // Table 4
+        $table4 = [
+            'no_ch1027_o350_nu283',
+        ];
+
+        $startColumn = 'AM';
+        $objPHPExcel = Summary::averageLifetime($table4,$table2,$startColumn ,$startRow, $objPHPExcel, $mainObj);
+
+        $objWriter = new \PHPExcel_Writer_Excel2007($objPHPExcel);
+        $objWriter->save(storage_path(iconv('UTF-8', 'windows-874', 'excel/'.$outputFile)));
+
+        return array($outputFile, 'ชุดโฮมเธียเตอร์.xlsx');
+    }
+    // เครื่องเล่นวิทยุพกพา
+    public static function report16()
+    {
+        set_time_limit(3600);
+
+        $mainObj = new Main();
+        $mainObj->initList();
+
+        $inputFile = Summary9ByToolElectric::$inputFile;
+        $inputSheet = '16';
+        $startRow = 5;
+        $outputFile = Summary9ByToolElectric::$outputFile;
+        $outputName = 'เครื่องเล่นวิทยุพกพา.xlsx';
+
+        $objPHPExcel = new \PHPExcel();
+        $objPHPExcelMain = \PHPExcel_IOFactory::load(storage_path('excel/'. $inputFile));
+        $objPHPExcel->addExternalSheet($objPHPExcelMain->getSheetByName($inputSheet));
+        $objPHPExcel->removeSheetByIndex(0);
+        $objPHPExcel->setActiveSheetIndexByName($inputSheet);
+
+        $table1 = [
+            'no_ch1027_o351',
+        ];
+        $startColumn = 'D';
+        $objPHPExcel = Summary::sum($table1, $startColumn, $startRow, $objPHPExcel, $mainObj);
+
+        $table2 = [
+            'no_ch1027_o351_nu286',
+        ];
+        $startColumn = 'O';
+        $objPHPExcel = Summary::average($table2, $startColumn, $startRow, $objPHPExcel, $mainObj);
+
+        $settings = Setting::whereIn('group_id',[1,5,9,10,11,12,13])
+            ->get();
+        $factors = array();
+        $electricPower = array();
+        $startLastDigit = 40;
+        $endLastDigit = 134;
+        // โทรทัศน์ เพราะมีที่มีเบอร์ 5 กับไม่มีเบอร์ 5
+        for ($i=$startLastDigit;$i<=$endLastDigit;$i++){
+            $electricPower[$i] = (float)$settings->where('code', 'electric_power_' . $i)->first()->value;
+
+            $factors[$i] = (float)$settings->where('code','tool_factor_'. $i)->first()->value
+                * (float)$settings->where('code','season_factor_'. $i)->first()->value
+                * (float)$settings->where('code','usage_factor_'. $i)->first()->value;
+        }
+
+        //table 3
+        $table3 = [
+            ['no_ch1027_o351_nu286','no_ch1027_o351_nu287','no_ch1027_o351_nu288',$factors[117],$electricPower[117],'',81],
+        ];
+
+        $week = Parameter::WEEK_PER_YEAR;
+        $ktoe = Setting::where('code', 'E9')->first()->value;
+
+        // ที่มีฉลากประหยัดไปเบอร์ 5
+        // [ จำนวนหม้อ * อัตราการใช้ (นาที/ครั้ง) * อัตราการใช้ (ครั้งต่อวัน) * อัตราการใช้ (วัน/สัปดาห์) * (52/60) ] * factor * electric power
+        $sumAmountSQL = " (sum(IF(unique_key='param1',answer_numeric,0)) 
+        * sum(if(unique_key='param2', answer_numeric,0)) 
+        * sum(if(unique_key='param3', answer_numeric,0)))
+        * {$week}
+        * param4
+        * param5 
+        * (if(sum(if(unique_key='param6' and option_id=param7,1,0)) + if('param6'='',1,0) >0,1,0)) 
+        as sumAmount ";
+
+        $params = [
+            'param1'=>0, //จำนวน
+            'param2'=>1, //อัตราการใช้ (ชั่วโมง/วัน)
+            'param3'=>2, //อัตราการใช้ (วัน/สัปดาห์)
+            'param4'=>3, //factor
+            'param5'=>4, //electric power
+            'param6'=>5,  //ฉลากประหยัดไฟ
+            'param7'=>6
+        ];
+        $startColumn = 'AB';
+        $objPHPExcel = Summary::usageElectric($table3, $startColumn, $startRow, $objPHPExcel,$mainObj,$sumAmountSQL,$params,$ktoe);
+
+        // Table 4
+        $table4 = [
+            'no_ch1027_o351_nu289',
+        ];
+
+        $startColumn = 'AM';
+        $objPHPExcel = Summary::averageLifetime($table4,$table2,$startColumn ,$startRow, $objPHPExcel, $mainObj);
+
+        $objWriter = new \PHPExcel_Writer_Excel2007($objPHPExcel);
+        $objWriter->save(storage_path(iconv('UTF-8', 'windows-874', 'excel/'.$outputFile)));
+
+        return array($outputFile, $outputName);
+    }
+    // คอมพิวเตอร์
+    public static function report17()
+    {
+        set_time_limit(3600);
+
+        $mainObj = new Main();
+        $mainObj->initList();
+
+        $inputFile = Summary9ByToolElectric::$inputFile;
+        $inputSheet = '17';
+        $startRow = 5;
+        $outputFile = Summary9ByToolElectric::$outputFile;
+        $outputName = 'คอมพิวเตอร์.xlsx';
+
+        $objPHPExcel = new \PHPExcel();
+        $objPHPExcelMain = \PHPExcel_IOFactory::load(storage_path('excel/'. $inputFile));
+        $objPHPExcel->addExternalSheet($objPHPExcelMain->getSheetByName($inputSheet));
+        $objPHPExcel->removeSheetByIndex(0);
+        $objPHPExcel->setActiveSheetIndexByName($inputSheet);
+
+        $table1 = [
+            'no_ch1027_o352_ch291_o128_ch293_o134',
+            'no_ch1027_o352_ch291_o128_ch293_o135',
+            'no_ch1027_o352_ch291_o128_ch293_o136',
+            'no_ch1027_o352_ch291_o128_ch293_o137',
+            'no_ch1027_o352_ch291_o128_ch293_o138',
+            'no_ch1027_o352_ch291_o129_ch298_o132',
+            'no_ch1027_o352_ch291_o129_ch298_o133',
+            'no_ch1027_o352_ch291_o129_ch298_o134',
+            'no_ch1027_o352',
+            'no_ch1027_o352_ch291_o128',
+            'no_ch1027_o352_ch291_o129'
+        ];
+        $startColumn = 'D';
+        $objPHPExcel = Summary::sum($table1, $startColumn, $startRow, $objPHPExcel, $mainObj);
+
+        $table2 = [
+            'no_ch1027_o352_ch291_o128_ch293_o134_nu294',
+            'no_ch1027_o352_ch291_o128_ch293_o135_nu294',
+            'no_ch1027_o352_ch291_o128_ch293_o136_nu294',
+            'no_ch1027_o352_ch291_o128_ch293_o137_nu294',
+            'no_ch1027_o352_ch291_o128_ch293_o138_nu294',
+            'no_ch1027_o352_ch291_o129_ch298_o132_nu299',
+            'no_ch1027_o352_ch291_o129_ch298_o133_nu299',
+            'no_ch1027_o352_ch291_o129_ch298_o134_nu299',
+            [            'no_ch1027_o352_ch291_o128_ch293_o134_nu294',
+                'no_ch1027_o352_ch291_o128_ch293_o135_nu294',
+                'no_ch1027_o352_ch291_o128_ch293_o136_nu294',
+                'no_ch1027_o352_ch291_o128_ch293_o137_nu294',
+                'no_ch1027_o352_ch291_o128_ch293_o138_nu294',
+                'no_ch1027_o352_ch291_o129_ch298_o132_nu299',
+                'no_ch1027_o352_ch291_o129_ch298_o133_nu299',
+                'no_ch1027_o352_ch291_o129_ch298_o134_nu299'],
+            [            'no_ch1027_o352_ch291_o128_ch293_o134_nu294',
+                'no_ch1027_o352_ch291_o128_ch293_o135_nu294',
+                'no_ch1027_o352_ch291_o128_ch293_o136_nu294',
+                'no_ch1027_o352_ch291_o128_ch293_o137_nu294',
+                'no_ch1027_o352_ch291_o128_ch293_o138_nu294'],
+            ['no_ch1027_o352_ch291_o129_ch298_o132_nu299',
+                'no_ch1027_o352_ch291_o129_ch298_o133_nu299',
+                'no_ch1027_o352_ch291_o129_ch298_o134_nu299']
+        ];
+        $startColumn = 'O';
+        $objPHPExcel = Summary::average($table2, $startColumn, $startRow, $objPHPExcel, $mainObj);
+
+        $settings = Setting::whereIn('group_id',[1,5,9,10,11,12,13])
+            ->get();
+        $factors = array();
+        $electricPower = array();
+        $startLastDigit = 40;
+        $endLastDigit = 134;
+        // โทรทัศน์ เพราะมีที่มีเบอร์ 5 กับไม่มีเบอร์ 5
+        for ($i=$startLastDigit;$i<=$endLastDigit;$i++){
+            $electricPower[$i] = (float)$settings->where('code', 'electric_power_' . $i)->first()->value;
+
+            $factors[$i] = (float)$settings->where('code','tool_factor_'. $i)->first()->value
+                * (float)$settings->where('code','season_factor_'. $i)->first()->value
+                * (float)$settings->where('code','usage_factor_'. $i)->first()->value;
+        }
+
+        //table 3
+        $table3 = [
+            ['no_ch1027_o352_ch291_o128_ch293_o134_nu294','no_ch1027_o352_ch291_o128_ch293_o134_nu295','no_ch1027_o352_ch291_o128_ch293_o134_nu296',$factors[118],$electricPower[118],'',81],
+            ['no_ch1027_o352_ch291_o128_ch293_o135_nu294','no_ch1027_o352_ch291_o128_ch293_o135_nu295','no_ch1027_o352_ch291_o128_ch293_o135_nu296',$factors[119],$electricPower[119],'',81],
+            ['no_ch1027_o352_ch291_o128_ch293_o136_nu294','no_ch1027_o352_ch291_o128_ch293_o136_nu295','no_ch1027_o352_ch291_o128_ch293_o136_nu296',$factors[120],$electricPower[120],'',81],
+            ['no_ch1027_o352_ch291_o128_ch293_o137_nu294','no_ch1027_o352_ch291_o128_ch293_o137_nu295','no_ch1027_o352_ch291_o128_ch293_o137_nu296',$factors[121],$electricPower[121],'',81],
+            ['no_ch1027_o352_ch291_o128_ch293_o138_nu294','no_ch1027_o352_ch291_o128_ch293_o138_nu295','no_ch1027_o352_ch291_o128_ch293_o138_nu296',$factors[122],$electricPower[122],'',81],
+            ['no_ch1027_o352_ch291_o129_ch298_o132_nu299','no_ch1027_o352_ch291_o129_ch298_o132_nu300','no_ch1027_o352_ch291_o129_ch298_o132_nu301',$factors[123],$electricPower[123],'',81],
+            ['no_ch1027_o352_ch291_o129_ch298_o133_nu299','no_ch1027_o352_ch291_o129_ch298_o133_nu300','no_ch1027_o352_ch291_o129_ch298_o133_nu301',$factors[124],$electricPower[124],'',81],
+            ['no_ch1027_o352_ch291_o129_ch298_o134_nu299','no_ch1027_o352_ch291_o129_ch298_o134_nu300','no_ch1027_o352_ch291_o129_ch298_o134_nu301',$factors[125],$electricPower[125],'',81],
+        ];
+
+        $week = Parameter::WEEK_PER_YEAR;
+        $ktoe = Setting::where('code', 'E9')->first()->value;
+
+        // ที่มีฉลากประหยัดไปเบอร์ 5
+        // [ จำนวนหม้อ * อัตราการใช้ (นาที/ครั้ง) * อัตราการใช้ (ครั้งต่อวัน) * อัตราการใช้ (วัน/สัปดาห์) * (52/60) ] * factor * electric power
+        $sumAmountSQL = " (sum(IF(unique_key='param1',answer_numeric,0)) 
+        * sum(if(unique_key='param2', answer_numeric,0)) 
+        * sum(if(unique_key='param3', answer_numeric,0)))
+        * {$week}
+        * param4
+        * param5 
+        * (if(sum(if(unique_key='param6' and option_id=param7,1,0)) + if('param6'='',1,0) >0,1,0)) 
+        as sumAmount ";
+
+        $params = [
+            'param1'=>0, //จำนวน
+            'param2'=>1, //อัตราการใช้ (ชั่วโมง/วัน)
+            'param3'=>2, //อัตราการใช้ (วัน/สัปดาห์)
+            'param4'=>3, //factor
+            'param5'=>4, //electric power
+            'param6'=>5,  //ฉลากประหยัดไฟ
+            'param7'=>6
+        ];
+        $startColumn = 'AB';
+        $objPHPExcel = Summary::usageElectric($table3, $startColumn, $startRow, $objPHPExcel,$mainObj,$sumAmountSQL,$params,$ktoe);
+
+        // Table 4
+        $table4 = [
+            'no_ch1027_o352_ch291_o128_ch293_o134_nu297',
+            'no_ch1027_o352_ch291_o128_ch293_o135_nu297',
+            'no_ch1027_o352_ch291_o128_ch293_o136_nu297',
+            'no_ch1027_o352_ch291_o128_ch293_o137_nu297',
+            'no_ch1027_o352_ch291_o128_ch293_o138_nu297',
+            'no_ch1027_o352_ch291_o129_ch298_o132_nu302',
+            'no_ch1027_o352_ch291_o129_ch298_o133_nu302',
+            'no_ch1027_o352_ch291_o129_ch298_o134_nu302',
+            [            'no_ch1027_o352_ch291_o128_ch293_o134_nu297',
+                'no_ch1027_o352_ch291_o128_ch293_o135_nu297',
+                'no_ch1027_o352_ch291_o128_ch293_o136_nu297',
+                'no_ch1027_o352_ch291_o128_ch293_o137_nu297',
+                'no_ch1027_o352_ch291_o128_ch293_o138_nu297',
+                'no_ch1027_o352_ch291_o129_ch298_o132_nu302',
+                'no_ch1027_o352_ch291_o129_ch298_o133_nu302',
+                'no_ch1027_o352_ch291_o129_ch298_o134_nu302'],
+            [            'no_ch1027_o352_ch291_o128_ch293_o134_nu297',
+                'no_ch1027_o352_ch291_o128_ch293_o135_nu297',
+                'no_ch1027_o352_ch291_o128_ch293_o136_nu297',
+                'no_ch1027_o352_ch291_o128_ch293_o137_nu297',
+                'no_ch1027_o352_ch291_o128_ch293_o138_nu297'],
+            [
+                'no_ch1027_o352_ch291_o129_ch298_o132_nu302',
+                'no_ch1027_o352_ch291_o129_ch298_o133_nu302',
+                'no_ch1027_o352_ch291_o129_ch298_o134_nu302',]
+        ];
+
+        $startColumn = 'AM';
+        $objPHPExcel = Summary::averageLifetime($table4,$table2,$startColumn ,$startRow, $objPHPExcel, $mainObj);
+
+        $objWriter = new \PHPExcel_Writer_Excel2007($objPHPExcel);
+        $objWriter->save(storage_path(iconv('UTF-8', 'windows-874', 'excel/'.$outputFile)));
+
+        return array($outputFile, $outputName);
+    }
+    // เครื่องพิมพ์
+    public static function report18()
+    {
+        set_time_limit(3600);
+
+        $mainObj = new Main();
+        $mainObj->initList();
+
+        $inputFile = Summary9ByToolElectric::$inputFile;
+        $inputSheet = '18';
+        $startRow = 5;
+        $outputFile = Summary9ByToolElectric::$outputFile;
+        $outputName = 'เครื่องพิมพ์.xlsx';
+
+        $objPHPExcel = new \PHPExcel();
+        $objPHPExcelMain = \PHPExcel_IOFactory::load(storage_path('excel/'. $inputFile));
+        $objPHPExcel->addExternalSheet($objPHPExcelMain->getSheetByName($inputSheet));
+        $objPHPExcel->removeSheetByIndex(0);
+        $objPHPExcel->setActiveSheetIndexByName($inputSheet);
+
+        $table1 = [
+            'no_ch1027_o353_ch304_o139',
+            'no_ch1027_o353_ch304_o140',
+            'no_ch1027_o353_ch304_o141',
+            'no_ch1027_o353'
+        ];
+        $startColumn = 'D';
+        $objPHPExcel = Summary::sum($table1, $startColumn, $startRow, $objPHPExcel, $mainObj);
+
+        $table2 = [
+            'no_ch1027_o353_ch304_o139_nu305',
+            'no_ch1027_o353_ch304_o140_nu305',
+            'no_ch1027_o353_ch304_o141_nu305',
+            ['no_ch1027_o353_ch304_o139_nu305',
+                'no_ch1027_o353_ch304_o140_nu305',
+                'no_ch1027_o353_ch304_o141_nu305']
+        ];
+        $startColumn = 'O';
+        $objPHPExcel = Summary::average($table2, $startColumn, $startRow, $objPHPExcel, $mainObj);
+
+        $settings = Setting::whereIn('group_id',[1,5,9,10,11,12,13])
+            ->get();
+        $factors = array();
+        $electricPower = array();
+        $startLastDigit = 40;
+        $endLastDigit = 134;
+        // โทรทัศน์ เพราะมีที่มีเบอร์ 5 กับไม่มีเบอร์ 5
+        for ($i=$startLastDigit;$i<=$endLastDigit;$i++){
+            $electricPower[$i] = (float)$settings->where('code', 'electric_power_' . $i)->first()->value;
+
+            $factors[$i] = (float)$settings->where('code','tool_factor_'. $i)->first()->value
+                * (float)$settings->where('code','season_factor_'. $i)->first()->value
+                * (float)$settings->where('code','usage_factor_'. $i)->first()->value;
+        }
+
+        //table 3
+        $table3 = [
+            ['no_ch1027_o353_ch304_o139_nu305','no_ch1027_o353_ch304_o139_nu306','no_ch1027_o353_ch304_o139_nu307',$factors[126],$electricPower[126],'',81],
+            ['no_ch1027_o353_ch304_o140_nu305','no_ch1027_o353_ch304_o140_nu306','no_ch1027_o353_ch304_o140_nu307',$factors[127],$electricPower[127],'',81],
+            ['no_ch1027_o353_ch304_o141_nu305','no_ch1027_o353_ch304_o141_nu306','no_ch1027_o353_ch304_o141_nu307',$factors[128],$electricPower[128],'',81]
+            ];
+
+        $week = Parameter::WEEK_PER_YEAR;
+        $ktoe = Setting::where('code', 'E9')->first()->value;
+
+        // ที่มีฉลากประหยัดไปเบอร์ 5
+        // [ จำนวนหม้อ * อัตราการใช้ (นาที/ครั้ง) * อัตราการใช้ (ครั้งต่อวัน) * อัตราการใช้ (วัน/สัปดาห์) * (52/60) ] * factor * electric power
+        $sumAmountSQL = " (sum(IF(unique_key='param1',answer_numeric,0)) 
+        * sum(if(unique_key='param2', answer_numeric,0)) 
+        * sum(if(unique_key='param3', answer_numeric,0)))
+        * {$week}
+        * param4
+        * param5 
+        * (if(sum(if(unique_key='param6' and option_id=param7,1,0)) + if('param6'='',1,0) >0,1,0)) 
+        as sumAmount ";
+
+        $params = [
+            'param1'=>0, //จำนวน
+            'param2'=>1, //อัตราการใช้ (ชั่วโมง/วัน)
+            'param3'=>2, //อัตราการใช้ (วัน/สัปดาห์)
+            'param4'=>3, //factor
+            'param5'=>4, //electric power
+            'param6'=>5,  //ฉลากประหยัดไฟ
+            'param7'=>6
+        ];
+        $startColumn = 'AB';
+        $objPHPExcel = Summary::usageElectric($table3, $startColumn, $startRow, $objPHPExcel,$mainObj,$sumAmountSQL,$params,$ktoe);
+
+        // Table 4
+        $table4 = [
+            'no_ch1027_o353_ch304_o139_nu308',
+            'no_ch1027_o353_ch304_o140_nu308',
+            'no_ch1027_o353_ch304_o141_nu308',
+            ['no_ch1027_o353_ch304_o139_nu308',
+                'no_ch1027_o353_ch304_o140_nu308',
+                'no_ch1027_o353_ch304_o141_nu308']
+        ];
+
+        $startColumn = 'AM';
+        $objPHPExcel = Summary::averageLifetime($table4,$table2,$startColumn ,$startRow, $objPHPExcel, $mainObj);
+
+        $objWriter = new \PHPExcel_Writer_Excel2007($objPHPExcel);
+        $objWriter->save(storage_path(iconv('UTF-8', 'windows-874', 'excel/'.$outputFile)));
+
+        return array($outputFile, $outputName);
+    }
+    // โทรศัพท์มือถือ
+    public static function report19()
+    {
+        set_time_limit(3600);
+
+        $mainObj = new Main();
+        $mainObj->initList();
+
+        $inputFile = Summary9ByToolElectric::$inputFile;
+        $inputSheet = '19';
+        $startRow = 5;
+        $outputFile = Summary9ByToolElectric::$outputFile;
+        $outputName = 'โทรศัพท์มือถือ.xlsx';
+
+        $objPHPExcel = new \PHPExcel();
+        $objPHPExcelMain = \PHPExcel_IOFactory::load(storage_path('excel/'. $inputFile));
+        $objPHPExcel->addExternalSheet($objPHPExcelMain->getSheetByName($inputSheet));
+        $objPHPExcel->removeSheetByIndex(0);
+        $objPHPExcel->setActiveSheetIndexByName($inputSheet);
+
+        $table1 = [
+            'no_ch1027_o354_ch310_o142',
+            'no_ch1027_o354_ch310_o143',
+            'no_ch1027_o354_ch310_o144',
+            'no_ch1027_o354'
+        ];
+        $startColumn = 'D';
+        $objPHPExcel = Summary::sum($table1, $startColumn, $startRow, $objPHPExcel, $mainObj);
+
+        $table2 = [
+            'no_ch1027_o354_ch310_o142_nu311',
+            'no_ch1027_o354_ch310_o143_nu311',
+            'no_ch1027_o354_ch310_o144_nu311',
+            ['no_ch1027_o354_ch310_o142_nu311',
+                'no_ch1027_o354_ch310_o143_nu311',
+                'no_ch1027_o354_ch310_o144_nu311']
+        ];
+        $startColumn = 'O';
+        $objPHPExcel = Summary::average($table2, $startColumn, $startRow, $objPHPExcel, $mainObj);
+
+        $settings = Setting::whereIn('group_id',[1,5,9,10,11,12,13])
+            ->get();
+        $factors = array();
+        $electricPower = array();
+        $startLastDigit = 40;
+        $endLastDigit = 134;
+        // โทรทัศน์ เพราะมีที่มีเบอร์ 5 กับไม่มีเบอร์ 5
+        for ($i=$startLastDigit;$i<=$endLastDigit;$i++){
+            $electricPower[$i] = (float)$settings->where('code', 'electric_power_' . $i)->first()->value;
+
+            $factors[$i] = (float)$settings->where('code','tool_factor_'. $i)->first()->value
+                * (float)$settings->where('code','season_factor_'. $i)->first()->value
+                * (float)$settings->where('code','usage_factor_'. $i)->first()->value;
+        }
+
+        //table 3
+        $table3 = [
+            ['no_ch1027_o354_ch310_o142_nu311','no_ch1027_o354_ch310_o142_nu312','no_ch1027_o354_ch310_o142_nu313',$factors[129],$electricPower[129],'',81],
+            ['no_ch1027_o354_ch310_o143_nu311','no_ch1027_o354_ch310_o143_nu312','no_ch1027_o354_ch310_o143_nu313',$factors[130],$electricPower[130],'',81],
+            ['no_ch1027_o354_ch310_o144_nu311','no_ch1027_o354_ch310_o144_nu312','no_ch1027_o354_ch310_o144_nu313',$factors[131],$electricPower[131],'',81]
+        ];
+
+        $week = Parameter::WEEK_PER_YEAR;
+        $ktoe = Setting::where('code', 'E9')->first()->value;
+
+        // ที่มีฉลากประหยัดไปเบอร์ 5
+        // [ จำนวนหม้อ * อัตราการใช้ (นาที/ครั้ง) * อัตราการใช้ (ครั้งต่อวัน) * อัตราการใช้ (วัน/สัปดาห์) * (52/60) ] * factor * electric power
+        $sumAmountSQL = " (sum(IF(unique_key='param1',answer_numeric,0)) 
+        * sum(if(unique_key='param2', answer_numeric,0)) 
+        * sum(if(unique_key='param3', answer_numeric,0)))
+        * {$week}
+        * param4
+        * param5 
+        * (if(sum(if(unique_key='param6' and option_id=param7,1,0)) + if('param6'='',1,0) >0,1,0)) 
+        as sumAmount ";
+
+        $params = [
+            'param1'=>0, //จำนวน
+            'param2'=>1, //อัตราการใช้ (ชั่วโมง/วัน)
+            'param3'=>2, //อัตราการใช้ (วัน/สัปดาห์)
+            'param4'=>3, //factor
+            'param5'=>4, //electric power
+            'param6'=>5,  //ฉลากประหยัดไฟ
+            'param7'=>6
+        ];
+        $startColumn = 'AB';
+        $objPHPExcel = Summary::usageElectric($table3, $startColumn, $startRow, $objPHPExcel,$mainObj,$sumAmountSQL,$params,$ktoe);
+
+        // Table 4
+        $table4 = [
+            'no_ch1027_o354_ch310_o142_nu314',
+            'no_ch1027_o354_ch310_o143_nu314',
+            'no_ch1027_o354_ch310_o144_nu314',
+            ['no_ch1027_o354_ch310_o142_nu314',
+                'no_ch1027_o354_ch310_o143_nu314',
+                'no_ch1027_o354_ch310_o144_nu314']
+        ];
+
+        $startColumn = 'AM';
+        $objPHPExcel = Summary::averageLifetime($table4,$table2,$startColumn ,$startRow, $objPHPExcel, $mainObj);
+
+        $objWriter = new \PHPExcel_Writer_Excel2007($objPHPExcel);
+        $objWriter->save(storage_path(iconv('UTF-8', 'windows-874', 'excel/'.$outputFile)));
+
+        return array($outputFile, $outputName);
+    }
+    // แบตเตอรี่สำรอง
+    public static function report20()
+    {
+        set_time_limit(3600);
+
+        $mainObj = new Main();
+        $mainObj->initList();
+
+        $inputFile = Summary9ByToolElectric::$inputFile;
+        $inputSheet = '20';
+        $startRow = 5;
+        $outputFile = Summary9ByToolElectric::$outputFile;
+        $outputName = 'แบตเตอรี่สำรอง.xlsx';
+
+        $objPHPExcel = new \PHPExcel();
+        $objPHPExcelMain = \PHPExcel_IOFactory::load(storage_path('excel/'. $inputFile));
+        $objPHPExcel->addExternalSheet($objPHPExcelMain->getSheetByName($inputSheet));
+        $objPHPExcel->removeSheetByIndex(0);
+        $objPHPExcel->setActiveSheetIndexByName($inputSheet);
+
+        $table1 = [
+            'no_ch1027_o355_ch317_o146',
+            'no_ch1027_o355_ch317_o147',
+            'no_ch1027_o355_ch317_o148',
+            'no_ch1027_o355'
+        ];
+        $startColumn = 'D';
+        $objPHPExcel = Summary::sum($table1, $startColumn, $startRow, $objPHPExcel, $mainObj);
+
+        $table2 = [
+            'no_ch1027_o355_ch317_o146_nu318',
+            'no_ch1027_o355_ch317_o147_nu318',
+            'no_ch1027_o355_ch317_o148_nu318',
+            ['no_ch1027_o355_ch317_o146_nu318',
+                'no_ch1027_o355_ch317_o147_nu318',
+                'no_ch1027_o355_ch317_o148_nu318']
+        ];
+        $startColumn = 'O';
+        $objPHPExcel = Summary::average($table2, $startColumn, $startRow, $objPHPExcel, $mainObj);
+
+        $settings = Setting::whereIn('group_id',[1,5,9,10,11,12,13])
+            ->get();
+        $factors = array();
+        $electricPower = array();
+        $startLastDigit = 40;
+        $endLastDigit = 134;
+        // โทรทัศน์ เพราะมีที่มีเบอร์ 5 กับไม่มีเบอร์ 5
+        for ($i=$startLastDigit;$i<=$endLastDigit;$i++){
+            $electricPower[$i] = (float)$settings->where('code', 'electric_power_' . $i)->first()->value;
+
+            $factors[$i] = (float)$settings->where('code','tool_factor_'. $i)->first()->value
+                * (float)$settings->where('code','season_factor_'. $i)->first()->value
+                * (float)$settings->where('code','usage_factor_'. $i)->first()->value;
+        }
+
+        //table 3
+        $table3 = [
+            ['no_ch1027_o355_ch317_o146_nu318','no_ch1027_o355_ch317_o146_nu319','no_ch1027_o355_ch317_o146_nu320',$factors[132],$electricPower[132],'',81],
+            ['no_ch1027_o355_ch317_o147_nu318','no_ch1027_o355_ch317_o147_nu319','no_ch1027_o355_ch317_o147_nu320',$factors[133],$electricPower[133],'',81],
+            ['no_ch1027_o355_ch317_o148_nu318','no_ch1027_o355_ch317_o148_nu319','no_ch1027_o355_ch317_o148_nu320',$factors[134],$electricPower[134],'',81],
+        ];
+
+        $week = Parameter::WEEK_PER_YEAR;
+        $ktoe = Setting::where('code', 'E9')->first()->value;
+
+        // ที่มีฉลากประหยัดไปเบอร์ 5
+        // [ จำนวนหม้อ * อัตราการใช้ (นาที/ครั้ง) * อัตราการใช้ (ครั้งต่อวัน) * อัตราการใช้ (วัน/สัปดาห์) * (52/60) ] * factor * electric power
+        $sumAmountSQL = " (sum(IF(unique_key='param1',answer_numeric,0)) 
+        * sum(if(unique_key='param2', answer_numeric,0)) 
+        * sum(if(unique_key='param3', answer_numeric,0)))
+        * {$week}
+        * param4
+        * param5 
+        * (if(sum(if(unique_key='param6' and option_id=param7,1,0)) + if('param6'='',1,0) >0,1,0)) 
+        as sumAmount ";
+
+        $params = [
+            'param1'=>0, //จำนวน
+            'param2'=>1, //อัตราการใช้ (ชั่วโมง/วัน)
+            'param3'=>2, //อัตราการใช้ (วัน/สัปดาห์)
+            'param4'=>3, //factor
+            'param5'=>4, //electric power
+            'param6'=>5,  //ฉลากประหยัดไฟ
+            'param7'=>6
+        ];
+        $startColumn = 'AB';
+        $objPHPExcel = Summary::usageElectric($table3, $startColumn, $startRow, $objPHPExcel,$mainObj,$sumAmountSQL,$params,$ktoe);
+
+        // Table 4
+        $table4 = [
+            'no_ch1027_o355_ch317_o146_nu321',
+            'no_ch1027_o355_ch317_o147_nu321',
+            'no_ch1027_o355_ch317_o148_nu321',
+            [            'no_ch1027_o355_ch317_o146_nu321',
+                'no_ch1027_o355_ch317_o147_nu321',
+                'no_ch1027_o355_ch317_o148_nu321']
+        ];
+
+        $startColumn = 'AM';
+        $objPHPExcel = Summary::averageLifetime($table4,$table2,$startColumn ,$startRow, $objPHPExcel, $mainObj);
+
+        $objWriter = new \PHPExcel_Writer_Excel2007($objPHPExcel);
+        $objWriter->save(storage_path(iconv('UTF-8', 'windows-874', 'excel/'.$outputFile)));
+
+        return array($outputFile, $outputName);
+    }
 
 }
