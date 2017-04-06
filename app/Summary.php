@@ -212,7 +212,8 @@ class Summary extends Model
                     $whereUniqueKey = "'" . $whereUniqueKey . "'";
                     foreach ($radioArr[$level1Counter] as $radioKey => $radioValue) {
                         $temp = $newSql;
-                        $temp = str_replace('radioKey', $radioKey, $temp);
+                        $removedCharRadioKey = str_replace('@', '' ,$radioKey);
+                        $temp = str_replace('radioKey', $removedCharRadioKey, $temp);
                         $temp = str_replace('radioValue', $radioValue, $temp);
                         $temp = str_replace('amountKey', $value[$idx], $temp);
 
@@ -290,7 +291,8 @@ class Summary extends Model
 
                 foreach ($radioArr[$level1Counter] as $radioKey => $radioValue) {
                     $temp = $newSql;
-                    $temp = str_replace('radioKey', $radioKey, $temp);
+                    $removedCharRadioKey = str_replace('@', '' ,$radioKey);
+                    $temp = str_replace('radioKey', $removedCharRadioKey, $temp);
                     $temp = str_replace('radioValue', $radioValue, $temp);
                     $temp = str_replace('amountKey', $value[$idx], $temp);
 
@@ -550,7 +552,8 @@ class Summary extends Model
 
                     foreach ($radioArr[$level1Counter] as $radioKey => $radioValue) {
                         $temp = $newSql;
-                        $temp = str_replace('radioKey', $radioKey, $temp);
+                        $removedCharRadioKey = str_replace('@', '' ,$radioKey);
+                        $temp = str_replace('radioKey', $removedCharRadioKey, $temp);
                         $temp = str_replace('radioValue', $radioValue, $temp);
                         $temp = str_replace('amountKey', $value[$idx], $temp); // อายุการใช้งาน
 
@@ -636,7 +639,8 @@ class Summary extends Model
 
                 foreach ($radioArr[$level1Counter] as $radioKey => $radioValue) {
                     $temp = $newSql;
-                    $temp = str_replace('radioKey', $radioKey, $temp);
+                    $removedCharRadioKey = str_replace('@', '' ,$radioKey);
+                    $temp = str_replace('radioKey', $removedCharRadioKey, $temp);
                     $temp = str_replace('radioValue', $radioValue, $temp);
                     $temp = str_replace('amountKey', $value[$idx], $temp);
 

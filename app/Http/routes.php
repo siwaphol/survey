@@ -74,6 +74,7 @@ Route::group(['middleware' => 'auth'], function () {
 
     Route::group(['prefix'=>'report'], function(){
         Route::get('tool/{tool_number}', 'Summary9ByToolElectric@reportTool');
+        Route::get('tool_fuel/{tool_number}', 'Summary9ByToolFuel@reportTool');
     });
 });
 
