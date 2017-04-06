@@ -219,7 +219,7 @@ class Summary extends Model
 
                         $finalSql .= $temp . " + ";
 
-                        $whereUniqueKey .= ",'" . $radioKey . "'";
+                        $whereUniqueKey .= ",'" . $removedCharRadioKey . "'";
                         $idx++;
                     }
                     $finalSql .= " 0 ";
@@ -297,7 +297,7 @@ class Summary extends Model
                     $temp = str_replace('amountKey', $value[$idx], $temp);
 
                     $sumSQL = $temp;
-                    $whereUniqueKey .= ",'" . $radioKey . "'";
+                    $whereUniqueKey .= ",'" . $removedCharRadioKey . "'";
 
                     $outerSTDDEVSql = "SELECT STDDEV(sum1) as a_stddev FROM
                         (SELECT $sumSQL AS sum1 FROM answers
@@ -553,19 +553,20 @@ class Summary extends Model
                     foreach ($radioArr[$level1Counter] as $radioKey => $radioValue) {
                         $temp = $newSql;
                         $removedCharRadioKey = str_replace('@', '' ,$radioKey);
+
                         $temp = str_replace('radioKey', $removedCharRadioKey, $temp);
                         $temp = str_replace('radioValue', $radioValue, $temp);
                         $temp = str_replace('amountKey', $value[$idx], $temp); // อายุการใช้งาน
 
                         $tempAmount = $newSql;
-                        $tempAmount = str_replace('radioKey', $radioKey, $tempAmount);
+                        $tempAmount = str_replace('radioKey', $removedCharRadioKey, $tempAmount);
                         $tempAmount = str_replace('radioValue', $radioValue, $tempAmount);
                         $tempAmount = str_replace('amountKey', $uniqueKeyArrAmount[$level1Counter][$idx], $tempAmount); // จำนวน
 
                         $finalSql .= $temp . " + ";
                         $amountSql .= $tempAmount . " + ";
 
-                        $whereUniqueKey .= ",'" . $radioKey . "'";
+                        $whereUniqueKey .= ",'" . $removedCharRadioKey . "'";
                         $idx++;
                     }
                     $finalSql .= " 0 ";
@@ -645,7 +646,7 @@ class Summary extends Model
                     $temp = str_replace('amountKey', $value[$idx], $temp);
 
                     $sumSQL = $temp;
-                    $whereUniqueKey .= ",'" . $radioKey . "'";
+                    $whereUniqueKey .= ",'" . $removedCharRadioKey . "'";
 
                     $outerSTDDEVSql = "SELECT STDDEV(sum1) as a_stddev FROM
                         (SELECT $sumSQL AS sum1 FROM answers
