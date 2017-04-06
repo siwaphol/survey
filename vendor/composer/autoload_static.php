@@ -353,6 +353,7 @@ class ComposerStaticInit972b56837168c16a3339717f041e3e16
         'AddSectionIdAndSubSectionIdToAnswers' => __DIR__ . '/../..' . '/database/migrations/2016_07_29_093943_add_section_id_and_sub_section_id_to_answers.php',
         'AddSectionIdAndSubSectionIdToQuestions' => __DIR__ . '/../..' . '/database/migrations/2016_07_29_093926_add_section_id_and_sub_section_id_to_questions.php',
         'AddSubmitedAtToMains' => __DIR__ . '/../..' . '/database/migrations/2016_08_14_175224_add_submited_at_to_mains.php',
+        'AddToolReportColumnToMenusTable' => __DIR__ . '/../..' . '/database/migrations/2017_04_06_213013_add_tool_report_column_to_menus_table.php',
         'AddUniqueKeyToAnswers' => __DIR__ . '/../..' . '/database/migrations/2016_07_28_122904_add_unique_key_to_answers.php',
         'CreateAnswersTable' => __DIR__ . '/../..' . '/database/migrations/2016_05_10_061441_create_answers_table.php',
         'CreateDescriptionsTable' => __DIR__ . '/../..' . '/database/migrations/2016_09_13_141620_create_descriptions_table.php',

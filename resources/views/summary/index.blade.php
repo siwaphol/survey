@@ -6,6 +6,27 @@
             text-align: center;
         }
     </style>
+
+    <script>
+        $(function () {
+            $(".select").select2()
+            $("#tool-electric").change(function () {
+                var toolID = $(this).val()
+                var downloadURL = "{{url("report/tool_electric")}}"
+                $("#tool-electric-download").attr("href", downloadURL + "/" + toolID)
+            })
+            $("#tool-fuel").change(function () {
+                var toolID = $(this).val()
+                var downloadURL = "{{url("report/tool_fuel")}}"
+                $("#tool-fuel-download").attr("href", downloadURL + "/" + toolID)
+            })
+            $("#tool-renew").change(function () {
+                var toolID = $(this).val()
+                var downloadURL = "{{url("report/tool_renew")}}"
+                $("#tool-renew-download").attr("href", downloadURL + "/" + toolID)
+            })
+        })
+    </script>
 @endsection
 
 @section('content')
@@ -30,6 +51,9 @@
                             <?php
                             $subMenus = \App\Menu::where('parent_id', $row->id)->get();
                             ?>
+                            @if((int)$row->id>=5 && (int)$row->id<=24)
+
+                            @else
                             <tr>
                                 <td>{{$row->name}}</td>
                                 <td>-</td>
@@ -76,6 +100,36 @@
                                     </td>
                                 </tr>
                             @endforeach
+                            @endif
+                            @if((int)$row->id===35)
+                                <tr>
+                                    <td>หมวด ข</td>
+                                    <td>ไฟฟ้า</td>
+                                    <td>
+                                        {!! Form::select(null,\App\Summary::$electricMenu,null,['class'=>"select", 'id'=>'tool-electric']) !!}
+                                        <a class="btn btn-success" href="{{url("report/tool_electric/1")}}" id="tool-electric-download">Download</a>
+                                    </td>
+                                    <td></td>
+                                </tr>
+                                <tr>
+                                    <td>หมวด ข</td>
+                                    <td>น้ำมันสำเร็จรูป</td>
+                                    <td>
+                                        {!! Form::select(null,\App\Summary::$fuelMenu,null,['class'=>"select", 'id'=>'tool-fuel']) !!}
+                                        <a class="btn btn-success" href="{{url("report/tool_fuel/1")}}" id="tool-fuel-download">Download</a>
+                                    </td>
+                                    <td></td>
+                                </tr>
+                                <tr>
+                                    <td>หมวด ข</td>
+                                    <td>ดั้งเดิม</td>
+                                    <td>
+                                        {!! Form::select(null,\App\Summary::$renewMenu,null,['class'=>"select", 'id'=>'tool-renew']) !!}
+                                        <a class="btn btn-success" href="{{url("report/tool_renew/1")}}" id="tool-renew-download">Download</a>
+                                    </td>
+                                    <td></td>
+                                </tr>
+                            @endif
                         @endforeach
                     </tbody>
                 </table>
@@ -85,3 +139,4 @@
         </div>
     </div>
 @endsection
+

@@ -10,6 +10,8 @@ class Menu extends Model
     const TYPE_TOGGLE = 'toggle';
     const TYPE_HEADING = 'heading';
 
+    protected $casts = ['tool_report'=>'array'];
+
     static $sections = array(
         0=>'',
         1=>'ทั่วไป',
