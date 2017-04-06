@@ -4176,4 +4176,158 @@ class Summary9ByToolElectric extends Controller
 
         return array($outputFile, $outputName);
     }
+    // เครื่องดักแมลง
+    public static function report35()
+    {
+        set_time_limit(3600);
+
+        // หมวดไล่และล่อแมลง
+        $mainObj = new Main();
+        $mainObj->initList();
+
+        $inputFile = Summary9ByToolElectric::$inputFile;
+        $inputSheet = '35';
+        $startRow = 5;
+        $outputFile = Summary9ByToolElectric::$outputFile;
+        $outputName = 'เครื่องดักแมลง.xlsx';
+
+        $objPHPExcel = new \PHPExcel();
+        $objPHPExcelMain = \PHPExcel_IOFactory::load(storage_path('excel/'. $inputFile));
+        $objPHPExcel->addExternalSheet($objPHPExcelMain->getSheetByName($inputSheet));
+        $objPHPExcel->removeSheetByIndex(0);
+        $objPHPExcel->setActiveSheetIndexByName($inputSheet);
+        $table1 = [
+            'no_ch1031_o373'
+        ];
+
+        $table2=[
+            'no_ch1031_o373_nu479'
+        ];
+
+        $settings = Setting::whereIn('group_id',[1,5,9,10,11,12,13])
+            ->get();
+        $factors = array();
+        $electricPower = array();
+        $factorLastDigit = [244,245];
+        foreach ($factorLastDigit as $lastDigit){
+            $electricPower[$lastDigit] = (float)$settings->where('code', 'electric_power_' . $lastDigit)->first()->value;
+
+            $factors[$lastDigit] = (float)$settings->where('code','tool_factor_'. $lastDigit)->first()->value
+                * (float)$settings->where('code','season_factor_'. $lastDigit)->first()->value
+                * (float)$settings->where('code','usage_factor_'. $lastDigit)->first()->value;
+        }
+
+        $table3_1 = [
+            ['no_ch1031_o373_nu479','no_ch1031_o373_nu480','no_ch1031_o373_nu481',$factors[244], $electricPower[244]]
+        ];
+
+        $table4 = [
+            'no_ch1031_o373_nu482'
+        ];
+
+        $startColumn = 'D';
+        $objPHPExcel = Summary::sum($table1, $startColumn, $startRow, $objPHPExcel, $mainObj);
+        $startColumn = 'O';
+        $objPHPExcel = Summary::average($table2, $startColumn, $startRow, $objPHPExcel, $mainObj);
+        $week = Parameter::WEEK_PER_YEAR;
+        $ktoe = Setting::where('code', 'E9')->first()->value;
+        $sumAmountSQL_1 = " sum(IF(unique_key='param1',answer_numeric,0)) 
+        * sum(IF(unique_key='param2',answer_numeric,0)) 
+        * sum(IF(unique_key='param3',answer_numeric,0)) 
+        * {$week} 
+        * param4
+        * param5 as sumAmount ";
+        $params = [
+            'param1'=>0,
+            'param2'=>1,
+            'param3'=>2,
+            'param4'=>3,
+            'param5'=>4
+        ];
+        $startColumn = 'AB';
+        $objPHPExcel = Summary::usageElectric($table3_1, $startColumn, $startRow,$objPHPExcel, $mainObj,$sumAmountSQL_1,$params,$ktoe);
+        $startColumn = 'AM';
+        $objPHPExcel = Summary::averageLifetime($table4, $table2,$startColumn, $startRow, $objPHPExcel, $mainObj);
+        $objWriter = new \PHPExcel_Writer_Excel2007($objPHPExcel);
+        $objWriter->save(storage_path(iconv('UTF-8', 'windows-874', 'excel/'.$outputFile)));
+
+        return array($outputFile, $outputName);
+    }
+    // ไม้ตียุง
+    public static function report36()
+    {
+        set_time_limit(3600);
+
+        // หมวดไล่และล่อแมลง
+        $mainObj = new Main();
+        $mainObj->initList();
+
+        $inputFile = Summary9ByToolElectric::$inputFile;
+        $inputSheet = '36';
+        $startRow = 5;
+        $outputFile = Summary9ByToolElectric::$outputFile;
+        $outputName = 'ไม้ตียุง.xlsx';
+
+        $objPHPExcel = new \PHPExcel();
+        $objPHPExcelMain = \PHPExcel_IOFactory::load(storage_path('excel/'. $inputFile));
+        $objPHPExcel->addExternalSheet($objPHPExcelMain->getSheetByName($inputSheet));
+        $objPHPExcel->removeSheetByIndex(0);
+        $objPHPExcel->setActiveSheetIndexByName($inputSheet);
+        $table1 = [
+            'no_ch1031_o374',
+        ];
+
+        $table2=[
+            'no_ch1031_o374_nu485',
+        ];
+
+        $settings = Setting::whereIn('group_id',[1,5,9,10,11,12,13])
+            ->get();
+        $factors = array();
+        $electricPower = array();
+        $factorLastDigit = [244,245];
+        foreach ($factorLastDigit as $lastDigit){
+            $electricPower[$lastDigit] = (float)$settings->where('code', 'electric_power_' . $lastDigit)->first()->value;
+
+            $factors[$lastDigit] = (float)$settings->where('code','tool_factor_'. $lastDigit)->first()->value
+                * (float)$settings->where('code','season_factor_'. $lastDigit)->first()->value
+                * (float)$settings->where('code','usage_factor_'. $lastDigit)->first()->value;
+        }
+
+        $table3_1 = [
+            ['no_ch1031_o374_nu485','no_ch1031_o374_nu486','no_ch1031_o374_nu487',$factors[245], $electricPower[245]]
+        ];
+
+        $table4 = [
+            'no_ch1031_o374_nu488',
+        ];
+
+        $startColumn = 'D';
+        $objPHPExcel = Summary::sum($table1, $startColumn, $startRow, $objPHPExcel, $mainObj);
+        $startColumn = 'O';
+        $objPHPExcel = Summary::average($table2, $startColumn, $startRow, $objPHPExcel, $mainObj);
+        $week = Parameter::WEEK_PER_YEAR;
+        $ktoe = Setting::where('code', 'E9')->first()->value;
+        $sumAmountSQL_1 = " sum(IF(unique_key='param1',answer_numeric,0)) 
+        * sum(IF(unique_key='param2',answer_numeric,0)) 
+        * sum(IF(unique_key='param3',answer_numeric,0)) 
+        * {$week} 
+        * param4
+        * param5 as sumAmount ";
+        $params = [
+            'param1'=>0,
+            'param2'=>1,
+            'param3'=>2,
+            'param4'=>3,
+            'param5'=>4
+        ];
+        $startColumn = 'AB';
+        $objPHPExcel = Summary::usageElectric($table3_1, $startColumn, $startRow,$objPHPExcel, $mainObj,$sumAmountSQL_1,$params,$ktoe);
+        $startColumn = 'AM';
+        $objPHPExcel = Summary::averageLifetime($table4, $table2,$startColumn, $startRow, $objPHPExcel, $mainObj);
+        $objWriter = new \PHPExcel_Writer_Excel2007($objPHPExcel);
+        $objWriter->save(storage_path(iconv('UTF-8', 'windows-874', 'excel/'.$outputFile)));
+
+        return array($outputFile, $outputName);
+    }
 }
