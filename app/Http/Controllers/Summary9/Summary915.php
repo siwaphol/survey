@@ -34,6 +34,7 @@ class Summary915 extends Controller
             'no_ch1030_o371_ch466_o101',
             'no_ch1030_o371_ch466_o102',
             'no_ch1030_o371_ch466_o103',
+
             'no_ch1030_o372_ch472_o100',
             'no_ch1030_o372_ch472_o101',
             'no_ch1030_o372_ch472_o102',
@@ -45,6 +46,7 @@ class Summary915 extends Controller
             'no_ch1030_o371_ch466_o101_nu467',
             'no_ch1030_o371_ch466_o102_nu467',
             'no_ch1030_o371_ch466_o103_nu467',
+
             'no_ch1030_o372_ch472_o100_nu473',
             'no_ch1030_o372_ch472_o101_nu473',
             'no_ch1030_o372_ch472_o102_nu473',
@@ -77,6 +79,7 @@ class Summary915 extends Controller
             'no_ch1030_o371_ch466_o101_nu470',
             'no_ch1030_o371_ch466_o102_nu470',
             'no_ch1030_o371_ch466_o103_nu470',
+
             'no_ch1030_o372_ch472_o100_nu476',
             'no_ch1030_o372_ch472_o101_nu476',
             'no_ch1030_o372_ch472_o102_nu476',
