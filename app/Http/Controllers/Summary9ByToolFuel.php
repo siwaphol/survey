@@ -670,6 +670,7 @@ class Summary9ByToolFuel extends Controller
 
         return array($outputFile, $outputName);
     }
+
     // เครื่องยนต์ขนาดเล็ก
     public static function report6()
     {
@@ -751,12 +752,12 @@ class Summary9ByToolFuel extends Controller
             ]
         ];
 
-        $objPHPExcel = Summary::average($table2, $startColumn, 13, $objPHPExcel, $mainObj);
+        $objPHPExcel = Summary::average($table2, $startColumn, $startRow, $objPHPExcel, $mainObj);
         $startColumn = 'AB';
         $ktoeIdx = 5;
-        $objPHPExcel = Summary::usageElectric($table3, $startColumn, 13,$objPHPExcel, $mainObj,$sumAmountSQL,$params,0,false,$ktoeIdx);
+        $objPHPExcel = Summary::usageElectric($table3, $startColumn, $startRow,$objPHPExcel, $mainObj,$sumAmountSQL,$params,0,false,$ktoeIdx);
         $startColumn = 'AM';
-        $objPHPExcel = Summary::averageLifetime($table4,$table2, $startColumn, 13, $objPHPExcel, $mainObj);
+        $objPHPExcel = Summary::averageLifetime($table4,$table2, $startColumn, $startRow, $objPHPExcel, $mainObj);
 
         $objWriter = new \PHPExcel_Writer_Excel2007($objPHPExcel);
         $objWriter->save(storage_path(iconv('UTF-8', 'windows-874', 'excel/'.$outputFile)));
@@ -844,17 +845,349 @@ class Summary9ByToolFuel extends Controller
             ]
         ];
 
-        $objPHPExcel = Summary::average($table2, $startColumn, 13, $objPHPExcel, $mainObj);
+        $objPHPExcel = Summary::average($table2, $startColumn, $startRow, $objPHPExcel, $mainObj);
         $startColumn = 'AB';
         $ktoeIdx = 5;
-        $objPHPExcel = Summary::usageElectric($table3, $startColumn, 13,$objPHPExcel, $mainObj,$sumAmountSQL,$params,0,false,$ktoeIdx);
+        $objPHPExcel = Summary::usageElectric($table3, $startColumn, $startRow,$objPHPExcel, $mainObj,$sumAmountSQL,$params,0,false,$ktoeIdx);
         $startColumn = 'AM';
-        $objPHPExcel = Summary::averageLifetime($table4,$table2, $startColumn, 13, $objPHPExcel, $mainObj);
+        $objPHPExcel = Summary::averageLifetime($table4,$table2, $startColumn, $startRow, $objPHPExcel, $mainObj);
 
         $objWriter = new \PHPExcel_Writer_Excel2007($objPHPExcel);
         $objWriter->save(storage_path(iconv('UTF-8', 'windows-874', 'excel/'.$outputFile)));
 
         return array($outputFile, $outputName);
     }
+    // เครื่องตัดหญ้าสะพายบ่า
+    public static function report8()
+    {
+        set_time_limit(3600);
 
+        $mainObj = new Main();
+        $mainObj->initList();
+
+        $inputFile = Summary9ByToolFuel::$inputFile;
+        $inputSheet = '8';
+        $startRow = 5;
+        $outputFile = Summary9ByToolFuel::$outputFile;
+        $outputName = 'เครื่องตัดหญ้าสะพายบ่า.xlsx';
+
+        $objPHPExcel = new \PHPExcel();
+        $objPHPExcelMain = \PHPExcel_IOFactory::load(storage_path('excel/'. $inputFile));
+        $objPHPExcel->addExternalSheet($objPHPExcelMain->getSheetByName($inputSheet));
+        $objPHPExcel->removeSheetByIndex(0);
+        $objPHPExcel->setActiveSheetIndexByName($inputSheet);
+
+        $table1 = [
+            'no_ch1034_o381_ch535_o214',
+            'no_ch1034_o381_ch535_o215',
+            'no_ch1034_o381',
+        ];
+        $startColumn = 'D';
+        $objPHPExcel = Summary::sum($table1,$startColumn,$startRow,$objPHPExcel,$mainObj);
+
+        $table2 = [
+            'no_ch1034_o381_ch535_o214_nu536',
+            'no_ch1034_o381_ch535_o215_nu536',
+            [
+                'no_ch1034_o381_ch535_o214_nu536',
+                'no_ch1034_o381_ch535_o215_nu536',
+            ]
+        ];
+
+        $settings = Setting::whereIn('group_id',[1,5,9,10,11,12,13])
+            ->get();
+        $fuelFactors = array();
+        $fuelPrice = array();
+        for ($i = 1; $i<=22; $i++){
+            $fuelFactors[$i] = (float)$settings->where('code','tool_factor_fuel_'. $i)->first()->value
+                * (float)$settings->where('code','season_factor_fuel_'. $i)->first()->value
+                * (float)$settings->where('code','usage_factor_fuel_'. $i)->first()->value;
+            if ($i>=5){
+                $fuelPrice[$i] = (float)$settings->where('code', 'fuel_price_fuel_' . $i)->first()->value;
+            }
+        }
+
+        $ktoes = [
+            'E4'=>$settings->where('code','E4')->first()->value, // แก็สโซฮอล 91
+            'E5'=>$settings->where('code','E5')->first()->value, // แก็สโซฮอล 95
+            'E8'=>$settings->where('code','E8')->first()->value, // ดีเซล
+        ];
+
+        $table3 = [
+            ['no_ch1034_o381_ch535_o214_nu536','no_ch1034_o381_ch535_o214_nu537','no_ch1034_o381_ch535_o214_nu538', $fuelFactors[18],$fuelPrice[18],$ktoes['E4']],
+            ['no_ch1034_o381_ch535_o215_nu536','no_ch1034_o381_ch535_o215_nu537','no_ch1034_o381_ch535_o215_nu538', $fuelFactors[19],$fuelPrice[19],$ktoes['E5']],
+        ];
+        $sumAmountSQL = " (sum(IF(unique_key='param1',answer_numeric,0)) 
+        * sum(IF(unique_key='param2',answer_numeric,0)) 
+        * sum(IF(unique_key='param3',answer_numeric,0)) 
+        * 12) * param4 * param5 as sumAmount ";
+        $params = [
+            'param1'=>0,
+            'param2'=>1,
+            'param3'=>2,
+            'param4'=>3,
+            'param5'=>4,
+        ];
+
+        $table4 = [
+            'no_ch1034_o381_ch535_o214_nu539',
+            'no_ch1034_o381_ch535_o215_nu539',
+            [
+                'no_ch1034_o381_ch535_o214_nu539',
+                'no_ch1034_o381_ch535_o215_nu539',
+            ]
+        ];
+
+        $objPHPExcel = Summary::average($table2, $startColumn, $startRow, $objPHPExcel, $mainObj);
+        $startColumn = 'AB';
+        $ktoeIdx = 5;
+        $objPHPExcel = Summary::usageElectric($table3, $startColumn, $startRow,$objPHPExcel, $mainObj,$sumAmountSQL,$params,0,false,$ktoeIdx);
+        $startColumn = 'AM';
+        $objPHPExcel = Summary::averageLifetime($table4,$table2, $startColumn, $startRow, $objPHPExcel, $mainObj);
+
+        $objWriter = new \PHPExcel_Writer_Excel2007($objPHPExcel);
+        $objWriter->save(storage_path(iconv('UTF-8', 'windows-874', 'excel/'.$outputFile)));
+
+        return array($outputFile, $outputName);
+    }
+    // ควายเหล็ก
+    public static function report9()
+    {
+        set_time_limit(3600);
+
+        $mainObj = new Main();
+        $mainObj->initList();
+
+        $inputFile = Summary9ByToolFuel::$inputFile;
+        $inputSheet = '9';
+        $startRow = 5;
+        $outputFile = Summary9ByToolFuel::$outputFile;
+        $outputName = 'ควายเหล็ก.xlsx';
+
+        $objPHPExcel = new \PHPExcel();
+        $objPHPExcelMain = \PHPExcel_IOFactory::load(storage_path('excel/'. $inputFile));
+        $objPHPExcel->addExternalSheet($objPHPExcelMain->getSheetByName($inputSheet));
+        $objPHPExcel->removeSheetByIndex(0);
+        $objPHPExcel->setActiveSheetIndexByName($inputSheet);
+
+        $table1 = [
+            'no_ch1034_o382_ch541_o218',
+        ];
+        $startColumn = 'D';
+        $objPHPExcel = Summary::sum($table1,$startColumn,$startRow,$objPHPExcel,$mainObj);
+
+        $table2 = [
+            'no_ch1034_o382_ch541_o218_nu542',
+        ];
+
+        $settings = Setting::whereIn('group_id',[1,5,9,10,11,12,13])
+            ->get();
+        $fuelFactors = array();
+        $fuelPrice = array();
+        for ($i = 1; $i<=22; $i++){
+            $fuelFactors[$i] = (float)$settings->where('code','tool_factor_fuel_'. $i)->first()->value
+                * (float)$settings->where('code','season_factor_fuel_'. $i)->first()->value
+                * (float)$settings->where('code','usage_factor_fuel_'. $i)->first()->value;
+            if ($i>=5){
+                $fuelPrice[$i] = (float)$settings->where('code', 'fuel_price_fuel_' . $i)->first()->value;
+            }
+        }
+
+        $ktoes = [
+            'E4'=>$settings->where('code','E4')->first()->value, // แก็สโซฮอล 91
+            'E5'=>$settings->where('code','E5')->first()->value, // แก็สโซฮอล 95
+            'E8'=>$settings->where('code','E8')->first()->value, // ดีเซล
+        ];
+
+        $table3 = [
+            ['no_ch1034_o382_ch541_o218_nu542','no_ch1034_o382_ch541_o218_nu543','no_ch1034_o382_ch541_o218_nu544', $fuelFactors[20],$fuelPrice[20],$ktoes['E8']],
+        ];
+        $sumAmountSQL = " (sum(IF(unique_key='param1',answer_numeric,0)) 
+        * sum(IF(unique_key='param2',answer_numeric,0)) 
+        * sum(IF(unique_key='param3',answer_numeric,0)) 
+        * 12) * param4 * param5 as sumAmount ";
+        $params = [
+            'param1'=>0,
+            'param2'=>1,
+            'param3'=>2,
+            'param4'=>3,
+            'param5'=>4,
+        ];
+
+        $table4 = [
+            'no_ch1034_o382_ch541_o218_nu545',
+        ];
+
+        $objPHPExcel = Summary::average($table2, $startColumn, $startRow, $objPHPExcel, $mainObj);
+        $startColumn = 'AB';
+        $ktoeIdx = 5;
+        $objPHPExcel = Summary::usageElectric($table3, $startColumn, $startRow,$objPHPExcel, $mainObj,$sumAmountSQL,$params,0,false,$ktoeIdx);
+        $startColumn = 'AM';
+        $objPHPExcel = Summary::averageLifetime($table4,$table2, $startColumn, $startRow, $objPHPExcel, $mainObj);
+
+        $objWriter = new \PHPExcel_Writer_Excel2007($objPHPExcel);
+        $objWriter->save(storage_path(iconv('UTF-8', 'windows-874', 'excel/'.$outputFile)));
+
+        return array($outputFile, $outputName);
+    }
+    // รถอีแต๋น
+    public static function report10()
+    {
+        set_time_limit(3600);
+
+        $mainObj = new Main();
+        $mainObj->initList();
+
+        $inputFile = Summary9ByToolFuel::$inputFile;
+        $inputSheet = '10';
+        $startRow = 5;
+        $outputFile = Summary9ByToolFuel::$outputFile;
+        $outputName = 'รถอีแต๋น.xlsx';
+
+        $objPHPExcel = new \PHPExcel();
+        $objPHPExcelMain = \PHPExcel_IOFactory::load(storage_path('excel/'. $inputFile));
+        $objPHPExcel->addExternalSheet($objPHPExcelMain->getSheetByName($inputSheet));
+        $objPHPExcel->removeSheetByIndex(0);
+        $objPHPExcel->setActiveSheetIndexByName($inputSheet);
+
+        $table1 = [
+            'no_ch1034_o383_ch547_o218',
+        ];
+        $startColumn = 'D';
+        $objPHPExcel = Summary::sum($table1,$startColumn,$startRow,$objPHPExcel,$mainObj);
+
+        $table2 = [
+            'no_ch1034_o383_ch547_o218_nu548',
+        ];
+
+        $settings = Setting::whereIn('group_id',[1,5,9,10,11,12,13])
+            ->get();
+        $fuelFactors = array();
+        $fuelPrice = array();
+        for ($i = 1; $i<=22; $i++){
+            $fuelFactors[$i] = (float)$settings->where('code','tool_factor_fuel_'. $i)->first()->value
+                * (float)$settings->where('code','season_factor_fuel_'. $i)->first()->value
+                * (float)$settings->where('code','usage_factor_fuel_'. $i)->first()->value;
+            if ($i>=5){
+                $fuelPrice[$i] = (float)$settings->where('code', 'fuel_price_fuel_' . $i)->first()->value;
+            }
+        }
+
+        $ktoes = [
+            'E4'=>$settings->where('code','E4')->first()->value, // แก็สโซฮอล 91
+            'E5'=>$settings->where('code','E5')->first()->value, // แก็สโซฮอล 95
+            'E8'=>$settings->where('code','E8')->first()->value, // ดีเซล
+        ];
+
+        $table3 = [
+            ['no_ch1034_o383_ch547_o218_nu548','no_ch1034_o383_ch547_o218_nu549','no_ch1034_o383_ch547_o218_nu550', $fuelFactors[21],$fuelPrice[21],$ktoes['E8']],
+        ];
+        $sumAmountSQL = " (sum(IF(unique_key='param1',answer_numeric,0)) 
+        * sum(IF(unique_key='param2',answer_numeric,0)) 
+        * sum(IF(unique_key='param3',answer_numeric,0)) 
+        * 12) * param4 * param5 as sumAmount ";
+        $params = [
+            'param1'=>0,
+            'param2'=>1,
+            'param3'=>2,
+            'param4'=>3,
+            'param5'=>4,
+        ];
+
+        $table4 = [
+            'no_ch1034_o383_ch547_o218_nu551',
+        ];
+
+        $objPHPExcel = Summary::average($table2, $startColumn, $startRow, $objPHPExcel, $mainObj);
+        $startColumn = 'AB';
+        $ktoeIdx = 5;
+        $objPHPExcel = Summary::usageElectric($table3, $startColumn, $startRow,$objPHPExcel, $mainObj,$sumAmountSQL,$params,0,false,$ktoeIdx);
+        $startColumn = 'AM';
+        $objPHPExcel = Summary::averageLifetime($table4,$table2, $startColumn, $startRow, $objPHPExcel, $mainObj);
+
+        $objWriter = new \PHPExcel_Writer_Excel2007($objPHPExcel);
+        $objWriter->save(storage_path(iconv('UTF-8', 'windows-874', 'excel/'.$outputFile)));
+
+        return array($outputFile, $outputName);
+    }
+    // รถแทรกเตอร์
+    public static function report11()
+    {
+        set_time_limit(3600);
+
+        $mainObj = new Main();
+        $mainObj->initList();
+
+        $inputFile = Summary9ByToolFuel::$inputFile;
+        $inputSheet = '11';
+        $startRow = 5;
+        $outputFile = Summary9ByToolFuel::$outputFile;
+        $outputName = 'รถแทรกเตอร์.xlsx';
+
+        $objPHPExcel = new \PHPExcel();
+        $objPHPExcelMain = \PHPExcel_IOFactory::load(storage_path('excel/'. $inputFile));
+        $objPHPExcel->addExternalSheet($objPHPExcelMain->getSheetByName($inputSheet));
+        $objPHPExcel->removeSheetByIndex(0);
+        $objPHPExcel->setActiveSheetIndexByName($inputSheet);
+
+        $table1 = [
+            'no_ch1034_o384_ch553_o218',
+        ];
+        $startColumn = 'D';
+        $objPHPExcel = Summary::sum($table1,$startColumn,$startRow,$objPHPExcel,$mainObj);
+
+        $table2 = [
+            'no_ch1034_o384_ch553_o218_nu554',
+        ];
+
+        $settings = Setting::whereIn('group_id',[1,5,9,10,11,12,13])
+            ->get();
+        $fuelFactors = array();
+        $fuelPrice = array();
+        for ($i = 1; $i<=22; $i++){
+            $fuelFactors[$i] = (float)$settings->where('code','tool_factor_fuel_'. $i)->first()->value
+                * (float)$settings->where('code','season_factor_fuel_'. $i)->first()->value
+                * (float)$settings->where('code','usage_factor_fuel_'. $i)->first()->value;
+            if ($i>=5){
+                $fuelPrice[$i] = (float)$settings->where('code', 'fuel_price_fuel_' . $i)->first()->value;
+            }
+        }
+
+        $ktoes = [
+            'E4'=>$settings->where('code','E4')->first()->value, // แก็สโซฮอล 91
+            'E5'=>$settings->where('code','E5')->first()->value, // แก็สโซฮอล 95
+            'E8'=>$settings->where('code','E8')->first()->value, // ดีเซล
+        ];
+
+        $table3 = [
+            ['no_ch1034_o384_ch553_o218_nu554','no_ch1034_o384_ch553_o218_nu555','no_ch1034_o384_ch553_o218_nu556', $fuelFactors[22],$fuelPrice[22],$ktoes['E8']]
+        ];
+        $sumAmountSQL = " (sum(IF(unique_key='param1',answer_numeric,0)) 
+        * sum(IF(unique_key='param2',answer_numeric,0)) 
+        * sum(IF(unique_key='param3',answer_numeric,0)) 
+        * 12) * param4 * param5 as sumAmount ";
+        $params = [
+            'param1'=>0,
+            'param2'=>1,
+            'param3'=>2,
+            'param4'=>3,
+            'param5'=>4,
+        ];
+
+        $table4 = [
+            'no_ch1034_o384_ch553_o218_nu557',
+        ];
+
+        $objPHPExcel = Summary::average($table2, $startColumn, $startRow, $objPHPExcel, $mainObj);
+        $startColumn = 'AB';
+        $ktoeIdx = 5;
+        $objPHPExcel = Summary::usageElectric($table3, $startColumn, $startRow,$objPHPExcel, $mainObj,$sumAmountSQL,$params,0,false,$ktoeIdx);
+        $startColumn = 'AM';
+        $objPHPExcel = Summary::averageLifetime($table4,$table2, $startColumn, $startRow, $objPHPExcel, $mainObj);
+
+        $objWriter = new \PHPExcel_Writer_Excel2007($objPHPExcel);
+        $objWriter->save(storage_path(iconv('UTF-8', 'windows-874', 'excel/'.$outputFile)));
+
+        return array($outputFile, $outputName);
+    }
 }
