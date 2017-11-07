@@ -16,7 +16,7 @@ class QuestionController extends Controller
 {
     public function importExcelQuestion()
     {
-        $filename = "SurveyDB_v1.xlsx";
+        $filename = "Survey2_v1.xlsx";
         $path = storage_path("excel\\" . $filename);
 
         if(explode('.', $filename)[1] === 'xls'){
@@ -69,7 +69,8 @@ class QuestionController extends Controller
         \DB::table('questions')->truncate();
         \DB::statement("SET FOREIGN_KEY_CHECKS = 1");
 
-        for($sheetNo=1; $sheetNo <=10; $sheetNo++){
+        $allQuestionSheet = 2;
+        for($sheetNo=1; $sheetNo <=$allQuestionSheet; $sheetNo++){
             echo ' sheet ' . $sheetNo;
             if($sheetNo%2){
                 echo ' (odd)';
@@ -183,8 +184,10 @@ class QuestionController extends Controller
         
         $result = \DB::select($str);
 
-        if (count($result)<=0)
-            return abort(404);
+        if (count($result)<=0){
+            return dd("result not found");
+//            return abort(404);
+        }
 
         $grouped = QuestionController::createQuestionGroup($result);
 
